@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ $# -gt 0 ]; then
+  if  [ "$(id -u)" = "0" ]; then
+    chown root $1 && chmod +s $1
+  else
+    echo "Permission denied: $(basename $0) must be run as root (use sudo !)">&2
+    exit 1
+  fi
+else
+  echo "filename must be provided !\nusage: $(basename $0) <filename>" >&2
+  exit 1
+fi
+exit 0

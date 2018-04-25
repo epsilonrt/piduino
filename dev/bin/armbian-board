@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ -r /etc/armbian-release ]; then
+  . /etc/armbian-release
+  echo "$BOARD"
+fi

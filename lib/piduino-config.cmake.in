@@ -1,0 +1,53 @@
+# Copyright © 2018 Pascal JEAN, All rights reserved.
+# This file is part of the Piduino Project.
+#
+# The Piduino Project is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# The Piduino Project is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with the Piduino Project.  If not, see <http://www.gnu.org/licenses/>.
+# - Config file for the piduino package
+# It defines the following variables
+#  PIDUINO_INCLUDE_DIRS - include directories for piduino
+#  PIDUINO_LIBRARY_DIRS - where to find libraries
+#  PIDUINO_LIBRARIES    - libraries to link against
+#  PIDUINO_CFLAGS       - all required cflags
+
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
+# Compute paths
+get_filename_component(PIDUINO_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+unset(PIDUINO_INCLUDE_DIRS)
+foreach(RELATIVE_PATH IN LISTS @CONF_INCLUDE_DIRS@)
+  get_filename_component(ABSOLUTE_PATH ${RELATIVE_PATH} ABSOLUTE)
+  list(APPEND PIDUINO_INCLUDE_DIRS "${ABSOLUTE_PATH}")
+endforeach()
+
+unset(PIDUINO_LIBRARY_DIRS)
+foreach(RELATIVE_PATH IN LISTS @CONF_LIB_DIRS@)
+  get_filename_component(ABSOLUTE_PATH ${RELATIVE_PATH} ABSOLUTE)
+  list(APPEND PIDUINO_LIBRARY_DIRS "${ABSOLUTE_PATH}")
+endforeach()
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${PIDUINO_CMAKE_DIR}/piduino.cmake")
+
+# These are IMPORTED targets created by piduino.cmake
+set(PIDUINO_LIBRARIES piduino Threads::Threads @CPPDB_LIBRARY@ @SQLITE3_LIBRARIES@)
+
+set(PIDUINO_CFLAGS @SQLITE3_CFLAGS@ ${CMAKE_THREAD_LIBS_INIT})
+set(CMAKE_MODULE_PATH "${PIDUINO_CMAKE_DIR}")
+set(PIDUINO_WITH_GPIO @PIDUINO_WITH_GPIO@)
+set(PIDUINO_WITH_I2C @PIDUINO_WITH_I2C@)
+set(PIDUINO_WITH_SPI @PIDUINO_WITH_SPI@)
+set(PIDUINO_WITH_SERIAL @PIDUINO_WITH_SERIAL@)

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="libpiduino" Version="10.0.0" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+  </Plugins>
+  <VirtualDirectory Name="src">
+    <VirtualDirectory Name="arch">
+      <VirtualDirectory Name="arm">
+        <VirtualDirectory Name="allwinner">
+          <VirtualDirectory Name="nanopi">
+            <File Name="src/arch/arm/allwinner/nanopi/gpiodevice_descriptor_nanopi.cpp"/>
+          </VirtualDirectory>
+          <File Name="src/arch/arm/allwinner/gpio.cpp"/>
+          <File Name="src/arch/arm/allwinner/allwinner_h.cpp"/>
+          <File Name="src/arch/arm/allwinner/allwinner_h.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="broadcom">
+          <VirtualDirectory Name="raspberrypi">
+            <File Name="src/arch/arm/broadcom/raspberrypi/gpiodevice_descriptor_raspberrypi.cpp"/>
+          </VirtualDirectory>
+          <File Name="src/arch/arm/broadcom/gpio.cpp"/>
+          <File Name="src/arch/arm/broadcom/broadcom_bcm2835.cpp"/>
+          <File Name="src/arch/arm/broadcom/broadcom_bcm2835.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="i2c">
+      <File Name="src/i2c/i2c-dev.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gpio">
+      <File Name="src/gpio/arduino.cpp"/>
+      <File Name="src/gpio/gpiodevice.cpp"/>
+      <File Name="src/gpio/gpio.cpp"/>
+      <File Name="src/gpio/gpioconnector.cpp"/>
+      <File Name="src/gpio/gpiopin.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="spi"/>
+    <File Name="src/clock.cpp"/>
+    <File Name="src/scheduler.cpp"/>
+    <File Name="src/iomap.c"/>
+    <File Name="src/board.cpp"/>
+    <File Name="src/manufacturer.cpp"/>
+    <File Name="src/soc.cpp"/>
+    <File Name="src/database.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="piduino">
+      <File Name="include/piduino/clock.h"/>
+      <File Name="include/piduino/gpiopin.h"/>
+      <File Name="include/piduino/scheduler.h"/>
+      <File Name="include/piduino/arduino.h"/>
+      <File Name="include/piduino/gpiodevice.h"/>
+      <File Name="include/piduino/board.h"/>
+      <File Name="include/piduino/iomap.h"/>
+      <File Name="include/piduino/gpioconnector.h"/>
+      <File Name="include/piduino/gpio.h"/>
+      <File Name="include/piduino/manufacturer.h"/>
+      <File Name="include/piduino/soc.h"/>
+      <File Name="include/piduino/database.h"/>
+    </VirtualDirectory>
+    <File Name="include/Arduino.h"/>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="resources">
+    <File Name="CMakeLists.txt"/>
+  </VirtualDirectory>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CMake">-DCL_USED=1</BuildSystem>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu gcc" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Release" Command="$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output/$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CMake">-DCL_USED=1</BuildSystem>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <VirtualDirectory Name="piduino">
+    <File Name="COPYING"/>
+    <File Name="AUTHORS"/>
+    <File Name="COPYING.LESSER"/>
+    <File Name="README.md"/>
+    <File Name="cmake_uninstall.cmake.in"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
+  <VirtualDirectory Name="lib">
+    <File Name="lib/piduino.pc.in"/>
+    <File Name="lib/piduino-config-version.cmake.in"/>
+    <File Name="lib/piduino-config.cmake.in"/>
+    <File Name="lib/config.h.in"/>
+    <VirtualDirectory Name="resources">
+      <File Name="lib/CMakeLists.txt"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+</CodeLite_Project>

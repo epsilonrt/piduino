@@ -1,0 +1,41 @@
+/**
+ * @file
+ * @brief Configuration SysIo
+ *
+ * Copyright © 2017 Pascal JEAN, All rights reserved.
+ * This file is part of the Piduino Library.
+ *
+ * The Piduino Library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * The Piduino Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef _PIDUINO_CONFIG_H_
+#define _PIDUINO_CONFIG_H_
+/* ========================================================================== */
+#define PIDUINO_WITH_GPIO   @PIDUINO_WITH_GPIO@
+#define PIDUINO_WITH_I2C    @PIDUINO_WITH_I2C@
+#define PIDUINO_WITH_SPI    @PIDUINO_WITH_SPI@
+#define PIDUINO_WITH_SERIAL @PIDUINO_WITH_SERIAL@
+
+#define PIDUINO_WITH_STATIC @PIDUINO_WITH_STATIC@
+
+#define PIDUINO_VERSION       "@PIDUINO_VERSION_STRING@"
+#define PIDUINO_VERSION_SHORT "@PIDUINO_VERSION_SHORT@"
+#define PIDUINO_VERSION_TINY  "@PIDUINO_VERSION_TINY@"
+#define PIDUINO_VERSION_MAJOR @PIDUINO_VERSION_MAJOR@
+#define PIDUINO_VERSION_MINOR @PIDUINO_VERSION_MINOR@
+#define PIDUINO_VERSION_PATCH @PIDUINO_VERSION_PATCH@
+#define PIDUINO_VERSION_SHA1  @PIDUINO_VERSION_SHA1@
+
+/* ========================================================================== */
+#endif /*_PIDUINO_CONFIG_H_ defined */

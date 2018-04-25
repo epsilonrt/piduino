@@ -1,0 +1,14 @@
+#!/bin/sh
+if [ -r /etc/armbian-release ]; then
+  . /etc/armbian-release
+  if [ "_$BOARDFAMILY" = "_" ]; then
+    cpu="$LINUXFAMILY"
+  else
+    cpu="$BOARDFAMILY"
+  fi
+fi
+
+if [ "_$cpu" = "_" ]; then
+  cpu=$(cat /proc/cpuinfo | awk '/Hardware/ { print $3 }' | tr '[:upper:]' '[:lower:]')
+fi
+echo "$cpu"
