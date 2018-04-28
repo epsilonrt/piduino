@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiduino" Version="10.0.0" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+  </Plugins>
   <VirtualDirectory Name="examples">
     <VirtualDirectory Name="arduino">
       <VirtualDirectory Name="interrupt">
@@ -30,11 +35,6 @@
       </VirtualDirectory>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Plugins>
-    <Plugin Name="qmake">
-      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
-    </Plugin>
-  </Plugins>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="arch">
       <VirtualDirectory Name="arm">
@@ -74,6 +74,7 @@
     <File Name="src/manufacturer.cpp"/>
     <File Name="src/soc.cpp"/>
     <File Name="src/database.cpp"/>
+    <File Name="src/system.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -90,6 +91,7 @@
       <File Name="include/piduino/soc.h"/>
       <File Name="include/piduino/database.h"/>
       <File Name="include/piduino/configfile.h"/>
+      <File Name="include/piduino/system.h"/>
     </VirtualDirectory>
     <File Name="include/Arduino.h"/>
   </VirtualDirectory>

@@ -25,6 +25,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <typeinfo>
+#include <type_traits>
 
 /**
  *  @defgroup piduino_configfile Fichier configuration
@@ -62,7 +63,6 @@ namespace Piduino {
       }
   };
 
-
   class ConfigFile {
     public:
 
@@ -97,6 +97,17 @@ namespace Piduino {
         }
 
         return Convert::string_to_T<ValueType> (_contents.find (key)->second);
+      }
+
+      // -----------------------------------------------------------------------
+      std::string value (const std::string &key,
+                         std::string const &defaultValue = std::string()) const {
+        if (!keyExists (key)) {
+
+          return defaultValue;
+        }
+        
+        return _contents.find (key)->second;
       }
 
     private:
@@ -143,14 +154,19 @@ namespace Piduino {
       }
 
       // -----------------------------------------------------------------------
+      static void trim (std::string &str) {
+
+        str.erase (0, str.find_first_not_of ("\t \""));
+        str.erase (str.find_last_not_of ("\t \"") + 1);
+      }
+
+      // -----------------------------------------------------------------------
       void
       extractKey (std::string &key, size_t const &sepPos,
                   const std::string &line) const {
 
         key = line.substr (0, sepPos);
-        if (key.find ('\t') != line.npos || key.find (' ') != line.npos) {
-          key.erase (key.find_first_of ("\t "));
-        }
+        trim (key);
       }
 
       // -----------------------------------------------------------------------
@@ -159,8 +175,7 @@ namespace Piduino {
                     const std::string &line) const {
 
         value = line.substr (sepPos + 1);
-        value.erase (0, value.find_first_not_of ("\t "));
-        value.erase (value.find_last_not_of ("\t ") + 1);
+        trim (value);
       }
 
       // -----------------------------------------------------------------------
@@ -228,7 +243,19 @@ namespace Piduino {
 
         file.close();
       }
+
   };
+#if 0
+  // -----------------------------------------------------------------------
+  std::string ConfigFile::value (const std::string &key, std::string const &defaultValue) const {
+
+    if (!keyExists (key)) {
+
+      return std::string();
+    }
+    return _contents.find (key)->second;
+  }
+#endif
 }
 /**
  *  @}

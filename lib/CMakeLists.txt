@@ -36,6 +36,7 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/manufacturer.h
   ${PIDUINO_INC_DIR}/piduino/database.h
   ${PIDUINO_INC_DIR}/piduino/configfile.h
+  ${PIDUINO_INC_DIR}/piduino/system.h
 )
 
 set (hdr_gpio 

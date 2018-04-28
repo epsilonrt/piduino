@@ -18,6 +18,7 @@
 #ifndef _PIDUINO_BOARD_H_
 #define _PIDUINO_BOARD_H_
 
+#include <piduino/system.h>
 #include <piduino/soc.h>
 
 /**
@@ -139,8 +140,8 @@ namespace Piduino {
       //
       // -----------------------------------------------------------------------
 
-      Board(int rev = -1);
-      Board(const std::string & tag);
+      Board(int raspberryPiRevision = -1);
+      Board(const std::string & armbianBoardTag);
       virtual ~Board();
 
       inline const std::string & name() const {
@@ -159,24 +160,12 @@ namespace Piduino {
         return _id;
       }
 
-      inline int revision() const {
-        return _revision;
-      }
-
       inline float pcbRevision() const {
         return _pcb_revision;
       }
 
       inline int gpioId() const {
         return _gpio_id;
-      }
-
-      inline int ram() const {
-        return _ram;
-      }
-
-      inline const std::string & tag() const {
-        return _tag;
       }
 
       inline const Model & model() const {
@@ -186,24 +175,22 @@ namespace Piduino {
       inline const Manufacturer & manufacturer() const {
         return _manufacturer;
       }
+      
+      inline const System & system() const {
+        return _system;
+      }
 
     protected:
-      void setId (int i);
       void setRevision (int rev);
       void setTag (const std::string & tag);
-      int findRevision();
-      std::string findTag();
-      int totalRam();
 
     private:
       int _id;
       Model _model;
       Manufacturer _manufacturer;
-      std::string _tag;
+      System _system;
       int _gpio_id; // Révision du GPIO
-      int _revision; // Révision carte (raspberry)
       float _pcb_revision;
-      int _ram; // RAM en Mo
   };
 }
 /**
