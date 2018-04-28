@@ -1,2 +1,2 @@
 #!/bin/sh
-ln -sf ../../utils/gpio/gpio src
+ln -sf ../../../utils/gpio/gpio src

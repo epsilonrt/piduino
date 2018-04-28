@@ -5,4 +5,6 @@
   Board
 
 ## Installation
+    sudo apt-get update
     sudo apt-get install libcppdb-dev pkg-config cmake libsqlite3-dev
+    sudo ldconfig

@@ -142,10 +142,10 @@ namespace Piduino {
         setTag (tag);
       }
       else {
-        
+
         rev = findRevision();
         if (rev > 0) {
-          
+
           // Revision from /proc/cpuinfo found...
           setRevision (rev);
         }
@@ -221,12 +221,13 @@ namespace Piduino {
         std::string hardware = cfg.value<std::string> ("Hardware");
 
         if ( (hardware == "BCM2710") || (hardware == "BCM2709") ||
-             (hardware == "BCM2708") || (hardware == "BCM2837") ||
+             (hardware == "BCM2708") || (hardware == "BCM2835") ||
              (hardware == "BCM2836") || (hardware == "BCM2837")) {
 
           if (cfg.keyExists ("Revision")) {
 
-            rev = cfg.value<int> ("Revision");
+            std::string str = cfg.value<std::string> ("Revision");
+            rev = std::stoi (str, nullptr, 16);
           }
         }
       }

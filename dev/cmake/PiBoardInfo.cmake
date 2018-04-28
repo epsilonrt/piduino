@@ -102,6 +102,7 @@ function(GetPiBoardInfo)
 
       if (rpi_info)
       
+        #message (STATUS "rpi_info='${rpi_info}'")
         execute_process(COMMAND ${rpi_info} -c RESULT_VARIABLE ret OUTPUT_VARIABLE cpu OUTPUT_STRIP_TRAILING_WHITESPACE)
         #message (STATUS "RPI_CPU='${cpu}'")
         if (ret EQUAL 0)

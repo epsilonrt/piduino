@@ -18,6 +18,7 @@
 #ifndef _PIDUINO_GPIO_DEVICE_H_
 #define _PIDUINO_GPIO_DEVICE_H_
 
+#include <piduino/board.h>
 #include <piduino/gpio.h>
 
 #ifndef __DOXYGEN__

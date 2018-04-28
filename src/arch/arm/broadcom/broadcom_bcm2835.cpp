@@ -18,9 +18,7 @@
 #include <iostream>
 #include <iomanip>
 #include <exception>
-#include <piduino/gpio.h>
 #include <piduino/clock.h>
-#include <piduino/board.h>
 #include "broadcom_bcm2835.h"
 
 namespace Piduino {
@@ -33,9 +31,9 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
   const std::map<SoC::Id, unsigned long> DeviceBcm2835::_iobase {
-    {Bcm2708, Bcm2708Base},
-    {Bcm2709, Bcm2709Base},
-    {Bcm2710, Bcm2710Base},
+    {SoC::Bcm2708, Bcm2708Base},
+    {SoC::Bcm2709, Bcm2709Base},
+    {SoC::Bcm2710, Bcm2710Base},
   };
 
 // -----------------------------------------------------------------------------
