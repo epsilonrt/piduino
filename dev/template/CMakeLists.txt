@@ -9,12 +9,12 @@ project(template)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Set default locations
-set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../../cmake-build-Release/output)
+set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../cmake-build-Debug/output)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
 
-set(CONFIGURATION_NAME "Release")
+set(CONFIGURATION_NAME "Debug")
 
 # Projects
 
@@ -22,14 +22,14 @@ set(CONFIGURATION_NAME "Release")
 # Top project
 # Define some variables
 set(PROJECT_template_PATH "${CMAKE_CURRENT_LIST_DIR}")
-set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
+set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 
 
 
 #{{{{ User Code 1
 # Place your code here
 
-# --- SysIo Begin. Do not edit by hand -----------------------------------------
+# --- PiDuino Begin. Do not edit by hand -----------------------------------------
 # Modifies binary file paths if codelite is not used.
 if (NOT CL_USED)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -39,7 +39,7 @@ endif (NOT CL_USED)
 # search for the piduino package, if found, add the options ...
 find_package(piduino QUIET)
 if (piduino_FOUND)
-  message (STATUS "SysIo found !")
+  message (STATUS "PiDuino found !")
   link_directories(${PIDUINO_LIBRARY_DIRS})
   add_definitions(${PIDUINO_CFLAGS})
   include_directories(BEFORE ${PIDUINO_INCLUDE_DIRS})
@@ -50,9 +50,9 @@ if (piduino_FOUND)
     GetPiBoardInfo()
   endif (NOT PIBOARD_ID)
 else (piduino_FOUND)
-  message (STATUS "<WARNING> SysIo not found !")
+  message (STATUS "<WARNING> PiDuino not found !")
 endif (piduino_FOUND)
-# --- SysIo End. Do not edit by hand -------------------------------------------
+# --- PiDuino End. Do not edit by hand -------------------------------------------
 #}}}}
 
 include_directories(
@@ -63,12 +63,9 @@ include_directories(
 
 
 # Compiler options
-add_definitions(-O2)
+add_definitions(-g)
+add_definitions(-O0)
 add_definitions(-Wall)
-add_definitions(
-    -DNDEBUG
-)
-
 
 # Linker options
 
@@ -80,14 +77,14 @@ endif(WIN32)
 # Library path
 set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. ")
 
-# Define the C sources
-set ( C_SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/template.c
+# Define the CXX sources
+set ( CXX_SRCS
+    ${CMAKE_CURRENT_LIST_DIR}/template.cpp
 )
 
 set_source_files_properties(
-    ${C_SRCS} PROPERTIES COMPILE_FLAGS 
-    " -O2 -Wall")
+    ${CXX_SRCS} PROPERTIES COMPILE_FLAGS 
+    " -g -O0 -Wall")
 
 if(WIN32)
     enable_language(RC)

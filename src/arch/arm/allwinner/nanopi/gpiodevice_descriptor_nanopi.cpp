@@ -44,7 +44,7 @@ namespace Piduino {
     // GPIO ID 4
     // NanoPi Neo, Neo2, Neo Plus2, Neo Air --->
     {
-      1,
+      4,
       {
         "nanopineo",
         {

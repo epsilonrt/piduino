@@ -29,7 +29,7 @@ set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 #{{{{ User Code 1
 # Place your code here
 
-# --- SysIo Begin. Do not edit by hand -----------------------------------------
+# --- PiDuino Begin. Do not edit by hand -----------------------------------------
 # Modifies binary file paths if codelite is not used.
 if (NOT CL_USED)
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -39,7 +39,7 @@ endif (NOT CL_USED)
 # search for the piduino package, if found, add the options ...
 find_package(piduino QUIET)
 if (piduino_FOUND)
-  message (STATUS "SysIo found !")
+  message (STATUS "PiDuino found !")
   link_directories(${PIDUINO_LIBRARY_DIRS})
   add_definitions(${PIDUINO_CFLAGS})
   include_directories(BEFORE ${PIDUINO_INCLUDE_DIRS})
@@ -50,9 +50,9 @@ if (piduino_FOUND)
     GetPiBoardInfo()
   endif (NOT PIBOARD_ID)
 else (piduino_FOUND)
-  message (STATUS "<WARNING> SysIo not found !")
+  message (STATUS "<WARNING> PiDuino not found !")
 endif (piduino_FOUND)
-# --- SysIo End. Do not edit by hand -------------------------------------------
+# --- PiDuino End. Do not edit by hand -------------------------------------------
 #}}}}
 
 include_directories(

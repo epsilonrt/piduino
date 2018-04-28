@@ -13,7 +13,7 @@
   http://www.arduino.cc/en/Tutorial/Button
 */
 #include <iostream>
-#include <piduino/arduino.h> // all the magic is here ;-)
+#include <Arduino.h> // all the magic is here ;-)
 using namespace std;
 
 // constants won't change. They're used here to set pin numbers:

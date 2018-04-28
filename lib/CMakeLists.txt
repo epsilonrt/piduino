@@ -34,6 +34,8 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/board.h
   ${PIDUINO_INC_DIR}/piduino/soc.h
   ${PIDUINO_INC_DIR}/piduino/manufacturer.h
+  ${PIDUINO_INC_DIR}/piduino/database.h
+  ${PIDUINO_INC_DIR}/piduino/configfile.h
 )
 
 set (hdr_gpio 
@@ -41,6 +43,10 @@ set (hdr_gpio
   ${PIDUINO_INC_DIR}/piduino/gpiopin.h
   ${PIDUINO_INC_DIR}/piduino/gpioconnector.h
   ${PIDUINO_INC_DIR}/piduino/arduino.h
+)
+
+set (hdr_gpio_root 
+  ${PIDUINO_INC_DIR}/Arduino.h
 )
 
 set (hdr_i2c
@@ -64,6 +70,7 @@ set(hdr_public ${hdr_piduino} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 if (PIDUINO_WITH_GPIO)
   file(GLOB src_gpio ${PIDUINO_SRC_DIR}/gpio/*.c ${PIDUINO_SRC_DIR}/gpio/*.cpp)
   list(APPEND hdr_public ${hdr_gpio})
+  list(APPEND hdr_root ${hdr_gpio_root})
 endif (PIDUINO_WITH_GPIO)
 
 if (PIDUINO_WITH_I2C)
@@ -167,7 +174,7 @@ install(EXPORT piduino DESTINATION
 
 # Install the piduino boards database
 install(FILES
-  "${PIDUINO_DATABASE_DIR}/piduino.sdb"
+  "${PIDUINO_DATABASE_DIR}/piduino.db"
   DESTINATION "${PIDUINO_INSTALL_DATA_DIR}" COMPONENT lib)
 
 install (TARGETS piduino-shared
@@ -176,6 +183,9 @@ install (TARGETS piduino-shared
   LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT lib
   PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/piduino" COMPONENT dev
   )
+
+install(FILES
+  "${hdr_root}" DESTINATION "${INSTALL_INCLUDE_DIR}" COMPONENT dev)
 
 if(PIDUINO_WITH_STATIC)
   install (TARGETS piduino-static 

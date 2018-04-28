@@ -20,6 +20,7 @@
 #include <exception>
 #include <piduino/gpio.h>
 #include <piduino/clock.h>
+#include <piduino/board.h>
 #include "broadcom_bcm2835.h"
 
 namespace Piduino {
@@ -31,30 +32,33 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-  const std::map<eRpiMcu, unsigned long> DeviceBcm2835::_iobase {
-    {eRpiMcuBcm2708, Bcm2708Base},
-    {eRpiMcuBcm2709, Bcm2709Base},
-    {eRpiMcuBcm2710, Bcm2710Base},
+  const std::map<SoC::Id, unsigned long> DeviceBcm2835::_iobase {
+    {Bcm2708, Bcm2708Base},
+    {Bcm2709, Bcm2709Base},
+    {Bcm2710, Bcm2710Base},
   };
 
 // -----------------------------------------------------------------------------
   DeviceBcm2835::DeviceBcm2835() : Device () {
-    const xRpi * info = pxRpiInfo();
+    Board board;
 
-    if (!info) {
+    if (board.soc().family().id() == SoC::Family::BroadcomBcm2835) {
+
+      _piobase = _iobase.at (board.soc().id()) + PioOffset;
+      _gpioDescriptor = &_gpioDescriptors.at (board.gpioId());
+    }
+    else {
 
       throw std::system_error (ENOTSUP, std::system_category(),
-                               "It seems that this system is not a raspberry pi !");
+                               "It seems that this system is not a Broadcom BCM2835 board !");
     }
-    _piobase = _iobase.at (info->eMcu) + PioOffset;
-    _gpioDescriptor = &_gpioDescriptors.at (info->iGpioRev);
   }
 
 // -----------------------------------------------------------------------------
   DeviceBcm2835::~DeviceBcm2835() {
   }
 // -----------------------------------------------------------------------------
-  unsigned int 
+  unsigned int
   DeviceBcm2835::flags() const {
     return  hasAltRead;
   }

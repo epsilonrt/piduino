@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiduino" Version="10.0.0" InternalType="Console">
+  <VirtualDirectory Name="examples">
+    <VirtualDirectory Name="arduino">
+      <VirtualDirectory Name="interrupt">
+        <File Name="examples/arduino/interrupt/interrupt.cpp"/>
+        <File Name="examples/arduino/interrupt/CMakeLists.txt"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="button">
+        <File Name="examples/arduino/button/CMakeLists.txt"/>
+        <File Name="examples/arduino/button/button.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="blink">
+        <File Name="examples/arduino/blink/blink.cpp"/>
+        <File Name="examples/arduino/blink/CMakeLists.txt"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gpio">
+      <VirtualDirectory Name="interrupt">
+        <File Name="examples/gpio/interrupt/interrupt.cpp"/>
+        <File Name="examples/gpio/interrupt/CMakeLists.txt"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="blink">
+        <File Name="examples/gpio/blink/blink.cpp"/>
+        <File Name="examples/gpio/blink/CMakeLists.txt"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="waitforint">
+        <File Name="examples/gpio/waitforint/CMakeLists.txt"/>
+        <File Name="examples/gpio/waitforint/waitforint.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
@@ -59,6 +89,7 @@
       <File Name="include/piduino/manufacturer.h"/>
       <File Name="include/piduino/soc.h"/>
       <File Name="include/piduino/database.h"/>
+      <File Name="include/piduino/configfile.h"/>
     </VirtualDirectory>
     <File Name="include/Arduino.h"/>
   </VirtualDirectory>

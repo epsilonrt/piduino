@@ -139,7 +139,8 @@ namespace Piduino {
       //
       // -----------------------------------------------------------------------
 
-      Board();
+      Board(int rev = -1);
+      Board(const std::string & tag);
       virtual ~Board();
 
       inline const std::string & name() const {
@@ -188,6 +189,11 @@ namespace Piduino {
 
     protected:
       void setId (int i);
+      void setRevision (int rev);
+      void setTag (const std::string & tag);
+      int findRevision();
+      std::string findTag();
+      int totalRam();
 
     private:
       int _id;
@@ -198,10 +204,6 @@ namespace Piduino {
       int _revision; // Révision carte (raspberry)
       float _pcb_revision;
       int _ram; // RAM en Mo
-
-      bool raspbianDetect();
-      bool armbianDetect();
-      int ramDetect();
   };
 }
 /**

@@ -34,12 +34,12 @@ find_package(Threads REQUIRED)
 
 set (PIDUINO_CFLAGS_OTHER ${CMAKE_THREAD_LIBS_INIT})
 
-find_package(PkgConfig REQUIRED)
-find_package(CPPDB REQUIRED)
-pkg_check_modules (SQLITE3 REQUIRED sqlite3)
+#find_package(PkgConfig REQUIRED)
+find_package(CppDb REQUIRED)
 
-set (SYSIO_LDFLAGS_OTHER  ${SQLITE3_LDFLAGS})
-list(APPEND SYSIO_CFLAGS_OTHER ${SQLITE3_CFLAGS})
+#pkg_check_modules (SQLITE3 REQUIRED sqlite3)
+set (PIDUINO_LDFLAGS_OTHER  ${CPPDB_LDFLAGS})
+#list(APPEND PIDUINO_CFLAGS_OTHER ${SQLITE3_CFLAGS})
 
 include (GitVersion)
 include (PiBoardInfo)
@@ -99,7 +99,7 @@ if (NOT PIBOARD_FOUND)
   endif (CMAKE_HOST_UNIX)
 endif (NOT PIBOARD_FOUND)
 
-add_definitions (-DPIBOARD_ID=${PIBOARD_ID})
+add_definitions (-DPIBOARD_ID=${PIBOARD_ID} -DPIDUINO_DBPATH="${PIDUINO_INSTALL_DATA_DIR}/piduino.db")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")
@@ -180,7 +180,7 @@ if (CPACK_GENERATOR STREQUAL "DEB")
 
   set(CPACK_DEB_PACKAGE_COMPONENT 1)
   set(CPACK_DEB_COMPONENT_INSTALL 1)
-  set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://www.epsilonrt.fr/piduino")
+  set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/epsilonrt/piduino")
 
   find_program(dpkg_query NAMES dpkg-query)
   find_program(dpkg_cmd NAMES dpkg)

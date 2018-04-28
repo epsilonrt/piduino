@@ -8,7 +8,7 @@ cflags_other=@PIDUINO_CFLAGS_PKGCONFIG@
 
 Name: @PROJECT_NAME@
 Description: @PROJECT_DESCRIPTION@
-URL: http://www.epsilonrt.fr/piduino
+URL: https://github.com/epsilonrt/piduino
 Version: @PIDUINO_VERSION@
 Requires: 
 Libs: -L${libdir} -lpiduino ${ldflags_other}

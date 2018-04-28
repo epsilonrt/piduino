@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiduino-dev" Version="10.0.0" InternalType="Console">
+  <VirtualDirectory Name="template">
+    <VirtualDirectory Name="arduino">
+      <File Name="template/arduino/template.cpp"/>
+      <File Name="template/arduino/CMakeLists.txt"/>
+    </VirtualDirectory>
+    <File Name="template/template.cpp"/>
+    <File Name="template/CMakeLists.txt"/>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="template">
-    <VirtualDirectory Name="cpp">
-      <File Name="template/cpp/CMakeLists.txt"/>
-      <File Name="template/cpp/template.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="module">
-      <File Name="template/module/module.h"/>
-      <File Name="template/module/module.c"/>
-    </VirtualDirectory>
-    <File Name="template/CMakeLists.txt"/>
-    <File Name="template/template.c"/>
-  </VirtualDirectory>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="resources">
@@ -123,7 +119,7 @@
     <File Name="cmake/GitVersion.cmake"/>
     <File Name="cmake/Findrt.cmake"/>
     <File Name="cmake/Findmath.cmake"/>
-    <File Name="cmake/FindCPPDB.cmake"/>
+    <File Name="cmake/FindCppDb.cmake"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

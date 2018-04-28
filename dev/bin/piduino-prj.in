@@ -20,7 +20,7 @@ usage()
 cat << EOF
 usage: $(basename $0) [Options] [project_name]
 
-This script creates a new project for SysIo. 
+This script creates a new project for PiDuino. 
 
 ARGUMENT
   [project_name] name of the project to create. If the project name is not 
@@ -29,13 +29,13 @@ OPTIONS:
   -h Show this message
   -f Forces the overwriting of existing files.
   -g Add the created files to the git repository of the current directory
-  -s Also create a C (or C ++) source file
-  -p Indicates that the project to create is a C ++ project
+  -s Also create a C++ source file
+  -a Indicates that the project to create is a Arduino Like project
   -e Copy examples in the current directory.
 EOF
 }
 
-while getopts ":fgspeh" opt; do
+while getopts ":fgsaeh" opt; do
   case $opt in
     f)
       FORCE="ON"
@@ -46,8 +46,8 @@ while getopts ":fgspeh" opt; do
     s)
       SOURCE="ON"
       ;;
-    p)
-      CPP="ON"
+    a)
+      ARDUINO="ON"
       ;;
     h)
       usage
@@ -80,11 +80,8 @@ PROJECT_FILE=${PROJECT_DIR}/${PROJECT_NAME}.project
 WORKSPACE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.workspace
 CMAKELISTS_FILE=${PROJECT_DIR}/CMakeLists.txt
 
-if [ "_$CPP" = "_ON" ]; then
-  SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.cpp
-else
-  SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.c
-fi
+SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.cpp
+
 #echo "PROJECT_DIR=$PROJECT_DIR"
 #echo "PROJECT_FILE=$PROJECT_FILE"
 
@@ -96,10 +93,10 @@ if [ -f ${PROJECT_FILE} ]; then
   fi
 fi
 
-if [ "_$CPP" = "_ON" ]; then
-  cp ${PIDUINO_TEMPLATE_DIR}/cpp/CMakeLists.txt ${CMAKELISTS_FILE}
-  cp ${PIDUINO_TEMPLATE_DIR}/cpp/template.project ${PROJECT_FILE}
-  cp ${PIDUINO_TEMPLATE_DIR}/cpp/template.workspace ${WORKSPACE_FILE}
+if [ "_$ARDUINO" = "_ON" ]; then
+  cp ${PIDUINO_TEMPLATE_DIR}/arduino/CMakeLists.txt ${CMAKELISTS_FILE}
+  cp ${PIDUINO_TEMPLATE_DIR}/arduino/template.project ${PROJECT_FILE}
+  cp ${PIDUINO_TEMPLATE_DIR}/arduino/template.workspace ${WORKSPACE_FILE}
 else
   cp ${PIDUINO_TEMPLATE_DIR}/CMakeLists.txt ${CMAKELISTS_FILE}
   cp ${PIDUINO_TEMPLATE_DIR}/template.project ${PROJECT_FILE}
@@ -114,10 +111,10 @@ fi
 
 
 if [ "_$SOURCE" = "_ON" ]; then
-  if [ "_$CPP" = "_ON" ]; then
-    cp ${PIDUINO_TEMPLATE_DIR}/cpp/template.cpp ${SOURCE_FILE}
+  if [ "_$ARDUINO" = "_ON" ]; then
+    cp ${PIDUINO_TEMPLATE_DIR}/arduino/template.cpp ${SOURCE_FILE}
   else
-    cp ${PIDUINO_TEMPLATE_DIR}/template.c ${SOURCE_FILE}
+    cp ${PIDUINO_TEMPLATE_DIR}/template.cpp ${SOURCE_FILE}
   fi
   sed -i -e "s#template#$PROJECT_NAME#g" ${SOURCE_FILE}
   if [ "_$GIT" = "_ON" ]; then

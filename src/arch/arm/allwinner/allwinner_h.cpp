@@ -62,12 +62,12 @@ namespace Piduino {
 
     if (board.soc().family().id() == SoC::Family::AllwinnerH) {
 
-      //_gpioDescriptor = &_gpioDescriptors.at (info->iGpioRev);
+      _gpioDescriptor = &_gpioDescriptors.at (board.gpioId());
     }
     else {
 
       throw std::system_error (ENOTSUP, std::system_category(),
-                               "It seems that this system is not a AllwinnerH board !");
+                               "It seems that this system is not a Allwinner H3/H5 board !");
     }
   }
 

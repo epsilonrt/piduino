@@ -30,7 +30,7 @@
 // This example code is in the public domain.
 
 #include <iostream>
-#include <piduino/arduino.h> // all the magic is here ;-)
+#include <Arduino.h> // all the magic is here ;-)
 using namespace std;
 
 // <DANGER> Be careful !!! Before launching this program :

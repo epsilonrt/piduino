@@ -59,7 +59,7 @@ install (DIRECTORY template
   )
 
 # SysIO examples
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/demo/
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/
         DESTINATION ${PIDUINO_INSTALL_EXAMPLES_DIR}/piduino 
         COMPONENT dev
         FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")

@@ -14,20 +14,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
+#include <sstream>
+#include <cstdlib>
 #include <piduino/database.h>
 
 namespace Piduino {
 
 // -----------------------------------------------------------------------------
-  Database::Database() {
-
+  Database::Database() : cppdb::session() {
+    std::ostringstream ci;
+    std::string dbpath(PIDUINO_DBPATH);
+    const char * dbpath_env = std::getenv ("PIDUINO_DBPATH");
+    if (dbpath_env) {
+      
+      dbpath = std::string(dbpath_env);
+    }
+    ci << "sqlite3:db=" << dbpath;
+    cppdb::session::open(ci.str());
   }
-  
+
 // -----------------------------------------------------------------------------
   Database::~Database() {
-
+    
+    cppdb::session::close();
   }
-  
+
 // -----------------------------------------------------------------------------
   Database db;
 }
