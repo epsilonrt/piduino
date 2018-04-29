@@ -13,7 +13,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Piduino gpio tool.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -25,6 +24,7 @@
 #include <unistd.h>
 #include <piduino/clock.h>
 #include <piduino/gpio.h>
+#include <piduino/database.h>
 #include "exception.h"
 #include "version.h"
 
@@ -33,7 +33,7 @@ using namespace Piduino;
 
 /* constants ================================================================ */
 const string authors = "Pascal JEAN";
-const string website = "http://www.epsilonrt.fr/piduino";
+const string website = "https://github.com/epsilonrt/piduino";
 
 /* types ==================================================================== */
 typedef void (*func) (int argc, char * argv[]);
@@ -58,6 +58,7 @@ void toggle (int argc, char * argv[]);
 void blink (int argc, char * argv[]);
 void readall (int argc, char * argv[]);
 void wfi (int argc, char * argv[]);
+void warranty (int argc, char * argv[]);
 void pwm (int argc, char * argv[]); // TODO
 
 Pin * getPin (char * c_str);
@@ -86,6 +87,7 @@ main (int argc, char **argv) {
     {"blink", blink},
     {"wfi", wfi},
     {"readall", readall},
+    {"warranty", warranty},
     {"pwm", pwm} // TODO
   };
 
@@ -569,8 +571,26 @@ sig_handler (int sig) {
 void
 version() {
 
-  cout << VERSION_SHORT << endl;
-  // TODO Board info
+  cout << "Piduino gpio version " << VERSION_SHORT << endl;
+  cout << "Copyright © 2018 " << authors << ", " << website << endl;
+  cout << "This program comes with ABSOLUTELY NO WARRANTY." << endl;
+  cout << "This is free software, and you are welcome to redistribute it" << endl;
+  cout << "under certain conditions; type 'gpio warranty' for details." << endl << endl;
+  cout << "Pi Board details:" << endl;
+  cout << db.board();
+}
+
+// -----------------------------------------------------------------------------
+void
+warranty (int argc, char * argv[]) {
+  std::ostringstream filepath;
+
+  filepath << PIDUINO_INSTALL_DATA_DIR << "/WARRANTY";
+  ifstream f (filepath.str());
+
+  if (f.is_open()) {
+    cout << f.rdbuf();
+  }
 }
 
 // -----------------------------------------------------------------------------

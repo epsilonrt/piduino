@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include <string>
-#include <piduino/board.h>
+#include <piduino/system.h>
 #include <piduino/database.h>
+#include <piduino/board.h>
 
 namespace Piduino {
-}
 
+  System system;
+  Database db;
+}
 /* ========================================================================== */

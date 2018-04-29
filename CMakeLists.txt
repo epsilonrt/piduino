@@ -99,7 +99,7 @@ if (NOT PIBOARD_FOUND)
   endif (CMAKE_HOST_UNIX)
 endif (NOT PIBOARD_FOUND)
 
-add_definitions (-DPIBOARD_ID=${PIBOARD_ID} -DPIDUINO_DBPATH="${PIDUINO_INSTALL_DATA_DIR}/piduino.db")
+add_definitions (-DPIBOARD_ID=${PIBOARD_ID} -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")

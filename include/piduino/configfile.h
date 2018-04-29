@@ -81,13 +81,6 @@ namespace Piduino {
       }
 
       // -----------------------------------------------------------------------
-      static bool
-      fileExist (const std::string &filename) {
-
-        return std::ifstream (filename).good();
-      }
-
-      // -----------------------------------------------------------------------
       template<typename ValueType> ValueType value (const std::string &key,
           ValueType const &defaultValue = ValueType()) const {
 

@@ -75,6 +75,7 @@
     <File Name="src/soc.cpp"/>
     <File Name="src/database.cpp"/>
     <File Name="src/system.cpp"/>
+    <File Name="src/piduino.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -196,6 +197,7 @@
     <File Name="COPYING.LESSER"/>
     <File Name="README.md"/>
     <File Name="cmake_uninstall.cmake.in"/>
+    <File Name="WARRANTY"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

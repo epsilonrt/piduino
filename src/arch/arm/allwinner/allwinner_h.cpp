@@ -20,7 +20,7 @@
 #include <exception>
 #include <piduino/gpio.h>
 #include <piduino/clock.h>
-#include <piduino/board.h>
+#include <piduino/database.h>
 #include "allwinner_h.h"
 
 namespace Piduino {
@@ -58,11 +58,10 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
   DeviceAllwinnerH::DeviceAllwinnerH() : Device () {
-    Board board;
 
-    if (board.soc().family().id() == SoC::Family::AllwinnerH) {
+    if (db.board().soc().family().id() == SoC::Family::AllwinnerH) {
 
-      _gpioDescriptor = &_gpioDescriptors.at (board.gpioId());
+      _gpioDescriptor = &_gpioDescriptors.at (db.board().gpioId());
     }
     else {
 

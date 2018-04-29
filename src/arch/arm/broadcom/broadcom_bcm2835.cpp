@@ -40,10 +40,10 @@ namespace Piduino {
   DeviceBcm2835::DeviceBcm2835() : Device () {
     Board board;
 
-    if (board.soc().family().id() == SoC::Family::BroadcomBcm2835) {
+    if (db.board().soc().family().id() == SoC::Family::BroadcomBcm2835) {
 
-      _piobase = _iobase.at (board.soc().id()) + PioOffset;
-      _gpioDescriptor = &_gpioDescriptors.at (board.gpioId());
+      _piobase = _iobase.at (db.board().soc().id()) + PioOffset;
+      _gpioDescriptor = &_gpioDescriptors.at (db.board().gpioId());
     }
     else {
 

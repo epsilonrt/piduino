@@ -173,7 +173,7 @@ namespace Piduino {
   void
   System::readCpuInfo() {
 
-    if (ConfigFile::fileExist ("/proc/cpuinfo")) {
+    if (fileExist ("/proc/cpuinfo")) {
       std::string str;
       ConfigFile cfg ("/proc/cpuinfo", ':');
 
@@ -191,6 +191,14 @@ namespace Piduino {
         _sn = std::stoll (str, nullptr, 16);
       }
 
+      if (cfg.keyExists ("Features")) {
+        std::istringstream sts (cfg.value ("Features"));
+
+        while (std::getline (sts, str, ' ')) {
+          
+          _core.features.push_back(str);
+        }
+      }
       _ncore = cfg.value<int> ("processor", 0) + 1;
       _core.model = cfg.value ("model name");
       _core.bogomips = cfg.value<double> ("BogoMIPS", 0);
@@ -207,31 +215,31 @@ namespace Piduino {
 //                         System::ArmbianInfo Class
 //
 // -----------------------------------------------------------------------------
-/*
-  BOARD=nanopineo
-  BOARD_NAME="NanoPi Neo"
-  VERSION=5.23
-  LINUXFAMILY=sun8i
-  BRANCH=default
-  ARCH=arm
+  /*
+    BOARD=nanopineo
+    BOARD_NAME="NanoPi Neo"
+    VERSION=5.23
+    LINUXFAMILY=sun8i
+    BRANCH=default
+    ARCH=arm
 
-  BOARD=nanopineo
-  BOARD_NAME="NanoPi Neo"
-  BOARDFAMILY=sun8i
-  VERSION=5.41
-  LINUXFAMILY=sunxi
-  BRANCH=next
-  ARCH=arm
-  IMAGE_TYPE=user-built
-  BOARD_TYPE=conf
-  INITRD_ARCH=arm
-  KERNEL_IMAGE_TYPE=zImage
- */
+    BOARD=nanopineo
+    BOARD_NAME="NanoPi Neo"
+    BOARDFAMILY=sun8i
+    VERSION=5.41
+    LINUXFAMILY=sunxi
+    BRANCH=next
+    ARCH=arm
+    IMAGE_TYPE=user-built
+    BOARD_TYPE=conf
+    INITRD_ARCH=arm
+    KERNEL_IMAGE_TYPE=zImage
+   */
 
   // ---------------------------------------------------------------------------
   System::ArmbianInfo::ArmbianInfo() : _valid (false) {
 
-    if (ConfigFile::fileExist ("/etc/armbian-release")) {
+    if (fileExist ("/etc/armbian-release")) {
 
       ConfigFile cfg ("/etc/armbian-release");
       _valid = true;

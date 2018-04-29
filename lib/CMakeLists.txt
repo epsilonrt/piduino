@@ -178,6 +178,10 @@ install(FILES
   "${PIDUINO_DATABASE_DIR}/piduino.db"
   DESTINATION "${PIDUINO_INSTALL_DATA_DIR}" COMPONENT lib)
 
+install(FILES
+  "${PROJECT_SOURCE_DIR}/COPYING" "${PROJECT_SOURCE_DIR}/WARRANTY"
+  DESTINATION "${PIDUINO_INSTALL_DATA_DIR}" COMPONENT lib)
+
 install (TARGETS piduino-shared
   # IMPORTANT: Add the piduino library to the "export-set"
   EXPORT piduino

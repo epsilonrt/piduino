@@ -20,6 +20,7 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 
 /**
  *  @defgroup piduino_system System
@@ -115,6 +116,13 @@ namespace Piduino {
       // -----------------------------------------------------------------------
       System();
 
+      // -----------------------------------------------------------------------
+      static bool
+      fileExist (const std::string &filename) {
+
+        return std::ifstream (filename).good();
+      }
+
       inline const std::string & hardware() const {
         return _hardware;
       }
@@ -152,6 +160,8 @@ namespace Piduino {
       ArmCore _core;
       ArmbianInfo _armbian;
   };
+  
+  extern System system;
 }
 /**
  *  @}
