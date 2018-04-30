@@ -173,11 +173,19 @@ install(FILES
 install(EXPORT piduino DESTINATION
   "${PIDUINO_INSTALL_CMAKE_DIR}" COMPONENT dev)
 
+# Install configuration file
+configure_file("${PIDUINO_ETC_DIR}/piduino.conf.in" 
+  "${PROJECT_BINARY_DIR}/piduino.conf" @ONLY)
+install(FILES
+  "${PROJECT_BINARY_DIR}/piduino.conf"
+  DESTINATION "${PIDUINO_INSTALL_ETC_DIR}" COMPONENT lib)
+
 # Install the piduino boards database
 install(FILES
   "${PIDUINO_DATABASE_DIR}/piduino.db"
   DESTINATION "${PIDUINO_INSTALL_DATA_DIR}" COMPONENT lib)
 
+# Install the piduino licence files
 install(FILES
   "${PROJECT_SOURCE_DIR}/COPYING" "${PROJECT_SOURCE_DIR}/WARRANTY"
   DESTINATION "${PIDUINO_INSTALL_DATA_DIR}" COMPONENT lib)

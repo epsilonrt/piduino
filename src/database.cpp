@@ -29,23 +29,35 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-  Database::Database (const std::string & sqliteDbPath) :
-    cppdb::session (connectionInfo (sqliteDbPath)) {
+  Database::Database (const std::string & cinfo) :
+    cppdb::session (), _cinfo (findConnectionInfo (cinfo)) {
 
+    if (!_cinfo.empty()) {
+
+      cppdb::session::open (_cinfo);
+    }
     _board = std::make_shared<Board>();
   }
 
 // -----------------------------------------------------------------------------
-  Database::Database (int cpuinfoBoardRevision, const std::string & sqliteDbPath) :
-    cppdb::session (connectionInfo (sqliteDbPath)) {
+  Database::Database (int cpuinfoBoardRevision, const std::string & cinfo) :
+    cppdb::session (), _cinfo (findConnectionInfo (cinfo)) {
 
+    if (!_cinfo.empty()) {
+
+      cppdb::session::open (_cinfo);
+    }
     _board = std::make_shared<Board> (cpuinfoBoardRevision);
   }
 
 // -----------------------------------------------------------------------------
-  Database::Database (const std::string & armbianBoardTag, const std::string & sqliteDbPath) :
-    cppdb::session (connectionInfo (sqliteDbPath)) {
+  Database::Database (const std::string & armbianBoardTag, const std::string & cinfo) :
+    cppdb::session (), _cinfo (findConnectionInfo (cinfo)) {
 
+    if (!_cinfo.empty()) {
+
+      cppdb::session::open (_cinfo);
+    }
     _board = std::make_shared<Board> (armbianBoardTag);
   }
 
@@ -56,47 +68,41 @@ namespace Piduino {
   }
 
 // -----------------------------------------------------------------------------
+  void
+  Database::setConnectionInfo (const std::string & cinfo) {
+
+    if (cppdb::session::is_open()) {
+      cppdb::session::close();
+    }
+    _cinfo = cinfo;
+    cppdb::session::open (_cinfo);
+  }
+
+// -----------------------------------------------------------------------------
   std::string
-  Database::connectionInfo (const std::string & sqliteDbPath) {
-    std::ostringstream ci;
-    std::string dbPath (sqliteDbPath);
+  Database::findConnectionInfo (const std::string & cinfo) {
+    std::string ret (cinfo), str;
 
-    if (dbPath.empty()) {
-      const char * path;
+    if (ret.empty()) {
+      const char * env;
 
-      path = std::getenv ("PWD");
-      if (path) {
-        std::ostringstream filepath;
+      env = std::getenv ("PIDUINO_CONN_INFO");
+      if (env) {
 
-        filepath << path << "/piduino.db";
-        if (System::fileExist (filepath.str())) {
-
-          dbPath = filepath.str();
-        }
+        ret = std::string (env);
       }
+      else {
+        std::string fn (PIDUINO_INSTALL_ETC_DIR);
+        fn += "/piduino.conf";
 
-      if (dbPath.empty()) {
+        if (System::fileExist (fn)) {
+          ConfigFile cfg (fn);
 
-        path = std::getenv ("PIDUINO_DBPATH");
-        if (path) {
-
-          if (System::fileExist (path)) {
-
-            dbPath = std::string (path);
-          }
+          ret = cfg.value ("connection_info");
         }
-      }
-
-      if (dbPath.empty()) {
-        std::ostringstream filepath;
-
-        filepath << PIDUINO_INSTALL_DATA_DIR << "/piduino.db";
-        dbPath = filepath.str();
       }
     }
-
-    ci << "sqlite3:db=" << dbPath;
-    return ci.str();
+    return ret;
   }
 
 // -----------------------------------------------------------------------------
@@ -106,36 +112,17 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-  Database::Board::Board (int raspberryPiRevision) : _id (-1), _gpio_id (-1), _pcb_revision (-1) {
+  Database::Board::Board (int cpuinfoBoardRevision) :
+    _id (-1), _gpio_id (-1), _pcb_revision (-1), _revision (-1), _found (false) {
 
-    if (raspberryPiRevision == -1) {
+    if (cpuinfoBoardRevision == -1) {
       // if the revision is not provided, try to detect the host system model...
 
-      if (system.armbianInfo().isValid()) {
-
-        // BOARD Tag from /etc/armbian-release found...
-        setTag (system.armbianInfo().board());
-      }
-      else {
-
-        if ( (system.hardware() == "BCM2710") || (system.hardware() == "BCM2709") ||
-             (system.hardware() == "BCM2708") || (system.hardware() == "BCM2835") ||
-             (system.hardware() == "BCM2836") || (system.hardware() == "BCM2837")) {
-
-          // Revision from /proc/cpuinfo found...
-          setRevision (raspberryPiRevision);
-        }
-        else {
-
-          throw std::system_error (ENOTSUP, std::system_category(),
-                                   "Unable to identify your host system");
-        }
-
-      }
+      probingSystem();
     }
     else {
 
-      setRevision (raspberryPiRevision);
+      setRevision (cpuinfoBoardRevision);
     }
 
   }
@@ -152,45 +139,73 @@ namespace Piduino {
   }
 
 // -----------------------------------------------------------------------------
-  void Database::Board::setRevision (int rev) {
+  bool
+  Database::Board::probingSystem() {
 
-    cppdb::result res = Piduino::db << "SELECT id,pcb_revision,"
-                        "board_model_id,gpio_id,manufacturer_id FROM board "
-                        "WHERE revision=?" << rev << cppdb::row;
-    if (!res.empty()) {
-      int bmid;
-      int mid;
+    if (system.armbianInfo().found()) {
 
-      res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid;
-      _model.setId (static_cast<Database::Board::Model::Id> (bmid));
-      _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
+      // BOARD Tag from /etc/armbian-release found...
+      return setTag (system.armbianInfo().board());
     }
     else {
 
-      throw std::invalid_argument ("Couldn't find a board with " +
-                                   Convert::T_to_string (rev) + " revision number !");
+      if ( (system.revision() > 0) &&
+           ( (system.hardware() == "BCM2710") || (system.hardware() == "BCM2709") ||
+             (system.hardware() == "BCM2708") || (system.hardware() == "BCM2835") ||
+             (system.hardware() == "BCM2836") || (system.hardware() == "BCM2837"))) {
+
+        // Revision from /proc/cpuinfo found...
+        return setRevision (system.revision());
+      }
     }
+    return false;
   }
 
 // -----------------------------------------------------------------------------
-  void Database::Board::setTag (const std::string & t) {
+  bool
+  Database::Board::setRevision (int rev) {
 
-    cppdb::result res = Piduino::db << "SELECT id,pcb_revision,"
-                        "board_model_id,gpio_id,manufacturer_id FROM board "
-                        "WHERE tag=?" << t << cppdb::row;
-    if (!res.empty()) {
-      int bmid;
-      int mid;
+    if (Piduino::db.is_open()) {
 
-      res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid;
-      _model.setId (static_cast<Database::Board::Model::Id> (bmid));
-      _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
+      cppdb::result res = Piduino::db << "SELECT id,pcb_revision,"
+                          "board_model_id,gpio_id,manufacturer_id FROM board "
+                          "WHERE revision=?" << rev << cppdb::row;
+      if (!res.empty()) {
+        int bmid;
+        int mid;
+
+        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid;
+        _model.setId (static_cast<Database::Board::Model::Id> (bmid));
+        _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
+        _revision = rev;
+        _found = true;
+        return true;
+      }
     }
-    else {
+    return false;
+  }
 
-      throw std::invalid_argument ("Couldn't find a board with " +
-                                   t + " tag !");
+// -----------------------------------------------------------------------------
+  bool
+  Database::Board::setTag (const std::string & t) {
+
+    if (Piduino::db.is_open()) {
+      cppdb::result res = Piduino::db << "SELECT id,pcb_revision,"
+                          "board_model_id,gpio_id,manufacturer_id FROM board "
+                          "WHERE tag=?" << t << cppdb::row;
+      if (!res.empty()) {
+        int bmid;
+        int mid;
+
+        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid;
+        _model.setId (static_cast<Database::Board::Model::Id> (bmid));
+        _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
+        _tag = t;
+        _found = true;
+        return true;
+      }
     }
+    return false;
   }
 
 // -----------------------------------------------------------------------------
@@ -212,11 +227,11 @@ namespace Piduino {
 
       os << "Board Revision  : " << std::hex << std::showbase << system.revision() << std::endl;
     }
-    if (system.armbianInfo().isValid()) {
+    if (system.armbianInfo().found()) {
 
       os << "Armbian Board   : " << system.armbianInfo().board() << std::endl;
     }
-    os << "SoC             : " << b.soc().name() << "(" << b.soc().manufacturer().name() << ")" << std::endl;
+    os << "SoC             : " << b.soc().name() << " (" << b.soc().manufacturer().name() << ")" << std::endl;
     os << "Memory          : " << system.totalRam() << "MB" << std::endl;
     os << "GPIO Id         : " << b.gpioId() << std::endl;
     if (b.pcbRevision() > 0) {

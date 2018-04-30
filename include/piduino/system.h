@@ -77,7 +77,7 @@ namespace Piduino {
         public:
           ArmbianInfo();
 
-          inline bool isValid() const {
+          inline bool found() const {
             return _valid;
           }
           inline const std::string & board() const {

@@ -146,12 +146,28 @@ namespace Piduino {
           //
           // -------------------------------------------------------------------
 
-          Board (int raspberryPiRevision = -1);
+          Board (int cpuinfoBoardRevision = -1);
           Board (const std::string & armbianBoardTag);
           virtual ~Board();
+          
+          bool probingSystem();
+          bool setRevision (int rev);
+          bool setTag (const std::string & armbianBoardTag);
+          
+          inline int id() const {
+            return _id;
+          }
 
           inline const std::string & name() const {
             return model().name();
+          }
+          
+          inline const std::string & tag() const {
+            return _tag;
+          }
+          
+          inline int revision() const {
+            return _revision;
           }
 
           inline const Family & family() const {
@@ -160,10 +176,6 @@ namespace Piduino {
 
           inline const SoC & soc() const {
             return model().soc();
-          }
-
-          inline int id() const {
-            return _id;
           }
 
           inline float pcbRevision() const {
@@ -182,11 +194,11 @@ namespace Piduino {
             return _manufacturer;
           }
           
-          friend std::ostream& operator<< (std::ostream& os, const Board& c);
+          inline bool found() const {
+            return _found;
+          }
 
-        protected:
-          void setRevision (int rev);
-          void setTag (const std::string & tag);
+          friend std::ostream& operator<< (std::ostream& os, const Board& c);
 
         private:
           int _id;
@@ -194,6 +206,9 @@ namespace Piduino {
           Manufacturer _manufacturer;
           int _gpio_id; // Révision du GPIO
           float _pcb_revision;
+          int _revision;
+          bool _found;
+          std::string _tag;
       };
 
       // -----------------------------------------------------------------------
@@ -201,12 +216,18 @@ namespace Piduino {
       //                      Database Class
       //
       // -----------------------------------------------------------------------
-      Database (const std::string & sqliteDbPath = std::string());
-      Database (int cpuinfoBoardRevision, const std::string & sqliteDbPath = std::string());
-      Database (const std::string & armbianBoardTag, const std::string & sqliteDbPath = std::string());
+      Database (const std::string & connectionInfo = std::string());
+      Database (int cpuinfoBoardRevision, const std::string & connectionInfo = std::string());
+      Database (const std::string & armbianBoardTag, const std::string & connectionInfo = std::string());
       virtual ~Database();
       
-      static std::string connectionInfo (const std::string & sqliteDbPath = std::string());
+      static std::string findConnectionInfo (const std::string & connectionInfo = std::string());
+      
+      void setConnectionInfo (const std::string & connectionInfo);
+      
+      inline const std::string& connectionInfo() const {
+        return _cinfo;
+      }
 
       inline const Board & board() const {
         return *_board;
@@ -214,6 +235,7 @@ namespace Piduino {
 
     private:
       std::shared_ptr<Board> _board;
+      std::string _cinfo;
   };
 
   extern Database db;

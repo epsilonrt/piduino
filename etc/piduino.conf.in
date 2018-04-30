@@ -1,0 +1,2 @@
+# PiDuino configuration file
+connection_info="sqlite3:db=@PIDUINO_INSTALL_DATA_DIR@/piduino.db"

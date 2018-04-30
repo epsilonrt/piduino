@@ -53,6 +53,7 @@ set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
 set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDE_DIR include CACHE PATH
   "Installation directory for header files")
+set(INSTALL_ETC_DIR /etc CACHE PATH "Installation directory for configuration")
 
 set(DEF_INSTALL_CMAKE_DIR lib)
 set(DEF_INSTALL_DOC_DIR share/doc)
@@ -74,6 +75,7 @@ foreach(p LIB BIN INCLUDE CMAKE DATA DOC)
 endforeach()
 
 set (PIDUINO_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+set (PIDUINO_ETC_DIR ${PROJECT_SOURCE_DIR}/etc)
 set (PIDUINO_INC_DIR ${PROJECT_SOURCE_DIR}/include)
 set (PIDUINO_DATABASE_DIR ${PROJECT_SOURCE_DIR}/sql)
 set (PIDUINO_LIB_DIR ${PROJECT_BINARY_DIR}/lib)
@@ -81,6 +83,7 @@ set (PIDUINO_INSTALL_CMAKE_DIR "${INSTALL_CMAKE_DIR}/piduino/cmake")
 set (PIDUINO_INSTALL_DOC_DIR "${INSTALL_DOC_DIR}/piduino")
 set (PIDUINO_INSTALL_EXAMPLES_DIR "${PIDUINO_INSTALL_DOC_DIR}/examples")
 set (PIDUINO_INSTALL_DATA_DIR "${INSTALL_DATA_DIR}/piduino")
+set (PIDUINO_INSTALL_ETC_DIR "${INSTALL_ETC_DIR}")
 
 if (NOT PIBOARD_ID)
   message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
@@ -99,7 +102,7 @@ if (NOT PIBOARD_FOUND)
   endif (CMAKE_HOST_UNIX)
 endif (NOT PIBOARD_FOUND)
 
-add_definitions (-DPIBOARD_ID=${PIBOARD_ID} -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}")
+add_definitions (-DPIBOARD_ID=${PIBOARD_ID} -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}" -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")

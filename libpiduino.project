@@ -210,4 +210,7 @@
       <File Name="lib/CMakeLists.txt"/>
     </VirtualDirectory>
   </VirtualDirectory>
+  <VirtualDirectory Name="etc">
+    <File Name="etc/piduino.conf.in"/>
+  </VirtualDirectory>
 </CodeLite_Project>
