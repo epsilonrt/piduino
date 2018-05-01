@@ -149,11 +149,11 @@ namespace Piduino {
           Board (int cpuinfoBoardRevision = -1);
           Board (const std::string & armbianBoardTag);
           virtual ~Board();
-          
+
           bool probingSystem();
           bool setRevision (int rev);
           bool setTag (const std::string & armbianBoardTag);
-          
+
           inline int id() const {
             return _id;
           }
@@ -161,11 +161,11 @@ namespace Piduino {
           inline const std::string & name() const {
             return model().name();
           }
-          
+
           inline const std::string & tag() const {
             return _tag;
           }
-          
+
           inline int revision() const {
             return _revision;
           }
@@ -193,7 +193,11 @@ namespace Piduino {
           inline const Manufacturer & manufacturer() const {
             return _manufacturer;
           }
-          
+
+          inline unsigned long totalRam() const {
+            return _ram;
+          }
+
           inline bool found() const {
             return _found;
           }
@@ -209,6 +213,7 @@ namespace Piduino {
           int _revision;
           bool _found;
           std::string _tag;
+          long _ram; // RAM en Mo
       };
 
       // -----------------------------------------------------------------------
@@ -220,11 +225,11 @@ namespace Piduino {
       Database (int cpuinfoBoardRevision, const std::string & connectionInfo = std::string());
       Database (const std::string & armbianBoardTag, const std::string & connectionInfo = std::string());
       virtual ~Database();
-      
+
       static std::string findConnectionInfo (const std::string & connectionInfo = std::string());
-      
+
       void setConnectionInfo (const std::string & connectionInfo);
-      
+
       inline const std::string& connectionInfo() const {
         return _cinfo;
       }
@@ -238,7 +243,15 @@ namespace Piduino {
       std::string _cinfo;
   };
 
-  extern Database db;
+  // ---------------------------------------------------------------------------
+  //
+  //                      Piduino Database Global Object
+  //
+  // ---------------------------------------------------------------------------
+  extern Database db; ///< Piduino Database Global Object
+  /**
+   * @}
+   */
 }
 /**
  *  @}

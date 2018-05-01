@@ -115,6 +115,7 @@ namespace Piduino {
   Database::Board::Board (int cpuinfoBoardRevision) :
     _id (-1), _gpio_id (-1), _pcb_revision (-1), _revision (-1), _found (false) {
 
+    _ram = system.totalRam();
     if (cpuinfoBoardRevision == -1) {
       // if the revision is not provided, try to detect the host system model...
 
@@ -167,14 +168,14 @@ namespace Piduino {
 
     if (Piduino::db.is_open()) {
 
-      cppdb::result res = Piduino::db << "SELECT id,pcb_revision,"
+      cppdb::result res = Piduino::db << "SELECT id,tag,pcb_revision,"
                           "board_model_id,gpio_id,manufacturer_id FROM board "
                           "WHERE revision=?" << rev << cppdb::row;
       if (!res.empty()) {
         int bmid;
         int mid;
 
-        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid;
+        res >> _id >> _tag >> _pcb_revision >> bmid >> _gpio_id >> mid;
         _model.setId (static_cast<Database::Board::Model::Id> (bmid));
         _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         _revision = rev;
@@ -190,14 +191,14 @@ namespace Piduino {
   Database::Board::setTag (const std::string & t) {
 
     if (Piduino::db.is_open()) {
-      cppdb::result res = Piduino::db << "SELECT id,pcb_revision,"
+      cppdb::result res = Piduino::db << "SELECT id,revision,pcb_revision,"
                           "board_model_id,gpio_id,manufacturer_id FROM board "
                           "WHERE tag=?" << t << cppdb::row;
       if (!res.empty()) {
         int bmid;
         int mid;
 
-        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid;
+        res >> _id >> _revision >> _pcb_revision >> bmid >> _gpio_id >> mid;
         _model.setId (static_cast<Database::Board::Model::Id> (bmid));
         _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         _tag = t;
