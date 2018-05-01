@@ -28,8 +28,8 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
   Gpio::Gpio (Device * dev, AccessLayer layer) :
-    _roc (true), _isopen (false), _accesslayer (layer), _device (dev), 
-    _numbering(Pin::NumberingUnknown) {
+    _roc (true), _isopen (false), _accesslayer (layer), _device (dev),
+    _numbering (Pin::NumberingUnknown) {
 
     const std::vector<Connector::Descriptor> & v = device()->descriptor()->connector;
 
@@ -165,9 +165,9 @@ namespace Piduino {
   }
 
 // -----------------------------------------------------------------------------
-  const std::string & 
+  const std::string &
   Gpio::name() const {
-    
+
     return device()->descriptor()->name;
   }
 

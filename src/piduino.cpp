@@ -16,11 +16,62 @@
  */
 #include <piduino/system.h>
 #include <piduino/database.h>
+#include <piduino/clock.h>
 #include <piduino/board.h>
+#include <piduino/gpio.h>
+#include <iostream>
+#include <csignal>
+#include <cstdlib>
+#include <memory>
+
+using namespace std;
 
 namespace Piduino {
 
+// -----------------------------------------------------------------------------
+//
+//                           Global Objects
+//
+// -----------------------------------------------------------------------------
   System system;
   Database db;
+  Clock clk;
+#ifdef PIDUINO_WITH_GPIO
+  //Gpio gpio;
+#endif
+
+// -----------------------------------------------------------------------------
+  void closeall () {
+
+#ifdef PIDUINO_WITH_GPIO
+    //gpio.close();
+#endif
+  }
+
+// -----------------------------------------------------------------------------
+// Signal Handler
+  void
+  sighandler (int sig) {
+
+    closeall();
+#ifndef NDEBUG
+    cout << endl << "everything was closed." << endl << "Have a nice day !" << endl;
+#endif
+    exit (EXIT_SUCCESS);
+  }
+
+// -----------------------------------------------------------------------------
+  void __attribute__ ( (constructor (65535))) begin () {
+
+    // sighandler() intercepts CTRL+C
+    signal (SIGINT, sighandler);
+    signal (SIGTERM, sighandler);
+  }
+
+// -----------------------------------------------------------------------------
+  void __attribute__ ( (destructor (65535))) end () {
+
+    closeall();
+  }
 }
 /* ========================================================================== */

@@ -41,10 +41,10 @@ namespace Piduino {
 
   class Device;
 
-/**
- *  @addtogroup piduino_gpio_class
- *  @{
- */
+  /**
+   *  @addtogroup piduino_gpio_class
+   *  @{
+   */
 
   /**
    * @class Gpio
@@ -258,10 +258,16 @@ namespace Piduino {
       std::map<int, std::shared_ptr<Pin>> _pin; // Broches uniquement GPIO
       std::map<int, std::shared_ptr<Connector>> _connector; // Connecteurs avec toutes les broches physiques
   };
+  // ---------------------------------------------------------------------------
+  //
+  //                      Piduino Gpio Global Object
+  //
+  // ---------------------------------------------------------------------------
+  //extern Gpio gpio; ///< Piduino Gpio Global Object, must be open before using !
+  /**
+   * @}
+   */
 }
-/**
- * @}
- */
 
 /* ========================================================================== */
 #endif /*_PIDUINO_GPIO_H_ defined */
