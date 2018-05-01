@@ -17,8 +17,13 @@
 # It defines the following variables
 #  PIDUINO_INCLUDE_DIRS - include directories for piduino
 #  PIDUINO_LIBRARY_DIRS - where to find libraries
+#  PIDUINO_DATA_DIR     - where to find piduino data (sqlite database...)
 #  PIDUINO_LIBRARIES    - libraries to link against
 #  PIDUINO_CFLAGS       - all required cflags
+#  PIDUINO_WITH_GPIO    - if board has GPIO
+#  PIDUINO_WITH_I2C     - if board has I2C bus
+#  PIDUINO_WITH_SPI     - if board has SPI bus
+#  PIDUINO_WITH_SERIAL  - if board has Serial port
 
 set(CMAKE_MODULE_PATH @PIDUINO_INSTALL_CMAKE_DIR@ ${CMAKE_MODULE_PATH})
 
@@ -53,6 +58,7 @@ set(PIDUINO_WITH_GPIO @PIDUINO_WITH_GPIO@)
 set(PIDUINO_WITH_I2C @PIDUINO_WITH_I2C@)
 set(PIDUINO_WITH_SPI @PIDUINO_WITH_SPI@)
 set(PIDUINO_WITH_SERIAL @PIDUINO_WITH_SERIAL@)
+set(PIDUINO_DATA_DIR @PIDUINO_INSTALL_DATA_DIR@)
 
 #message(STATUS "PIDUINO_INCLUDE_DIRS=${PIDUINO_INCLUDE_DIRS}")
 #message(STATUS "PIDUINO_LIBRARIES=${PIDUINO_LIBRARIES}")
