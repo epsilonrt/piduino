@@ -161,7 +161,15 @@ namespace Piduino {
       ArmbianInfo _armbian;
   };
   
-  extern System system;
+  // ---------------------------------------------------------------------------
+  //
+  //                      Piduino System Global Object
+  //
+  // ---------------------------------------------------------------------------
+  extern System system; ///< Piduino System Global Object
+  /**
+   * @}
+   */
 }
 /**
  *  @}

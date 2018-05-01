@@ -116,6 +116,12 @@ namespace Piduino {
       uint64_t _us;
       uint64_t _ms;
   };
+  // ---------------------------------------------------------------------------
+  //
+  //                      Piduino Clock Global Object
+  //
+  // ---------------------------------------------------------------------------
+  extern Clock clk; ///< Piduino Clock Global Object
   /**
    * @}
    */

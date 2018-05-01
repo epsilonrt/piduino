@@ -199,8 +199,6 @@
     <File Name="cmake_uninstall.cmake.in"/>
     <File Name="WARRANTY"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <VirtualDirectory Name="lib">
     <File Name="lib/piduino.pc.in"/>
     <File Name="lib/piduino-config-version.cmake.in"/>
@@ -213,4 +211,6 @@
   <VirtualDirectory Name="etc">
     <File Name="etc/piduino.conf.in"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>
