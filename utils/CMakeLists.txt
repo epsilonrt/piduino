@@ -23,5 +23,6 @@ if(NOT CPACK_PACKAGE_DIRECTORY)
 endif()
 
 add_subdirectory (gpio)
+add_subdirectory (pinfo)
 #add_subdirectory (i2c)
 #add_subdirectory (serial)
