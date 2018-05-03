@@ -61,6 +61,7 @@
       <File Name="src/gpio/gpiopin.cpp"/>
       <File Name="src/gpio/gpio-database.cpp"/>
       <File Name="src/gpio/gpioconnector-database.cpp"/>
+      <File Name="src/gpio/gpiopin-database.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="spi"/>
     <File Name="src/clock.cpp"/>
@@ -209,4 +210,10 @@
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
+  <VirtualDirectory Name="database">
+    <File Name="database/piduino-data.sql"/>
+    <File Name="database/piduino-schema.sql"/>
+    <File Name="database/README.md"/>
+    <File Name="database/build"/>
+  </VirtualDirectory>
 </CodeLite_Project>

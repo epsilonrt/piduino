@@ -28,48 +28,120 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
   bool
-  Connector::Descriptor::insertToDb () {
-    /*
-        std::string name;
-        int number;
-        int rows;
-        int columns;
-        PinNumberFunc pinNumber;
-        std::vector<Pin::Descriptor> pin;
-        long long id;
-     */
-#if 0
-    if (id < 0) {
-      // new record
-      cppdb::statement stat;
+  Connector::Descriptor::insert () {
+    cppdb::statement stat;
+    long long connector_id;
+    
+    connector_id = findId();
+    if (connector_id < 0) {
+      // new connector
 
-      stat = Piduino::db << "INSERT INTO gpio_connector(name,rows,gpio_connector_family_id) "
-             "VALUES(?,?,?)" << name << rows << family.id();
-      stat.exec();
+      if (id < 0) {
 
-      if (stat.affected() == 1) {
-        id = stat.last_insert_id();
-        for (int i = 0; i < connector.size(); i++) {
-
-          if (connector[i].insertToDb ()) {
-
-            stat.reset();
-            stat = Piduino::db << "INSERT INTO gpio_has_connector(num,gpio_id,gpio_connector_id) "
-                   "VALUES(?,?,?)" << connector[i].number << id << connector[i].id;
-            stat.exec();
-          }
-        }
-        return true;
+        stat = Piduino::db << "INSERT INTO gpio_connector(name,rows,gpio_connector_family_id) "
+               "VALUES(?,?,?)" << name << rows << family.id();
       }
+      else {
+
+        stat = Piduino::db << "INSERT INTO gpio_connector(id,name,rows,gpio_connector_family_id) "
+               "VALUES(?,?,?,?)" << id << name << rows << family.id();
+      }
+      stat.exec();
+      id = stat.last_insert_id();
+      
+      for (int i = 0; i < pin.size(); i++) {
+
+        pin[i].insert ();
+        if (!hasPin (pin[i])) {
+
+          stat.reset();
+          stat = Piduino::db << "INSERT INTO gpio_connector_has_pin(gpio_connector_id,gpio_pin_id,row,column) "
+                 "VALUES(?,?,?,?)" << id << pin[i].id << pin[i].num.row << pin[i].num.column;
+          stat.exec();
+        }
+      }
+      return true;
     }
-#endif
+    else {
+      // already existing connector
+      
+      id = connector_id;
+    }
     return false;
   }
 
   // ---------------------------------------------------------------------------
   bool
-  Connector::Descriptor::findInDb() const {
-    return false;
+  Connector::Descriptor:: hasPin (const Pin::Descriptor & p) const {
+    cppdb::result res =
+      Piduino::db << "SELECT gpio_pin_id "
+      "FROM gpio_connector_has_pin "
+      "WHERE gpio_connector_id=? AND "
+      "gpio_pin_id=? AND "
+      "row=? AND "
+      "column=?"
+      << id << p.id << p.num.row << p.num.column << cppdb::row;
+
+    return !res.empty();
+  }
+
+// ---------------------------------------------------------------------------
+  long long
+  Connector::Descriptor::findId() const {
+    cppdb::result res =
+      Piduino::db <<
+      "SELECT id "
+      " FROM gpio_connector "
+      " WHERE name=? AND "
+      "   rows=? AND "
+      "   gpio_connector_family_id=?"
+      << name << rows << family.id();
+
+    while (res.next()) {
+      int match_count = 0;
+      cppdb::result res2;
+      long long connector_id;
+
+      res >> connector_id;
+      res2 = Piduino::db <<
+             "SELECT gpio_pin_id,row,column "
+             " FROM gpio_connector_has_pin "
+             " WHERE "
+             "   gpio_connector_id=?"
+             << connector_id;
+
+      while (res2.next()) {
+        long long gpio_pin_id;
+        int r, c;
+
+        res2 >> gpio_pin_id >> r >> c;
+
+        for (int i = 0; i < pin.size(); i++) {
+          const Pin::Descriptor & p = pin[i];
+
+          if ( (p.num.row == r) && (p.num.column == c)) {
+            long long pin_id = p.id;
+
+            if (pin_id < 0) {
+              pin_id = p.findId();
+            }
+
+            if (pin_id == gpio_pin_id) {
+              match_count++;
+            }
+            else {
+              return -1;
+            }
+            break;
+          }
+        }
+      }
+      if (match_count == pin.size()) {
+
+        return connector_id;
+      }
+    }
+    return -1;
   }
 
 #if 0
@@ -82,37 +154,37 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
 //
-//                            Connector::Family Class
+//                        Connector::Family Class
 //
 // -----------------------------------------------------------------------------
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
   int hex1NumFunc (int row, int column, int columns) {
 
     return row;
   }
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
   int hex2NumFunc (int row, int column, int columns) {
 
     return (row - 1) * columns + column;
   }
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
   std::map<Connector::Family::Id, Connector::Family::PinNumberFunc>
   Connector::Family::_fnum_map = {
     { Connector::Family::Hex1, hex1NumFunc},
     { Connector::Family::Hex2, hex2NumFunc},
   };
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
   int
   Connector::Family::pinNumber (int row, int column) const {
 
     return _fnum (row, column, _columns);
   }
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
   void
   Connector::Family::setId (Connector::Family::Id i)  {
 
@@ -129,6 +201,5 @@ namespace Piduino {
       }
     }
   }
-
 }
 /* ========================================================================== */

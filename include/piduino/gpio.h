@@ -69,8 +69,10 @@ namespace Piduino {
           std::vector<Connector::Descriptor> connector; ///< Descripteurs des connecteurs
           // TODO
           //Descriptor (long long id = -1);
-          bool insertToDb (); ///< Insertion dans la base de données
-          bool findInDb() const;
+          bool insert (); ///< Insertion dans la base de données
+          bool hasConnector (const Connector::Descriptor & c) const;
+        private:
+          long long findId() const;
       };
 
 
@@ -269,7 +271,7 @@ namespace Piduino {
   //
   //                      Piduino Gpio Global Object
   //
-   // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   //extern Gpio gpio; ///< Piduino Gpio Global Object, must be open before using !
   /**
    * @}

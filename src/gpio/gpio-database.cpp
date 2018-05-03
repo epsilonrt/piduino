@@ -28,19 +28,13 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
   bool
-  Gpio::Descriptor::insertToDb () {
-    /*
-        std::string name;
-        int number;
-        int rows;
-        int columns;
-        PinNumberFunc pinNumber;
-        std::vector<Pin::Descriptor> pin;
-        long long id;
-     */
-    if (!findInDb()) {
-      // new record
-      cppdb::statement stat;
+  Gpio::Descriptor::insert () {
+    cppdb::statement stat;
+    long long gpio_id ;
+
+    gpio_id = findId();
+    if (gpio_id < 0) {
+      // new gpio
 
       if (id < 0) {
 
@@ -54,30 +48,51 @@ namespace Piduino {
                "VALUES(?,?)" << id << name;
       }
       stat.exec();
+      id = stat.last_insert_id();
+      for (int i = 0; i < connector.size(); i++) {
 
-      if (stat.affected() == 1) {
-        
-        id = stat.last_insert_id();
-        for (int i = 0; i < connector.size(); i++) {
+        connector[i].insert ();
+        if (!hasConnector (connector[i])) {
 
-          if (connector[i].insertToDb ()) {
-
-            stat.reset();
-            stat = Piduino::db << "INSERT INTO gpio_has_connector(num,gpio_id,gpio_connector_id) "
-                   "VALUES(?,?,?)" << connector[i].number << id << connector[i].id;
-            stat.exec();
-          }
+          stat.reset();
+          stat = Piduino::db << "INSERT INTO gpio_has_connector(num,gpio_id,gpio_connector_id) "
+                 "VALUES(?,?,?)" << connector[i].number << id << connector[i].id;
+          stat.exec();
         }
-        return true;
       }
+      return true;
+    }
+    else {
+      // already existing connector
+      
+      id = gpio_id;
     }
     return false;
   }
 
   // ---------------------------------------------------------------------------
   bool
-  Gpio::Descriptor::findInDb() const {
-    return false;
+  Gpio::Descriptor:: hasConnector (const Connector::Descriptor & c) const {
+    cppdb::result res =
+      Piduino::db << "SELECT gpio_connector_id FROM gpio_has_connector "
+      "WHERE gpio_id=? AND "
+      "gpio_connector_id=?"
+      << id << c.id << cppdb::row;
+    return !res.empty();
+  }
+
+  // ---------------------------------------------------------------------------
+  long long
+  Gpio::Descriptor::findId() const {
+    cppdb::result res =
+      Piduino::db << "SELECT id FROM gpio WHERE name=?"
+      << name << cppdb::row;
+    if (!res.empty()) {
+      long long i;
+      res >> i;
+      return i;
+    }
+    return -1;
   }
 
 #if 0

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rm -f piduino.db
+sed -i -e '/^CREATE\ INDEX/d' piduino-schema.sql
+sed -i -e 's/piduino\.sdb/piduino\.db/g' piduino-schema.sql
+sqlite3  < piduino-schema.sql
+sqlite3 piduino.db < piduino-data.sql

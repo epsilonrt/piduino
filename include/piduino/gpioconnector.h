@@ -55,7 +55,7 @@ namespace Piduino {
             Unknown = -1
           };
 
-          Family (Id i = Unknown) : _id (i), _columns (-1), _fnum(nullptr) {
+          Family (Id i = Unknown) : _id (i), _columns (-1), _fnum (nullptr) {
             setId (i);
           }
           virtual ~Family() {}
@@ -110,8 +110,11 @@ namespace Piduino {
           std::vector<Pin::Descriptor> pin;
           // TODO
           // Descriptor (long long id = -1);
-          bool insertToDb (); ///< Insertion dans la base de données
-          bool findInDb() const;;
+          bool insert (); ///< Insertion dans la base de données
+          bool hasPin (const Pin::Descriptor & p) const;
+        private:
+          long long findId() const;
+
       };
 
       /**

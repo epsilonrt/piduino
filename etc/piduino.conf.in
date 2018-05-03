@@ -1,2 +1,3 @@
 # PiDuino configuration file
-connection_info="sqlite3:db=@PIDUINO_INSTALL_DATA_DIR@/piduino.db"
+#connection_info="sqlite3:db=@PIDUINO_INSTALL_DATA_DIR@/piduino.db"
+connection_info="sqlite3:db=/home/pascal/src/piduino/work/piduino.db"

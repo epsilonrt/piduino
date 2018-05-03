@@ -166,10 +166,15 @@ namespace Piduino {
         public:
           Type type; ///< Type de broche
           Number num; ///< Numéros
-          std::map<Mode, std::string> name; ///< Noms
           long long id;
+          std::map<Mode, std::string> name; ///< Noms
+          bool insert (); ///< Insertion dans la base de données
+          bool hasModeName (Mode m, long long nameId) const;
+          long long findId() const;
+          long long findName (const std::string & name) const;
+        private:
+          void insertModeName (Mode m, const std::string & n);
       };
-
 
       //------------------------------------------------------------------------
       //                          Opérations
@@ -301,17 +306,17 @@ namespace Piduino {
 
       /**
        * @brief Routine d'interruption
-       * 
+       *
        * Une routine d'interruption ne prend et ne renvoie aucun paramètre.
        */
       typedef void (* Isr) (void);
 
       /**
        * @brief Installe une routine d'interruption (Isr)
-       * 
+       *
        * Cette fonction créée un thread qui attend l'arrivée d'une interruption
        * déclenchée par chaque front edge et exécute la fonction isr.
-       * 
+       *
        * @param isr fonction exécuté à chaque interruption
        * @param edge front déclenchant l'interruption
        */
@@ -319,7 +324,7 @@ namespace Piduino {
 
       /**
        * @brief Désinstalle la routine d'interruption
-       * 
+       *
        * Le thread est détruit.
        */
       void detachInterrupt();
