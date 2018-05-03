@@ -34,8 +34,6 @@ namespace Piduino {
       DeviceAllwinnerH();
       virtual ~DeviceAllwinnerH();
 
-      const Gpio::Descriptor * descriptor() const;
-
       bool open();
       void close();
       AccessLayer preferedAccessLayer() const;
@@ -54,12 +52,10 @@ namespace Piduino {
 
     private:
       xIoMap * iomap[2];
-      const Gpio::Descriptor * _gpioDescriptor;
 
       static const int _portSize[];
       static const std::map<int, Pin::Mode> _int2mode;
       static const std::map<Pin::Mode, int> _mode2int;
-      static const std::map<int, Gpio::Descriptor> _gpioDescriptors;
       static const std::map<Pin::Mode, std::string> _modes;
 
       const unsigned long Io1Base = 0x01C20000;

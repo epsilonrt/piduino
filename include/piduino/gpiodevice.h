@@ -49,9 +49,6 @@ namespace Piduino {
       virtual void setDebug (bool enable);
       virtual unsigned int flags() const;
 
-      // Méthodes purement virtuelles
-      virtual const Gpio::Descriptor * descriptor() const = 0;
-
       virtual bool open() = 0;
       virtual void close() = 0;
       virtual AccessLayer preferedAccessLayer() const = 0;

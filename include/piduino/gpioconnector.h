@@ -43,15 +43,56 @@ namespace Piduino {
       friend class Pin;
       friend class Gpio;
 
-      /**
-       * @brief Fonction de calcul du numéro d'une broche de connecteur
-       * Le numéro d'une broche dépend de sa ligne \c row, de sa colonne \c column,
-       * du nombre de colonnes \c columns et du modèle du connecteur.
-       *
-       * Chaque connecteur dispose d'une de ses fonctions fournis au constructeur par
-       * le descripteur.
-       */
-      typedef int (* PinNumberFunc) (int row, int column, int columns);
+      class Family {
+        public:
+          /**
+           * @enum Id
+           * @brief Identifiant
+           */
+          enum  Id {
+            Hex1 = 0, ///< Connecteur Header HE14 à 1 rangée
+            Hex2, ///< Connecteur Header HE10 à 2 rangées: 1 impaire, 1 paire
+            Unknown = -1
+          };
+
+          Family (Id i = Unknown) : _id (i), _columns (-1), _fnum(nullptr) {
+            setId (i);
+          }
+          virtual ~Family() {}
+
+          inline Id id() const {
+            return _id;
+          }
+
+          inline int columns() const {
+            return _columns;
+          }
+
+          inline const std::string &name() const {
+            return _name;
+          }
+
+          /**
+           * @brief Calcul du numéro de broche
+           *
+           * Permet à une broche de récupérer son numéro dans le connecteur
+           *
+           * @param row ligne de la broche
+           * @param column colonne de la broche
+           * @return Numéro de la broche dans le connecteur
+           */
+          int pinNumber (int row, int column) const;
+
+          void setId (Id i);
+
+        private:
+          typedef int (* PinNumberFunc) (int row, int column, int columns);
+          Id _id;
+          int _columns;
+          PinNumberFunc _fnum;
+          std::string _name;
+          static std::map<Id, PinNumberFunc> _fnum_map; // fonctions de numérotation
+      };
 
       /**
        * @class Descriptor
@@ -64,9 +105,13 @@ namespace Piduino {
           std::string name;
           int number;
           int rows;
-          int columns;
-          PinNumberFunc pinNumber;
+          Family family;
+          long long id; ///< Database Id
           std::vector<Pin::Descriptor> pin;
+          // TODO
+          // Descriptor (long long id = -1);
+          bool insertToDb (); ///< Insertion dans la base de données
+          bool findInDb() const;;
       };
 
       /**
@@ -98,6 +143,16 @@ namespace Piduino {
        * @brief Nombre de colonnes
        */
       int columns() const;
+
+      /**
+       * @brief Modèle du connecteur
+       */
+      const Family & family() const;
+
+      /**
+       * @brief Identifiant en base de données
+       */
+      int id() const;
 
       /**
        * @brief Active le mode mise au point
@@ -201,7 +256,7 @@ namespace Piduino {
        * @param parent pointeur sur le Gpio parent
        * @param desc pointeur sur la description du connecteur
        */
-      Connector (Gpio * parent, const Descriptor * desc);
+      Connector (Gpio * parent, Descriptor * desc);
 
       /**
        * @brief Destructeur
@@ -234,19 +289,19 @@ namespace Piduino {
        * @return Numéro de la broche dans le connecteur
        */
       int pinNumber (int row, int column) const;
-      
+
       /**
        * @brief Affiche une ligne horizontale d'un tableau de broches
        * @param os flux d'affichage
        */
       void printHline (std::ostream & os) const;
-      
+
       /**
        * @brief Affiche l'entête d'un tableau de broches
        * @param os flux d'affichage
        */
       void printTitle (std::ostream & os) const;
-      
+
       /**
        * @brief Affiche une ligne d'un tableau de broches
        * Si le connecteur à 2 colonnes, les broches num et num+1 sont affichées
@@ -256,10 +311,17 @@ namespace Piduino {
        */
       void printRow (std::ostream & os, int num) const;
 
+      /**
+       * @brief Modification identifiant en base de données
+       */
+      inline void setId (int i) {
+        _descriptor->id = i;
+      }
+
     private:
       bool _isopen;
       Gpio * _parent;
-      const Descriptor * _descriptor; // descripteur
+      Descriptor * _descriptor; // descripteur
       std::map<int, std::shared_ptr<Pin>> _pin; // toutes les broches
   };
 }

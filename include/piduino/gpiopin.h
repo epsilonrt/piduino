@@ -167,6 +167,7 @@ namespace Piduino {
           Type type; ///< Type de broche
           Number num; ///< Numéros
           std::map<Mode, std::string> name; ///< Noms
+          long long id;
       };
 
 

@@ -31,10 +31,10 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-  Connector::Connector (Gpio * parent, const Descriptor * desc) :
+  Connector::Connector (Gpio * parent, Descriptor * desc) :
     _isopen (false), _parent (parent), _descriptor (desc) {
     int num;
-    const std::vector<Pin::Descriptor> & v = _descriptor->pin;
+    std::vector<Pin::Descriptor> & v = _descriptor->pin;
 
     for (int i = 0; i < v.size(); i++) {
 
@@ -109,7 +109,20 @@ namespace Piduino {
   int
   Connector::columns() const {
 
-    return _descriptor->columns;
+    return _descriptor->family.columns();
+  }
+
+// -----------------------------------------------------------------------------
+  const Connector::Family & Connector::family() const {
+
+    return _descriptor->family;
+  }
+
+// -----------------------------------------------------------------------------
+  int
+  Connector::id() const {
+
+    return _descriptor->id;
   }
 
 // -----------------------------------------------------------------------------
@@ -123,7 +136,7 @@ namespace Piduino {
   int
   Connector::pinNumber (int row, int column) const {
 
-    return _descriptor->pinNumber (row, column, columns());
+    return _descriptor->family.pinNumber (row, column);
   }
 
 // -----------------------------------------------------------------------------
@@ -341,7 +354,7 @@ namespace Piduino {
         if (p->mode() != Pin::ModeDisabled)  {
           if ( (p->mode() == Pin::ModeInput) || (p->mode() == Pin::ModeOutput) ||
                (device()->flags() & Device::hasAltRead)) {
-                 
+
             s[4] = std::to_string (p->read());
           }
         }

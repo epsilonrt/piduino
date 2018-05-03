@@ -65,8 +65,14 @@ namespace Piduino {
       class Descriptor {
         public:
           std::string name; ///< Nom de la carte
+          long long id; ///< Database Id
           std::vector<Connector::Descriptor> connector; ///< Descripteurs des connecteurs
+          // TODO
+          //Descriptor (long long id = -1);
+          bool insertToDb (); ///< Insertion dans la base de données
+          bool findInDb() const;
       };
+
 
       /**
        * @brief Constructeur par défaut
@@ -255,6 +261,7 @@ namespace Piduino {
       AccessLayer _accesslayer;
       Device * _device; // Accès à la couche matérielle
       Pin::Numbering _numbering; // Numérotation en cours
+      Descriptor _descriptor;
       std::map<int, std::shared_ptr<Pin>> _pin; // Broches uniquement GPIO
       std::map<int, std::shared_ptr<Connector>> _connector; // Connecteurs avec toutes les broches physiques
   };
@@ -262,7 +269,7 @@ namespace Piduino {
   //
   //                      Piduino Gpio Global Object
   //
-  // ---------------------------------------------------------------------------
+   // ---------------------------------------------------------------------------
   //extern Gpio gpio; ///< Piduino Gpio Global Object, must be open before using !
   /**
    * @}

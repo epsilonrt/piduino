@@ -39,17 +39,11 @@
     <VirtualDirectory Name="arch">
       <VirtualDirectory Name="arm">
         <VirtualDirectory Name="allwinner">
-          <VirtualDirectory Name="nanopi">
-            <File Name="src/arch/arm/allwinner/nanopi/gpiodevice_descriptor_nanopi.cpp"/>
-          </VirtualDirectory>
           <File Name="src/arch/arm/allwinner/gpio.cpp"/>
           <File Name="src/arch/arm/allwinner/allwinner_h.cpp"/>
           <File Name="src/arch/arm/allwinner/allwinner_h.h"/>
         </VirtualDirectory>
         <VirtualDirectory Name="broadcom">
-          <VirtualDirectory Name="raspberrypi">
-            <File Name="src/arch/arm/broadcom/raspberrypi/gpiodevice_descriptor_raspberrypi.cpp"/>
-          </VirtualDirectory>
           <File Name="src/arch/arm/broadcom/gpio.cpp"/>
           <File Name="src/arch/arm/broadcom/broadcom_bcm2835.cpp"/>
           <File Name="src/arch/arm/broadcom/broadcom_bcm2835.h"/>
@@ -65,6 +59,8 @@
       <File Name="src/gpio/gpio.cpp"/>
       <File Name="src/gpio/gpioconnector.cpp"/>
       <File Name="src/gpio/gpiopin.cpp"/>
+      <File Name="src/gpio/gpio-database.cpp"/>
+      <File Name="src/gpio/gpioconnector-database.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="spi"/>
     <File Name="src/clock.cpp"/>

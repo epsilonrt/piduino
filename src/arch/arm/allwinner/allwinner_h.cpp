@@ -59,11 +59,7 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   DeviceAllwinnerH::DeviceAllwinnerH() : Device () {
 
-    if (db.board().soc().family().id() == SoC::Family::AllwinnerH) {
-
-      _gpioDescriptor = &_gpioDescriptors.at (db.board().gpioId());
-    }
-    else {
+    if (db.board().soc().family().id() != SoC::Family::AllwinnerH) {
 
       throw std::system_error (ENOTSUP, std::system_category(),
                                "It seems that this system is not a Allwinner H3/H5 board !");
@@ -84,12 +80,6 @@ namespace Piduino {
   AccessLayer
   DeviceAllwinnerH::preferedAccessLayer() const {
     return AccessLayerAll;
-  }
-
-// -----------------------------------------------------------------------------
-  const Gpio::Descriptor *
-  DeviceAllwinnerH::descriptor() const {
-    return _gpioDescriptor;
   }
 
 // -----------------------------------------------------------------------------
