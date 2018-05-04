@@ -13,7 +13,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-set(CONFIGURATION_NAME "Debug")
+set(CONFIGURATION_NAME "Release")
 
 # Projects
 
@@ -61,9 +61,12 @@ include_directories(
 
 
 # Compiler options
-add_definitions(-g)
-add_definitions(-O0)
+add_definitions(-O2)
 add_definitions(-Wall)
+add_definitions(
+    -DNDEBUG
+)
+
 
 # Linker options
 
@@ -82,7 +85,7 @@ set ( CXX_SRCS
 
 set_source_files_properties(
     ${CXX_SRCS} PROPERTIES COMPILE_FLAGS 
-    " -g -O0 -Wall")
+    " -O2 -Wall")
 
 if(WIN32)
     enable_language(RC)

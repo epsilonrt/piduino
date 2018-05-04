@@ -50,8 +50,8 @@ namespace Piduino {
            * @brief Identifiant
            */
           enum  Id {
-            Hex1 = 0, ///< Connecteur Header HE14 à 1 rangée
-            Hex2, ///< Connecteur Header HE10 à 2 rangées: 1 impaire, 1 paire
+            Header1X = 0, ///< Connecteur Header à 1 rangée (SIL)
+            Header2X,     ///< Connecteur Header à 2 rangées: 1 impaire, 1 paire (ie HE10)
             Unknown = -1
           };
 
@@ -91,7 +91,6 @@ namespace Piduino {
           int _columns;
           PinNumberFunc _fnum;
           std::string _name;
-          static std::map<Id, PinNumberFunc> _fnum_map; // fonctions de numérotation
       };
 
       /**
@@ -108,13 +107,11 @@ namespace Piduino {
           Family family;
           long long id; ///< Database Id
           std::vector<Pin::Descriptor> pin;
-          // TODO
-          // Descriptor (long long id = -1);
+          // -- functions
+          Descriptor (long long connectorId = -1, int connectorNumber = -1);
           bool insert (); ///< Insertion dans la base de données
           bool hasPin (const Pin::Descriptor & p) const;
-        private:
           long long findId() const;
-
       };
 
       /**
@@ -155,7 +152,7 @@ namespace Piduino {
       /**
        * @brief Identifiant en base de données
        */
-      int id() const;
+      long long id() const;
 
       /**
        * @brief Active le mode mise au point
@@ -254,7 +251,7 @@ namespace Piduino {
       /**
        * @brief Constructeur
        *
-       * Un connecteur ne peut être instancié que par une classe Board.
+       * Un connecteur ne peut être instancié que par un objet Gpio.
        *
        * @param parent pointeur sur le Gpio parent
        * @param desc pointeur sur la description du connecteur

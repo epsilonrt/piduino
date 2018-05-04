@@ -19,6 +19,7 @@
 #include <iomanip>
 #include <exception>
 #include <piduino/clock.h>
+#include <piduino/database.h>
 #include "broadcom_bcm2835.h"
 
 namespace Piduino {
@@ -38,12 +39,10 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
   DeviceBcm2835::DeviceBcm2835() : Device () {
-    Board board;
 
     if (db.board().soc().family().id() == SoC::Family::BroadcomBcm2835) {
 
       _piobase = _iobase.at (db.board().soc().id()) + PioOffset;
-      _gpioDescriptor = &_gpioDescriptors.at (db.board().gpioId());
     }
     else {
 
@@ -55,6 +54,7 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   DeviceBcm2835::~DeviceBcm2835() {
   }
+  
 // -----------------------------------------------------------------------------
   unsigned int
   DeviceBcm2835::flags() const {
@@ -239,13 +239,6 @@ namespace Piduino {
   const std::map<Pin::Mode, std::string> &
   DeviceBcm2835::modes() const {
     return _modes;
-  }
-
-
-// -----------------------------------------------------------------------------
-  const Gpio::Descriptor *
-  DeviceBcm2835::descriptor() const {
-    return _gpioDescriptor;
   }
 
 // -----------------------------------------------------------------------------

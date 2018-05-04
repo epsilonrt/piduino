@@ -44,7 +44,8 @@ namespace Piduino {
           enum Id {
             BroadcomBcm2835 = 0,
             AllwinnerH,
-            // Add New item here and update soc_family table in database !
+            // Add New item here and update soc_family table in database,
+            // then add device driver source in src/arch !
 
             //---
             Unknown = -1

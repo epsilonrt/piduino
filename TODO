@@ -1,0 +1,17 @@
+# TODO
+
+## 2018-04-05
+
+List of things to do in chronological order:
+
+- clean Arch detection
+- Update deb packages build
+- Update README
+- Database doxygen doc
+- gpio tool manpage
+- IoDevice generic class
+- serial port feature
+- i2c bus feature
+- spi bus feature
+- arduino classes (string ....)
+- database Qt client

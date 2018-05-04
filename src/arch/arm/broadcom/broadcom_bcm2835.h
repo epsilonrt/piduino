@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_ARCH_ARM_RASPBERRYPI_GPIODEVICE_H_
-#define _PIDUINO_ARCH_ARM_RASPBERRYPI_GPIODEVICE_H_
+#ifndef _PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H_
+#define _PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H_
 
 #include <piduino/gpiodevice.h>
 #include <piduino/iomap.h>
@@ -32,8 +32,6 @@ namespace Piduino {
     public:
       DeviceBcm2835();
       virtual ~DeviceBcm2835();
-
-      const Gpio::Descriptor * descriptor() const;
 
       bool open();
       void close();
@@ -52,7 +50,6 @@ namespace Piduino {
     private:
       unsigned long _piobase;
       xIoMap * _iomap;
-      const Gpio::Descriptor * _gpioDescriptor;
 
       inline unsigned int readReg (unsigned int offset) const {
         return *pIo (_iomap, offset);
@@ -65,7 +62,6 @@ namespace Piduino {
       static const std::map<SoC::Id, unsigned long> _iobase;
       static const std::map<unsigned int, Pin::Mode> _int2mode;
       static const std::map<Pin::Mode, unsigned int> _mode2int;
-      static const std::map<int, Gpio::Descriptor> _gpioDescriptors;
       static const std::map<Pin::Mode, std::string> _modes;
 
       static const unsigned int  GpioSize     = 54;
@@ -96,4 +92,4 @@ namespace Piduino {
   };
 }
 /* ========================================================================== */
-#endif /*_PIDUINO_ARCH_ARM_RASPBERRYPI_GPIODEVICE_H_ defined */
+#endif /*_PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H_ defined */

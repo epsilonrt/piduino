@@ -37,14 +37,14 @@ namespace Piduino {
   Database db;
   Clock clk;
 #ifdef PIDUINO_WITH_GPIO
-  //Gpio gpio;
+  Gpio gpio;
 #endif
 
 // -----------------------------------------------------------------------------
   void closeall () {
 
 #ifdef PIDUINO_WITH_GPIO
-    //gpio.close();
+    gpio.close();
 #endif
   }
 

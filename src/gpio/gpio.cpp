@@ -17,6 +17,9 @@
 
 #include <piduino/gpio.h>
 #include <piduino/gpiodevice.h>
+#include <piduino/database.h>
+#include  "../arch/arm/allwinner/allwinner_h.h"
+#include  "../arch/arm/broadcom/broadcom_bcm2835.h"
 
 namespace Piduino {
 
@@ -26,16 +29,33 @@ namespace Piduino {
 //
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-  Gpio::Gpio (Device * dev, AccessLayer layer) :
-    _roc (true), _isopen (false), _accesslayer (layer), _device (dev),
+  // ---------------------------------------------------------------------------
+  Gpio::Gpio (long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer) :
+    _roc (true), _isopen (false), _accesslayer (layer), _device (nullptr),
     _numbering (Pin::NumberingUnknown) {
 
-    std::vector<Connector::Descriptor> & v = _descriptor.connector;
+    _descriptor = std::make_shared<Descriptor> (gpioDatabaseId);
+
+    // TODO extract from dB
+    switch (socFamilyId) {
+        // TODO
+      case SoC::Family::BroadcomBcm2835 :
+        _device = new DeviceBcm2835();
+        break;
+      case SoC::Family::AllwinnerH :
+        _device = new DeviceAllwinnerH();
+        break;
+      default:
+        throw std::system_error (ENOTSUP, std::system_category(),
+                                 "It seems that this system is not supported !");
+        break;
+    }
+
+    std::vector<Connector::Descriptor> & v = _descriptor->connector;
 
     if (layer == AccessLayerAuto) {
 
-      _accesslayer = dev->preferedAccessLayer();
+      _accesslayer = _device->preferedAccessLayer();
     }
 
     // Création des connecteurs à partir des descripteurs
@@ -46,21 +66,27 @@ namespace Piduino {
     setNumbering (Pin::NumberingLogical);
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  Gpio::Gpio (AccessLayer layer) :
+    Gpio (db.board().gpioId(), db.board().soc().family().id(), layer) {
+
+  }
+
+  // ---------------------------------------------------------------------------
   Gpio::~Gpio() {
 
     close();
     delete _device;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   AccessLayer
   Gpio::accessLayer() const {
 
     return _accesslayer;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   bool
   Gpio::open () {
 
@@ -88,7 +114,7 @@ namespace Piduino {
     return isOpen();
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   void
   Gpio::close() {
 
@@ -103,21 +129,21 @@ namespace Piduino {
     }
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   bool
   Gpio::isOpen() const {
 
     return _isopen;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   Pin::Numbering
   Gpio::numbering() const {
 
     return _numbering;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   void
   Gpio::setNumbering (Pin::Numbering nb) {
 
@@ -143,90 +169,97 @@ namespace Piduino {
     }
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   const std::string &
   Gpio::numberingName () const {
 
     return Pin::numberingName (numbering());
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   bool
   Gpio::releaseOnClose() const {
 
     return _roc;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   void
   Gpio::setReleaseOnClose (bool enable) {
 
     _roc = enable;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   const std::string &
   Gpio::name() const {
 
-    return _descriptor.name;
+    return _descriptor->name;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  long long
+  Gpio::id() const {
+
+    return _descriptor->id;
+  }
+
+  // ---------------------------------------------------------------------------
   int
   Gpio::size() const {
 
     return _pin.size();
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   const std::map<int, std::shared_ptr<Pin>> &
   Gpio::pin() {
 
     return _pin;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   Pin &
   Gpio::pin (int number) const {
 
     return *_pin.at (number).get();
   };
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   int
   Gpio::connectors() const {
 
     return _connector.size();
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   Connector *
   Gpio::connector (int num) const {
 
     return _connector.at (num).get();
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   const std::map<int, std::shared_ptr<Connector>> &
   Gpio::connector() {
     return _connector;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   Device *
   Gpio::device() const {
 
     return _device;
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   bool
   Gpio::isDebug() const {
 
     return device()->isDebug();
   }
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   void
   Gpio::setDebug (bool enable) {
 

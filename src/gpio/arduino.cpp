@@ -19,7 +19,9 @@
 
 using namespace Piduino;
 
-#if 0
+#ifdef PIDUINO_WITH_GPIO
+// -----------------------------------------------------------------------------
+
 // -----------------------------------------------------------------------------
 void pinMode (int n, ArduinoPinMode mode) {
   Pin::Pull p = Pin::PullOff;
@@ -71,6 +73,8 @@ void detachInterrupt (int n) {
 
   gpio.pin (n).detachInterrupt();
 }
+// -----------------------------------------------------------------------------
+#endif  /* PIDUINO_WITH_GPIO */
 
 // -----------------------------------------------------------------------------
 void delay (unsigned long ms) {
@@ -95,5 +99,4 @@ unsigned long micros() {
 
   return clk.micros();
 }
-#endif
 /* ========================================================================== */

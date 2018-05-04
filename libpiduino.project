@@ -39,12 +39,10 @@
     <VirtualDirectory Name="arch">
       <VirtualDirectory Name="arm">
         <VirtualDirectory Name="allwinner">
-          <File Name="src/arch/arm/allwinner/gpio.cpp"/>
           <File Name="src/arch/arm/allwinner/allwinner_h.cpp"/>
           <File Name="src/arch/arm/allwinner/allwinner_h.h"/>
         </VirtualDirectory>
         <VirtualDirectory Name="broadcom">
-          <File Name="src/arch/arm/broadcom/gpio.cpp"/>
           <File Name="src/arch/arm/broadcom/broadcom_bcm2835.cpp"/>
           <File Name="src/arch/arm/broadcom/broadcom_bcm2835.h"/>
         </VirtualDirectory>
@@ -195,6 +193,7 @@
     <File Name="README.md"/>
     <File Name="cmake_uninstall.cmake.in"/>
     <File Name="WARRANTY"/>
+    <File Name="TODO"/>
   </VirtualDirectory>
   <VirtualDirectory Name="lib">
     <File Name="lib/piduino.pc.in"/>

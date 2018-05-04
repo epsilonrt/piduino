@@ -24,8 +24,8 @@ endif()
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
   
 file(GLOB src_piduino ${PIDUINO_SRC_DIR}/*.c ${PIDUINO_SRC_DIR}/*.cpp)
-file(GLOB src_arch  ${PIDUINO_SRC_ARCH_DIR}/*.c ${PIDUINO_SRC_ARCH_DIR}/*.cpp)
-file(GLOB src_board  ${PIDUINO_SRC_BOARD_DIR}/*.c ${PIDUINO_SRC_BOARD_DIR}/*.cpp)
+#file(GLOB src_arch  ${PIDUINO_SRC_ARCH_DIR}/*.c ${PIDUINO_SRC_ARCH_DIR}/*.cpp)
+#file(GLOB src_board  ${PIDUINO_SRC_BOARD_DIR}/*.c ${PIDUINO_SRC_BOARD_DIR}/*.cpp)
 
 set (hdr_piduino 
   ${PIDUINO_INC_DIR}/piduino/clock.h
@@ -69,7 +69,8 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 set(hdr_public ${hdr_piduino} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 if (PIDUINO_WITH_GPIO)
-  file(GLOB src_gpio ${PIDUINO_SRC_DIR}/gpio/*.c ${PIDUINO_SRC_DIR}/gpio/*.cpp)
+  file(GLOB src_gpio ${PIDUINO_SRC_DIR}/gpio/*.c ${PIDUINO_SRC_DIR}/gpio/*.cpp ${PIDUINO_SRC_DIR}/arch/arm/)
+  file(GLOB_RECURSE src_device ${PIDUINO_SRC_DIR}/arch/*.cpp)
   list(APPEND hdr_public ${hdr_gpio})
   list(APPEND hdr_root ${hdr_gpio_root})
 endif (PIDUINO_WITH_GPIO)
@@ -90,8 +91,9 @@ if (PIDUINO_WITH_SERIAL)
 endif (PIDUINO_WITH_SERIAL)
 
 #message ("hdr_public=${hdr_public}")
+#message ("src_device=${src_device}")
 
-set (libsrc ${src_piduino} ${src_arch}  ${src_board} 
+set (libsrc ${src_piduino} ${src_device}
   ${src_gpio} ${src_i2c} ${src_spi} ${src_serial}
   )
 

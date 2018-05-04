@@ -24,6 +24,7 @@
 #include <memory>
 #include <exception>
 #include <piduino/gpioconnector.h>
+#include <piduino/soc.h>
 
 /**
  *  @defgroup piduino_gpio Gpio
@@ -67,21 +68,29 @@ namespace Piduino {
           std::string name; ///< Nom de la carte
           long long id; ///< Database Id
           std::vector<Connector::Descriptor> connector; ///< Descripteurs des connecteurs
-          // TODO
-          //Descriptor (long long id = -1);
+          // -- functions
+          Descriptor (long long gpioId = -1);
           bool insert (); ///< Insertion dans la base de données
           bool hasConnector (const Connector::Descriptor & c) const;
-        private:
           long long findId() const;
       };
 
 
       /**
        * @brief Constructeur par défaut
+       * 
        * @param layer choix de la couche d'accès, AccessLayerAuto par défaut, dans
        * ce cas, le choix est laissé à la couche GpioDevice (conseillé).
        */
       Gpio (AccessLayer layer = AccessLayerAuto);
+      
+      /**
+       * @brief Constructeur
+       * @param gpioDatabaseId identifiant du GPIO en base de données
+       * @param socFamilyId famille du SoC de la carte
+       * @param layer choix de la couche d'accès
+       */
+      Gpio (long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer);
 
       /**
        * @brief Destructeur
@@ -108,6 +117,11 @@ namespace Piduino {
        * @brief Nom de la carte
        */
       const std::string & name() const;
+
+      /**
+       * @brief Identifiant en base de données
+       */
+      long long id() const;
 
       /**
        * @brief Modifie la libération des broches à la fermeture
@@ -255,7 +269,7 @@ namespace Piduino {
        * @param device pointeur sur le driver de la plateforme
        * @param layer choix de la couche d'accès
        */
-      explicit Gpio (Device * device, AccessLayer layer);
+      //explicit Gpio (Device * device, AccessLayer layer);
 
     private:
       bool _roc; // Release On Close
@@ -263,7 +277,7 @@ namespace Piduino {
       AccessLayer _accesslayer;
       Device * _device; // Accès à la couche matérielle
       Pin::Numbering _numbering; // Numérotation en cours
-      Descriptor _descriptor;
+      std::shared_ptr<Descriptor> _descriptor;
       std::map<int, std::shared_ptr<Pin>> _pin; // Broches uniquement GPIO
       std::map<int, std::shared_ptr<Connector>> _connector; // Connecteurs avec toutes les broches physiques
   };
@@ -272,7 +286,7 @@ namespace Piduino {
   //                      Piduino Gpio Global Object
   //
   // ---------------------------------------------------------------------------
-  //extern Gpio gpio; ///< Piduino Gpio Global Object, must be open before using !
+  extern Gpio gpio; ///< Piduino Gpio Global Object, must be open before using !
   /**
    * @}
    */

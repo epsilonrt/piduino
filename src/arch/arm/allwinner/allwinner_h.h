@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_ARCH_ARM_NANOPI_GPIODEVICE_H_
-#define _PIDUINO_ARCH_ARM_NANOPI_GPIODEVICE_H_
+#ifndef _PIDUINO_ARCH_ARM_ALLWINNER_H_H_
+#define _PIDUINO_ARCH_ARM_ALLWINNER_H_H_
 
 #include <piduino/gpiodevice.h>
 #include <piduino/iomap.h>
@@ -72,4 +72,4 @@ namespace Piduino {
   };
 }
 /* ========================================================================== */
-#endif /*_PIDUINO_ARCH_ARM_NANOPI_GPIODEVICE_H_ defined */
+#endif /*_PIDUINO_ARCH_ARM_ALLWINNER_H_H_ defined */

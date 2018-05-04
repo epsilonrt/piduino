@@ -132,7 +132,7 @@ namespace Piduino {
   bool
   Pin::Descriptor::hasModeName (Mode modeId, long long nameId) const {
     cppdb::result res =
-      Piduino::db << 
+      Piduino::db <<
       "SELECT gpio_pin_name_id "
       " FROM gpio_pin_has_name "
       " WHERE  gpio_pin_id=? AND "
@@ -166,13 +166,47 @@ namespace Piduino {
     }
   }
 
-#if 0
 // -----------------------------------------------------------------------------
-  Pin::Descriptor::Descriptor (long long i) :
-    type (Pin::TypeUnknown), id (i) {
-    // Chargement depuis database
-  }
-#endif
+  Pin::Descriptor::Descriptor (long long pinId, int pinRow, int pinColumn) :
+    type (Pin::TypeUnknown), id (pinId) {
 
+    num.row = pinRow;
+    num.column = pinColumn;
+    
+    if (id > 0) {
+      // Chargement depuis database
+      cppdb::result res;
+
+      res = Piduino::db <<
+            "SELECT gpio_pin_type_id,logical_num,mcu_num,system_num "
+            " FROM gpio_pin "
+            " WHERE "
+            "   id=?"
+            << id << cppdb::row;
+
+      if (!res.empty()) {
+        int tid;
+        
+        res >> tid >> num.logical >> num.mcu >> num.system;
+        type = static_cast<Pin::Type> (tid);
+        
+        res = Piduino::db <<
+              "SELECT gpio_pin_name.name,gpio_pin_has_name.gpio_pin_mode_id "
+              " FROM gpio_pin_has_name "
+              " INNER JOIN gpio_pin_name ON gpio_pin_name.id = gpio_pin_has_name.gpio_pin_name_id "
+              " WHERE "
+              "   gpio_pin_has_name.gpio_pin_id=?"
+              << id;
+
+        while (res.next()) {
+          int pin_mode;
+          std::string pin_name;
+
+          res >> pin_name >> pin_mode;
+          name[static_cast<Pin::Mode> (pin_mode)] = pin_name;
+        }
+      }
+    }
+  }
 }
 /* ========================================================================== */

@@ -154,6 +154,7 @@ namespace Piduino {
           int system; ///< Numéro dans numérotation du système d'exploitation (commence à 0)
           int row; ///< Numéro de ligne dans la connecteur (commence à 1)
           int column; ///< Numéro de colonne dans la connecteur (commence à 1)
+          Number() : logical (-1), mcu (-1), system (-1), row (-1), column (-1) {}
       };
 
       /**
@@ -166,8 +167,10 @@ namespace Piduino {
         public:
           Type type; ///< Type de broche
           Number num; ///< Numéros
-          long long id;
-          std::map<Mode, std::string> name; ///< Noms
+          long long id; ///< Database Id
+          std::map<Mode, std::string> name; ///< Mode/Name pairs
+          // -- functions
+          Descriptor (long long pinId = -1, int pinRow = -1, int pinColumn = -1);
           bool insert (); ///< Insertion dans la base de données
           bool hasModeName (Mode m, long long nameId) const;
           long long findId() const;
@@ -407,6 +410,11 @@ namespace Piduino {
        * n'est pas de type TypeGpio.
        */
       const std::string & name();
+
+      /**
+      * @brief Identifiant en base de données
+      */
+      long long id() const;
 
       /**
        * @brief Indique si la broche utilise SysFs

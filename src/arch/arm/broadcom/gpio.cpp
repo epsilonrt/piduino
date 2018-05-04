@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-
 #include <piduino/gpio.h>
 #include "broadcom_bcm2835.h"
 
 namespace Piduino {
 
+#if 0
 // -----------------------------------------------------------------------------
 //
 //                           Gpio Class
@@ -30,5 +30,6 @@ namespace Piduino {
   Gpio::Gpio (AccessLayer layer) : Gpio (new DeviceBcm2835(), layer) {
 
   }
+#endif
 }
 /* ========================================================================== */

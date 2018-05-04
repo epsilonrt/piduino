@@ -2,17 +2,16 @@
 
 cmake_minimum_required(VERSION 2.8.11)
 
-# Project name
+# Workspace name
 project(interrupt)
 
 # This setting is useful for providing JSON file used by CodeLite for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Set default locations
-set(CL_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../cmake-build-Debug/output)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CL_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 set(CONFIGURATION_NAME "Debug")
 
@@ -21,8 +20,7 @@ set(CONFIGURATION_NAME "Debug")
 
 # Top project
 # Define some variables
-set(PROJECT_interrupt_PATH "${CMAKE_CURRENT_LIST_DIR}")
-set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+set(PROJECT_PATH "${CMAKE_SOURCE_DIR}/")
 
 
 
@@ -79,7 +77,7 @@ set(CMAKE_LDFLAGS "${CMAKE_LDFLAGS} -L. ")
 
 # Define the CXX sources
 set ( CXX_SRCS
-    ${CMAKE_CURRENT_LIST_DIR}/interrupt.cpp
+    ${CMAKE_SOURCE_DIR}/interrupt.cpp
 )
 
 set_source_files_properties(

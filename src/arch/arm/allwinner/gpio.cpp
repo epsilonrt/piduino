@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-
+#if 0
 #include <piduino/gpio.h>
 #include "allwinner_h.h"
 
@@ -26,9 +26,10 @@ namespace Piduino {
 //
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   Gpio::Gpio (AccessLayer layer) : Gpio (new DeviceAllwinnerH(), layer) {
 
   }
 }
+#endif
 /* ========================================================================== */

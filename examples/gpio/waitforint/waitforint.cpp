@@ -8,8 +8,6 @@
 
 // This example code is in the public domain.
 #include <iostream>
-#include <csignal>
-#include <cstdlib>
 #include <piduino/clock.h>
 #include <piduino/gpio.h>
 
@@ -21,26 +19,14 @@ using namespace Piduino;
 const int ledPin = 0; // Header Pin 11: GPIO17 for RPi, GPIOA0 for NanoPi
 const int irqPin = 3; // Header Pin 15: GPIO22 for RPi, GPIOA3 for NanoPi
 
-Clock clk; // the clock of our program used for time calculation...
-Gpio g; // our GPIO port
-Pin & led = g.pin (ledPin); // led is a reference on pin 11 of the GPIO
-Pin & irq = g.pin (irqPin); // irq is a reference on pin 15 of the GPIO
+Pin & led = gpio.pin (ledPin); // led is a reference on pin 11 of the GPIO
+Pin & irq = gpio.pin (irqPin); // irq is a reference on pin 15 of the GPIO
 unsigned long t1, t2; // for calculating time differences between interruptions
-
-// -----------------------------------------------------------------------------
-// Signal Handler
-static void
-sighandler (int sig) {
-
-  g.close();
-  cout << endl << "everything was closed."<< endl << "Have a nice day !\n" << endl;
-  exit (EXIT_SUCCESS);
-}
 
 // -----------------------------------------------------------------------------
 int main (int argc, char **argv) {
   
-  g.open();
+  gpio.open();
   led.setMode(Pin::ModeOutput); // the led pin is an output
   led.write(0); // turn off the led
   irq.setPull(Pin::PullUp); // activates the pull-up resistor if the input is 
@@ -48,9 +34,6 @@ int main (int argc, char **argv) {
   irq.setMode(Pin::ModeInput);  // the irq pin is an input that will be used 
                                 // as an interrupt request.
 
-  // sighandler() intercepts CTRL+C
-  signal (SIGINT, sighandler);
-  signal (SIGTERM, sighandler);
   cout << "Press Ctrl+C to abort ..." << endl;
   
   t1 = clk.millis(); // first time

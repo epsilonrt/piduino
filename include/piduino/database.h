@@ -154,7 +154,7 @@ namespace Piduino {
           bool setRevision (int rev);
           bool setTag (const std::string & armbianBoardTag);
 
-          inline int id() const {
+          inline long long id() const {
             return _id;
           }
 
@@ -182,7 +182,7 @@ namespace Piduino {
             return _pcb_revision;
           }
 
-          inline int gpioId() const {
+          inline long long gpioId() const {
             return _gpio_id;
           }
 
@@ -205,10 +205,10 @@ namespace Piduino {
           friend std::ostream& operator<< (std::ostream& os, const Board& c);
 
         private:
-          int _id;
+          long long _id;
           Model _model;
           Manufacturer _manufacturer;
-          int _gpio_id; // Révision du GPIO
+          long long _gpio_id; // Révision du GPIO
           float _pcb_revision;
           int _revision;
           bool _found;

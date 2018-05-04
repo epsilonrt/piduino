@@ -17,6 +17,7 @@
 
 #include <piduino/gpioconnector.h>
 #include <piduino/database.h>
+#include <sstream>
 
 namespace Piduino {
 
@@ -31,7 +32,7 @@ namespace Piduino {
   Connector::Descriptor::insert () {
     cppdb::statement stat;
     long long connector_id;
-    
+
     connector_id = findId();
     if (connector_id < 0) {
       // new connector
@@ -48,7 +49,7 @@ namespace Piduino {
       }
       stat.exec();
       id = stat.last_insert_id();
-      
+
       for (int i = 0; i < pin.size(); i++) {
 
         pin[i].insert ();
@@ -64,7 +65,7 @@ namespace Piduino {
     }
     else {
       // already existing connector
-      
+
       id = connector_id;
     }
     return false;
@@ -144,13 +145,42 @@ namespace Piduino {
     return -1;
   }
 
-#if 0
 // -----------------------------------------------------------------------------
-  Connector::Descriptor::Descriptor (long long i) :
-    id (i), number (-1), rows (-1) {
-    // Chargement depuis database
+  Connector::Descriptor::Descriptor (long long connectorId, int connectorNumber) :
+    number (connectorNumber), rows (-1), id (connectorId) {
+
+    if (id > 0) {
+      // Chargement depuis database
+      cppdb::result res;
+
+      res = Piduino::db <<
+            "SELECT name,rows,gpio_connector_family_id "
+            " FROM gpio_connector "
+            " WHERE "
+            "   id=?"
+            << id << cppdb::row;
+
+      if (!res.empty()) {
+        int fid;
+        res >> name >> rows >> fid;
+        family.setId (static_cast<Connector::Family::Id> (fid));
+        res = Piduino::db <<
+              "SELECT gpio_pin_id,row,column"
+              " FROM gpio_connector_has_pin "
+              " WHERE "
+              "   gpio_connector_id=?"
+              << id;
+
+        while (res.next()) {
+          long long pin_id;
+          int row, column;
+
+          res >> pin_id >> row >> column;
+          pin.push_back (Pin::Descriptor (pin_id, row, column));
+        }
+      }
+    }
   }
-#endif
 
 // -----------------------------------------------------------------------------
 //
@@ -159,23 +189,16 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-  int hex1NumFunc (int row, int column, int columns) {
+  int header1XNumFunc (int row, int column, int columns) {
 
     return row;
   }
 
 // ---------------------------------------------------------------------------
-  int hex2NumFunc (int row, int column, int columns) {
+  int header2XNumFunc (int row, int column, int columns) {
 
     return (row - 1) * columns + column;
   }
-
-// ---------------------------------------------------------------------------
-  std::map<Connector::Family::Id, Connector::Family::PinNumberFunc>
-  Connector::Family::_fnum_map = {
-    { Connector::Family::Hex1, hex1NumFunc},
-    { Connector::Family::Hex2, hex2NumFunc},
-  };
 
 // ---------------------------------------------------------------------------
   int
@@ -186,17 +209,33 @@ namespace Piduino {
 
 // ---------------------------------------------------------------------------
   void
-  Connector::Family::setId (Connector::Family::Id i)  {
+  Connector::Family::setId (Connector::Family::Id familyId)  {
 
-    if (Piduino::db.is_open()) {
+    if ((Piduino::db.is_open()) && (familyId != Id::Unknown)) {
       cppdb::result res =
         Piduino::db << "SELECT name,columns FROM gpio_connector_family WHERE id=?"
-        << i << cppdb::row;
+        << familyId << cppdb::row;
 
       if (!res.empty()) {
 
-        _id = i;
-        _fnum = _fnum_map.at (i);
+        _id = familyId;
+
+        switch (familyId) {
+          case Connector::Family::Header1X:
+            _fnum = header1XNumFunc;
+            break;
+          case Connector::Family::Header2X:
+            _fnum = header2XNumFunc;
+            break;
+          default: {
+            std::ostringstream msg;
+
+            _fnum = nullptr;
+            msg << __FILE__ << "(" << __LINE__ << "): Invalid Connector::Family::Id";
+            throw std::invalid_argument (msg.str());
+          }
+          break;
+        }
         res >> _name >> _columns;
       }
     }

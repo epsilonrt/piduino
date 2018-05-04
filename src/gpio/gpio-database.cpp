@@ -64,7 +64,7 @@ namespace Piduino {
     }
     else {
       // already existing connector
-      
+
       id = gpio_id;
     }
     return false;
@@ -95,13 +95,39 @@ namespace Piduino {
     return -1;
   }
 
-#if 0
 // -----------------------------------------------------------------------------
-  Gpio::Descriptor::Descriptor (long long i) :
-    id (i), number (-1), rows (-1) {
-    // Chargement depuis database
+  Gpio::Descriptor::Descriptor (long long gpioId) :
+    id (gpioId) {
+
+    if (id > 0) {
+      // Chargement depuis database
+      cppdb::result res;
+
+      res = Piduino::db <<
+            "SELECT name "
+            " FROM gpio "
+            " WHERE "
+            "   id=?"
+            << id << cppdb::row;
+      if (!res.empty()) {
+        res >> name;
+        res = Piduino::db <<
+              "SELECT num,gpio_connector_id "
+              " FROM gpio_has_connector "
+              " WHERE "
+              "   gpio_id=?"
+              << id;
+
+        while (res.next()) {
+          long long connector_id;
+          int connector_num;
+
+          res >> connector_num >> connector_id;
+          connector.push_back (Connector::Descriptor (connector_id, connector_num));
+        }
+      }
+    }
   }
-#endif
 
 }
 /* ========================================================================== */

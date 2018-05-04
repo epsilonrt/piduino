@@ -39,7 +39,6 @@ const string website = "https://github.com/epsilonrt/piduino";
 typedef void (*func) (int argc, char * argv[]);
 
 /* private variables ======================================================== */
-Gpio * gpio = 0;
 Pin::Numbering numbering = Pin::NumberingLogical;
 int pinnumber = -1;
 int connector = -1;
@@ -142,10 +141,9 @@ main (int argc, char **argv) {
     do_it = str2func. at (argv[optind]);
     optind++;
 
-    gpio = new Gpio ();
-    gpio->setNumbering (numbering);
-    gpio->setDebug (debug);
-    gpio->open();
+    gpio.setNumbering (numbering);
+    gpio.setDebug (debug);
+    gpio.open();
 
     /* Execute command */
     do_it (argc, argv);
@@ -182,11 +180,6 @@ main (int argc, char **argv) {
     ret = -1;
   }
 
-  if (gpio) {
-
-    delete gpio;
-  }
-
   return ret;
 }
 
@@ -203,10 +196,10 @@ readall (int argc, char * argv[]) {
   if (paramc >= 1) {
 
     int connector = stoi (string (argv[optind]));
-    cout << gpio->connector (connector);
+    cout << gpio.connector (connector);
   }
   else {
-    for (auto p = gpio->connector().cbegin(); p != gpio->connector().cend(); ++p) {
+    for (auto p = gpio.connector().cbegin(); p != gpio.connector().cend(); ++p) {
       // p est une pair: first = numéro et second = connecteur
       cout << p->second << endl;
     }
@@ -252,7 +245,7 @@ mode (int argc, char * argv[]) {
       m = str2mode.at (smode);
 
       // Modification à garder après fermeture !
-      gpio->setReleaseOnClose (false);
+      gpio.setReleaseOnClose (false);
       pin->setMode (m);
     }
     else {
@@ -290,7 +283,7 @@ pull (int argc, char * argv[]) {
       p = str2pull.at (pmode);
 
       // Modification à garder après fermeture !
-      gpio->setReleaseOnClose (false);
+      gpio.setReleaseOnClose (false);
       pin->setPull (p);
     }
     else {
@@ -344,11 +337,10 @@ write (int argc, char * argv[]) {
 
     if (pin->mode () != Pin::ModeOutput) {
 
-      delete gpio;
       throw Exception (Exception::NotOutputPin, pinnumber);
     }
     // Modification à garder après fermeture !
-    gpio->setReleaseOnClose (false);
+    gpio.setReleaseOnClose (false);
     pin->write (value);
   }
 }
@@ -370,11 +362,10 @@ toggle (int argc, char * argv[]) {
     pin = getPin (argv[optind]);
     if (pin->mode () != Pin::ModeOutput) {
 
-      delete gpio;
       throw Exception (Exception::NotOutputPin, pinnumber);
     }
     // Modification à garder après fermeture !
-    gpio->setReleaseOnClose (false);
+    gpio.setReleaseOnClose (false);
     pin->toggle ();
   }
 }
@@ -395,7 +386,7 @@ blink (int argc, char * argv[]) {
   else {
     int period = 1000;
 
-    gpio->setReleaseOnClose (true);
+    gpio.setReleaseOnClose (true);
 
     pin = getPin (argv[optind]);
     if (paramc > 1)    {
@@ -487,7 +478,6 @@ pwm (int argc, char * argv[]) {
 
     if (pin->mode () != Pin::ModePwm) {
 
-      delete gpio;
       throw Exception (Exception::NotPwmPin, pinnumber);
     }
 
@@ -528,7 +518,7 @@ getPin (char * c_str) {
   if (!physicalNumbering) {
 
     pinnumber = stoi (s);
-    p = &gpio->pin (pinnumber);
+    p = &gpio.pin (pinnumber);
   }
   else {
     vector<string> v = split (s, '.');
@@ -543,7 +533,7 @@ getPin (char * c_str) {
       connector = 1;
       pinnumber = stoi (v[0]);
     }
-    p = &gpio->connector (connector)->pin (pinnumber);
+    p = &gpio.connector (connector)->pin (pinnumber);
   }
   p->forceUseSysFs (forceSysFs);
   return p;
@@ -553,14 +543,13 @@ getPin (char * c_str) {
 void
 sig_handler (int sig) {
 
-  if (gpio) {
+  if (gpio.isOpen()) {
 
     if (useSysFsBeforeWfi >= 0) {
 
       pin->forceUseSysFs (useSysFsBeforeWfi != 0);
     }
 
-    delete gpio;
     cout << endl << "everything was closed.";
   }
   cout << endl << "Have a nice day !" << endl;
