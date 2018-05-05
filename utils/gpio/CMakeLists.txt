@@ -28,6 +28,15 @@ set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 
 #{{{{ User Code 1
 # Place your code here
+add_custom_target(setuid
+  COMMAND piduino-setuid  ${PROJECT_NAME}
+  WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+  COMMENT "Setting set-uid root bit for executable")
+
+set(PROGRAM_PERMISSIONS_DEFAULT
+    OWNER_WRITE OWNER_READ OWNER_EXECUTE
+    GROUP_READ GROUP_EXECUTE
+    WORLD_READ WORLD_EXECUTE)
 
 # --- SysIo Begin. Do not edit by hand -----------------------------------------
 # Modifies binary file paths if codelite is not used.
