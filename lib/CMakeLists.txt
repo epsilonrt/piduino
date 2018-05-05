@@ -189,8 +189,12 @@ install(FILES
 
 # Install the piduino licence files
 install(FILES
-  "${PROJECT_SOURCE_DIR}/COPYING" "${PROJECT_SOURCE_DIR}/WARRANTY"
+  "${PROJECT_SOURCE_DIR}/COPYING" "${PROJECT_SOURCE_DIR}/COPYING.LESSER"
   DESTINATION "${PIDUINO_INSTALL_DATA_DIR}" COMPONENT lib)
+
+install(FILES
+  "${PROJECT_SOURCE_DIR}/README.md"
+  DESTINATION "${PIDUINO_INSTALL_DOC_DIR}" COMPONENT lib)
 
 install (TARGETS piduino-shared
   # IMPORTANT: Add the piduino library to the "export-set"

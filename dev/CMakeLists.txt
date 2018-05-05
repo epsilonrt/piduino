@@ -31,8 +31,6 @@ configure_file(
     "${CMAKE_CURRENT_BINARY_DIR}/piduino-prj"
     IMMEDIATE @ONLY)
 
-#file(GLOB dev_bin ${CMAKE_CURRENT_SOURCE_DIR}/bin/*)
-file(GLOB dev_bin_rpi ${CMAKE_CURRENT_SOURCE_DIR}/rpi/*)
 file(GLOB dev_cmake ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
 install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/bin/armbian-board 
@@ -58,17 +56,12 @@ install (DIRECTORY template
   COMPONENT dev
   )
 
-# SysIO examples
+# Examples
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/
-        DESTINATION ${PIDUINO_INSTALL_EXAMPLES_DIR}/piduino 
+        DESTINATION ${PIDUINO_INSTALL_EXAMPLES_DIR}
         COMPONENT dev
-        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt")
+        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt"
+        PATTERN ".clang/" EXCLUDE
+        PATTERN ".codelite/" EXCLUDE
+        PATTERN "cmake-build*/" EXCLUDE)
 
-if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
-  install (FILES ${dev_bin_rpi} 
-    DESTINATION "${INSTALL_BIN_DIR}" 
-    PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ 
-      WORLD_EXECUTE WORLD_READ
-    COMPONENT dev
-    )
-endif()
