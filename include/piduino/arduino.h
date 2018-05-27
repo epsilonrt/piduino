@@ -18,24 +18,69 @@
 #ifndef _PIDUINO_ARDUINO_H_
 #define _PIDUINO_ARDUINO_H_
 
-#include <piduino/gpio.h>
-#include <piduino/clock.h>
 #ifndef __DOXYGEN__
+
+#ifdef __cplusplus
+// -----------------------------------------------------------------------------
+#include <piduino/gpio.h>
+
+#define EXTERN_C extern "C"
+
 enum ArduinoPinMode {
   INPUT = Piduino::Pin::ModeInput,
   OUTPUT = Piduino::Pin::ModeOutput,
   INPUT_PULLUP,
   INPUT_PULLDOWN // Not supported by Arduino !
 };
+
 enum ArduinoIntEdge {
   // LOW & HIGH unsupported !
-  CHANGE = Piduino::Pin::EdgeBoth,
   RISING = Piduino::Pin::EdgeRising,
-  FALLING = Piduino::Pin::EdgeFalling
+  FALLING = Piduino::Pin::EdgeFalling,
+  CHANGE = Piduino::Pin::EdgeBoth,
 };
+
+enum ArduinoBool {
+  HIGH = true,
+  LOW = false
+};
+
 typedef Piduino::Pin::Isr Isr;
+
+#else /* __cplusplus not defined */
+// -----------------------------------------------------------------------------
+#include <stdbool.h>
+#include <stdint.h>
+
+#define EXTERN_C
+
+typedef enum {
+  INPUT = 0,
+  OUTPUT,
+  INPUT_PULLUP,
+  INPUT_PULLDOWN // Not supported by Arduino !
+} ArduinoPinMode;
+
+typedef enum {
+  // LOW & HIGH unsupported !
+  RISING = 1,
+  FALLING,
+  CHANGE
+} ArduinoIntEdge ;
+
+typedef enum  {
+  HIGH = true,
+  LOW = false
+} ArduinoBool;
+
+typedef void (* Isr) (void);
+
+// -----------------------------------------------------------------------------
+#endif /* __cplusplus not defined */
+
 #define digitalPinToInterrupt(p) (p)
-#else
+
+#else /* __DOXYGEN__ defined */
 
 /**
  *  @defgroup piduino_arduino Arduino
@@ -68,9 +113,9 @@ enum ArduinoPinMode {
  */
 enum ArduinoIntEdge {
   // LOW & HIGH unsupported !
-  CHANGE, ///< front montant et descendant
   RISING, ///< front montant
   FALLING ///< front descendant
+  CHANGE, ///< front montant et descendant
 };
 
 /**
@@ -88,8 +133,6 @@ enum ArduinoIntEdge {
  */
 typedef void (* Isr) (void);
 
-#endif /* __DOXYGEN__ */
-
 /**
  * @enum ArduinoBool
  * @brief Valeur binaire
@@ -99,72 +142,87 @@ enum ArduinoBool {
   LOW = false   ///< état bas
 };
 
+
+#endif /* __DOXYGEN__ defined */
+
 // Digital pins ----------------------------------------------------------------
 /**
  * @brief Modification du mode d'une broche digitale
  *
  *  https://www.arduino.cc/en/Tutorial/DigitalPins
  */
-void pinMode (int pin, ArduinoPinMode mode);
+EXTERN_C void pinMode (int pin, ArduinoPinMode mode);
 
 /**
  * @brief Modification d'une broche digitale
  *
  *  https://www.arduino.cc/en/Tutorial/DigitalPins
  */
-void digitalWrite (int pin, int value);
+EXTERN_C void digitalWrite (int pin, int value);
 
 /**
  * @brief Lecture d'une broche digitale
  *
  *  https://www.arduino.cc/en/Tutorial/DigitalPins
  */
-int digitalRead (int pin);
+EXTERN_C int digitalRead (int pin);
 
 /**
  * @brief Basculement de l'état  d'une broche digitale
  *
  *  @warning Non disponible dans Arduino !
  */
-void digitalToggle (int pin); // Not supported by Arduino !
+EXTERN_C void digitalToggle (int pin); // Not supported by Arduino !
 
 // Interrupts ------------------------------------------------------------------
 /**
  * @brief Installe une routine d'interruption (Isr)
- * 
+ *
  * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
  */
-void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
+EXTERN_C void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
 
 /**
  * @brief Désinstalle une routine d'interruption (Isr)
- * 
+ *
  * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
  */
-void detachInterrupt (int pin);
+EXTERN_C void detachInterrupt (int pin);
 
 // Time ------------------------------------------------------------------------
 /**
  * @brief Pause pour une durée en millisecondes
  * @param ms durée de la pause en ms, -1 pour endormir le thread
  */
-void delay (unsigned long ms);
+EXTERN_C void delay (unsigned long ms);
 
 /**
  * @brief Pause pour une durée en microsecondes
  * @param ms durée de la pause en us, -1 pour endormir le thread
  */
-void delayMicroseconds (unsigned long us);
+EXTERN_C void delayMicroseconds (unsigned long us);
 
 /**
  * @brief Nombre de millisecondes depuis le lancement du programme
  */
-unsigned long millis();
+EXTERN_C unsigned long millis();
 
 /**
  * @brief Nombre de microsecondes depuis le lancement du programme
  */
-unsigned long micros();
+EXTERN_C unsigned long micros();
+
+/**
+ * @brief Définie la priorité en temps réel du thread appelant
+ *
+ * L'algorithme choisie est le round-robin. Sur un système Linux, la
+ * valeur normale de priorité est de 20, la valeur minimale est de 1 et
+ * la valeur maximale est de 99. Donner une valeur de 99 est une très
+ * mauvaise idée qui peut bloquer le système...
+ *
+ * @param priority valeur de la priorité
+ */
+EXTERN_C void setPriority (int priority);
 
 /**
 * @}

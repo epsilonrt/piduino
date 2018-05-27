@@ -15,64 +15,39 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#ifdef PIDUINO_WITH_GPIO
-// -----------------------------------------------------------------------------
 #include <piduino/arduino.h>
+#include <piduino/clock.h>
+#include <piduino/scheduler.h>
 
 using namespace Piduino;
 
 // -----------------------------------------------------------------------------
-void pinMode (int n, ArduinoPinMode mode) {
-  Pin::Pull p = Pin::PullOff;
-  Pin::Mode m = Pin::ModeOutput;
+void delay (unsigned long ms) {
 
-  if (mode != OUTPUT) {
-
-    m = Pin::ModeInput;
-    if (mode == INPUT_PULLUP) {
-      p = Pin::PullUp;
-    }
-    else if (mode == INPUT_PULLDOWN) {
-      p = Pin::PullDown;
-    }
-  }
-
-  if (gpio.open()) {
-    gpio.pin (n).setMode (m);
-    gpio.pin (n).setPull (p);
-  }
+  clk.delay (ms);
 }
 
 // -----------------------------------------------------------------------------
-void digitalWrite (int n, int value) {
+void delayMicroseconds (unsigned long us) {
 
-  gpio.pin (n).write (value);
+  clk.delayMicroseconds (us);
 }
 
 // -----------------------------------------------------------------------------
-void digitalToggle (int n) {
+unsigned long millis() {
 
-  gpio.pin (n).toggle ();
+  return clk.millis();
 }
 
 // -----------------------------------------------------------------------------
-int digitalRead (int n) {
+unsigned long micros() {
 
-  return gpio.pin (n).read();
+  return clk.micros();
 }
 
 // -----------------------------------------------------------------------------
-void attachInterrupt (int n, Pin::Isr isr, ArduinoIntEdge mode) {
-
-  gpio.pin (n).attachInterrupt (isr, static_cast<Pin::Edge> (mode));
+void setPriority (int priority) {
+  
+  Scheduler::setRtPriority(priority);
 }
-
-// -----------------------------------------------------------------------------
-void detachInterrupt (int n) {
-
-  gpio.pin (n).detachInterrupt();
-}
-// -----------------------------------------------------------------------------
-#endif  /* PIDUINO_WITH_GPIO */
 /* ========================================================================== */

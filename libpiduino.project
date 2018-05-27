@@ -71,6 +71,7 @@
     <File Name="src/database.cpp"/>
     <File Name="src/system.cpp"/>
     <File Name="src/piduino.cpp"/>
+    <File Name="src/arduino.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
