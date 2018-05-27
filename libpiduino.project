@@ -194,6 +194,7 @@
     <File Name="README.md"/>
     <File Name="cmake_uninstall.cmake.in"/>
     <File Name="TODO.md"/>
+    <File Name="README.FR_fr.md"/>
   </VirtualDirectory>
   <VirtualDirectory Name="lib">
     <File Name="lib/piduino.pc.in"/>
