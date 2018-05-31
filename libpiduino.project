@@ -72,6 +72,7 @@
     <File Name="src/piduino.cpp"/>
     <File Name="src/arduino.cpp"/>
     <File Name="src/iomap.cpp"/>
+    <File Name="src/iodevice.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -89,6 +90,7 @@
       <File Name="include/piduino/database.h"/>
       <File Name="include/piduino/configfile.h"/>
       <File Name="include/piduino/system.h"/>
+      <File Name="include/piduino/iodevice.h"/>
     </VirtualDirectory>
     <File Name="include/Arduino.h"/>
   </VirtualDirectory>

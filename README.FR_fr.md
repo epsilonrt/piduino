@@ -76,11 +76,11 @@ Plus.
 AllWinner Hx.  
 * Création des utilitaires `gpio` et `pinfo`
 * Passage de iomap en C++    
+* Création d'une classe purement virtuelle IoDevice  
 
 Ce qui reste à faire:
 
 * Nettoyage la détection d'architecture   
-* Création d'une classe purement virtuelle IoDevice  
 * API analogWrite()
 * API Port série  
 * API Bus I2C
