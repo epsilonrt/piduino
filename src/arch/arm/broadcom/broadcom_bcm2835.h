@@ -49,14 +49,14 @@ namespace Piduino {
 
     private:
       unsigned long _piobase;
-      xIoMap * _iomap;
+      IoMap  _iomap;
 
       inline unsigned int readReg (unsigned int offset) const {
-        return *pIo (_iomap, offset);
+        return *_iomap.io(offset);
       }
       
       inline void writeReg (unsigned int offset, unsigned int value) {
-        *pIo (_iomap, offset) = value;
+        *_iomap.io(offset) = value;
       }
 
       static const std::map<SoC::Id, unsigned long> _iobase;

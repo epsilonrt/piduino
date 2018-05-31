@@ -64,7 +64,6 @@
     <VirtualDirectory Name="spi"/>
     <File Name="src/clock.cpp"/>
     <File Name="src/scheduler.cpp"/>
-    <File Name="src/iomap.c"/>
     <File Name="src/board.cpp"/>
     <File Name="src/manufacturer.cpp"/>
     <File Name="src/soc.cpp"/>
@@ -72,6 +71,7 @@
     <File Name="src/system.cpp"/>
     <File Name="src/piduino.cpp"/>
     <File Name="src/arduino.cpp"/>
+    <File Name="src/iomap.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">

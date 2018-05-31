@@ -1,4 +1,4 @@
-/* Copyright © 2015 Pascal JEAN, All rights reserved.
+/* Copyright © 2015-2018 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * The Piduino Library is free software; you can redistribute it and/or
@@ -18,8 +18,6 @@
 #ifndef _PIDUINO_IOMAP_H_
 #define _PIDUINO_IOMAP_H_
 
-#include <stdbool.h>
-
 /**
  *  @defgroup piduino_iomap Accès mémoire IO
  *
@@ -28,76 +26,84 @@
  *  @{
  */
 
-#ifdef __cplusplus
-  extern "C" {
-#endif
+namespace Piduino {
 
-/* structures =============================================================== */
+  /**
+   * @class IoMap
+   * @brief Projection mémoire
+   */
+  class IoMap {
+    public:
+      /**
+       * @brief Constructeur
+       */
+      IoMap ();
 
-/**
- * @brief Projection mémoire
- *
- * Cet objet permet d'accéder à des registres d'entrée-sortie
- * (gpio, port parallèle...) \n
- * La structure est opaque pour l'utilisateur.
- */
-typedef struct xIoMap xIoMap;
+      /**
+       * @brief Destructeur
+       */
+      virtual ~IoMap();
 
-/* internal public functions ================================================ */
-/**
- * @brief Ouverture d'une projection mémoire
- *
- * @param base adresse de base de la zone à projeter
- * @param size taille de la zone à projeter en octets
- * @return pointeur sur la projection, NULL si erreur
- */
-xIoMap * xIoMapOpen (unsigned long base, unsigned int size);
+      /**
+       * @brief Ouverture d'une projection mémoire
+       *
+       * @param base adresse de base de la zone à projeter
+       * @param size taille de la zone à projeter en octets
+       * @return true si ouverte, false si erreur
+       */
+      bool open (unsigned long base, unsigned int size);
 
-/**
- * @brief Fermeture d'une projection mémoire
- *
- * @param p pointeur sur la projection
- */
-int iIoMapClose (xIoMap *p);
+      /**
+       * @brief Fermeture d'une projection mémoire
+       */
+      void close();
 
+      /**
+       * @brief Pointeur d'accès aux registres
+       * @param offset offset à l'intérieur de la zone en sizeof(int)
+       * @return le pointeur sur le registre, NULL si erreur
+       */
+      volatile unsigned int * io (unsigned int offset = 0) const;
 
-/**
- * @brief Indique si une projection mémoire est ouverte
- *
- * @param p pointeur sur la projection
- * @return true si ouverte
- */
-bool bIoMapIsOpen (const xIoMap *p);
+      /**
+       * @brief Pointeur d'accès aux registres
+       * @param offset offset à l'intérieur de la zone en sizeof(int)
+       * @return le pointeur sur le registre, NULL si erreur
+       */
+      volatile unsigned int * operator [] (unsigned int offset) const {
 
-/**
- * @brief Adresse de base de la zone projetée
- *
- * @param p pointeur sur la projection
- * @return la taille en octets
- */
-unsigned long ulIoMapBase (const xIoMap *p);
+        return io (offset);
+      }
 
-/**
- * @brief Taille de la zone projetée
- *
- * @param p pointeur sur la projection
- * @return l'adresse de base
- */
-unsigned int uIoMapSize (const xIoMap *p);
+      /**
+       * @brief Indique si une projection mémoire est ouverte
+       */
+      bool isOpen() const {
 
-/**
- * @brief Pointeur d'accès aux registres
- *
- * @param p pointeur sur la projection
- * @param offset offset à l'intérieur de la zone en sizeof(int)
- * @return le pointeur sur le registre, NULL si erreur
- */
-volatile unsigned int * pIo(const xIoMap *p, unsigned int offset);
+        return _fd >= 0;
+      }
 
-#ifdef __cplusplus
-  }
-#endif
+      /**
+       * @brief Adresse de base de la zone projetée
+       */
+      inline unsigned long base() const {
+        return _base;
+      }
 
+      /**
+       * @brief Taille de la zone projetée
+       */
+      inline unsigned int size() const {
+        return _size;
+      }
+
+    private:
+      unsigned long _base; /*< adresse de base de la zone */
+      unsigned int _size; /*< Taille de la zone */
+      int _fd;           /*< descripteur d'accès à la zone mémoire */
+      void * _map;         /*< pointeur de la zone */
+  };
+}
 /**
  * @}
  */

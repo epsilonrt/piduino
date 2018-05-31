@@ -51,7 +51,7 @@ namespace Piduino {
       const std::map<Pin::Mode, std::string> & modes() const;
 
     private:
-      xIoMap * iomap[2];
+      IoMap _iomap[2];
 
       static const int _portSize[];
       static const std::map<int, Pin::Mode> _int2mode;

@@ -88,26 +88,10 @@ namespace Piduino {
 
     if (!isOpen()) {
 
-      iomap[0] = xIoMapOpen (Io1Base, MapBlockSize);
-
-      if (iomap[0]) {
-
-        iomap[1] = xIoMapOpen (Io2Base, MapBlockSize);
-        if (iomap[1]) {
-
-
-          setOpen (true);
-          // debugPrintAllBanks ();
-        }
-        else {
-
-          iIoMapClose (iomap[0]);
-        }
-      }
-      if (!isOpen()) {
-
-        throw std::system_error (EACCES, std::system_category());
-      }
+      _iomap[0].open (Io1Base, MapBlockSize);
+      _iomap[1].open (Io2Base, MapBlockSize);
+      setOpen (true);
+      // debugPrintAllBanks ();
     }
     return isOpen();
   }
@@ -117,8 +101,8 @@ namespace Piduino {
   DeviceAllwinnerH::close() {
 
     if (isOpen()) {
-      iIoMapClose (iomap[0]);
-      iIoMapClose (iomap[1]);
+      _iomap[0].close();
+      _iomap[1].close();
       setOpen (false);
     }
   }
@@ -356,11 +340,11 @@ namespace Piduino {
 
       if (bkindex < 7) {
 
-        bk = (PioBank *) pIo (iomap[0], (Pio1Offset + bkindex * 0x24) >> 2);
+        bk = (PioBank *) (_iomap[0].io ( (Pio1Offset + bkindex * 0x24) >> 2));
       }
       else if (bkindex == 7) {
 
-        bk = (PioBank *) pIo (iomap[1], Pio2Offset >> 2);
+        bk = (PioBank *) (_iomap[1].io (Pio2Offset >> 2));
       }
     }
     else {

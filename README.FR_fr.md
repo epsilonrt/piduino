@@ -75,22 +75,23 @@ Plus.
 * Création des couches d'accès au SoC pour Broadcom BCM283X et 
 AllWinner Hx.  
 * Création des utilitaires `gpio` et `pinfo`
+* Passage de iomap en C++    
 
 Ce qui reste à faire:
 
-- Nettoyage la détection d'architecture   
-- Passage de iomap en C++    
-- Création d'une classe purement virtuelle IoDevice  
-- API Port série  
-- API Bus I2C
-- API Bus SPI  
-- Emulation setup() et loop() avec gestion du passage en mode daemon
-- Mise à jour README   
-- Classes Arduino (String ....)  
-- Pages Man pour les utilitaires  
-- Outil de gestion de la base de données des cartes sous Qt  
-- Documentation Doxygen des classes Database  
-- Création d'une page Web  
+* Nettoyage la détection d'architecture   
+* Création d'une classe purement virtuelle IoDevice  
+* API analogWrite()
+* API Port série  
+* API Bus I2C
+* API Bus SPI  
+* Emulation setup() et loop() avec gestion du passage en mode daemon
+* Mise à jour README   
+* Classes Arduino (String ....)  
+* Pages Man pour les utilitaires  
+* Outil de gestion de la base de données des cartes sous Qt  
+* Documentation Doxygen des classes Database  
+* Création d'une page Web  
 
 ## Dépendances
 

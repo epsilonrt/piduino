@@ -39,22 +39,23 @@ What was done
 * Creation of database model and addition of all variants of Raspberry Pi, Nano Pi Neo, Neo2, Neo Plus 2, M1, M1 Plus.  
 * Creation of SoC access layers for Broadcom BCM283X and AllWinner Hx.  
 * Creating `gpio` and` pinfo` utilities  
+* Passing iomap in C++  
 
 The rest of the things to do:
 
-- Cleaning the architecture detection  
-- Passing iomap in C++  
-- Creating a purely virtual class IoDevice  
-- Serial Port API  
-- I2C Bus API  
-- SPI Bus API  
-- Emulation setup () and loop () with management of the passage in daemon mode  
-- Update README  
-- Arduino Classes (String ....)  
-- Man Pages for Utilities  
-- Tool for managing the database of cards under Qt  
-- Database Doxygen Documentation  
-- Creating a web page
+* Cleaning the architecture detection  
+* Creating a purely virtual class IoDevice  
+* analogWrite() Software PWM feature  
+* Serial Port API  
+* I2C Bus API  
+* SPI Bus API  
+* Emulation setup () and loop () with management of the passage in daemon mode  
+* Update README  
+* Arduino Classes (String ....)  
+* Man Pages for Utilities  
+* Tool for managing the database of cards under Qt  
+* Database Doxygen Documentation  
+* Creating a web page
 
 ## Dependencies
 

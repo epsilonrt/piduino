@@ -54,7 +54,7 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   DeviceBcm2835::~DeviceBcm2835() {
   }
-  
+
 // -----------------------------------------------------------------------------
   unsigned int
   DeviceBcm2835::flags() const {
@@ -73,15 +73,8 @@ namespace Piduino {
 
     if (!isOpen()) {
 
-      _iomap = xIoMapOpen (_piobase, MapBlockSize);
-      if (_iomap) {
-
-        setOpen (true);
-      }
-      else {
-
-        throw std::system_error (errno, std::system_category(), __FUNCTION__);
-      }
+      _iomap.open (_piobase, MapBlockSize);
+      setOpen (true);
     }
     return isOpen();
   }
@@ -91,7 +84,8 @@ namespace Piduino {
   DeviceBcm2835::close() {
 
     if (isOpen()) {
-      iIoMapClose (_iomap);
+
+      _iomap.close();
       setOpen (false);
     }
   }
