@@ -38,7 +38,7 @@ namespace Piduino {
   };
 
 // -----------------------------------------------------------------------------
-  DeviceBcm2835::DeviceBcm2835() : Device () {
+  DeviceBcm2835::DeviceBcm2835() : GpioDevice () {
 
     if (db.board().soc().family().id() == SoC::Family::BroadcomBcm2835) {
 

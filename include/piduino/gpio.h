@@ -40,7 +40,7 @@
 
 namespace Piduino {
 
-  class Device;
+  class GpioDevice;
 
   /**
    *  @addtogroup piduino_gpio_class
@@ -259,7 +259,7 @@ namespace Piduino {
       /**
        * @brief Accès à la couche matérielle
        */
-      Device * device() const;
+      GpioDevice * device() const;
 
       /**
        * @brief Constructeur sous jacent
@@ -269,13 +269,13 @@ namespace Piduino {
        * @param device pointeur sur le driver de la plateforme
        * @param layer choix de la couche d'accès
        */
-      //explicit Gpio (Device * device, AccessLayer layer);
+      //explicit Gpio (GpioDevice * device, AccessLayer layer);
 
     private:
       bool _roc; // Release On Close
       bool _isopen;
       AccessLayer _accesslayer;
-      Device * _device; // Accès à la couche matérielle
+      GpioDevice * _device; // Accès à la couche matérielle
       Pin::Numbering _numbering; // Numérotation en cours
       std::shared_ptr<Descriptor> _descriptor;
       std::map<int, std::shared_ptr<Pin>> _pin; // Broches uniquement GPIO

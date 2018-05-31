@@ -24,7 +24,7 @@
 namespace Piduino {
 
   class Gpio;
-  class Device;
+  class GpioDevice;
 
   /**
    *  @addtogroup piduino_gpio_connector
@@ -267,7 +267,7 @@ namespace Piduino {
       /**
        * @brief Accès à la couche matérielle
        */
-      Device * device() const;
+      GpioDevice * device() const;
 
       /**
        * @brief Ouverture

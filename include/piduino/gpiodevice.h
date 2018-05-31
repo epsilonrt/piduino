@@ -26,14 +26,14 @@
 namespace Piduino {
 
   /*
-   * @class Device
+   * @class GpioDevice
    * @author Pascal JEAN
    * @date 02/22/18
    * @brief Accès à la couche matérielle du GPIO
    *
    * Classe abstraite devant être implémentée sur la plateforme cible.
    */
-  class Device {
+  class GpioDevice {
 
   public:
       enum {
@@ -42,8 +42,8 @@ namespace Piduino {
         hasAltRead  = 0x0004
       };
       
-      Device();
-      virtual ~Device();
+      GpioDevice();
+      virtual ~GpioDevice();
       virtual bool isOpen() const;
       virtual bool isDebug() const;
       virtual void setDebug (bool enable);

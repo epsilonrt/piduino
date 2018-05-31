@@ -27,7 +27,7 @@ namespace Piduino {
 //                        DeviceBcm2835 Class
 //
 // -----------------------------------------------------------------------------
-  class DeviceBcm2835 : public Device {
+  class DeviceBcm2835 : public GpioDevice {
 
     public:
       DeviceBcm2835();

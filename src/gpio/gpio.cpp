@@ -246,7 +246,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  Device *
+  GpioDevice *
   Gpio::device() const {
 
     return _device;

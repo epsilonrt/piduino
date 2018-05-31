@@ -57,7 +57,7 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-  DeviceAllwinnerH::DeviceAllwinnerH() : Device () {
+  DeviceAllwinnerH::DeviceAllwinnerH() : GpioDevice () {
 
     if (db.board().soc().family().id() != SoC::Family::AllwinnerH) {
 

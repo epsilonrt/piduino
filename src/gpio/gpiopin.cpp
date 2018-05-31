@@ -377,7 +377,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  Device *
+  GpioDevice *
   Pin::device() const {
 
     return connector()->device();
@@ -466,7 +466,7 @@ namespace Piduino {
 
       if (!_useSysFs) {
 
-        if (device()->flags() & Device::hasToggle) {
+        if (device()->flags() & GpioDevice::hasToggle) {
 
           device()->toggle (this);
           return;
@@ -699,7 +699,7 @@ namespace Piduino {
   Pin::readPull ()  {
 
     if (device()) {
-      if (device()->flags() & Device::hasPullRead) {
+      if (device()->flags() & GpioDevice::hasPullRead) {
 
         _pull = device()->pull (this);
         return;

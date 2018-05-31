@@ -21,57 +21,57 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
 //
-//                        Device Class
+//                        GpioDevice Class
 //
 // -----------------------------------------------------------------------------
-  Device::Device() : _isopen (false), _isdebug (false) {
+  GpioDevice::GpioDevice() : _isopen (false), _isdebug (false) {
 
   }
 
 // -----------------------------------------------------------------------------
-  Device::~Device() {
+  GpioDevice::~GpioDevice() {
 
   }
 
 // -----------------------------------------------------------------------------
   bool
-  Device::isOpen() const {
+  GpioDevice::isOpen() const {
 
     return _isopen;
   }
 
 // -----------------------------------------------------------------------------
   void
-  Device::setOpen (bool open) {
+  GpioDevice::setOpen (bool open) {
     _isopen = open;
   }
 
 // -----------------------------------------------------------------------------
   bool
-  Device::isDebug() const {
+  GpioDevice::isDebug() const {
     return _isdebug;
   }
 
 // -----------------------------------------------------------------------------
   void
-  Device::setDebug (bool enable) {
+  GpioDevice::setDebug (bool enable) {
     _isdebug = enable;
   }
 
 // -----------------------------------------------------------------------------
   void
-  Device::toggle (const Pin * pin) {
+  GpioDevice::toggle (const Pin * pin) {
   }
 
 // -----------------------------------------------------------------------------
   Pin::Pull
-  Device::pull (const Pin * pin) const {
+  GpioDevice::pull (const Pin * pin) const {
     return Pin::PullUnknown;
   }
 
 // -----------------------------------------------------------------------------
   unsigned int
-  Device::flags() const {
+  GpioDevice::flags() const {
     return 0;
   }
 // -----------------------------------------------------------------------------

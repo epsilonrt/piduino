@@ -28,7 +28,7 @@ namespace Piduino {
 //                          DeviceAllwinnerH Class
 //
 // -----------------------------------------------------------------------------
-  class DeviceAllwinnerH : public Device {
+  class DeviceAllwinnerH : public GpioDevice {
 
     public:
       DeviceAllwinnerH();
