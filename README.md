@@ -41,15 +41,18 @@ What was done
 * Creating `gpio` and` pinfo` utilities  
 * Switching iomap in C++  
 * Creating a purely virtual class IoDevice  
+* analogWrite() with GPIO software PWM feature (Polling with thread) 
 
 The rest of the things to do:
 
 * Cleaning the architecture detection  
-* analogWrite() Software PWM feature  
 * Serial Port API  
 * I2C Bus API  
 * SPI Bus API  
 * Emulation setup () and loop () with management of the passage in daemon mode  
+* analogWrite() with Software PWM feature (Kernel driver module)
+* analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
+* analogRead() with external ADC or Sensor ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
 * Update README  
 * Arduino Classes (String ....)  
 * Man Pages for Utilities  

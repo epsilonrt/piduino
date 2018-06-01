@@ -17,7 +17,7 @@
 
 #include <piduino/scheduler.h>
 #include <system_error>
-#include <sched.h>
+#include <pthread.h>
 
 namespace Piduino {
 
@@ -31,10 +31,11 @@ namespace Piduino {
   void Scheduler::setRtPriority (int priority) {
     struct sched_param sparam;
     int min, max;
+    int policy;
 
-    sched_setscheduler (0, SCHED_RR, &sparam);
-    min = sched_get_priority_min (SCHED_RR);
-    max = sched_get_priority_max (SCHED_RR);
+    min = sched_get_priority_min (SCHED_FIFO);
+    max = sched_get_priority_max (SCHED_FIFO);
+    pthread_getschedparam (pthread_self(), &policy, &sparam);
 
     if (priority < min) {
 
@@ -49,7 +50,7 @@ namespace Piduino {
       sparam.sched_priority = priority;
     }
 
-    if (sched_setscheduler (0, SCHED_RR, &sparam) < 0) {
+    if (pthread_setschedparam (pthread_self(), SCHED_FIFO, &sparam) < 0) {
 
       throw std::system_error (errno, std::system_category(), __FUNCTION__);
     }

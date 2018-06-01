@@ -15,13 +15,17 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
+#include <chrono>
 #include <piduino/scheduler.h>
-#include <piduino/clock.h>
 #include <piduino/gpiopwm.h>
 
+using namespace std::chrono;
+
 namespace Piduino {
-  
+
   std::string GpioPwm::_name = "GpioPwm";
+  typedef time_point<high_resolution_clock, nanoseconds> nanos_t;
+  typedef duration<double, std::nano> nanod_t;
 
   // ---------------------------------------------------------------------------
   GpioPwm::GpioPwm (Pin * p, unsigned int r, unsigned long c) :
@@ -76,23 +80,26 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  const std::string & 
+  const std::string &
   GpioPwm::name() const {
-    
+
     return _name;
   }
 
   // ---------------------------------------------------------------------------
   void *
   GpioPwm::generator (std::atomic<int> & flag, GpioPwm * pwm) {
-    unsigned long T = 1.0 / static_cast<double> (pwm->clock()) * 1E6 ;
-    double D = pwm->max() - pwm->min() + 1;
+    nanod_t T (1E9 / static_cast<double> (pwm->clock())) ;
+    double D = pwm->max() - pwm->min();
+    Pin * p = pwm->pin();
 
-    if ( (T > 0) && (D > 0)) {
-      Clock tclk;
-      unsigned long ton = 0;
-      unsigned long toff = 0;
-      Pin * p = pwm->pin();
+    if ( (T > nanod_t (0)) && (D > 0)) {
+      nanod_t ton;
+      nanod_t toff;
+
+      nanos_t next = time_point_cast<nanos_t::duration>
+                     (high_resolution_clock::time_point (high_resolution_clock::now()));
+      p->write (false);
 
       Scheduler::setRtPriority (90);
 
@@ -101,18 +108,24 @@ namespace Piduino {
 
           if (flag & FlagValueUpdated) {
 
-            ton = static_cast<double> (pwm->read()) / D * T;
+            ton = nanod_t ( (static_cast<double> (pwm->read()) * T) / D) ;
             toff = T - ton;
             flag &= ~FlagValueUpdated;
           }
 
-          if (ton) {
-            tclk.delayMicroseconds (ton);
+          if (ton > nanod_t (0)) {
+
+            next += duration_cast<nanoseconds> (toff);
+            std::this_thread::sleep_until (next);
             p->write (true);
           }
 
-          tclk.delayMicroseconds (toff);
-          p->write (false);
+          if (toff > nanod_t (0)) {
+            
+            next += duration_cast<nanoseconds> (ton);
+            std::this_thread::sleep_until (next);
+            p->write (false);
+          }
         }
       }
       catch (std::system_error & e) {
@@ -124,20 +137,21 @@ namespace Piduino {
 
       }
     }
+    p->write (false);
     return 0;
   }
 
   // ---------------------------------------------------------------------------
   void
   GpioPwm::write (long v) {
-
-    if ( (v >= min()) && (v <= max())) {
-      _value = v;
-      _flag |= FlagValueUpdated;
+    if (v < min()) {
+      v = min();
     }
-    else {
-      // TODO: illegal value
+    if (v > max()) {
+      v = max();
     }
+    _value = v;
+    _flag |= FlagValueUpdated;
   }
 
   // ---------------------------------------------------------------------------

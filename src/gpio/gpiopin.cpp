@@ -17,6 +17,7 @@
 
 #include <piduino/gpio.h>
 #include <piduino/gpiodevice.h>
+#include <piduino/gpiopwm.h>
 #include <piduino/scheduler.h>
 #include <exception>
 #include <fstream>
@@ -97,16 +98,45 @@ namespace Piduino {
   };
 
   // ---------------------------------------------------------------------------
-  Pin::Pin (Connector * parent, const Descriptor * desc) :
+  Pin::Pin (Connector * parent, const Descriptor * desc, const std::string & dn) :
     _isopen (false), _parent (parent), _descriptor (desc), _holdMode (ModeUnknown),
     _holdPull (PullUnknown), _holdState (false), _useSysFs (false),
     _valueFd (-1), _firstPolling (true), _edge (EdgeUnknown), _mode (ModeUnknown),
-    _pull (PullUnknown), _run (false) {
+    _pull (PullUnknown), _run (false), _dac (0), _dacName (dn) {
 
     if ( (parent->gpio()->accessLayer() & AccessLayerIoMap) != AccessLayerIoMap) {
 
       _useSysFs = true;
     }
+
+    if (type() == TypeGpio) {
+      if (_dacName == "GpioPwm") {
+
+        _dac = std::make_shared<GpioPwm> (this);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  Pin::analogWrite (long value) {
+
+    if (_dac) {
+
+      _dac->write (value);
+      if (!_dac->isOpen()) {
+
+        setMode (ModeOutput);
+        _dac->open();
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  Converter &
+  Pin::dac() {
+
+    return *_dac;
   }
 
   // ---------------------------------------------------------------------------
@@ -284,7 +314,7 @@ namespace Piduino {
 
     return _descriptor->name.at (m);
   }
-  
+
   // ---------------------------------------------------------------------------
   long long
   Pin::id() const {

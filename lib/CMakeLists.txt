@@ -37,12 +37,16 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/database.h
   ${PIDUINO_INC_DIR}/piduino/configfile.h
   ${PIDUINO_INC_DIR}/piduino/system.h
+  ${PIDUINO_INC_DIR}/piduino/iodevice.h
+  ${PIDUINO_INC_DIR}/piduino/converter.h
+  ${PIDUINO_INC_DIR}/piduino/pwm.h
 )
 
 set (hdr_gpio 
   ${PIDUINO_INC_DIR}/piduino/gpio.h
   ${PIDUINO_INC_DIR}/piduino/gpiopin.h
   ${PIDUINO_INC_DIR}/piduino/gpioconnector.h
+  ${PIDUINO_INC_DIR}/piduino/gpiopwm.h
   ${PIDUINO_INC_DIR}/piduino/arduino.h
 )
 

@@ -25,6 +25,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <piduino/converter.h>
 
 namespace Piduino {
 
@@ -252,6 +253,16 @@ namespace Piduino {
       void write (bool value);
 
       /**
+       * @brief Génération signal analogique
+       * Le type de signal dépend de la plate-forme, la plupart du temps, il
+       * s'agit d'un signal PWM. \n
+       * Le mode de la borche est éventuellement modifié afin de générer le 
+       * signal demandé.
+       * @param value valeur entre dac().min() et dac().max()
+       */
+      void analogWrite (long value);
+
+      /**
        * @brief Bascule de l'état binaire d'une sortie
        *
        * Si la sortie est à l'état bas, elle passe à l'état haut et inversement.
@@ -340,6 +351,11 @@ namespace Piduino {
        * @brief Type de broche
        */
       Type type() const;
+
+      /**
+       * @brief DAC utilisé par la broche
+       */
+      Converter & dac();
 
       /**
        * @brief Numéro de la broche dans la numérotation logique \c NumberingLogical
@@ -554,8 +570,8 @@ namespace Piduino {
        * @param parent pointeur sur le GPIO parent
        * @param desc pointeur sur la description
        */
-      Pin (Connector * parent, const Descriptor * desc);
-
+      Pin (Connector * parent, const Descriptor * desc, const std::string & dacName = "GpioPwm");
+      
       /**
        * @brief Desctructeur
        */
@@ -595,6 +611,9 @@ namespace Piduino {
 
       std::atomic<int> _run;  // indique au thread de continuer
       std::thread _thread;
+      
+      std::shared_ptr<Converter> _dac;
+      std::string _dacName;
 
       static const std::map<Pull, std::string> _pulls;
       static const std::map<Type, std::string> _types;

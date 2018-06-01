@@ -35,7 +35,7 @@ namespace Piduino {
   class GpioPwm : public Pwm {
 
     public:
-      GpioPwm (Pin * pin, unsigned int resolution = 16, unsigned long clock = 1000);
+      GpioPwm (Pin * pin, unsigned int resolution = 10, unsigned long clock = 1000);
       virtual ~GpioPwm();
 
       virtual bool open ();

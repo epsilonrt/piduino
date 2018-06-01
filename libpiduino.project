@@ -60,6 +60,7 @@
       <File Name="src/gpio/gpio-database.cpp"/>
       <File Name="src/gpio/gpioconnector-database.cpp"/>
       <File Name="src/gpio/gpiopin-database.cpp"/>
+      <File Name="src/gpio/gpiopwm.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="spi"/>
     <File Name="src/clock.cpp"/>
@@ -73,6 +74,8 @@
     <File Name="src/arduino.cpp"/>
     <File Name="src/iomap.cpp"/>
     <File Name="src/iodevice.cpp"/>
+    <File Name="src/converter.cpp"/>
+    <File Name="src/pwm.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -91,6 +94,9 @@
       <File Name="include/piduino/configfile.h"/>
       <File Name="include/piduino/system.h"/>
       <File Name="include/piduino/iodevice.h"/>
+      <File Name="include/piduino/converter.h"/>
+      <File Name="include/piduino/pwm.h"/>
+      <File Name="include/piduino/gpiopwm.h"/>
     </VirtualDirectory>
     <File Name="include/Arduino.h"/>
   </VirtualDirectory>
