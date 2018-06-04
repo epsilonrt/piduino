@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_GPIO_DEVICE_H_
-#define _PIDUINO_GPIO_DEVICE_H_
+#ifndef PIDUINO_GPIO_DEVICE_H
+#define PIDUINO_GPIO_DEVICE_H
 
 #include <piduino/board.h>
 #include <piduino/gpio.h>
@@ -74,4 +74,4 @@ namespace Piduino {
 }
 #endif /* DOXYGEN not defined */
 /* ========================================================================== */
-#endif /*_PIDUINO_GPIO_DEVICE_H_ defined */
+#endif /*PIDUINO_GPIO_DEVICE_H defined */

@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_MANUFACTURER_H_
-#define _PIDUINO_MANUFACTURER_H_
+#ifndef PIDUINO_MANUFACTURER_H
+#define PIDUINO_MANUFACTURER_H
 
 #include <string>
 
@@ -72,4 +72,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_MANUFACTURER_H_ defined */
+#endif /*PIDUINO_MANUFACTURER_H defined */

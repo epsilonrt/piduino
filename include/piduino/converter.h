@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_CONVERTER_H_
-#define _PIDUINO_CONVERTER_H_
+#ifndef PIDUINO_CONVERTER_H
+#define PIDUINO_CONVERTER_H
 
 #include <string>
 #include <piduino/iodevice.h>
@@ -68,4 +68,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_CONVERTER_H_ defined */
+#endif /*PIDUINO_CONVERTER_H defined */

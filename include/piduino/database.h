@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _PIDUINO_DATABASE_H_
-#define _PIDUINO_DATABASE_H_
+#ifndef PIDUINO_DATABASE_H
+#define PIDUINO_DATABASE_H
 
 #include <string>
 #include <memory>
@@ -258,4 +258,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_DATABASE_H_ defined */
+#endif /*PIDUINO_DATABASE_H defined */

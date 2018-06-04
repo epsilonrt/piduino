@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_SYSTEM_H_
-#define _PIDUINO_SYSTEM_H_
+#ifndef PIDUINO_SYSTEM_H
+#define PIDUINO_SYSTEM_H
 
 #include <string>
 #include <vector>
@@ -176,4 +176,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_SYSTEM_H_ defined */
+#endif /*PIDUINO_SYSTEM_H defined */

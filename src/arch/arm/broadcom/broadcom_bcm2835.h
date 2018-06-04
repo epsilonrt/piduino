@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H_
-#define _PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H_
+#ifndef PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H
+#define PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H
 
 #include <piduino/gpiodevice.h>
 #include <piduino/iomap.h>
@@ -92,4 +92,4 @@ namespace Piduino {
   };
 }
 /* ========================================================================== */
-#endif /*_PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H_ defined */
+#endif /*PIDUINO_ARCH_ARM_BROADCOM_BCM2835_H defined */

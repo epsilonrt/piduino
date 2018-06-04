@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_GPIO_H_
-#define _PIDUINO_GPIO_H_
+#ifndef PIDUINO_GPIO_H
+#define PIDUINO_GPIO_H
 
 #include <string>
 #include <vector>
@@ -293,4 +293,4 @@ namespace Piduino {
 }
 
 /* ========================================================================== */
-#endif /*_PIDUINO_GPIO_H_ defined */
+#endif /*PIDUINO_GPIO_H defined */

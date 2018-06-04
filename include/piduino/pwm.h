@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_PWM_H_
-#define _PIDUINO_PWM_H_
+#ifndef PIDUINO_PWM_H
+#define PIDUINO_PWM_H
 
 #include <piduino/converter.h>
 
@@ -45,4 +45,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_PWM_H_ defined */
+#endif /*PIDUINO_PWM_H defined */

@@ -19,8 +19,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_CONFIG_H_
-#define _PIDUINO_CONFIG_H_
+#ifndef PIDUINO_CONFIG_H_
+#define PIDUINO_CONFIG_H_
 /* ========================================================================== */
 #define PIDUINO_WITH_GPIO   @PIDUINO_WITH_GPIO@
 #define PIDUINO_WITH_I2C    @PIDUINO_WITH_I2C@
@@ -38,4 +38,4 @@
 #define PIDUINO_VERSION_SHA1  @PIDUINO_VERSION_SHA1@
 
 /* ========================================================================== */
-#endif /*_PIDUINO_CONFIG_H_ defined */
+#endif /*PIDUINO_CONFIG_H_ defined */

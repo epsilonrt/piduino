@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_SCHEDULER_H_
-#define _PIDUINO_SCHEDULER_H_
+#ifndef PIDUINO_SCHEDULER_H
+#define PIDUINO_SCHEDULER_H
 
 /**
  *  @defgroup piduino_sceduler Scheduler
@@ -57,4 +57,4 @@ namespace Piduino {
 */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_SCHEDULER_H_ defined */
+#endif /*PIDUINO_SCHEDULER_H defined */

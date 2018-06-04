@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_ARDUINO_H_
-#define _PIDUINO_ARDUINO_H_
+#ifndef PIDUINO_ARDUINO_H
+#define PIDUINO_ARDUINO_H
 
 #ifndef __DOXYGEN__
 
@@ -229,4 +229,4 @@ EXTERN_C void setPriority (int priority);
 */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_ARDUINO_H_ defined */
+#endif /*PIDUINO_ARDUINO_H defined */

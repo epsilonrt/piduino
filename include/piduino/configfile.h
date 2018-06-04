@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_CONFIGFILE_H_
-#define _PIDUINO_CONFIGFILE_H_
+#ifndef PIDUINO_CONFIGFILE_H
+#define PIDUINO_CONFIGFILE_H
 
 #include <iostream>
 #include <string>
@@ -255,4 +255,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_CONFIGFILE_H_ defined */
+#endif /*PIDUINO_CONFIGFILE_H defined */

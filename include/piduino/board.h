@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_BOARD_H_
-#define _PIDUINO_BOARD_H_
+#ifndef PIDUINO_BOARD_H
+#define PIDUINO_BOARD_H
 
 #include <piduino/system.h>
 
@@ -34,4 +34,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_BOARD_H_ defined */
+#endif /*PIDUINO_BOARD_H defined */

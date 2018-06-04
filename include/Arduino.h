@@ -15,9 +15,9 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _ARDUINO_H_
-#define _ARDUINO_H_
+#ifndef __ARDUINO_H__
+#define __ARDUINO_H__
 
 #include <piduino/arduino.h>
 
-#endif /*_ARDUINO_H_ defined */
+#endif /*__ARDUINO_H__ defined */

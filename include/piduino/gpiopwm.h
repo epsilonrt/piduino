@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_GPIOPWM_H_
-#define _PIDUINO_GPIOPWM_H_
+#ifndef PIDUINO_GPIOPWM_H
+#define PIDUINO_GPIOPWM_H
 
 #include <atomic>
 #include <thread>
@@ -69,4 +69,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_GPIOPWM_H_ defined */
+#endif /*PIDUINO_GPIOPWM_H defined */

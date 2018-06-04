@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_GPIO_CONNECTOR_H_
-#define _PIDUINO_GPIO_CONNECTOR_H_
+#ifndef PIDUINO_GPIO_CONNECTOR_H
+#define PIDUINO_GPIO_CONNECTOR_H
 
 #include <iostream>
 #include <piduino/gpiopin.h>
@@ -330,4 +330,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_GPIO_CONNECTOR_H_ defined */
+#endif /*PIDUINO_GPIO_CONNECTOR_H defined */

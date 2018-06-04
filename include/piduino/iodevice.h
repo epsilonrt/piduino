@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_IODEVICE_H_
-#define _PIDUINO_IODEVICE_H_
+#ifndef PIDUINO_IODEVICE_H
+#define PIDUINO_IODEVICE_H
 
 
 /**
@@ -64,4 +64,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_IODEVICE_H_ defined */
+#endif /*PIDUINO_IODEVICE_H defined */

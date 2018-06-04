@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_IOMAP_H_
-#define _PIDUINO_IOMAP_H_
+#ifndef PIDUINO_IOMAP_H
+#define PIDUINO_IOMAP_H
 
 /**
  *  @defgroup piduino_iomap Accès mémoire IO
@@ -109,4 +109,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*_PIDUINO_IOMAP_H_ defined */
+#endif /*PIDUINO_IOMAP_H defined */

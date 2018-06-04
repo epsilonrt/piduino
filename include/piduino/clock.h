@@ -15,8 +15,8 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _PIDUINO_CLOCK_H_
-#define _PIDUINO_CLOCK_H_
+#ifndef PIDUINO_CLOCK_H
+#define PIDUINO_CLOCK_H
 
 #include <cstdint>
 
@@ -128,4 +128,4 @@ namespace Piduino {
 }
 
 /* ========================================================================== */
-#endif /*_PIDUINO_CLOCK_H_ defined */
+#endif /*PIDUINO_CLOCK_H defined */
