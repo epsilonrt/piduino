@@ -21,10 +21,7 @@
 #include <piduino/arduino.h>
 
 #ifdef __cplusplus
-#include <iostream>
 using namespace std;
-#else
-#include <stdio.h>
 #endif
 
 #ifndef EXTERN_C

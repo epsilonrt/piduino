@@ -21,7 +21,45 @@
 #ifndef __DOXYGEN__
 
 #ifdef __cplusplus
+extern "C"{
+#endif
+
+/* constants ================================================================ */
+#define PI 3.1415926535897932384626433832795
+#define HALF_PI 1.5707963267948966192313216916398
+#define TWO_PI 6.283185307179586476925286766559
+#define DEG_TO_RAD 0.017453292519943295769236907684886
+#define RAD_TO_DEG 57.295779513082320876798154814105
+#define EULER 2.718281828459045235360287471352
+
+/* macros =================================================================== */
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+#define radians(deg) ((deg)*DEG_TO_RAD)
+#define degrees(rad) ((rad)*RAD_TO_DEG)
+#define sq(x) ((x)*(x))
+
+#define lowByte(w) ((uint8_t) ((w) & 0xff))
+#define highByte(w) ((uint8_t) ((w) >> 8))
+
+#define bitRead(value, bit) (((value) >> (bit)) & 0x01)
+#define bitSet(value, bit) ((value) |= (1UL << (bit)))
+#define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
+#define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
+#define bit(b) (1UL << (b))
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#ifdef __cplusplus
 // -----------------------------------------------------------------------------
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
+#include <iostream>
 #include <piduino/gpio.h>
 
 #define EXTERN_C extern "C"
@@ -51,6 +89,10 @@ typedef Piduino::Pin::Isr Isr;
 // -----------------------------------------------------------------------------
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <stdio.h>
 
 #define EXTERN_C
 
@@ -79,6 +121,11 @@ typedef void (* Isr) (void);
 #endif /* __cplusplus not defined */
 
 #define digitalPinToInterrupt(p) (p)
+
+/* types ==================================================================== */
+typedef unsigned int word;
+typedef uint8_t boolean;
+typedef uint8_t byte;
 
 #else /* __DOXYGEN__ defined */
 
@@ -173,6 +220,17 @@ EXTERN_C int digitalRead (int pin);
  *  @warning Non disponible dans Arduino !
  */
 EXTERN_C void digitalToggle (int pin); // Not supported by Arduino !
+
+// Analog pins -----------------------------------------------------------------
+/**
+ * @brief Writes an analog value (PWM wave) to a pin. 
+ * @param pin  the pin to write to.
+ * @param value the duty cycle: between 0 (always off) and 255 (always on). 
+ */
+EXTERN_C void analogWrite(int pin, int value);
+
+//int analogRead(uint8_t);
+//void analogReference(uint8_t mode);
 
 // Interrupts ------------------------------------------------------------------
 /**

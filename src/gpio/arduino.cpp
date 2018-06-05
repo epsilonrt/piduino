@@ -63,6 +63,19 @@ int digitalRead (int n) {
 }
 
 // -----------------------------------------------------------------------------
+void analogWrite(int n, int v) {
+  unsigned int r = gpio.pin(n).dac().resolution();
+  
+  if (r > 8) {
+    v <<= r - 8;
+  }
+  if (r < 8) {
+    v >>= 8 - r;
+  }
+  gpio.pin(n).analogWrite (v);
+}
+
+// -----------------------------------------------------------------------------
 void attachInterrupt (int n, Pin::Isr isr, ArduinoIntEdge mode) {
 
   gpio.pin (n).attachInterrupt (isr, static_cast<Pin::Edge> (mode));
