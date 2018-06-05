@@ -12,9 +12,6 @@
           <File Name="examples/noarduino/gpio/waitforint/CMakeLists.txt"/>
           <File Name="examples/noarduino/gpio/waitforint/waitforint.cpp"/>
         </VirtualDirectory>
-        <VirtualDirectory Name="fading">
-          <File Name="examples/noarduino/gpio/fading/main.cpp"/>
-        </VirtualDirectory>
         <VirtualDirectory Name="blink">
           <File Name="examples/noarduino/gpio/blink/CMakeLists.txt"/>
           <File Name="examples/noarduino/gpio/blink/blink.cpp"/>
@@ -22,6 +19,9 @@
         <VirtualDirectory Name="interrupt">
           <File Name="examples/noarduino/gpio/interrupt/CMakeLists.txt"/>
           <File Name="examples/noarduino/gpio/interrupt/interrupt.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="fade">
+          <File Name="examples/noarduino/gpio/fade/fade.cpp"/>
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
@@ -33,6 +33,9 @@
     </VirtualDirectory>
     <VirtualDirectory Name="interrupt">
       <File Name="examples/interrupt/interrupt.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="fade">
+      <File Name="examples/fade/fade.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src">

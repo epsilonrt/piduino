@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="waitforint" Version="10.0.0" InternalType="Console">
+<CodeLite_Project Name="fade" Version="10.0.0" InternalType="Console">
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="waitforint.cpp"/>
+    <File Name="fade.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
