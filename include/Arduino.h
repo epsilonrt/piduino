@@ -20,4 +20,46 @@
 
 #include <piduino/arduino.h>
 
+#ifdef __cplusplus
+#include <iostream>
+using namespace std;
+#else
+#include <stdio.h>
+#endif
+
+#ifndef EXTERN_C
+#define EXTERN_C extern "C"
+#ifdef __cplusplus
+#define EXTERN_C extern "C"
+#else /* __cplusplus not defined */
+#define EXTERN_C
+#endif /* __cplusplus not defined */
+#endif /* EXTERN_C not defined */
+
+EXTERN_C void setup();
+EXTERN_C void loop();
+
+#if !(defined(ARDUINO_NOSETUP) && defined(ARDUINO_NOLOOP))
+#ifndef ARDUINO_NOARGS
+static int argc;
+static char **argv;
+int main (int __arduino_argc, char **__arduino_argv) {
+  argc = __arduino_argc;
+  argv = __arduino_argv;
+#else
+int main () {
+#endif
+
+#ifndef ARDUINO_NOSETUP
+  setup();
+#endif /* ARDUINO_NOSETUP not defined */
+#ifndef ARDUINO_NOLOOP
+  for (;;) {
+    loop();
+  }
+#endif  /* ARDUINO_NOLOOP not defined */
+  return 0;
+}
+#endif /* !(defined(ARDUINO_NOSETUP) && defined(ARDUINO_NOLOOP)) */
+
 #endif /*__ARDUINO_H__ defined */

@@ -1,12 +1,12 @@
 // interrupt
 
-// This program captures the rising and falling edges sent on a digital pin. 
-// A led copies the state of the input signal and the console displays the 
+// This program captures the rising and falling edges sent on a digital pin.
+// A led copies the state of the input signal and the console displays the
 // time differences between edges.
 
 // How to make this program work ?
 
-// 1- Connect the irqPin to another pin of the GPIO connector with a wire 
+// 1- Connect the irqPin to another pin of the GPIO connector with a wire
 // (eg Pin 10: Pin Header 24, GPIOC3 for NanoPi, GPIO8 for RaspberryPi).
 
 // 2- Configure pin 10 as output with the gpio utility:
@@ -21,17 +21,14 @@
 
 // 5- The console should display the time differences between edges (100ms):
 //  Press Ctrl+C to abort ...
-//  27047:	0
-//  100:	  1
-//  100:	  0
-//  100:	  1
+//  27047:  0
+//  100:    1
+//  100:    0
+//  100:    1
 
 // Created 6 March 2018
 // This example code is in the public domain.
-
-#include <iostream>
 #include <Arduino.h> // all the magic is here ;-)
-using namespace std;
 
 // <DANGER> Be careful !!! Before launching this program :
 //    -> Check that the pin below is well connected to an LED ! <-
@@ -47,35 +44,30 @@ void isr() {
   int value;
 
   t2 = millis(); // second time
-  
+
   // reads the binary value
   value = digitalRead (irqPin);
 
   // copy irq value to led
   digitalWrite (ledPin, value);
-  
+
   // prints the time difference between edges and the state of the irq pin.
   cout << t2 - t1 << ":\t" << value << endl;
   t1 = t2; // the new time becomes the first for the next irq
 }
 
-int main () {
-
-  // setup begin
+void setup() {
   // initialize digital pin ledPin as an output.
   pinMode (ledPin, OUTPUT);
   // initialize digital pin irqPin as an input with pull-up (for button ?)
   pinMode (irqPin, INPUT_PULLUP);
   // attach interrupt service routine isr to irqPin, called for each edge
   attachInterrupt (irqPin, isr, CHANGE);
-  cout << "Press Ctrl+C to abort ..." << endl;
-  // setup end
+}
 
-  for (;;) { // Infinite loop, Press Ctrl+C to abort ...
-
-    delay (-1); // nothing to do, we sleep ...
-  }
-
-  return 0;
+void loop () {
+  
+  // Press Ctrl+C to abort ...
+  delay (-1); // nothing to do, we sleep ...
 }
 // -----------------------------------------------------------------------------

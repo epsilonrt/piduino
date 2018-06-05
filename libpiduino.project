@@ -6,33 +6,33 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="examples">
-    <VirtualDirectory Name="arduino">
-      <VirtualDirectory Name="interrupt">
-        <File Name="examples/arduino/interrupt/interrupt.cpp"/>
-        <File Name="examples/arduino/interrupt/CMakeLists.txt"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="button">
-        <File Name="examples/arduino/button/CMakeLists.txt"/>
-        <File Name="examples/arduino/button/button.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="blink">
-        <File Name="examples/arduino/blink/blink.cpp"/>
-        <File Name="examples/arduino/blink/CMakeLists.txt"/>
+    <VirtualDirectory Name="noarduino">
+      <VirtualDirectory Name="gpio">
+        <VirtualDirectory Name="waitforint">
+          <File Name="examples/noarduino/gpio/waitforint/CMakeLists.txt"/>
+          <File Name="examples/noarduino/gpio/waitforint/waitforint.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="fading">
+          <File Name="examples/noarduino/gpio/fading/main.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="blink">
+          <File Name="examples/noarduino/gpio/blink/CMakeLists.txt"/>
+          <File Name="examples/noarduino/gpio/blink/blink.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="interrupt">
+          <File Name="examples/noarduino/gpio/interrupt/CMakeLists.txt"/>
+          <File Name="examples/noarduino/gpio/interrupt/interrupt.cpp"/>
+        </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
-    <VirtualDirectory Name="gpio">
-      <VirtualDirectory Name="interrupt">
-        <File Name="examples/gpio/interrupt/interrupt.cpp"/>
-        <File Name="examples/gpio/interrupt/CMakeLists.txt"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="blink">
-        <File Name="examples/gpio/blink/blink.cpp"/>
-        <File Name="examples/gpio/blink/CMakeLists.txt"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="waitforint">
-        <File Name="examples/gpio/waitforint/CMakeLists.txt"/>
-        <File Name="examples/gpio/waitforint/waitforint.cpp"/>
-      </VirtualDirectory>
+    <VirtualDirectory Name="blink">
+      <File Name="examples/blink/blink.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="button">
+      <File Name="examples/button/button.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="interrupt">
+      <File Name="examples/interrupt/interrupt.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src">

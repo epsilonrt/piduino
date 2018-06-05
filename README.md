@@ -42,6 +42,7 @@ What was done
 * Switching iomap in C++  
 * Creating a purely virtual class IoDevice  
 * analogWrite() with GPIO software PWM feature (Polling with thread) 
+* Emulate setup() and loop() for Arduino compatibility (in Arduino.h)
 
 The rest of the things to do:
 
@@ -49,14 +50,14 @@ The rest of the things to do:
 * Serial Port API  
 * I2C Bus API  
 * SPI Bus API  
-* Emulation setup () and loop () with management of the passage in daemon mode  
+* Enabling daemon mode for loop()
 * analogWrite() with Software PWM feature (Kernel driver module)
 * analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
 * analogRead() with external ADC or Sensor ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
 * Update README  
 * Arduino Classes (String ....)  
 * Man Pages for Utilities  
-* Tool for managing the database of cards under Qt  
+* Tool for managing the database of boards with Qt  
 * Database Doxygen Documentation (English)  
 * Creating a web page
 
