@@ -79,6 +79,7 @@
     <File Name="src/iodevice.cpp"/>
     <File Name="src/converter.cpp"/>
     <File Name="src/pwm.cpp"/>
+    <File Name="src/wstring.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -102,6 +103,7 @@
       <File Name="include/piduino/gpiopwm.h"/>
     </VirtualDirectory>
     <File Name="include/Arduino.h"/>
+    <File Name="include/WString.h"/>
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
