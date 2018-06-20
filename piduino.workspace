@@ -5,14 +5,14 @@
   <Project Name="libpiduino-dev" Path="dev/libpiduino-dev.project" Active="No"/>
   <Project Name="piduino-utils" Path="utils/piduino-utils.project" Active="No"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
       <Project Name="libpiduino" ConfigName="Debug"/>
       <Project Name="libpiduino-doc" ConfigName="Debug"/>
       <Project Name="libpiduino-dev" ConfigName="Debug"/>
       <Project Name="piduino-utils" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
       <Project Name="libpiduino" ConfigName="Release"/>
       <Project Name="libpiduino-doc" ConfigName="Release"/>

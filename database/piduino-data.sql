@@ -929,6 +929,8 @@ INSERT INTO `board_model` (id,name,board_family_id,soc_id) VALUES (12,'NanoPi M1
 INSERT INTO `board_model` (id,name,board_family_id,soc_id) VALUES (13,'NanoPi M1+',1,3);
 INSERT INTO `board_model` (id,name,board_family_id,soc_id) VALUES (14,'NanoPi Neo 2',1,4);
 INSERT INTO `board_model` (id,name,board_family_id,soc_id) VALUES (15,'NanoPi Neo+ 2',1,4);
+INSERT INTO `board_model` (id,name,board_family_id,soc_id) VALUES (16,'NanoPi Core',1,3);
+INSERT INTO `board_model` (id,name,board_family_id,soc_id) VALUES (17,'NanoPi Core2',1,4);
 INSERT INTO `board_family` (id,name) VALUES (-1,'Unknown');
 INSERT INTO `board_family` (id,name) VALUES (0,'RaspberryPi');
 INSERT INTO `board_family` (id,name) VALUES (1,'NanoPi');
@@ -971,6 +973,8 @@ INSERT INTO `board` (id,tag,revision,ram,pcb_revision,board_model_id,gpio_id,man
 INSERT INTO `board` (id,tag,revision,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id) VALUES (34,'nanopim1plus',NULL,NULL,NULL,13,6,6);
 INSERT INTO `board` (id,tag,revision,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id) VALUES (35,'nanopineo2',NULL,NULL,NULL,14,4,6);
 INSERT INTO `board` (id,tag,revision,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id) VALUES (36,'nanopineoplus2',NULL,NULL,NULL,15,4,6);
+INSERT INTO `board` (id,tag,revision,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id) VALUES (37,'nanopineocore',NULL,NULL,NULL,16,4,6);
+INSERT INTO `board` (id,tag,revision,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id) VALUES (38,'nanopineocore2',NULL,NULL,NULL,17,4,6);
 INSERT INTO `arch` (id,name) VALUES (-1,'Unknown');
 INSERT INTO `arch` (id,name) VALUES (0,'ARM');
 COMMIT;

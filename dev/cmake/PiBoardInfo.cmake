@@ -40,13 +40,15 @@ function(GetPiBoardInfo)
     if ((${cpu} MATCHES ".*sun8i.*") OR (${cpu} MATCHES ".*sun50i.*"))
     
       # Allwinner sunxi  -------------------------------------------------------
-      # board               Gpio Rev. SoC     Arch      SoC ID
-      # nanopineo           1         H3      sun8i     sun8iw7
-      # nanopineoair        1         H3      sun8i     sun8iw7
-      # nanopineo2          1         H5      sun50i    sun50iw2
-      # nanopineoplus2      1         H5      sun50i    sun50iw2
-      # nanopim1            2         H3      sun8i     sun8iw7
-      # nanopim1plus        3         H3      sun8i     sun8iw7
+      # board               Gpio Rev. SoC     Arch      SoC ID    System
+      # nanopineo           1         H3      sun8i     sun8iw7   Armbian
+      # nanopineocore       1         H3      sun8i     sun8i     Ubuntu 16.04 Friendlyelec variant
+      # nanopineoair        1         H3      sun8i     sun8iw7   Armbian
+      # nanopineo2          1         H5      sun50i    sun50iw2  Armbian
+      # nanopineoplus2      1         H5      sun50i    sun50iw2  Armbian
+      # nanopineocore2      1         H5      sun50i    sun50iw2  Ubuntu 16.04 Friendlyelec variant
+      # nanopim1            2         H3      sun8i     sun8iw7   Armbian
+      # nanopim1plus        3         H3      sun8i     sun8iw7   Armbian
       find_program(armbian_board NAMES armbian-board PATHS ${PROJECT_TOOLS_PATHS})
       if (armbian_board)
       
@@ -57,6 +59,10 @@ function(GetPiBoardInfo)
         if ("${board}" STREQUAL "nanopineo")
           set (PIBOARD_ID BOARD_NANOPI_NEO PARENT_SCOPE)
           set (PIBOARD_NAME "NanoPi Neo" PARENT_SCOPE)
+          set (PIBOARD_GPIO_REVISION 1 PARENT_SCOPE)
+        elseif ("${board}" STREQUAL "nanopineocore")
+          set (PIBOARD_ID BOARD_NANOPI_NEOCORE PARENT_SCOPE)
+          set (PIBOARD_NAME "NanoPi Neo Core" PARENT_SCOPE)
           set (PIBOARD_GPIO_REVISION 1 PARENT_SCOPE)
         elseif ("${board}" STREQUAL "nanopineoair")
           set (PIBOARD_ID BOARD_NANOPI_AIR PARENT_SCOPE)
@@ -77,6 +83,10 @@ function(GetPiBoardInfo)
         elseif ("${board}" STREQUAL "nanopineoplus2")
           set (PIBOARD_ID BOARD_NANOPI_NEOPLUS2 PARENT_SCOPE)
           set (PIBOARD_NAME "NanoPi Neo Plus2" PARENT_SCOPE)
+          set (PIBOARD_GPIO_REVISION 1 PARENT_SCOPE)
+        elseif ("${board}" STREQUAL "nanopineocore2")
+          set (PIBOARD_ID BOARD_NANOPI_NEOCORE2 PARENT_SCOPE)
+          set (PIBOARD_NAME "NanoPi Neo Core2" PARENT_SCOPE)
           set (PIBOARD_GPIO_REVISION 1 PARENT_SCOPE)
         else()
           message (WARNING "Unknown ArmBian board !")

@@ -248,5 +248,6 @@
     <File Name="database/piduino-schema.sql"/>
     <File Name="database/README.md"/>
     <File Name="database/build"/>
+    <File Name="database/piduino-data-core.sql"/>
   </VirtualDirectory>
 </CodeLite_Project>
