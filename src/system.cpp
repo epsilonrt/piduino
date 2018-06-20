@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
+#include <algorithm>
 #include <sys/sysinfo.h>
 #include <piduino/system.h>
 #include <piduino/configfile.h>
@@ -195,8 +196,8 @@ namespace Piduino {
         std::istringstream sts (cfg.value ("Features"));
 
         while (std::getline (sts, str, ' ')) {
-          
-          _core.features.push_back(str);
+
+          _core.features.push_back (str);
         }
       }
       _ncore = cfg.value<int> ("processor", 0) + 1;
@@ -234,18 +235,46 @@ namespace Piduino {
     BOARD_TYPE=conf
     INITRD_ARCH=arm
     KERNEL_IMAGE_TYPE=zImage
+
+    /etc/friendlyelec-release
+    BOARD="NanoPi-NEO-Core2"
+    BOARD_NAME="NanoPi-NEO-Core2"
+    LINUXFAMILY=Allwinnersun50iw2Family
+    BRANCH=dev
+    BOARD_VENDOR=FriendlyELEC
+    ARCH=arm
+
    */
 
   // ---------------------------------------------------------------------------
   System::ArmbianInfo::ArmbianInfo() : _valid (false) {
+    std::vector<std::string> filename = { "/etc/friendlyelec-release",
+                                          "/etc/armbian-release"
+                                        };
+    int findex = -1;
 
-    if (fileExist ("/etc/armbian-release")) {
+    for (int i = 0; i < filename.size(); i++) {
 
-      ConfigFile cfg ("/etc/armbian-release");
+      if (fileExist (filename[i])) {
+        findex = i;
+        break;
+      }
+    }
+
+    if (findex >= 0) {
+
+      ConfigFile cfg (filename[findex]);
       _valid = true;
       _board = cfg.value ("BOARD");
+      transform (_board.begin(), _board.end(), _board.begin(), ::tolower);
+      _board.erase(std::remove(_board.begin(), _board.end(), '-'), _board.end());
       _boardName = cfg.value ("BOARD_NAME");
-      _version = cfg.value ("VERSION");
+
+      if (cfg.keyExists ("VERSION")) {
+
+        _version = cfg.value ("VERSION");
+      }
+
       if (cfg.keyExists ("BOARDFAMILY")) {
 
         _family = cfg.value ("BOARDFAMILY");

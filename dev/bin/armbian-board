@@ -1,4 +1,10 @@
 #!/bin/sh
+if [ -r /etc/friendlyelec-release ]; then
+  . /etc/friendlyelec-release
+  echo "$BOARD" | tr '[:upper:]' '[:lower:]' | sed s/-//g
+  exit 0
+fi
+
 if [ -r /etc/armbian-release ]; then
   . /etc/armbian-release
   echo "$BOARD"

@@ -1,4 +1,16 @@
 #!/bin/sh
+if [ -r /etc/friendlyelec-release ]; then
+  . /etc/friendlyelec-release
+  if [ "_$BOARDFAMILY" = "_" ]; then
+    cpu="$LINUXFAMILY"
+  else
+    cpu="$BOARDFAMILY"
+  fi
+  cpu=$(echo "$cpu" | sed s/Allwinner//g | sed s/Family//g)
+  echo "$cpu"
+  exit 0
+fi
+
 if [ -r /etc/armbian-release ]; then
   . /etc/armbian-release
   if [ "_$BOARDFAMILY" = "_" ]; then
@@ -6,9 +18,9 @@ if [ -r /etc/armbian-release ]; then
   else
     cpu="$BOARDFAMILY"
   fi
+  echo "$cpu"
+  exit 0
 fi
 
-if [ "_$cpu" = "_" ]; then
-  cpu=$(cat /proc/cpuinfo | awk '/Hardware/ { print $3 }' | tr '[:upper:]' '[:lower:]')
-fi
+cpu=$(cat /proc/cpuinfo | awk '/Hardware/ { print $3 }' | tr '[:upper:]' '[:lower:]')
 echo "$cpu"
