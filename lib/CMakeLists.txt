@@ -217,8 +217,8 @@ install (TARGETS piduino-shared
   PUBLIC_HEADER DESTINATION "${INSTALL_INCLUDE_DIR}/piduino" COMPONENT dev
   )
 
-install(FILES
-  "${hdr_root}" DESTINATION "${INSTALL_INCLUDE_DIR}" COMPONENT dev)
+install(DIRECTORY
+  "${PIDUINO_INC_DIR}/piduino/arduino" DESTINATION "${INSTALL_INCLUDE_DIR}/piduino" COMPONENT dev)
 
 if(PIDUINO_WITH_STATIC)
   install (TARGETS piduino-static 
