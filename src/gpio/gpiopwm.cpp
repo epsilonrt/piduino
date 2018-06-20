@@ -51,7 +51,7 @@ namespace Piduino {
 
     if (!isOpen()) {
 
-      if (Pwm::open (Pwm::ReadWrite)) {
+      if (Pwm::open (OpenMode::ReadWrite)) {
 
         _flag = FlagRun | FlagValueUpdated;
         _thread = std::thread (generator, std::ref (_flag), this);

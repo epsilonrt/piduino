@@ -14,60 +14,54 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include <piduino/iodevice.h>
+#include <piduino/private/iodevice_p.h>
 
 namespace Piduino {
 
   // ---------------------------------------------------------------------------
-  IoDevice::IoDevice() : _openMode (NotOpen) {
+  IoDevice::Private::Private (bool _isSequential) :
+    openMode (OpenMode::NotOpen), isSequential (_isSequential) {}
+
+  // ---------------------------------------------------------------------------
+  IoDevice::Private::~Private()  {}
+
+  // ---------------------------------------------------------------------------
+  IoDevice::IoDevice (IoDevice::Private &dd) : d (&dd) {
 
   }
-  
+
+  // ---------------------------------------------------------------------------
+  IoDevice::IoDevice (bool isSequential) :
+    d (std::make_unique<Private> (isSequential))  {
+
+  }
+
   // ---------------------------------------------------------------------------
   IoDevice::~IoDevice() {
 
   }
 
   // ---------------------------------------------------------------------------
-  IoDevice::OpenMode
-  IoDevice::openMode() const {
-
-    return _openMode;
-  }
-
-  // ---------------------------------------------------------------------------
   void
   IoDevice::setOpenMode (OpenMode m) {
 
-    _openMode = m;
+    d->openMode = m;
   }
 
   // ---------------------------------------------------------------------------
-  bool
-  IoDevice::isOpen() const {
+  IoDevice::OpenMode
+  IoDevice::openMode() const {
 
-    return _openMode != NotOpen;
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  IoDevice::isReadable() const {
-
-    return (openMode() & ReadOnly) != 0;
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  IoDevice::isWritable() const {
-
-    return (openMode() & WriteOnly) != 0;
+    return d->openMode;
   }
 
   // ---------------------------------------------------------------------------
   bool
   IoDevice::open (OpenMode m) {
 
-    setOpenMode (m);
+    if (!isOpen()) {
+      setOpenMode (m);
+    }
     return true;
   }
 
@@ -76,8 +70,75 @@ namespace Piduino {
   IoDevice::close() {
 
     if (isOpen()) {
-      _openMode = NotOpen;
+      d->errorString.clear();
+      setOpenMode (OpenMode::NotOpen);
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  IoDevice::isOpen() const {
+
+    return openMode() != OpenMode::NotOpen;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  IoDevice::isReadable() const {
+
+    return (openMode() & OpenMode::ReadOnly) == OpenMode::ReadOnly;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool 
+  IoDevice::isBuffered() const {
+
+    return (openMode() & OpenMode::Unbuffered) != OpenMode::Unbuffered;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  IoDevice::isWritable() const {
+
+    return (openMode() & OpenMode::WriteOnly) == OpenMode::WriteOnly;
+  }
+
+  // ---------------------------------------------------------------------------
+  std::string
+  IoDevice::errorString() const {
+
+    return d->errorString;
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::setErrorString (const std::string &errorString) {
+
+    d->errorString = errorString;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  IoDevice::isSequential() const {
+
+    return d->isSequential;
+  }
+
+  // ---------------------------------------------------------------------------
+  void IoDevice::setTextModeEnabled (bool enabled) {
+
+    if (enabled) {
+      d->openMode |= OpenMode::Text;
+    }
+    else {
+      d->openMode &= ~OpenMode::Text;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  bool IoDevice::isTextModeEnabled() const {
+
+    return (openMode() & OpenMode::Text) == OpenMode::Text;
   }
 }
 

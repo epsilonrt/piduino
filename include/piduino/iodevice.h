@@ -18,6 +18,9 @@
 #ifndef PIDUINO_IODEVICE_H
 #define PIDUINO_IODEVICE_H
 
+#include <piduino/memory.h>
+#include <piduino/flags.h>
+#include <string>
 
 /**
  *  @defgroup piduino_iodevice IO Device
@@ -30,7 +33,7 @@ namespace Piduino {
 
     public:
 
-      enum OpenMode {
+      enum class OpenMode {
         NotOpen = 0x0000,
         ReadOnly = 0x0001,
         WriteOnly = 0x0002,
@@ -41,23 +44,50 @@ namespace Piduino {
         Unbuffered = 0x0020
       };
 
-      IoDevice();
+      explicit IoDevice(bool isSequential = false);
       virtual ~IoDevice();
 
       OpenMode openMode() const;
       virtual bool isOpen() const;
       bool isReadable() const;
       bool isWritable() const;
+      bool isBuffered() const;
+      /**
+       * Returns true if this device is sequential; otherwise returns false.
+       * 
+       * Sequential devices, as opposed to a random-access devices, have no 
+       * concept of a start, an end, a size, or a current position, and they
+       * do not support seeking. You can only read from the device when it 
+       * reports that data is available. The most common example of a sequential 
+       * device is a network socket. On Unix, special files such as /dev/zero 
+       * and fifo pipes are sequential.
+       * 
+       * Regular files, on the other hand, do support random access. They have 
+       * both a size and a current position, and they also support seeking 
+       * backwards and forwards in the data stream. Regular files are non-sequential.
+       * 
+       * The QIODevice implementation returns false.
+       */
+      virtual bool isSequential() const;
+
+      void setTextModeEnabled (bool enabled);
+      bool isTextModeEnabled() const;
 
       virtual bool open (OpenMode mode);
       virtual void close();
+      std::string errorString() const;
 
     protected:
+      class Private;
+      IoDevice (Private &dd);
       void setOpenMode (OpenMode openMode);
+      void setSequential (bool enable);
+      void setErrorString (const std::string &errorString);
 
     private:
-      OpenMode _openMode;
+      std::unique_ptr<IoDevice::Private> d;
   };
+  ENABLE_FLAGS_OPERATORS (IoDevice::OpenMode);
 }
 /**
  *  @}

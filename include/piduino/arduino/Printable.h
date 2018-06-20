@@ -20,7 +20,6 @@
 #ifndef Printable_h
 #define Printable_h
 
-#include <new.h>
 
 class Print;
 

@@ -24,6 +24,7 @@ endif()
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
   
 file(GLOB src_piduino ${PIDUINO_SRC_DIR}/*.c ${PIDUINO_SRC_DIR}/*.cpp)
+file(GLOB src_arduino ${PIDUINO_SRC_DIR}/arduino/cores/*.cpp)
 #file(GLOB src_arch  ${PIDUINO_SRC_ARCH_DIR}/*.c ${PIDUINO_SRC_ARCH_DIR}/*.cpp)
 #file(GLOB src_board  ${PIDUINO_SRC_BOARD_DIR}/*.c ${PIDUINO_SRC_BOARD_DIR}/*.cpp)
 
@@ -37,7 +38,11 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/database.h
   ${PIDUINO_INC_DIR}/piduino/configfile.h
   ${PIDUINO_INC_DIR}/piduino/system.h
+  ${PIDUINO_INC_DIR}/piduino/memory.h
+  ${PIDUINO_INC_DIR}/piduino/ringbuffer.h
+  ${PIDUINO_INC_DIR}/piduino/flags.h
   ${PIDUINO_INC_DIR}/piduino/iodevice.h
+  ${PIDUINO_INC_DIR}/piduino/chardevice.h
   ${PIDUINO_INC_DIR}/piduino/converter.h
   ${PIDUINO_INC_DIR}/piduino/pwm.h
 )
@@ -50,8 +55,12 @@ set (hdr_gpio
   ${PIDUINO_INC_DIR}/piduino/arduino.h
 )
 
-set (hdr_gpio_root 
-  ${PIDUINO_INC_DIR}/Arduino.h
+set (hdr_arduino 
+  ${PIDUINO_INC_DIR}/piduino/arduino/Arduino.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/WString.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Print.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Printable.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Stream.h
 )
 
 set (hdr_i2c
@@ -76,7 +85,7 @@ if (PIDUINO_WITH_GPIO)
   file(GLOB src_gpio ${PIDUINO_SRC_DIR}/gpio/*.c ${PIDUINO_SRC_DIR}/gpio/*.cpp ${PIDUINO_SRC_DIR}/arch/arm/)
   file(GLOB_RECURSE src_device ${PIDUINO_SRC_DIR}/arch/*.cpp)
   list(APPEND hdr_public ${hdr_gpio})
-  list(APPEND hdr_root ${hdr_gpio_root})
+  list(APPEND hdr_root ${hdr_arduino})
 endif (PIDUINO_WITH_GPIO)
 
 if (PIDUINO_WITH_I2C)
@@ -98,11 +107,12 @@ endif (PIDUINO_WITH_SERIAL)
 #message ("src_device=${src_device}")
 
 set (libsrc ${src_piduino} ${src_device}
-  ${src_gpio} ${src_i2c} ${src_spi} ${src_serial}
+  ${src_gpio} ${src_i2c} ${src_spi} ${src_serial} ${src_arduino}
   )
 
 include_directories(BEFORE
   ${PIDUINO_INC_DIR} 
+  ${PIDUINO_INC_DIR}/piduino/arduino 
   ${PIDUINO_SRC_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -154,13 +164,13 @@ file(RELATIVE_PATH REL_INCLUDE_DIR "${PIDUINO_INSTALL_CMAKE_DIR}"
   "${INSTALL_INCLUDE_DIR}")
 
 # ... for the build tree
-set(CONF_INCLUDE_DIRS "${PIDUINO_INC_DIR}" "${PIDUINO_SRC_DIR}" "${PROJECT_BINARY_DIR}")
+set(CONF_INCLUDE_DIRS "${PIDUINO_INC_DIR}" "${PIDUINO_INC_DIR}/piduino/arduino" "${PIDUINO_SRC_DIR}" "${PROJECT_BINARY_DIR}")
 set(CONF_LIB_DIRS "${PROJECT_BINARY_DIR}/lib/piduino")
 configure_file(piduino-config.cmake.in
   "${PROJECT_BINARY_DIR}/piduino-config.cmake" @ONLY)
 
 # ... for the install tree
-set(CONF_INCLUDE_DIRS "\${PIDUINO_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+set(CONF_INCLUDE_DIRS "\${PIDUINO_CMAKE_DIR}/${REL_INCLUDE_DIR}" "\${PIDUINO_CMAKE_DIR}/${REL_INCLUDE_DIR}/piduino/arduino")
 set(CONF_LIB_DIRS "\${PIDUINO_CMAKE_DIR}/${REL_LIB_DIR}")
 configure_file(piduino-config.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/piduino-config.cmake" @ONLY)

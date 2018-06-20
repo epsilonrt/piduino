@@ -9,6 +9,7 @@ List of things to do in chronological order (Last update: 2018-04-05)
 
 * Cleaning the architecture detection  
 * Serial Port API  
+* derive GpioDevice from IoDevice
 * I2C Bus API  
 * SPI Bus API  
 * Enabling daemon mode for loop()

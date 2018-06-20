@@ -12,5 +12,5 @@ URL: https://github.com/epsilonrt/piduino
 Version: @PIDUINO_VERSION@
 Requires: 
 Libs: -L${libdir} -lpiduino ${ldflags_other}
-Cflags: -I${includedir} ${cflags_other}
+Cflags: -I${includedir} -I${includedir}/piduino/arduino ${cflags_other}
 

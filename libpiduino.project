@@ -80,6 +80,13 @@
     <File Name="src/converter.cpp"/>
     <File Name="src/pwm.cpp"/>
     <File Name="src/wstring.cpp"/>
+    <VirtualDirectory Name="arduino">
+      <VirtualDirectory Name="cores">
+        <File Name="src/arduino/cores/Print.cpp"/>
+        <File Name="src/arduino/cores/Stream.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <File Name="src/chardevice.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -101,9 +108,22 @@
       <File Name="include/piduino/converter.h"/>
       <File Name="include/piduino/pwm.h"/>
       <File Name="include/piduino/gpiopwm.h"/>
+      <VirtualDirectory Name="arduino">
+        <File Name="include/piduino/arduino/WString.h"/>
+        <File Name="include/piduino/arduino/Print.h"/>
+        <File Name="include/piduino/arduino/Arduino.h"/>
+        <File Name="include/piduino/arduino/Printable.h"/>
+        <File Name="include/piduino/arduino/Stream.h"/>
+      </VirtualDirectory>
+      <File Name="include/piduino/chardevice.h"/>
+      <File Name="include/piduino/ringbuffer.h"/>
+      <File Name="include/piduino/memory.h"/>
+      <VirtualDirectory Name="private">
+        <File Name="include/piduino/private/iodevice_p.h"/>
+        <File Name="include/piduino/private/chardevice_p.h"/>
+      </VirtualDirectory>
+      <File Name="include/piduino/flags.h"/>
     </VirtualDirectory>
-    <File Name="include/Arduino.h"/>
-    <File Name="include/WString.h"/>
   </VirtualDirectory>
   <Description/>
   <Dependencies/>

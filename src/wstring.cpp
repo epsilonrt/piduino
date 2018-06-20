@@ -91,7 +91,7 @@ String String::toString (long num, unsigned char base) {
 }
 
 // -----------------------------------------------------------------------------
-void 
+void
 String::getBytes (unsigned char *buf, unsigned int bufsize, unsigned int index) const {
 
   if (!bufsize || !buf) {
@@ -107,6 +107,17 @@ String::getBytes (unsigned char *buf, unsigned int bufsize, unsigned int index) 
   }
   strncpy ( (char *) buf, c_str() + index, n);
   buf[n] = 0;
+}
+
+// -----------------------------------------------------------------------------
+void
+String::replace (const String& str1, const String& str2) {
+  size_t found;
+
+  while ( (found = find (str1)) != std::string::npos) {
+
+    std::string::replace (found, str1.length(), str2);
+  }
 }
 
 /* ========================================================================== */

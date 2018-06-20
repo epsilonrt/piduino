@@ -1,5 +1,5 @@
 /**
- * \file circular_buffer-main.cpp
+ * \file RingBuffer-main.cpp
  *
  * \brief   Tests for STL-style circular buffer
  * \author  Martin Moene
@@ -7,29 +7,17 @@
  * \since   0.0.0
  */
 
-// VC2010: cl -W4 -EHsc -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -I%BOOST_INCLUDE% circular_buffer-main.cpp
-//    VC6: cl -W3 -EHsc -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -I%BOOST_INCLUDE% circular_buffer-main.cpp
-
-#include "ringbuffer.h"
+#include <piduino/ringbuffer.h>
 
 #include <cassert>
-
 #include <algorithm>
 #include <iterator>
 #include <iostream>
 
-#if defined( _MSC_VER ) && ( _MSC_VER >= 1200 ) && ( _MSC_VER < 1300 )
-# define COMPILER_IS_MSVC6
-#endif
 
 /*
  * dimension_of( array ):
  */
-#ifdef COMPILER_IS_MSVC6
-
-# define dimension_of( a ) (sizeof( a ) / sizeof( 0[a] ) )
-
-#else
 template< int n >
 struct char_array_wrapper {
   char result[n];
@@ -38,69 +26,52 @@ struct char_array_wrapper {
 template< typename T, int s >
 char_array_wrapper<s> the_type_of_the_variable_is_not_an_array (T const (&array) [s]) { }
 
-# define dimension_of(v) sizeof( the_type_of_the_variable_is_not_an_array(v).result )
+#define dimension_of(v) sizeof( the_type_of_the_variable_is_not_an_array(v).result )
 
-#endif
+using namespace Piduino;
 
-/*
- * value_type and test data:
- */
-using namespace spm;
+typedef RingBuffer<int> RingBufferInt;
 
-typedef int value_type;
-typedef circular_buffer<value_type> circular_buffer_int;
+const int data[] = { 1, 3, 5, 7, 9, 11, 13, 15, };
 
-const value_type data[] = { 1, 3, 5, 7, 9, 11, 13, 15, };
+// -----------------------------------------------------------------------------
+int * begin (int * pos) {
 
-value_type *       begin (value_type * pos) {
-  return pos;
-}
-const value_type * begin (const value_type * pos) {
   return pos;
 }
 
-/*
- * dimension_of( array )
- */
-#if defined COMPILER_IS_MSVC6
+// -----------------------------------------------------------------------------
+const int * begin (const int * pos) {
 
-// VC6 Note: size is fixed to that of data[]:
-
-value_type * end (value_type (&a) [dimension_of (data)]) {
-  return &a[0] + dimension_of (data);
-}
-const value_type * end (const value_type (&a) [dimension_of (data)]) {
-  return &a[0] + dimension_of (data);
+  return pos;
 }
 
-#else
+// -----------------------------------------------------------------------------
+template <int N>
+int * end (int (&array) [N]) {
 
-template < int N >
-value_type * end (value_type (&array) [N]) {
   return &array[0] + N;
 }
 
-template < int N >
-const value_type * end (const value_type (&array) [N]) {
+// -----------------------------------------------------------------------------
+template <int N>
+const int * end (const int (&array) [N]) {
+
   return &array[0] + N;
 }
 
-#endif
-
-/*
- * Circular buffer:
- */
-
+// -----------------------------------------------------------------------------
 void testThatDefaultConstructedBufferCapacityMatches() {
-  circular_buffer_int b;
+  RingBufferInt b;
 
   assert (1 == b.capacity());
   assert (0 == b.size());
   assert (b.empty());
 }
 
+// -----------------------------------------------------------------------------
 void testThatResizedBufferCapacityMatches() {
-  circular_buffer_int b;
+  RingBufferInt b;
 
   b.reserve (5);
   assert (5 == b.capacity());
@@ -108,8 +79,9 @@ void testThatResizedBufferCapacityMatches() {
   assert (b.empty());
 }
 
+// -----------------------------------------------------------------------------
 void testThatPushBackBackContentsMatches() {
-  circular_buffer_int b (3);
+  RingBufferInt b (3);
   b.push_back (9);
 
   assert (! b.empty());
@@ -117,16 +89,18 @@ void testThatPushBackBackContentsMatches() {
   assert (9 == b.back());
 }
 
+// -----------------------------------------------------------------------------
 void testThatPushBackFrontContentsMatches() {
-  circular_buffer_int b (3);
+  RingBufferInt b (3);
   b.push_back (9);
 
   assert (1 == b.size());
   assert (9 == b.front());
 }
 
+// -----------------------------------------------------------------------------
 void testThatPopFrontContentsMatches() {
-  circular_buffer_int b (3);
+  RingBufferInt b (3);
   b.push_back (9);
   b.push_back (7);
 
@@ -136,8 +110,9 @@ void testThatPopFrontContentsMatches() {
   assert (7 == b.front());
 }
 
+// -----------------------------------------------------------------------------
 void testThatClearEmptiesBuffer() {
-  circular_buffer_int b (3);
+  RingBufferInt b (3);
   b.push_back (9);
 
   assert (! b.empty());
@@ -149,8 +124,9 @@ void testThatClearEmptiesBuffer() {
   assert (0 == b.size());
 }
 
+// -----------------------------------------------------------------------------
 void testThatUncheckedIndexContentsMatches() {
-  circular_buffer_int b (3);
+  RingBufferInt b (3);
   b.push_back (9);
   b.push_back (7);
 
@@ -159,8 +135,9 @@ void testThatUncheckedIndexContentsMatches() {
   assert (7 == b[1]);
 }
 
+// -----------------------------------------------------------------------------
 void testThatValidCheckedIndexContentsMatches() {
-  circular_buffer_int b (3);
+  RingBufferInt b (3);
   b.push_back (9);
   b.push_back (7);
 
@@ -169,8 +146,9 @@ void testThatValidCheckedIndexContentsMatches() {
   assert (7 == b.at (1));
 }
 
+// -----------------------------------------------------------------------------
 void testThatInvalidCheckedIndexThrows() {
-  circular_buffer_int b (3);
+  RingBufferInt b (3);
   b.push_back (9);
   b.push_back (7);
 
@@ -185,15 +163,16 @@ void testThatInvalidCheckedIndexThrows() {
   assert (0 && "expected std::out_of_range exception");
 }
 
+// -----------------------------------------------------------------------------
 void testThatCopyConstructedBufferContentsMatch() {
   const unsigned int N = 3;
-  circular_buffer_int b (N);
+  RingBufferInt b (N);
 
   b.push_back (1);
   b.push_back (2);
   b.push_back (5);
 
-  circular_buffer_int c (b);
+  RingBufferInt c (b);
 
   assert (N == b.size());
   assert (N == c.size());
@@ -202,22 +181,24 @@ void testThatCopyConstructedBufferContentsMatch() {
   assert (b == c);
 }
 
+// -----------------------------------------------------------------------------
 void testThatIterationConstructedBufferSmallerThanCapacityContentsMatch() {
   const unsigned int N = 3;
-  circular_buffer_int b (begin (data), begin (data) + N);
+  RingBufferInt b (begin (data), begin (data) + N);
 
   assert (N == b.size());
 
   assert (std::equal (begin (b), begin (b) + 3, begin (data)));
 }
 
+// -----------------------------------------------------------------------------
 void testThatIterationConstructedBufferLargerThanCapacityContentsMatch() {
   const unsigned int N = dimension_of (data);
   const unsigned int M = 5;
 
   assert (N > M);
 
-  circular_buffer_int b (M);
+  RingBufferInt b (M);
 
   std::copy (begin (data), end (data), std::back_inserter (b));
 
@@ -226,10 +207,11 @@ void testThatIterationConstructedBufferLargerThanCapacityContentsMatch() {
   assert (std::equal (begin (b), end (b), begin (data) + N - M));
 }
 
+// -----------------------------------------------------------------------------
 void testThatAssignedBufferComparesEqual() {
   const unsigned int N = dimension_of (data);
-  circular_buffer_int b (begin (data), begin (data) + N);
-  circular_buffer_int c;
+  RingBufferInt b (begin (data), begin (data) + N);
+  RingBufferInt c;
 
   c = b;
 
@@ -239,10 +221,11 @@ void testThatAssignedBufferComparesEqual() {
   assert (std::equal (begin (b), end (b), begin (data)));
 }
 
+// -----------------------------------------------------------------------------
 void testThatEqualityOperatorComparesEqual() {
   const unsigned int N = dimension_of (data);
-  circular_buffer_int b (begin (data), begin (data) + N);
-  circular_buffer_int c (begin (data), begin (data) + N);
+  RingBufferInt b (begin (data), begin (data) + N);
+  RingBufferInt c (begin (data), begin (data) + N);
 
   assert (N == b.size());
   assert (N == c.size());
@@ -251,10 +234,11 @@ void testThatEqualityOperatorComparesEqual() {
   assert (c == b);
 }
 
+// -----------------------------------------------------------------------------
 void testThatEqualityOperatorComparesNotEqual() {
   const unsigned int N = dimension_of (data) - 3;
-  circular_buffer_int b (begin (data) + 1, begin (data) + 1 + N);
-  circular_buffer_int c (begin (data) + 2, begin (data) + 2 + N);
+  RingBufferInt b (begin (data) + 1, begin (data) + 1 + N);
+  RingBufferInt c (begin (data) + 2, begin (data) + 2 + N);
 
   assert (N == b.size());
   assert (N == c.size());
@@ -263,10 +247,11 @@ void testThatEqualityOperatorComparesNotEqual() {
   assert (! (c == b));
 }
 
+// -----------------------------------------------------------------------------
 void testThatInequalityOperatorComparesUnequal() {
   const unsigned int N = dimension_of (data) - 3;
-  circular_buffer_int b (begin (data) + 1, begin (data) + 1 + N);
-  circular_buffer_int c (begin (data) + 2, begin (data) + 2 + N);
+  RingBufferInt b (begin (data) + 1, begin (data) + 1 + N);
+  RingBufferInt c (begin (data) + 2, begin (data) + 2 + N);
 
   assert (N == b.size());
   assert (N == c.size());
@@ -275,10 +260,11 @@ void testThatInequalityOperatorComparesUnequal() {
   assert (c != b);
 }
 
+// -----------------------------------------------------------------------------
 void testThatInequalityOperatorComparesNotUnequal() {
   const unsigned int N = dimension_of (data);
-  circular_buffer_int b (begin (data), begin (data) + N);
-  circular_buffer_int c (begin (data), begin (data) + N);
+  RingBufferInt b (begin (data), begin (data) + N);
+  RingBufferInt c (begin (data), begin (data) + N);
 
   assert (N == b.size());
   assert (N == c.size());
@@ -287,10 +273,11 @@ void testThatInequalityOperatorComparesNotUnequal() {
   assert (! (c != b));
 }
 
+// -----------------------------------------------------------------------------
 void testThatLessThanOperatorComparesLessThan() {
   const unsigned int N = dimension_of (data) - 3;
-  circular_buffer_int b (begin (data) + 1, begin (data) + 1 + N);
-  circular_buffer_int c (begin (data) + 2, begin (data) + 2 + N);
+  RingBufferInt b (begin (data) + 1, begin (data) + 1 + N);
+  RingBufferInt c (begin (data) + 2, begin (data) + 2 + N);
 
   assert (N == b.size());
   assert (N == c.size());
@@ -303,11 +290,12 @@ void testThatLessThanOperatorComparesLessThan() {
  * Iterators:
  */
 
+// -----------------------------------------------------------------------------
 void testThatIteratorAdvancesCorrectly() {
   const unsigned int N = dimension_of (data);
-  circular_buffer_int b (begin (data), begin (data) + N);
+  RingBufferInt b (begin (data), begin (data) + N);
 
-  circular_buffer_int::iterator pos = begin (b);
+  RingBufferInt::iterator pos = begin (b);
 
   assert (data[0] == *pos);
   assert (data[1] == *++pos);
@@ -322,39 +310,102 @@ void testThatIteratorAdvancesCorrectly() {
   assert (data[0] == *pos);
 }
 
+// -----------------------------------------------------------------------------
 void testThatIteratorDistanceIsCorrect() {
   const unsigned int N = dimension_of (data);
-  circular_buffer_int b (begin (data), begin (data) + N);
+  RingBufferInt b (begin (data), begin (data) + N);
 
-  circular_buffer_int::iterator pos = begin (b);
+  RingBufferInt::iterator pos = begin (b);
 
-  assert (static_cast<circular_buffer_int::difference_type> (N) == std::distance (begin (b), end (b)));
+  assert (static_cast<RingBufferInt::difference_type> (N) == std::distance (begin (b), end (b)));
 }
 
+// -----------------------------------------------------------------------------
 void testThatNonconstIteratorCanBeConvertedToConstIterator() {
-  circular_buffer_int b;
+  RingBufferInt b;
 
-  circular_buffer_int::const_iterator pos = b.begin();
+  RingBufferInt::const_iterator pos = b.begin();
 }
 
 /*
  * check iterator const-ness:
  */
 
+// -----------------------------------------------------------------------------
 void testThatWriteToConstBufferIteratorFailsToCompile() {
   const unsigned int N = dimension_of (data);
-  const circular_buffer_int b (begin (data), begin (data) + N);
+  const RingBufferInt b (begin (data), begin (data) + N);
 
 //   *( b.begin() ) = 33;
 }
 
-/**
- * test program.
- */
+// -----------------------------------------------------------------------------
+void testThatPopBackContentsMatches() {
+  RingBufferInt b (3);
+  b.push_back (9);
+  b.push_back (7);
+  b.push_back (5);
+  b.push_back (3);
+
+  b.pop_back();
+  assert (2 == b.size());
+  assert (5 == b.back());
+  assert (7 == b.front());
+  
+  b.pop_back();
+  assert (1 == b.size());
+  assert (7 == b.back());
+  assert (7 == b.front());
+}
+
+// -----------------------------------------------------------------------------
+void testThatPushFrontContentsMatches() {
+  RingBufferInt b (4);
+  b.push_back (9);
+  b.push_back (7);
+
+  b.push_front(11);
+  assert (3 == b.size());
+  assert (7 == b.back());
+  assert (11 == b.front());
+  
+  b.push_front(13);
+  assert (4 == b.size());
+  assert (7 == b.back());
+  assert (13 == b.front());
+}
+
+// -----------------------------------------------------------------------------
+void  testSkip() {
+  RingBufferInt b (4);
+  b.push_back (9);
+  b.push_back (7);
+  b.push_back (5);
+  b.push_back (3);
+  
+  b.skip(2);
+  assert (2 == b.size());
+  assert (3 == b.back());
+  assert (5 == b.front());
+  
+}
+
+// -----------------------------------------------------------------------------
+void  testChop() {
+  RingBufferInt b (4);
+  b.push_back (9);
+  b.push_back (7);
+  b.push_back (5);
+  b.push_back (3);
+  
+  b.chop(2);
+  assert (2 == b.size());
+  assert (7 == b.back());
+  assert (9 == b.front());
+}
+
+// -----------------------------------------------------------------------------
 int main() {
-  /*
-   * Circular buffer:
-   */
 
   testThatDefaultConstructedBufferCapacityMatches();
   testThatResizedBufferCapacityMatches();
@@ -391,6 +442,17 @@ int main() {
 
   // failure commented out:
   testThatWriteToConstBufferIteratorFailsToCompile();
+  /*
+   * New functions:
+   * push_front()
+   * pop_back()
+   * skip(n)
+   * chop(n)
+   */
+  testThatPopBackContentsMatches();
+  testThatPushFrontContentsMatches();
+  testSkip();
+  testChop();
 
   return 0;
 }

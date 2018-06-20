@@ -33,12 +33,24 @@ extern "C"{
 #define EULER 2.718281828459045235360287471352
 
 /* macros =================================================================== */
+#ifndef min
 #define min(a,b) ((a)<(b)?(a):(b))
+#endif
+#ifndef max
 #define max(a,b) ((a)>(b)?(a):(b))
+#endif
+#ifndef constrain
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+#endif
+#ifndef radians
 #define radians(deg) ((deg)*DEG_TO_RAD)
+#endif
+#ifndef degrees
 #define degrees(rad) ((rad)*RAD_TO_DEG)
+#endif
+#ifndef sq
 #define sq(x) ((x)*(x))
+#endif
 
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 #define highByte(w) ((uint8_t) ((w) >> 8))

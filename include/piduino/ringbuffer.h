@@ -1,12 +1,17 @@
-/**
- * \file circular_buffer.h
+/* Copyright © 2002-2012 Pete Goodliffe, All rights reserved.
  *
- * \brief   STL-style circular buffer
- * \author  Pete Goodliffe, modified and adapted for VC6 by Martin Moene
- * \date    12 September 2012
- * \since   0.0.0
+ * Copyright © 2018 Pascal JEAN, All rights reserved.
+ * This file is part of the Piduino Library.
  *
- * Copyright 2002 Pete Goodliffe All rights reserved.
+ * The Piduino Library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * The Piduino Library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
  * This circular buffer is based on the STL-style circular buffer by
  * Pete Goodliffe (circular.h). That code was subject of the following articles
@@ -27,13 +32,13 @@
  *
  * The code in this file compiles with VC6, VC8, VC2010, GNUC 4.5.2.
  * If compiling with VC6 is not a requirement, you may also be able to use
- * boost::circular_buffer<>, see
- * http://www.boost.org/doc/libs/1_48_0/libs/circular_buffer/
+ * boost::RingBuffer<>, see
+ * http://www.boost.org/doc/libs/1_48_0/libs/RingBuffer/
  *
  * Notable changes with respect to he original implementation are:
  * - There's no policy to select between accept and reject on buffer full
  * - Added non-member begin(cb) and end(cb).
- * - The iterator class is defined inside the circular_buffer class
+ * - The iterator class is defined inside the RingBuffer class
  *   (this may help to make the code more acceptable to VC6).
  * - The iterator class is derived from std::iterator<> to supply the
  *   iterator traits.
@@ -47,76 +52,58 @@
  *  17 December  2011 - created.
  */
 
-#ifndef SPM_CORE_CIRCULAR_BUFFER_H_INCLUDED
-#define SPM_CORE_CIRCULAR_BUFFER_H_INCLUDED
+#ifndef PIDUINO_RING_BUFFER_H
+#define PIDUINO_RING_BUFFER_H
 
+#include <piduino/memory.h>
 #include <iterator>
-#include <memory>
 #include <stdexcept>
 
-/**
- * \def SPM_CIRCULAR_BUFFER_COMPILER_IS_MSVC
- * Macro to recognize if the MS Visual C++ compiler is being used.
- */
-#if defined( _MSC_VER )
-# define SPM_CORE_CIRCULAR_BUFFER_COMPILER_IS_MSVC
-
-/**
- * \def SPM_CORE_CIRCULAR_BUFFER_COMPILER_IS_MSVC6
- * Macro to recognize if the MS Visual C++ compiler 6 is being used.
- */
-# if ( _MSC_VER >= 1200 ) && ( _MSC_VER < 1300 )
-#  define SPM_CORE_CIRCULAR_BUFFER_COMPILER_IS_MSVC6
-# endif
-#endif
-
-/**
- * spm core namespace.
- */
-namespace spm {
+namespace Piduino {
 
   /**
-   * STL-style circular buffer.
+   * @class RingBuffer
+   * @brief STL-style circular buffer.
    */
-  template < typename T, typename A = std::allocator<T> >
-  class circular_buffer {
+  template <typename T, typename A = std::allocator<T>>
+  class RingBuffer {
+
     public:
-      typedef circular_buffer<T, A> self_type;
-
+      typedef RingBuffer<T, A> self_type;
       typedef A allocator_type;
-
       typedef typename allocator_type::value_type        value_type;
       typedef typename allocator_type::pointer           pointer;
       typedef typename allocator_type::const_pointer     const_pointer;
       typedef typename allocator_type::reference         reference;
       typedef typename allocator_type::const_reference   const_reference;
-
       typedef typename allocator_type::size_type         size_type;
       typedef typename allocator_type::difference_type   difference_type;
 
-      /*
-       * lifetime:
+      // Lifetime
+      // -----------------------------------------------------------------------
+
+      /**
+       * @brief Default constructor
+       * @param capacity
+       * @param allocator
        */
-
-      ~circular_buffer() {
-        clear();
-        m_allocator.deallocate (m_array, m_capacity);
-      }
-
-      explicit circular_buffer (size_type const capacity = 1,
-                                allocator_type const & allocator = allocator_type())
+      explicit RingBuffer (size_type const capacity = 1,
+                           allocator_type const & allocator = allocator_type())
         : m_capacity (capacity)
         , m_allocator (allocator)
-        // VC6 requires (void *) 0:
         , m_array (m_allocator.allocate (capacity, (void *) 0))
         , m_head (1)
         , m_tail (0)
-        , m_contents_size (0) {
-      }
+        , m_contents_size (0) {}
 
-      // Note: copy-initialiser constructor must be non-explicit for operator=():
-
-      circular_buffer (self_type const & other)
+      /**
+       * @brief Copy constructor
+       *
+       * copy-initialiser constructor must be non-explicit for operator=()
+       * @param other
+       * @return
+       */
+      RingBuffer (self_type const & other)
         : m_capacity (other.m_capacity)
         , m_allocator (other.m_allocator)
         // VC6 requires (void *) 0:
@@ -124,6 +111,7 @@ namespace spm {
         , m_head (other.m_head)
         , m_tail (other.m_tail)
         , m_contents_size (other.m_contents_size) {
+
         try {
           assign_into (other.begin(), other.end());
         }
@@ -134,32 +122,53 @@ namespace spm {
         }
       }
 
-      template < typename II >
-      circular_buffer (II const from, II const to)
+      /**
+       * @brief ??
+       * @param from
+       * @param to
+       */
+      template <typename II>
+      RingBuffer (II const from, II const to)
         : m_capacity (0)
         , m_allocator (allocator_type())
         , m_array (0)
         , m_head (0)
         , m_tail (0)
         , m_contents_size (0) {
-        circular_buffer tmp (std::distance (from, to));
+
+        RingBuffer tmp (std::distance (from, to));
         tmp.assign_into (from, to);
         swap (tmp);
       }
 
-      // Note: copy-swap idiom using value parameter
-      circular_buffer & operator= (self_type other) {
+      /**
+       * @brief Destructor
+       */
+      ~RingBuffer() {
+        clear();
+        m_allocator.deallocate (m_array, m_capacity);
+      }
+
+      /**
+       * @brief copy-swap idiom using value parameter
+       * @param other
+       */
+      RingBuffer & operator= (self_type other) {
         other.swap (*this);
         return *this;
       }
 
+      /**
+       * @brief
+       * @param other
+       */
       void swap (self_type & other) {
         using std::swap;
 
         swap (m_capacity,      other.m_capacity);
 
         // no need to swap the allocator object
-        // as circular_buffer types are identical:
+        // as RingBuffer types are identical:
         // swap( m_allocator, other.m_allocator );
 
         swap (m_array,         other.m_array);
@@ -168,42 +177,44 @@ namespace spm {
         swap (m_contents_size, other.m_contents_size);
       }
 
+      /**
+       * @brief
+       * @return
+       */
       allocator_type get_allocator() const {
+
         return m_allocator;
       }
 
-      /*
-       * circular_buffer iterator class template:
+      /**
+       * @class iterator_
+       * @brief RingBuffer iterator class template
        */
+      template<typename E, typename EN>
+      class iterator_ : public std::iterator<std::random_access_iterator_tag, EN> {
 
-      template< typename E, typename EN >
-      class iterator_ : public std::iterator< std::random_access_iterator_tag, EN > {
         public:
           typedef E elem_type;
 
           // non-const element type
           typedef EN elem_type_nc;
 
-          typedef iterator_< elem_type, elem_type_nc > self_type;
+          typedef iterator_<elem_type, elem_type_nc> self_type;
 
           // VC6 requires <T,A>:
-          typedef circular_buffer<T, A> circular_buffer_type;
-
-#ifdef SPM_CORE_CIRCULAR_BUFFER_COMPILER_IS_MSVC6
-          typedef typename circular_buffer_type::difference_type difference_type;
-#endif
+          typedef RingBuffer<T, A> RingBufferType;
 
           /*
            * iterator lifetime:
            */
 
-          iterator_ (circular_buffer_type * const buf, size_type const pos)
+          iterator_ (RingBufferType * const buf, size_type const pos)
             : m_buf (buf)
             , m_pos (pos) {
           }
 
-          iterator_ (circular_buffer_type const * const buf, size_type const pos)
-            : m_buf (const_cast<circular_buffer_type * > (buf))
+          iterator_ (RingBufferType const * const buf, size_type const pos)
+            : m_buf (const_cast<RingBufferType *> (buf))
             , m_pos (pos) {
           }
 
@@ -229,7 +240,7 @@ namespace spm {
            */
 
           elem_type & operator*() {
-            return (*m_buf) [ m_pos ];
+            return (*m_buf) [m_pos];
           }
 
           elem_type * operator->() {
@@ -330,86 +341,142 @@ namespace spm {
           }
 
         private:
-          circular_buffer_type * m_buf;
+          RingBufferType * m_buf;
           size_type  m_pos;
       };
 
-      /*
-       * iterators:
-       */
+      // Iterators
+      // -----------------------------------------------------------------------
 
       typedef iterator_<value_type, value_type> iterator;
       typedef iterator_<const value_type, value_type> const_iterator;
 
-#ifdef SPM_CORE_CIRCULAR_BUFFER_COMPILER_IS_MSVC6
-      typedef std::reverse_iterator<iterator, T>        reverse_iterator;
-      typedef std::reverse_iterator<const_iterator, T> const_reverse_iterator;
-#else
       typedef std::reverse_iterator<iterator>          reverse_iterator;
       typedef std::reverse_iterator<const_iterator>    const_reverse_iterator;
-#endif
 
+      /**
+       * @brief
+       * @return
+       */
       iterator begin() {
+
         return iterator (this, 0);
       }
 
+      /**
+       * @brief
+       * @return
+       */
       iterator end() {
+
         return iterator (this, size());
       }
 
+      /**
+       * @brief
+       * @return
+       */
       const_iterator begin() const {
+
         return const_iterator (this, 0);
       }
 
+      /**
+       * @brief
+       * @return
+       */
       const_iterator end() const {
+
         return const_iterator (this, size());
       }
 
+      /**
+       * @brief
+       * @return
+       */
       reverse_iterator rbegin() {
+
         return reverse_iterator (end());
       }
 
+      /**
+       * @brief
+       * @return
+       */
       reverse_iterator rend() {
+
         return reverse_iterator (begin());
       }
 
+      /**
+       * @brief
+       * @return
+       */
       const_reverse_iterator rbegin() const {
+
         return const_reverse_iterator (end());
       }
 
+      /**
+       * @brief
+       * @return
+       */
       const_reverse_iterator rend() const {
+
         return const_reverse_iterator (begin());
       }
 
-      /*
-       * size accessors:
-       */
+      // Size accessors
+      // -----------------------------------------------------------------------
 
+      /**
+       * @brief
+       * @return
+       */
       bool empty() const {
+
         return 0 == m_contents_size;
       }
 
+      /**
+       * @brief
+       * @return
+       */
       size_type capacity() const {
+
         return m_capacity;
       }
 
+      /**
+       * @brief
+       * @return
+       */
       size_type size() const {
+
         return m_contents_size;
       }
 
+      /**
+       * @brief
+       * @return
+       */
       size_type max_size() const {
+
         return m_allocator.max_size();
       }
 
-      /*
-       * size modifiers:
-       */
+      // Size modifiers
+      // -----------------------------------------------------------------------
 
-      // reserve shrinks or expands the internal buffer to the size given; if the
-      // buffer shrinks, keep at most the last new_size items.
+      /**
+       * @brief reserve shrinks or expands the internal buffer to the size given
+       *
+       * if the buffer shrinks, keep at most the last new_size items.
+       * @param new_size
+       */
       void reserve (size_type const new_size) {
         if (new_size != capacity()) {
-          circular_buffer tmp (new_size);
+          RingBuffer tmp (new_size);
 
           // preferred:
           // const size_type offset = std::max( 0, size() - new_size );
@@ -422,44 +489,73 @@ namespace spm {
         }
       }
 
-    private:
-      // resize is not implemented
-      void resize (size_type const new_size);
+      // Content accessors
+      // -----------------------------------------------------------------------
 
-    public:
-      /*
-       * content accessors:
+      /**
+       * @brief access the first element
+       * @return a reference to the first element in the container.
        */
-
       reference front() {
-        return m_array[ m_head ];
+
+        return m_array[m_head];
       }
 
+      /**
+       * @brief access the last element
+       * @return
+       */
       reference back() {
-        return m_array[ m_tail ];
+
+        return m_array[m_tail];
       }
 
+      /**
+       * @brief access the first element
+       * @return a reference to the first element in the container.
+       */
       const_reference front() const {
-        return m_array[ m_head ];
+
+        return m_array[m_head];
       }
 
+      /**
+       * @brief access the last element
+       * @return
+       */
       const_reference back() const {
-        return m_array[ m_tail ];
+
+        return m_array[m_tail];
       }
 
+      /**
+       * @brief
+       * @param n
+       * @return
+       */
       const_reference operator[] (size_type const n) const {
+
         return at_unchecked (n);
       }
 
+      /**
+       * @brief
+       * @param n
+       * @return
+       */
       const_reference at (size_type const n) const {
+
         return at_checked (n);
       }
 
-      /*
-       * content modifiers:
-       */
+      // Content modifiers
+      // -----------------------------------------------------------------------
 
+      /**
+       * @brief
+       */
       void clear() {
+
         for (size_type n = 0; n < m_contents_size; ++n) {
           m_allocator.destroy (m_array + index_to_subscript (n));
         }
@@ -468,11 +564,16 @@ namespace spm {
         m_tail = m_contents_size = 0;
       }
 
+
+      /**
+       * @brief Appends the given item to the end of the container
+       */
       void push_back (value_type const & item) {
+
         size_type next = next_tail();
 
         if (m_contents_size == m_capacity) {
-          m_array[ next ] = item;
+          m_array[next] = item;
           increment_head();
         }
         else {
@@ -481,32 +582,120 @@ namespace spm {
         increment_tail();
       }
 
-      void pop_front() {
-        size_type destroy_pos = m_head;
-        increment_head();
-        m_allocator.destroy (m_array + destroy_pos);
+      /**
+       * @brief Insert a new element at the beginning of the container
+       */
+      void push_front (value_type const & item) {
+
+        size_type previous = previous_head();
+
+        if (m_contents_size == m_capacity) {
+          m_array[previous] = item; // buffer full, replace last element
+        }
+        else {
+          m_allocator.construct (m_array + previous, item);
+        }
+        decrement_head();
       }
 
+
+      /**
+       * @brief Removes the first element of the container.
+       */
+      void pop_front() {
+
+        if (m_contents_size) {
+
+          size_type destroy_pos = m_head;
+          increment_head();
+          m_allocator.destroy (m_array + destroy_pos);
+        }
+      }
+
+      /**
+       * @brief Remove the last element from the container.
+       */
+      void pop_back() {
+
+        if (m_contents_size) {
+
+          size_type destroy_pos = previous_tail();
+          decrement_tail();
+          m_allocator.destroy (m_array + destroy_pos);
+        }
+      }
+
+      /**
+       * @brief
+       * @param n
+       */
+      void skip (size_type len) {
+
+        if (len >= m_contents_size) {
+          clear();
+        }
+        else {
+
+          while (len--) {
+            pop_front();
+          }
+        }
+      }
+
+      /**
+       * @brief
+       * @param len
+       */
+      void chop (size_type len) {
+
+        if (len >= m_contents_size) {
+          clear();
+        }
+        else {
+
+          while (len--) {
+            pop_back();
+          }
+        }
+      }
+
+      /**
+       * @brief
+       * @param n
+       * @return
+       */
       reference operator[] (size_type const n) {
+
         return at_unchecked (n);
       }
 
+      /**
+       * @brief
+       * @param n
+       * @return
+       */
       reference at (size_type const n) {
+
         return at_checked (n);
       }
 
+      /**
+       * @brief
+       * @return
+       */
       pointer getimpl() {
+
         return m_array;
       }
 
     private:
       reference at_unchecked (size_type const index) const {
-        return m_array[ index_to_subscript (index) ];
+        return m_array[index_to_subscript (index)];
       }
 
       reference at_checked (size_type const index) const {
         if (index >= m_contents_size) {
-          throw std::out_of_range ("circular_buffer::at()");
+          throw std::out_of_range ("RingBuffer::at()");
         }
         return at_unchecked (index);
       }
@@ -526,8 +715,21 @@ namespace spm {
         m_tail = next_tail();
       }
 
+      void decrement_tail() {
+        --m_contents_size;
+        m_tail = previous_tail();
+      }
+
       size_type next_tail() {
         return (m_tail + 1 == m_capacity) ? 0 : m_tail + 1;
+      }
+
+      size_type previous_tail() {
+        return (m_tail == 0) ? m_capacity - 1 : m_tail - 1;
+      }
+
+      size_type previous_head() {
+        return (m_head == 0) ? m_capacity - 1 : m_head - 1;
       }
 
       void increment_head() {
@@ -540,7 +742,16 @@ namespace spm {
         }
       }
 
-      template < typename I >
+      void decrement_head() {
+        if (m_head == 0) {
+          m_head = m_capacity;
+        }
+
+        --m_head;
+        m_contents_size++;
+      }
+
+      template <typename I>
       void assign_into (I from, I const to) {
         if (m_contents_size > 0) {
           clear();
@@ -561,62 +772,91 @@ namespace spm {
       size_type      m_contents_size;
   };
 
-  /*
-   * comparison operators:
+  // Comparison operators
+  // ---------------------------------------------------------------------------
+  /**
+   * @brief
+   * @param lhs
+   * @param rhs
+   * @return
    */
-
-  template < typename T, typename A >
-  bool operator== (circular_buffer<T, A> const & lhs,
-                   circular_buffer<T, A> const & rhs) {
+  template <typename T, typename A>
+  bool operator== (RingBuffer<T, A> const & lhs,
+                   RingBuffer<T, A> const & rhs) {
     return lhs.size() == rhs.size()
            && std::equal (lhs.begin(), lhs.end(), rhs.begin());
   }
 
-  template < typename T, typename A >
-  bool operator!= (circular_buffer<T, A> const & lhs,
-                   circular_buffer<T, A> const & rhs) {
+  /**
+   * @brief
+   * @param lhs
+   * @param rhs
+   * @return
+   */
+  template <typename T, typename A>
+  bool operator!= (RingBuffer<T, A> const & lhs,
+                   RingBuffer<T, A> const & rhs) {
     return ! (lhs == rhs);
   }
 
-  template < typename T, typename A >
-  bool operator< (circular_buffer<T, A> const & lhs,
-                  circular_buffer<T, A> const & rhs) {
+  /**
+   * @brief
+   * @param lhs
+   * @param rhs
+   * @return
+   */
+  template <typename T, typename A>
+  bool operator< (RingBuffer<T, A> const & lhs,
+                  RingBuffer<T, A> const & rhs) {
     return std::lexicographical_compare (
              lhs.begin(), lhs.end(),
              rhs.begin(), rhs.end());
   }
 
-  template < typename T, typename A >
-  typename circular_buffer<T, A>::iterator
-  begin (circular_buffer<T, A> & cb) {
+  /**
+   * @brief
+   * @param cb
+   * @return
+   */
+  template <typename T, typename A>
+  typename RingBuffer<T, A>::iterator
+  begin (RingBuffer<T, A> & cb) {
     return cb.begin();
   }
 
-  template < typename T, typename A >
-  typename circular_buffer<T, A>::iterator
-  end (circular_buffer<T, A> & cb) {
+  /**
+   * @brief
+   * @param cb
+   * @return
+   */
+  template <typename T, typename A>
+  typename RingBuffer<T, A>::iterator
+  end (RingBuffer<T, A> & cb) {
     return cb.end();
   }
 
-  template < typename T, typename A >
-  typename circular_buffer<T, A>::const_iterator
-  begin (circular_buffer<const T, A> const & cb) {
+  /**
+   * @brief
+   * @param cb
+   * @return
+   */
+  template <typename T, typename A>
+  typename RingBuffer<T, A>::const_iterator
+  begin (RingBuffer<const T, A> const & cb) {
     return cb.begin();
   }
 
-  template < typename T, typename A >
-  typename circular_buffer<const T, A>::const_iterator
-  end (circular_buffer<const T, A> const & cb) {
+  /**
+   * @brief
+   * @param cb
+   * @return
+   */
+  template <typename T, typename A>
+  typename RingBuffer<const T, A>::const_iterator
+  end (RingBuffer<const T, A> const & cb) {
     return cb.end();
   }
 
-} // namespace spm
-
-#undef SPM_CORE_CIRCULAR_BUFFER_COMPILER_IS_MSVC
-#undef SPM_CORE_CIRCULAR_BUFFER_COMPILER_IS_MSVC6
-
-#endif // SPM_CORE_CIRCULAR_BUFFER_H_INCLUDED
-
-/*
- * end of file
- */
+}
+/* ========================================================================== */
+#endif // PIDUINO_RING_BUFFER_H

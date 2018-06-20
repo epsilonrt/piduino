@@ -23,9 +23,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "Arduino.h"
 
-#include "Print.h"
+#include <Print.h>
 
 // Public Methods //////////////////////////////////////////////////////////////
 
@@ -35,18 +34,6 @@ size_t Print::write(const uint8_t *buffer, size_t size)
   size_t n = 0;
   while (size--) {
     n += write(*buffer++);
-  }
-  return n;
-}
-
-size_t Print::print(const __FlashStringHelper *ifsh)
-{
-  const char * __attribute__((progmem)) p = (const char * ) ifsh;
-  size_t n = 0;
-  while (1) {
-    unsigned char c = pgm_read_byte(p++);
-    if (c == 0) break;
-    n += write(c);
   }
   return n;
 }
@@ -110,13 +97,6 @@ size_t Print::print(unsigned long n, int base)
 size_t Print::print(double n, int digits)
 {
   return printFloat(n, digits);
-}
-
-size_t Print::println(const __FlashStringHelper *ifsh)
-{
-  size_t n = print(ifsh);
-  n += println();
-  return n;
 }
 
 size_t Print::print(const Printable& x)
