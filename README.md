@@ -74,9 +74,9 @@ The dependencies are as follows:
 ## Installation
 
     sudo apt-get update
-    sudo apt-get install libcppdb -dev pkg-config cmake libsqlite3-dev sqlite3
+    sudo apt-get install libcppdb-dev pkg-config cmake libsqlite3-dev sqlite3
     git clone https://github.com/epsilonrt/piduino.git
-    piduino cd
+    cd piduino
     git checkout dev
     mkdir cmake-build-Release
     cd cmake-build-Release

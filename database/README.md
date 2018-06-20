@@ -9,7 +9,7 @@
 ## import depuis sql
 
     sqlite3  < piduino-schema.sql
-    sqlite3 piduino.db < piduino-schema.sql
+    sqlite3 piduino.db < piduino-data.sql
 
 ## export vers sql de données
 
