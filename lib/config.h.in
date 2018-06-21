@@ -1,8 +1,4 @@
-/**
- * @file
- * @brief Configuration PiDuino
- *
- * Copyright © 2017 Pascal JEAN, All rights reserved.
+/* Copyright © 2018 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * The Piduino Library is free software; you can redistribute it and/or
@@ -22,6 +18,7 @@
 #ifndef PIDUINO_CONFIG_H_
 #define PIDUINO_CONFIG_H_
 /* ========================================================================== */
+#define PIDUINO_WITH_ARDUINO   @PIDUINO_WITH_ARDUINO@
 #define PIDUINO_WITH_GPIO   @PIDUINO_WITH_GPIO@
 #define PIDUINO_WITH_I2C    @PIDUINO_WITH_I2C@
 #define PIDUINO_WITH_SPI    @PIDUINO_WITH_SPI@

@@ -14,13 +14,41 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-
-
-#ifdef PIDUINO_WITH_GPIO
-// -----------------------------------------------------------------------------
 #include <piduino/arduino.h>
+#include <piduino/clock.h>
+#include <piduino/scheduler.h>
 
 using namespace Piduino;
+
+// -----------------------------------------------------------------------------
+void delay (unsigned long ms) {
+
+  clk.delay (ms);
+}
+
+// -----------------------------------------------------------------------------
+void delayMicroseconds (unsigned long us) {
+
+  clk.delayMicroseconds (us);
+}
+
+// -----------------------------------------------------------------------------
+unsigned long millis() {
+
+  return clk.millis();
+}
+
+// -----------------------------------------------------------------------------
+unsigned long micros() {
+
+  return clk.micros();
+}
+
+// -----------------------------------------------------------------------------
+void setPriority (int priority) {
+  
+  Scheduler::setRtPriority(priority);
+}
 
 // -----------------------------------------------------------------------------
 void pinMode (int n, ArduinoPinMode mode) {
@@ -86,6 +114,4 @@ void detachInterrupt (int n) {
 
   gpio.pin (n).detachInterrupt();
 }
-// -----------------------------------------------------------------------------
-#endif  /* PIDUINO_WITH_GPIO */
 /* ========================================================================== */

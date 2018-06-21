@@ -19,35 +19,29 @@ cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 
 project (PIDUINO)
 set (PROJECT_DESCRIPTION "Library and tools for embedded development")
-set (PROJECT_TOOLS_PATHS ${PROJECT_SOURCE_DIR}/dev/bin ${PROJECT_SOURCE_DIR}/dev/rpi)
-
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME)
 
 # Appends the cmake/modules path to MAKE_MODULE_PATH variable.
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/dev/cmake" "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_MODULE_PATH})
 
+# Set a default build type if none was specified
+set(default_build_type "Release")
+ 
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
+  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
+      STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+set (PIDUINO_WITH_ARDUINO 1 CACHE BOOL "Enable Arduino layer")
+set (PIDUINO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
+set (PIDUINO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
+set (PIDUINO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
+set (PIDUINO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
 set (PIDUINO_WITH_STATIC 0 CACHE BOOL "Enable building static libraries.")
-
-set (CMAKE_CXX_STANDARD 11)
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads REQUIRED)
-
-set (PIDUINO_CFLAGS_OTHER ${CMAKE_THREAD_LIBS_INIT})
-
-#find_package(PkgConfig REQUIRED)
-find_package(CppDb REQUIRED)
-
-#pkg_check_modules (SQLITE3 REQUIRED sqlite3)
-set (PIDUINO_LDFLAGS_OTHER  ${CPPDB_LDFLAGS})
-#list(APPEND PIDUINO_CFLAGS_OTHER ${SQLITE3_CFLAGS})
-
-include (GitVersion)
-include (PiBoardInfo)
-
-GetGitVersion(PIDUINO_VERSION)
-set(PIDUINO_VERSION
-  ${PIDUINO_VERSION_MAJOR}.${PIDUINO_VERSION_MINOR}.${PIDUINO_VERSION_PATCH})
 
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
@@ -66,6 +60,20 @@ set(INSTALL_DOC_DIR ${DEF_INSTALL_DOC_DIR} CACHE PATH
   "Installation directory for documentation")
 set(INSTALL_DATA_DIR ${DEF_INSTALL_DATA_DIR} CACHE PATH
   "Installation directory for data")
+set (CMAKE_CXX_STANDARD 11)
+
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+set (PIDUINO_CFLAGS_OTHER ${CMAKE_THREAD_LIBS_INIT})
+
+find_package(CppDb REQUIRED)
+set (PIDUINO_LDFLAGS_OTHER  ${CPPDB_LDFLAGS})
+
+include (GitVersion)
+GetGitVersion(PIDUINO_VERSION)
+set(PIDUINO_VERSION
+  ${PIDUINO_VERSION_MAJOR}.${PIDUINO_VERSION_MINOR}.${PIDUINO_VERSION_PATCH})
 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE DATA DOC)
@@ -86,73 +94,12 @@ set (PIDUINO_INSTALL_EXAMPLES_DIR "${PIDUINO_INSTALL_DOC_DIR}/examples")
 set (PIDUINO_INSTALL_DATA_DIR "${INSTALL_DATA_DIR}/piduino")
 set (PIDUINO_INSTALL_ETC_DIR "${INSTALL_ETC_DIR}")
 
-if (NOT PIBOARD_ID)
-  message (STATUS "Check the target platform, you can use PIBOARD_ID to force the target...")
-  # Détection du type de carte sur le système hôte, doit être forcé en cross-compile
-  GetPiBoardInfo()
-endif (NOT PIBOARD_ID)
-
-if (NOT PIBOARD_FOUND)
-  # Linux Generic
-  message(STATUS "BOARD not defined !")
-  if (CMAKE_HOST_UNIX)
-    set (PIBOARD_ID BOARD_GENERIC_LINUX)
-    set (PIBOARD_NAME "Linux")
-  else (CMAKE_HOST_UNIX)
-    message (FATAL_ERROR "This system is not supported !")
-  endif (CMAKE_HOST_UNIX)
-endif (NOT PIBOARD_FOUND)
-
-add_definitions (-DPIBOARD_ID=${PIBOARD_ID} -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}" -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}")
-
-# Set a default build type if none was specified
-set(default_build_type "Release")
- 
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
-  set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE
-      STRING "Choose the type of build." FORCE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+message (STATUS "Building for ${CMAKE_SYSTEM_PROCESSOR} architecture.")
+if ((${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm.*") OR (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
+  set (PIDUINO_SRC_GPIO_ARCH_DIR ${PIDUINO_SRC_DIR}/gpio/arch/arm)
+else()
+  message (WARNING "${CMAKE_SYSTEM_PROCESSOR} is not a supported architecture !")
 endif()
-
-if ("${PIBOARD_ID}" STREQUAL "BOARD_RASPBERRYPI")
-  # Raspberry Pi ---------------------------------------------------------------
-  set (PIDUINO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
-  set (PIDUINO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
-  set (PIDUINO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
-  set (PIDUINO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
-  set (PIDUINO_SRC_ARCH_DIR ${PIDUINO_SRC_DIR}/arch/arm/broadcom)
-  set (PIDUINO_SRC_BOARD_DIR ${PIDUINO_SRC_ARCH_DIR}/raspberrypi)
-
-elseif (("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO") OR 
-        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEOCORE") OR 
-        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_AIR") OR 
-        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEO2") OR 
-        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEOPLUS2") OR 
-        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_NEOCORE2") OR 
-        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_M1") OR 
-        ("${PIBOARD_ID}" STREQUAL "BOARD_NANOPI_M1PLUS"))
-  # NanoPi Neo / Neo Air / M1  -------------------------------------------------
-  set (PIDUINO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
-  set (PIDUINO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
-  set (PIDUINO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
-  set (PIDUINO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
-  set (PIDUINO_SRC_ARCH_DIR ${PIDUINO_SRC_DIR}/arch/arm/allwinner)
-  set (PIDUINO_SRC_BOARD_DIR ${PIDUINO_SRC_ARCH_DIR}/nanopi)
-
-else ()
-  # Linux Generic  -------------------------------------------------------------
-  # BOARD_GENERIC_LINUX
-  set (PIDUINO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
-  set (PIDUINO_SRC_ARCH_DIR ${PIDUINO_SRC_DIR}/arch/generic)
-  set (PIDUINO_WITH_GPIO 0)
-  set (PIDUINO_WITH_I2C 0)
-  set (PIDUINO_WITH_SPI 0)
-endif ()
-
-message (STATUS "Build for ${PIBOARD_NAME} target, ${PIBOARD_ID} defined...")
 
 # uninstall target
 configure_file(
@@ -162,18 +109,30 @@ configure_file(
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
+if (${PIDUINO_WITH_ARDUINO})
+  add_definitions (-DPIDUINO_WITH_ARDUINO=1)
+  message (STATUS "Build with Arduino layer...")
+  set (PIDUINO_WITH_GPIO 1)
+endif()
 if (${PIDUINO_WITH_GPIO})
   add_definitions (-DPIDUINO_WITH_GPIO=1)
+  message (STATUS "Build with GPIO support...")
 endif()
 if (${PIDUINO_WITH_I2C})
   add_definitions (-DPIDUINO_WITH_I2C=1)
+  message (STATUS "Build with I2C bus support...")
 endif()
 if (${PIDUINO_WITH_SPI})
   add_definitions (-DPIDUINO_WITH_SPI=1)
+  message (STATUS "Build with SPI bus support...")
 endif()
 if (${PIDUINO_WITH_SERIAL})
   add_definitions (-DPIDUINO_WITH_SERIAL=1)
+  message (STATUS "Build with Serial port support...")
 endif()
+
+add_definitions ( -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}" 
+                  -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}")
 
 add_subdirectory (dev)
 add_subdirectory (lib)
@@ -193,7 +152,6 @@ set(CPACK_PACKAGE_CONTACT "Pascal JEAN <epsilonrt@gmail.com>")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/COPYING.LESSER")
 
 set(CPACK_GENERATOR "DEB")
-
 
 if (CPACK_GENERATOR STREQUAL "DEB")
 

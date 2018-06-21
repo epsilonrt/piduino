@@ -43,10 +43,11 @@ What was done
 * Creating a purely virtual class IoDevice  
 * analogWrite() with GPIO software PWM feature (Polling with thread) 
 * Emulate setup() and loop() for Arduino compatibility (in Arduino.h)
+* Cleaning the architecture detection  
 
 The rest of the things to do:
 
-* Cleaning the architecture detection  
+* Tool for managing the database of boards with Qt  
 * Serial Port API  
 * I2C Bus API  
 * SPI Bus API  
@@ -57,7 +58,6 @@ The rest of the things to do:
 * Update README  
 * Arduino Classes (String ....)  
 * Man Pages for Utilities  
-* Tool for managing the database of boards with Qt  
 * Database Doxygen Documentation (English)  
 * Creating a web page
 

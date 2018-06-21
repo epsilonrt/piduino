@@ -18,8 +18,10 @@
 #include <piduino/gpio.h>
 #include <piduino/gpiodevice.h>
 #include <piduino/database.h>
-#include  "../arch/arm/allwinner/allwinner_h.h"
-#include  "../arch/arm/broadcom/broadcom_bcm2835.h"
+#ifdef __ARM_ARCH
+#include  "gpio/arch/arm/allwinner/allwinner_h.h"
+#include  "gpio/arch/arm/broadcom/broadcom_bcm2835.h"
+#endif /* __ARM_ARCH */
 
 namespace Piduino {
 
@@ -36,15 +38,15 @@ namespace Piduino {
 
     _descriptor = std::make_shared<Descriptor> (gpioDatabaseId);
 
-    // TODO extract from dB
     switch (socFamilyId) {
-        // TODO
+#ifdef __ARM_ARCH
       case SoC::Family::BroadcomBcm2835 :
         _device = new DeviceBcm2835();
         break;
       case SoC::Family::AllwinnerH :
         _device = new DeviceAllwinnerH();
         break;
+#endif /* __ARM_ARCH */
       default:
         throw std::system_error (ENOTSUP, std::system_category(),
                                  "It seems that this system is not supported !");

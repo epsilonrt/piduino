@@ -24,9 +24,6 @@ endif()
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
   
 file(GLOB src_piduino ${PIDUINO_SRC_DIR}/*.c ${PIDUINO_SRC_DIR}/*.cpp)
-file(GLOB src_arduino ${PIDUINO_SRC_DIR}/arduino/cores/*.cpp)
-#file(GLOB src_arch  ${PIDUINO_SRC_ARCH_DIR}/*.c ${PIDUINO_SRC_ARCH_DIR}/*.cpp)
-#file(GLOB src_board  ${PIDUINO_SRC_BOARD_DIR}/*.c ${PIDUINO_SRC_BOARD_DIR}/*.cpp)
 
 set (hdr_piduino 
   ${PIDUINO_INC_DIR}/piduino/clock.h
@@ -52,10 +49,10 @@ set (hdr_gpio
   ${PIDUINO_INC_DIR}/piduino/gpiopin.h
   ${PIDUINO_INC_DIR}/piduino/gpioconnector.h
   ${PIDUINO_INC_DIR}/piduino/gpiopwm.h
-  ${PIDUINO_INC_DIR}/piduino/arduino.h
 )
 
 set (hdr_arduino 
+  ${PIDUINO_INC_DIR}/piduino/arduino.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Arduino.h
   ${PIDUINO_INC_DIR}/piduino/arduino/WString.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Print.h
@@ -75,39 +72,43 @@ set (hdr_serial
 #  ${PIDUINO_INC_DIR}/piduino/serial.h
 )
 
-
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                 ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
 
 set(hdr_public ${hdr_piduino} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
+if (PIDUINO_WITH_ARDUINO)
+  file(GLOB src_arduino ${PIDUINO_SRC_DIR}/arduino/*.cpp)
+  list(APPEND hdr_public ${hdr_arduino})
+endif (PIDUINO_WITH_ARDUINO)
+
 if (PIDUINO_WITH_GPIO)
-  file(GLOB src_gpio ${PIDUINO_SRC_DIR}/gpio/*.c ${PIDUINO_SRC_DIR}/gpio/*.cpp ${PIDUINO_SRC_DIR}/arch/arm/)
-  file(GLOB_RECURSE src_device ${PIDUINO_SRC_DIR}/arch/*.cpp)
+  file(GLOB src_gpio ${PIDUINO_SRC_DIR}/gpio/*.cpp)
+  file(GLOB_RECURSE src_gpio_arch ${PIDUINO_SRC_GPIO_ARCH_DIR}/*.cpp)
   list(APPEND hdr_public ${hdr_gpio})
-  list(APPEND hdr_root ${hdr_arduino})
 endif (PIDUINO_WITH_GPIO)
 
+#message ("src_gpio_arch=${src_gpio_arch}")
+
 if (PIDUINO_WITH_I2C)
-  file(GLOB src_i2c ${PIDUINO_SRC_DIR}/i2c/*.c ${PIDUINO_SRC_DIR}/i2c/*.cpp)
+  file(GLOB src_i2c ${PIDUINO_SRC_DIR}/i2c/*.cpp)
   list(APPEND hdr_public ${hdr_i2c})
 endif (PIDUINO_WITH_I2C)
 
 if (PIDUINO_WITH_SPI)
-  file(GLOB src_spi ${PIDUINO_SRC_DIR}/spi/*.c ${PIDUINO_SRC_DIR}/spi/*.cpp)
+  file(GLOB src_spi ${PIDUINO_SRC_DIR}/spi/*.cpp)
   list(APPEND hdr_public ${hdr_spi})
 endif (PIDUINO_WITH_SPI)
 
 if (PIDUINO_WITH_SERIAL)
-  file(GLOB src_serial ${PIDUINO_SRC_DIR}/serial/*.c ${PIDUINO_SRC_DIR}/serial/*.cpp)
+  file(GLOB src_serial ${PIDUINO_SRC_DIR}/serial/*.cpp)
   list(APPEND hdr_public ${hdr_serial})
 endif (PIDUINO_WITH_SERIAL)
 
 #message ("hdr_public=${hdr_public}")
-#message ("src_device=${src_device}")
 
-set (libsrc ${src_piduino} ${src_device}
-  ${src_gpio} ${src_i2c} ${src_spi} ${src_serial} ${src_arduino}
+set (libsrc ${src_piduino} 
+  ${src_arduino} ${src_gpio} ${src_gpio_arch} ${src_i2c} ${src_spi} ${src_serial}
   )
 
 include_directories(BEFORE
@@ -122,7 +123,6 @@ target_compile_definitions(piduino-shared PUBLIC LOG_ASSERT PIDUINO_WITH_CONFIG_
 set_target_properties(piduino-shared PROPERTIES 
   OUTPUT_NAME piduino 
   CLEAN_DIRECT_OUTPUT 1 
-  C_STANDARD 99 
   VERSION ${PIDUINO_VERSION} 
   SOVERSION ${PIDUINO_VERSION_SHORT}
   PUBLIC_HEADER "${hdr_public}"
@@ -134,7 +134,6 @@ if(PIDUINO_WITH_STATIC)
   set_target_properties(piduino-static PROPERTIES
     OUTPUT_NAME piduino 
     CLEAN_DIRECT_OUTPUT 1 
-    C_STANDARD 99 
     VERSION ${PIDUINO_VERSION} 
   )
 endif(PIDUINO_WITH_STATIC)

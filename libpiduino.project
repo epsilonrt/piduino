@@ -39,23 +39,22 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
-    <VirtualDirectory Name="arch">
-      <VirtualDirectory Name="arm">
-        <VirtualDirectory Name="allwinner">
-          <File Name="src/arch/arm/allwinner/allwinner_h.cpp"/>
-          <File Name="src/arch/arm/allwinner/allwinner_h.h"/>
-        </VirtualDirectory>
-        <VirtualDirectory Name="broadcom">
-          <File Name="src/arch/arm/broadcom/broadcom_bcm2835.cpp"/>
-          <File Name="src/arch/arm/broadcom/broadcom_bcm2835.h"/>
-        </VirtualDirectory>
-      </VirtualDirectory>
-    </VirtualDirectory>
     <VirtualDirectory Name="i2c">
       <File Name="src/i2c/i2c-dev.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="gpio">
-      <File Name="src/gpio/arduino.cpp"/>
+      <VirtualDirectory Name="arch">
+        <VirtualDirectory Name="arm">
+          <VirtualDirectory Name="allwinner">
+            <File Name="src/gpio/arch/arm/allwinner/allwinner_h.cpp"/>
+            <File Name="src/gpio/arch/arm/allwinner/allwinner_h.h"/>
+          </VirtualDirectory>
+          <VirtualDirectory Name="broadcom">
+            <File Name="src/gpio/arch/arm/broadcom/broadcom_bcm2835.h"/>
+            <File Name="src/gpio/arch/arm/broadcom/broadcom_bcm2835.cpp"/>
+          </VirtualDirectory>
+        </VirtualDirectory>
+      </VirtualDirectory>
       <File Name="src/gpio/gpiodevice.cpp"/>
       <File Name="src/gpio/gpio.cpp"/>
       <File Name="src/gpio/gpioconnector.cpp"/>
@@ -74,19 +73,17 @@
     <File Name="src/database.cpp"/>
     <File Name="src/system.cpp"/>
     <File Name="src/piduino.cpp"/>
-    <File Name="src/arduino.cpp"/>
     <File Name="src/iomap.cpp"/>
     <File Name="src/iodevice.cpp"/>
     <File Name="src/converter.cpp"/>
     <File Name="src/pwm.cpp"/>
-    <File Name="src/wstring.cpp"/>
-    <VirtualDirectory Name="arduino">
-      <VirtualDirectory Name="cores">
-        <File Name="src/arduino/cores/Print.cpp"/>
-        <File Name="src/arduino/cores/Stream.cpp"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
     <File Name="src/chardevice.cpp"/>
+    <VirtualDirectory Name="arduino">
+      <File Name="src/arduino/Print.cpp"/>
+      <File Name="src/arduino/WString.cpp"/>
+      <File Name="src/arduino/Core.cpp"/>
+      <File Name="src/arduino/Stream.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
