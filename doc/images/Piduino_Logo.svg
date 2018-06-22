@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg:svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="720px"
+   height="490px"
+   preserveAspectRatio="xMinYMin meet"
+   viewport="0 0 720 490"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="Piduino_Logo.svg">
+  <script />
+  <svg:metadata
+     id="metadata26">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </svg:metadata>
+  <svg:defs
+     id="defs24" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="943"
+     id="namedview22"
+     showgrid="false"
+     inkscape:zoom="1.2325395"
+     inkscape:cx="448.04312"
+     inkscape:cy="275.92012"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <svg:g
+     id="g4"
+     stroke-opacity="100%"
+     stroke-width="60"
+     stroke="rgb(0, 151, 156)"
+     fill="none">
+    <svg:path
+       d=" M 174 30  a 10.50 10.10 0 0 0 0 280  c 190 10 170 -280 370 -280  a 10.50 10.10 0 0 1 0 280  c -190 10 -170 -280 -370 -280 "
+       id="path6" />
+  </svg:g>
+  <svg:g
+     font-size="167"
+     id="g8"
+     transform="translate(0,10)"
+     style="font-size:167px;text-anchor:middle;fill:#00979c;stroke:#00979c;stroke-width:20;font-family:sans-serif;fill-opacity:1">
+    <svg:g
+       style="fill:#00979c;fill-opacity:1"
+       id="text10">
+      <svg:path
+         d="m 528.06885,194.67432 0,-32.78028 -32.53565,0 0,-13.69922 32.53565,0 0,-32.53564 13.8623,0 0,32.53564 32.53565,0 0,13.69922 -32.53565,0 0,32.78028 z"
+         style="fill:#00979c;fill-opacity:1"
+         id="path3075" />
+    </svg:g>
+    <svg:text
+       x="181"
+       y="218"
+       dy="0"
+       id="text12"
+       style="fill:#00979c;fill-opacity:1">
+      <ndash />
+    </svg:text>
+  </svg:g>
+  <svg:g
+     font-size="152"
+     font-weight="bold"
+     letter-spacing="0.1em"
+     text-anchor="left"
+     id="g18"
+     transform="translate(0.81133304,10.54733)"
+     style="font-weight:bold;font-size:152px;font-family:Consolas;letter-spacing:0.1em;fill:#00979c;stroke:#00979c;stroke-width:2">
+    <svg:g
+       transform="scale(1.0171639,0.98312568)"
+       style="font-size:182.28144836px;stroke-width:2.39844012"
+       id="text20">
+      <svg:text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:180px;line-height:125%;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0px;word-spacing:0px;fill:#00979c;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="16.226673"
+         y="474.58469"
+         id="text3354"
+         sodipodi:linespacing="125%"
+         transform="scale(0.98312573,1.0171639)"><svg:tspan
+           sodipodi:role="line"
+           id="tspan3356"
+           x="16.226673"
+           y="474.58469"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:180px;font-family:Consolas;-inkscape-font-specification:'Consolas Bold'">PIDUINO</svg:tspan></svg:text>
+    </svg:g>
+  </svg:g>
+  <svg:g
+     font-size="167"
+     id="g8-1"
+     transform="translate(-365.79452,0.52773446)"
+     style="font-size:167px;text-anchor:middle;fill:#00979c;stroke:#00979c;stroke-width:20;font-family:sans-serif;fill-opacity:1">
+    <svg:g
+       transform="scale(1.5645974,0.63914206)"
+       style="font-size:197.21893311px;stroke-width:23.61903381;fill:#00979c;fill-opacity:1"
+       id="text10-7">
+      <svg:path
+         d="m 321.41756,266.30877 0,-17.43 53.25297,0 0,17.43 z"
+         style="font-size:197.21893311px;stroke-width:23.61903381;fill:#00979c;fill-opacity:1"
+         id="path3078" />
+    </svg:g>
+    <svg:g
+       style="fill:#00979c;fill-opacity:1"
+       id="text12-4" />
+  </svg:g>
+</svg:svg>

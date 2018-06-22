@@ -238,8 +238,6 @@
   <VirtualDirectory Name="etc">
     <File Name="etc/piduino.conf.in"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <VirtualDirectory Name="database">
     <File Name="database/piduino-data.sql"/>
     <File Name="database/piduino-schema.sql"/>
@@ -247,4 +245,6 @@
     <File Name="database/build"/>
     <File Name="database/piduino-data-core.sql"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>
