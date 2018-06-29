@@ -6,7 +6,6 @@
 #include <QSqlError>
 
 class Node;
-
 class TreeModel : public QAbstractItemModel {
     Q_OBJECT
 
