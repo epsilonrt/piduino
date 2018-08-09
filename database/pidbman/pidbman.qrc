@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/board.png</file>
+        <file>images/board_variant.png</file>
+        <file>images/connector.png</file>
+        <file>images/function.png</file>
+        <file>images/gpio.png</file>
+        <file>images/manufacturer.png</file>
+        <file>images/pin.png</file>
+        <file>images/serial.png</file>
+        <file>images/soc.png</file>
+        <file>images/usb.png</file>
+    </qresource>
+</RCC>
