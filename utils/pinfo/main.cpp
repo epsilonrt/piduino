@@ -197,7 +197,7 @@ main (int argc, char **argv) {
           cout  << db.board().totalRam() << endl;
           break;
         case OPT_PCB:
-          if (db.board().pcbRevision() > 0) {
+          if (!db.board().pcbRevision().empty()) {
             cout  << db.board().pcbRevision() << endl;
           }
           else {
@@ -274,7 +274,7 @@ namespace Pinfo {
     if (flags & OPT_GPIOID) {
       cout << "GPIO Id         : " << db.board().gpioId() << endl;
     }
-    if ( (flags & OPT_PCB) && (db.board().pcbRevision() > 0)) {
+    if ( (flags & OPT_PCB) && (!db.board().pcbRevision().empty())) {
 
       cout << "PCB Revision    : " << db.board().pcbRevision() << endl;
     }

@@ -2,7 +2,11 @@
 -- Author:        epsilonrt
 -- Caption:       New Model
 -- Project:       Name of the project
+<<<<<<< HEAD
+-- Changed:       2018-07-01 17:32
+=======
 -- Changed:       2018-06-22 18:11
+>>>>>>> 19a6f3b31e89b3cdf1ba20c0c3e03a584200f5d2
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -43,8 +47,12 @@ CREATE TABLE "piduino"."gpio_pin_mode"(
 CREATE TABLE "piduino"."gpio"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "name" VARCHAR(45),
+  "board_family_id" INTEGER NOT NULL,
   CONSTRAINT "name_UNIQUE"
-    UNIQUE("name")
+    UNIQUE("name"),
+  CONSTRAINT "fk_gpio_board_family1"
+    FOREIGN KEY("board_family_id")
+    REFERENCES "board_family"("id")
 );
 CREATE TABLE "piduino"."gpio_connector"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -70,12 +78,18 @@ CREATE TABLE "piduino"."manufacturer"(
 CREATE TABLE "piduino"."gpio_pin"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "gpio_pin_type_id" INTEGER NOT NULL,
-  "logical_num" INTEGER NOT NULL,
-  "mcu_num" INTEGER NOT NULL,
-  "system_num" INTEGER NOT NULL,
   CONSTRAINT "fk_gpio_pin_gpio_pin_type1"
     FOREIGN KEY("gpio_pin_type_id")
     REFERENCES "gpio_pin_type"("id")
+);
+CREATE TABLE "piduino"."gpio_pin_number"(
+  "gpio_pin_id" INTEGER NOT NULL,
+  "logical_num" INTEGER NOT NULL,
+  "mcu_num" INTEGER NOT NULL,
+  "system_num" INTEGER NOT NULL,
+  CONSTRAINT "fk_soc_pin_number_gpio_pin1"
+    FOREIGN KEY("gpio_pin_id")
+    REFERENCES "gpio_pin"("id")
 );
 CREATE TABLE "piduino"."gpio_has_connector"(
   "num" INTEGER NOT NULL,
@@ -138,6 +152,16 @@ CREATE TABLE "piduino"."gpio_pin_has_name"(
     FOREIGN KEY("gpio_pin_mode_id")
     REFERENCES "gpio_pin_mode"("id")
 );
+<<<<<<< HEAD
+CREATE TABLE "piduino"."revision"(
+  "board_id" INTEGER NOT NULL,
+  "revision" INTEGER PRIMARY KEY NOT NULL CHECK("revision">=0),
+  CONSTRAINT "fk_revision_board1"
+    FOREIGN KEY("board_id")
+    REFERENCES "board"("id")
+);
+=======
+>>>>>>> 19a6f3b31e89b3cdf1ba20c0c3e03a584200f5d2
 CREATE TABLE "piduino"."soc_has_pin"(
   "soc_id" INTEGER NOT NULL,
   "gpio_pin_id" INTEGER NOT NULL,
@@ -148,19 +172,23 @@ CREATE TABLE "piduino"."soc_has_pin"(
     FOREIGN KEY("gpio_pin_id")
     REFERENCES "gpio_pin"("id")
 );
+<<<<<<< HEAD
+CREATE TABLE "piduino"."tag"(
+  "board_id" INTEGER NOT NULL,
+  "tag" VARCHAR(45) PRIMARY KEY NOT NULL,
+  CONSTRAINT "fk_tag_board1"
+    FOREIGN KEY("board_id")
+    REFERENCES "board"("id")
+);
+=======
+>>>>>>> 19a6f3b31e89b3cdf1ba20c0c3e03a584200f5d2
 CREATE TABLE "piduino"."board"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-  "tag" VARCHAR(45),
-  "revision" INTEGER CHECK("revision">=0),
   "ram" INTEGER DEFAULT 0,
-  "pcb_revision" DECIMAL,
+  "pcb_revision" VARCHAR(45),
   "board_model_id" INTEGER NOT NULL,
   "gpio_id" INTEGER NOT NULL,
   "manufacturer_id" INTEGER NOT NULL,
-  CONSTRAINT "revision_UNIQUE"
-    UNIQUE("revision"),
-  CONSTRAINT "tag_UNIQUE"
-    UNIQUE("tag"),
   CONSTRAINT "fk_board_board_model1"
     FOREIGN KEY("board_model_id")
     REFERENCES "board_model"("id"),
