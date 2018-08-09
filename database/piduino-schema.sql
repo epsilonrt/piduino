@@ -2,7 +2,7 @@
 -- Author:        epsilonrt
 -- Caption:       New Model
 -- Project:       Name of the project
--- Changed:       2018-08-07 11:08
+-- Changed:       2018-08-09 16:40
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -79,7 +79,7 @@ CREATE TABLE "piduino"."gpio_pin"(
     REFERENCES "gpio_pin_type"("id")
 );
 CREATE TABLE "piduino"."gpio_pin_number"(
-  "gpio_pin_id" INTEGER NOT NULL,
+  "gpio_pin_id" INTEGER PRIMARY KEY NOT NULL,
   "logical_num" INTEGER NOT NULL,
   "mcu_num" INTEGER NOT NULL,
   "system_num" INTEGER NOT NULL,

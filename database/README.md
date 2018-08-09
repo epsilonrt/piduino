@@ -30,6 +30,7 @@
 ## export vers csv de données
 
     .mode csv
+    .header on
     .output data.csv
     select * from board;
 
