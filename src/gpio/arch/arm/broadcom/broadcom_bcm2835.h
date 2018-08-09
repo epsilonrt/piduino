@@ -59,7 +59,7 @@ namespace Piduino {
         *_iomap.io(offset) = value;
       }
 
-      static const std::map<SoC::Id, unsigned long> _iobase;
+      static unsigned long iobase(SoC::Id soc);
       static const std::map<unsigned int, Pin::Mode> _int2mode;
       static const std::map<Pin::Mode, unsigned int> _mode2int;
       static const std::map<Pin::Mode, std::string> _modes;

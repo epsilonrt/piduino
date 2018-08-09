@@ -31,18 +31,23 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-  const std::map<SoC::Id, unsigned long> DeviceBcm2835::_iobase {
-    {SoC::Bcm2708, Bcm2708Base},
-    {SoC::Bcm2709, Bcm2709Base},
-    {SoC::Bcm2710, Bcm2710Base},
-  };
+  unsigned long DeviceBcm2835::iobase (SoC::Id soc) {
+    const std::map<SoC::Id, unsigned long> base  {
+      {SoC::Bcm2708, Bcm2708Base},
+      {SoC::Bcm2709, Bcm2709Base},
+      {SoC::Bcm2710, Bcm2710Base},
+    };
+
+    return base.at (soc);
+  }
 
 // -----------------------------------------------------------------------------
   DeviceBcm2835::DeviceBcm2835() : GpioDevice () {
 
     if (db.board().soc().family().id() == SoC::Family::BroadcomBcm2835) {
 
-      _piobase = _iobase.at (db.board().soc().id()) + PioOffset;
+      //_piobase = _iobase.at (db.board().soc().id()) + PioOffset;
+      _piobase = iobase (db.board().soc().id()) + PioOffset;
     }
     else {
 
