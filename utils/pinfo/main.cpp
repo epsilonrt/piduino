@@ -34,6 +34,9 @@ extern const char* __progname;
 #define OPT_ID      0x0080
 #define OPT_TAG     0x0100
 #define OPT_FAM     0x0200
+#define OPT_I2C     0x0400
+#define OPT_SPI     0x0800
+#define OPT_SER     0x1000
 #define OPT_ALL     0xFFFF
 
 namespace Pinfo {
@@ -45,6 +48,9 @@ namespace Pinfo {
   void warranty ();
   void usage ();
   void version ();
+  std::string i2cBuses();
+  std::string spiBuses();
+  std::string serialPorts();
   void printWithLabels (uint16_t flags);
 }
 
@@ -55,7 +61,7 @@ using namespace Pinfo;
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
-  const char *short_options = "srgmpbnitfahvw";
+  const char *short_options = "srgmpbnitfIPSahvw";
   static const struct option long_options[] = {
     {"soc",  no_argument, NULL, 's'},       // OPT_SOC
     {"revision",  no_argument, NULL, 'r'},  // OPT_REV
@@ -67,6 +73,9 @@ main (int argc, char **argv) {
     {"id",  no_argument, NULL, 'i'},        // OPT_ID
     {"tag",  no_argument, NULL, 't'},       // OPT_TAG
     {"family",  no_argument, NULL, 'f'},    // OPT_FAM
+    {"i2c",  no_argument, NULL, 'I'},       // OPT_I2C
+    {"spi",  no_argument, NULL, 'P'},       // OPT_SPI
+    {"serial",  no_argument, NULL, 'S'},    // OPT_SER
     {"all",  no_argument, NULL, 'a'},       // OPT_ALL
     {"warranty",  no_argument, NULL, 'w'},
     {"help",  no_argument, NULL, 'h'},
@@ -130,6 +139,21 @@ main (int argc, char **argv) {
       case 'f':
         count++;
         flags |= OPT_FAM;
+        break;
+
+      case 'I':
+        count++;
+        flags |= OPT_I2C;
+        break;
+
+      case 'P':
+        count++;
+        flags |= OPT_SPI;
+        break;
+
+      case 'S':
+        count++;
+        flags |= OPT_SER;
         break;
 
       case 'a':
@@ -219,6 +243,21 @@ main (int argc, char **argv) {
         case OPT_FAM:
           cout  << db.board().family().name() << endl;
           break;
+        case OPT_I2C:
+          if (!db.board().i2cDevices().empty()) {
+            cout  << i2cBuses() << endl;
+          }
+          break;
+        case OPT_SPI:
+          if (!db.board().spiDevices().empty()) {
+            cout  << spiBuses() << endl;
+          }
+          break;
+        case OPT_SER:
+          if (!db.board().serialDevices().empty()) {
+            cout  << serialPorts() << endl;
+          }
+          break;
         default:
           exit (EXIT_FAILURE);
           break;
@@ -278,6 +317,18 @@ namespace Pinfo {
 
       cout << "PCB Revision    : " << db.board().pcbRevision() << endl;
     }
+    if ( (flags & OPT_I2C) && (!db.board().i2cDevices().empty())) {
+
+      cout << "I2C Buses       : " << i2cBuses() << endl;
+    }
+    if ( (flags & OPT_SPI) && (!db.board().spiDevices().empty())) {
+
+      cout << "SPI Buses       : " << spiBuses() << endl;
+    }
+    if ( (flags & OPT_SER) && (!db.board().serialDevices().empty())) {
+
+      cout << "Serial Ports    : " << serialPorts() << endl;
+    }
   }
 
 // -----------------------------------------------------------------------------
@@ -335,6 +386,51 @@ namespace Pinfo {
     cout << "  -b  --builder   \tPrints the name of the manufacturer." << endl;
     cout << "  -h  --help      \tPrints this message" << endl;
     cout << "  -v  --version   \tPrints version and exit" << endl;
+  }
+
+// -----------------------------------------------------------------------------
+  std::string i2cBuses() {
+    std::string ret;
+    unsigned size = db.board().i2cDevices().size();
+
+    for (unsigned i = 0; i < size; i++) {
+
+      ret += db.board().i2cDevices() [i].path;
+      if (i < (size - 1)) {
+        ret += std::string (",");
+      }
+    }
+    return ret;
+  }
+
+// -----------------------------------------------------------------------------
+  std::string spiBuses() {
+    std::string ret;
+    unsigned size = db.board().spiDevices().size();
+
+    for (unsigned i = 0; i < size; i++) {
+
+      ret += db.board().spiDevices() [i].path;
+      if (i < (size - 1)) {
+        ret += std::string (",");
+      }
+    }
+    return ret;
+  }
+
+// -----------------------------------------------------------------------------
+  std::string serialPorts() {
+    std::string ret;
+    unsigned size = db.board().serialDevices().size();
+
+    for (unsigned i = 0; i < size; i++) {
+
+      ret += db.board().serialDevices() [i].path;
+      if (i < (size - 1)) {
+        ret += std::string (",");
+      }
+    }
+    return ret;
   }
 }
 /* ========================================================================== */

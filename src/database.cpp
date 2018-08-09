@@ -114,18 +114,24 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   Database::Board::Board (int cpuinfoBoardRevision) :
     _id (-1), _gpio_id (-1), _revision (-1), _found (false) {
+    bool boardFound = false;
 
     _ram = system.totalRam();
     if (cpuinfoBoardRevision == -1) {
       // if the revision is not provided, try to detect the host system model...
 
-      probingSystem();
+      boardFound = probingSystem();
     }
     else {
 
-      setRevision (cpuinfoBoardRevision);
+      boardFound = setRevision (cpuinfoBoardRevision);
     }
 
+    if (boardFound) {
+      _i2c_dev = system.findI2cBuses (soc());
+      _spi_dev = system.findSpiBuses (soc());
+      _serial_dev = system.findSerialPorts (soc());
+    }
   }
 
 // -----------------------------------------------------------------------------

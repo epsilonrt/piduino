@@ -110,6 +110,34 @@ namespace Piduino {
         return _manufacturer;
       }
 
+      inline const std::string & i2cSysPath() const {
+        return _i2c_syspath;
+      }
+
+      inline const std::string & spiSysPath() const {
+        return _spi_syspath;
+      }
+
+      inline const std::string & serialSysPath() const {
+        return _serial_syspath;
+      }
+
+      inline int i2cCount() const {
+        return _i2c_count;
+      }
+
+      inline int spiCount() const {
+        return _spi_count;
+      }
+
+      inline int spiCsCount() const {
+        return _spi_cscount;
+      }
+
+      inline int serialCount() const {
+        return _serial_count;
+      }
+
       void setId (Id i);
 
     private:
@@ -117,6 +145,13 @@ namespace Piduino {
       std::string _name;
       Family _family;
       Manufacturer _manufacturer;
+      int _i2c_count;
+      std::string _i2c_syspath;
+      int _spi_count;
+      int _spi_cscount;
+      std::string _spi_syspath;
+      int _serial_count;
+      std::string _serial_syspath;
   };
 }
 /**

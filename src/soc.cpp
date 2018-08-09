@@ -43,13 +43,13 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   void SoC::setId (SoC::Id i)  {
 
-    cppdb::result res = Piduino::db << "SELECT name,soc_family_id,manufacturer_id FROM soc WHERE id=?" << i << cppdb::row;
+    cppdb::result res = Piduino::db << "SELECT name,soc_family_id,manufacturer_id,i2c_count,i2c_syspath,spi_count,spi_cscount,spi_syspath,serial_count,serial_syspath FROM soc WHERE id=?" << i << cppdb::row;
     if (!res.empty()) {
       int sfid;
       int mid;
 
       _id = i;
-      res >> _name >> sfid >> mid;
+      res >> _name >> sfid >> mid >> _i2c_count >> _i2c_syspath >> _spi_count >> _spi_cscount >> _spi_syspath >> _serial_count >> _serial_syspath;
       _family.setId (static_cast<SoC::Family::Id> (sfid));
       _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
     }

@@ -28,6 +28,10 @@ set(WORKSPACE_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
 
 #{{{{ User Code 1
 # Place your code here
+set(PROGRAM_PERMISSIONS_DEFAULT
+    OWNER_WRITE OWNER_READ OWNER_EXECUTE
+    GROUP_READ GROUP_EXECUTE
+    WORLD_READ WORLD_EXECUTE)
 
 # --- SysIo Begin. Do not edit by hand -----------------------------------------
 # Modifies binary file paths if codelite is not used.
@@ -121,5 +125,5 @@ else()
   add_dependencies (pinfo piduino-shared)
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_BIN_DIR}" 
-        PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} COMPONENT utils)
+        PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID COMPONENT utils)
 #}}}}
