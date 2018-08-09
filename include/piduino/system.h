@@ -152,7 +152,7 @@ namespace Piduino {
         return _sn;
       }
 
-      inline unsigned short revision() const {
+      inline unsigned long revision() const {
         return _revision;
       }
 
@@ -178,7 +178,7 @@ namespace Piduino {
 
     private:
       std::string _hardware;
-      unsigned short _revision;
+      unsigned long _revision;
       unsigned long long _sn;
       long _ram; // RAM en Mo
       int _ncore;
