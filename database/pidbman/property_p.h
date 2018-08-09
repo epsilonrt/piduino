@@ -7,14 +7,12 @@
 
 class PropertyPrivate {
   public:
-    PropertyPrivate (const QString & tableName, QSqlDatabase & database, bool writable) :
-      id (-1), values (tableName, database), q_ptr (0), isWritable (writable) {}
+    PropertyPrivate (Node * parent, Property * q);
 
-    int id;
-    QString name;
-    EnumString values;
     Property * q_ptr;
-    bool isWritable;
+    Node * parent;
+    int id;
+    QString table;
     Q_DECLARE_PUBLIC (Property);
 };
 #endif

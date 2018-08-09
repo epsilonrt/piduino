@@ -1,6 +1,62 @@
 #include "node_p.h"
+#include "property_p.h"
 #include "socfamily.h"
 #include "soc.h"
+
+// ---------------------------------------------------------------------------
+//                          Class SocFamily
+// ---------------------------------------------------------------------------
+class SocFamilyPrivate : public PropertyPrivate {
+  public:
+    SocFamilyPrivate (QSqlDatabase & database) :
+      PropertyPrivate (QString ("soc_family"), database, false),
+      arch (QString("arch"), database, false, 0)  {}
+    Property arch;
+    Q_DECLARE_PUBLIC (SocFamily);
+};
+// ---------------------------------------------------------------------------
+SocFamily::SocFamily (SocFamilyPrivate &dd) : Property (dd) {}
+// ---------------------------------------------------------------------------
+SocFamily::SocFamily (QSqlDatabase & database, QObject * parent) :
+  Property (* new SocFamilyPrivate (database)) {
+
+  setParent (parent);
+}
+// ---------------------------------------------------------------------------
+SocFamily::~SocFamily() {}
+// ---------------------------------------------------------------------------
+Property & SocFamily::arch()  {
+  Q_D (SocFamily);
+  return d->arch;
+}
+// ---------------------------------------------------------------------------
+bool SocFamily::readFromDatabase() {
+  Q_D (SocFamily);
+  QSqlQuery q (database());
+
+  q.prepare(QString ("SELECT name,arch_id FROM %1 WHERE id=?").arg (table()));
+  q.addBindValue (d->id);
+  q.exec();
+  if (q.next()) {
+    bool hasChanged = false;
+    QString name = q.value (0).toString();
+    int arch_id =  q.value (1).toInt();
+
+    if (d->name != name) {
+      d->name = name;
+      hasChanged = true;
+    }
+    if (d->arch.id() != arch_id) {
+      d->arch.setId(arch_id);
+      hasChanged = true;
+    }
+    if (hasChanged) {
+      emit changed();
+    }
+    return true;
+  }
+  return false;
+}
 
 // ---------------------------------------------------------------------------
 //                          Class SocFamilyNode
@@ -11,7 +67,6 @@ class SocFamilyNodePrivate : public NodePrivate {
       NodePrivate (Node::TypeSocFamily, parent),
       arch (QString("arch"), parent->database(), false, 0) {
     }
-    Property arch;
     Q_DECLARE_PUBLIC (SocFamilyNode);
 };
 // ---------------------------------------------------------------------------

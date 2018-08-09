@@ -5,75 +5,74 @@
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-void NodePrivate::setRoot (Node * q) {
-  Node * r = q;
+NodePrivate::NodePrivate (Property * d, Node * p, Node * q) :
+  parent (p), q_ptr (q), data (d), database (parent->database()) {
 
-  q_ptr = q;
-  while (r->parent()) {
-    r = r->parent();
-  }
+  findRoot ();
+}
+// ---------------------------------------------------------------------------
+NodePrivate::NodePrivate (QSqlDatabase & db, Node * q) :
+  parent (0), root (q), q_ptr (q), data (0), database (db) {
+}
+// ---------------------------------------------------------------------------
+NodePrivate::~NodePrivate() {
+  qDeleteAll (children);
+  delete data;
+}
+// ---------------------------------------------------------------------------
+void NodePrivate::findRoot () {
+  root = q_ptr;
 
-  if (r->type() == Node::TypeDatabase) {
-    root = reinterpret_cast<Database *>(r);
+  while (root->parent()) {
+    root = root->parent();
   }
 }
-
 // ---------------------------------------------------------------------------
 Node::Node (NodePrivate &dd) : d_ptr (&dd) {
-
-  d_ptr->setRoot (this);
 }
 // ---------------------------------------------------------------------------
-Node::Node (Type type, Node * parent) :
-  QObject (parent), d_ptr (new NodePrivate (type, parent))  {
+Node::Node (Property * data, Node * parent) :
+  d_ptr (new NodePrivate (data, parent, this))  {
 
-  d_ptr->setRoot (this);
 }
 // ---------------------------------------------------------------------------
-Node::Node (Type type, QObject * parent) :
-  QObject (parent), d_ptr (new NodePrivate (type, 0))  {
-
-  d_ptr->setRoot (this);
+Node::Node (QSqlDatabase & database) :
+  d_ptr (new NodePrivate (database, this))  {
 }
 // ---------------------------------------------------------------------------
 Node::~Node() {
 
-  qDeleteAll (d_ptr->children);
-}
-// ---------------------------------------------------------------------------
-Node::Type Node::type() const {
-  return d_ptr->type;
-}
-// ---------------------------------------------------------------------------
-int Node::id() const {
-  return d_ptr->id;
-}
-// ---------------------------------------------------------------------------
-void Node::setFolder (bool value) {
-
-  d_ptr->is_folder = value;
 }
 // ---------------------------------------------------------------------------
 bool Node::isFolder() const {
 
-  return d_ptr->is_folder;
+  return d_ptr->data == 0;
+}
+// ---------------------------------------------------------------------------
+Property * Node::data() const {
+
+  return d_ptr->data;
+}
+// ---------------------------------------------------------------------------
+QString Node::name() const {
+  if (data()) {
+    return data()->name();
+  }
+  return QString();
 }
 // ---------------------------------------------------------------------------
 Node * Node::parent() const {
+
   return d_ptr->parent;
 }
 // ---------------------------------------------------------------------------
-void Node::setParent (Node * parent) {
-  Q_D (Node);
-  d->parent = parent;
-  d->setRoot(this);
-}
-// ---------------------------------------------------------------------------
 const QList<Node *> & Node::children() const {
+
   return d_ptr->children;
 }
 // ---------------------------------------------------------------------------
-Database * Node::root() const {
+Node * Node::root() const {
+
   return d_ptr->root;
 }
 // ---------------------------------------------------------------------------
@@ -86,35 +85,14 @@ void Node::clearChildren() {
   }
 }
 // ---------------------------------------------------------------------------
-void Node::appendChild (Node * child) {
+void Node::append (Node * child) {
 
   d_ptr->children.append (child);
 }
 // ---------------------------------------------------------------------------
-QString Node::name() const {
-  return d_ptr->name;
-}
-// ---------------------------------------------------------------------------
-void Node::setName (const QString & name) {
-  d_ptr->name = name;
-}
-// ---------------------------------------------------------------------------
-void Node::setId (int id) {
-  d_ptr->id = id;
-}
-// ---------------------------------------------------------------------------
 QSqlDatabase & Node::database() const {
-  return  d_ptr->root->database();
+
+  return  d_ptr->database;
 }
-// ---------------------------------------------------------------------------
-QString Node::toolTip() const {
-  return QString();
-}
-// ---------------------------------------------------------------------------
-void Node::updateToDatabase() const {}
-// ---------------------------------------------------------------------------
-void Node::insertToDatabase() const {}
-// ---------------------------------------------------------------------------
-void Node::deleteFromDatabase() const {}
 // ---------------------------------------------------------------------------
 void Node::childrenFromDatabase() {}

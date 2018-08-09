@@ -4,7 +4,6 @@
 
 #include "treemodel.h"
 #include "node.h"
-#include "database.h"
 
 // ---------------------------------------------------------------------------
 TreeModel::TreeModel (const QString & sqlite3Filename, QObject *parent)
@@ -15,7 +14,7 @@ TreeModel::TreeModel (const QString & sqlite3Filename, QObject *parent)
   db.setDatabaseName (sqlite3Filename);
   if (db.open()) {
 
-    rootNode = new Database (db, this);
+    rootNode = new Node (db);
   }
 }
 
@@ -90,30 +89,7 @@ QVariant TreeModel::data (const QModelIndex &index, int role) const {
     }
     else {
 
-      switch (node->type()) {
-        case Node::TypeDatabase:
-        case Node::TypeBoardFamily:
-        case Node::TypeSocFamily:
-          return iconProvider.icon (QFileIconProvider::Folder);
-        case Node::TypeBoardModel:
-          return QIcon (":/images/board.png");
-        case Node::TypeBoardVariant:
-          return QIcon (":/images/board_variant.png");
-        case Node::TypeGpio:
-          return QIcon (":/images/gpio.png");
-        case Node::TypeConnector:
-          return QIcon (":/images/connector.png");
-        case Node::TypePin:
-          return QIcon (":/images/pin.png");
-        case Node::TypeSoc:
-          return QIcon (":/images/soc.png");
-        case Node::TypeFunction:
-          return QIcon (":/images/function.png");
-        case Node::TypeManufacturer:
-          return QIcon (":/images/manufacturer.png");
-        default:
-          break;
-      }
+      return node->data()->icon();
     }
   }
   else if (role == Qt::DisplayRole) {

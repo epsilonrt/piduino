@@ -1,60 +1,32 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <QList>
-#include <QObject>
+#include "property.h"
 
-class QSqlDatabase;
-class QString;
-class Database;
 class NodePrivate;
-class Node : public QObject {
-    Q_OBJECT
+class Node {
   public:
-    enum Type { TypeDatabase,
-                TypeBoardFamily, TypeBoardModel, TypeBoardVariant,
-                TypeGpio, TypeConnector,
-                TypePin, TypeFunction,
-                TypeSoc, TypeSocFamily,
-                TypeManufacturer
-              };
 
-    Node (Type type, Node * parent = 0);
-    Node (Type type, QObject * parent = 0);
+    Node (Property * data, Node * parent); // property
+    Node (QSqlDatabase & database); // root
     virtual ~Node();
 
-    Type type() const;
-
-    int id() const;
-    void setId (int id);
-
-    virtual QString name() const;
-    virtual void setName (const QString & name);
-    virtual QString toolTip() const;
-
     Node * parent() const;
-    void setParent (Node * parent);
+    Node * root() const;
 
     const QList<Node *> & children() const;
-    void appendChild (Node * child);
+    void append (Node * child);
 
     bool isFolder() const;
+    Property * data() const;
 
-    Database * root() const;
+    virtual QString name() const;
     virtual QSqlDatabase & database() const;
-
-  public slots:
     virtual void childrenFromDatabase();
     void clearChildren();
-    virtual void updateToDatabase() const;
-    virtual void insertToDatabase() const;
-    virtual void deleteFromDatabase() const;
 
   protected:
     Node (NodePrivate &dd);
-    void setDatabase (QSqlDatabase * db = 0);
-    void setFolder (bool isFolder);
-
     const QScopedPointer<NodePrivate> d_ptr;
 
   private:

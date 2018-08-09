@@ -3,7 +3,26 @@
 
 #include "property.h"
 
-class QString;
+class SocFamilyPrivate;
+class SocFamily : public Property {
+  public:
+
+    SocFamily (QSqlDatabase & database, QObject * parent = 0);
+    virtual ~SocFamily();
+
+    Property & arch();
+
+  public slots:
+    virtual bool readFromDatabase();
+
+  protected:
+    SocFamily (SocFamilyPrivate &dd);
+
+  private:
+    Q_DECLARE_PRIVATE (SocFamily);
+    Q_DISABLE_COPY (SocFamily);
+};
+
 class Node;
 class SocFamilyNodePrivate;
 class SocFamilyNode : public Node {
@@ -13,7 +32,7 @@ class SocFamilyNode : public Node {
     virtual ~SocFamilyNode();
     virtual void childrenFromDatabase();
 
-    Property & arch();
+    SocFamily & record();
 
   protected:
     SocFamilyNode (SocFamilyNodePrivate &dd);
