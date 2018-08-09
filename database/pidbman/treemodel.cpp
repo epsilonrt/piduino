@@ -4,6 +4,7 @@
 
 #include "treemodel.h"
 #include "node.h"
+#include "database.h"
 
 // ---------------------------------------------------------------------------
 TreeModel::TreeModel (const QString & sqlite3Filename, QObject *parent)

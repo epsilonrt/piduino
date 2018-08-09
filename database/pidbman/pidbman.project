@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="pidbman" InternalType="qmake" Version="10.0.0">
-  <VirtualDirectory Name="ressources">
-    <File Name="pidbman.qrc"/>
-  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001Y0005Debug0005perso00000036CONFIG += debug
@@ -10,8 +7,26 @@ QT           += sql
 0001Y0007Release0005perso00000019QT           += sql]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="ressources">
+    <File Name="pidbman.qrc"/>
+  </VirtualDirectory>
   <Description/>
   <VirtualDirectory Name="src">
+    <File Name="connectorfamily.cpp"/>
+    <File Name="property.cpp"/>
+    <File Name="enumstring.cpp"/>
+    <File Name="socfamily.cpp"/>
+    <File Name="soc.cpp"/>
+    <File Name="pin.cpp"/>
+    <File Name="manufacturer.cpp"/>
+    <File Name="gpio.cpp"/>
+    <File Name="function.cpp"/>
+    <File Name="folder.cpp"/>
+    <File Name="database.cpp"/>
+    <File Name="connector.cpp"/>
+    <File Name="boardvariant.cpp"/>
+    <File Name="boardmodel.cpp"/>
+    <File Name="boardfamily.cpp"/>
     <File Name="actionbutton.cpp"/>
     <File Name="mainwindow.cpp"/>
     <File Name="treemodel.cpp"/>
@@ -19,6 +34,24 @@ QT           += sql
     <File Name="main.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
+    <File Name="connectorfamily.h"/>
+    <File Name="property.h"/>
+    <File Name="enumstring.h"/>
+    <VirtualDirectory Name="private">
+      <File Name="property_p.h"/>
+      <File Name="node_p.h"/>
+    </VirtualDirectory>
+    <File Name="socfamily.h"/>
+    <File Name="soc.h"/>
+    <File Name="pin.h"/>
+    <File Name="gpio.h"/>
+    <File Name="function.h"/>
+    <File Name="folder.h"/>
+    <File Name="database.h"/>
+    <File Name="connector.h"/>
+    <File Name="boardvariant.h"/>
+    <File Name="boardmodel.h"/>
+    <File Name="boardfamily.h"/>
     <File Name="actionbutton.h"/>
     <File Name="mainwindow.h"/>
     <File Name="treemodel.h"/>
