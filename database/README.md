@@ -5,6 +5,7 @@
   Database...
 
 ## Installation
+....
 
 ## import depuis sql
 
@@ -20,7 +21,11 @@
 
     echo "BEGIN TRANSACTION;" >  piduino-data.sql; sqlite3 piduino.db .dump | grep '^INSERT INTO' >> piduino-data.sql; echo "COMMIT;" >>  piduino-data.sql
 
+<<<<<<< HEAD
+## export table vers sql de données
+=======
 ## export vers sql de données
+>>>>>>> 19a6f3b31e89b3cdf1ba20c0c3e03a584200f5d2
 
     .mode insert
     .output data.sql
@@ -58,3 +63,4 @@ MySQL Workbench 6.2 or above.
 
 Once you open a database model in MySQL Workbench, you can see "Export SQLite
 CREATE script" in "Tools > Catalog" menu. Just choose it.
+

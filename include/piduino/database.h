@@ -178,7 +178,7 @@ namespace Piduino {
             return model().soc();
           }
 
-          inline float pcbRevision() const {
+          inline std::string pcbRevision() const {
             return _pcb_revision;
           }
 
@@ -209,7 +209,7 @@ namespace Piduino {
           Model _model;
           Manufacturer _manufacturer;
           long long _gpio_id; // Révision du GPIO
-          float _pcb_revision;
+          std::string _pcb_revision;
           int _revision;
           bool _found;
           std::string _tag;

@@ -37,17 +37,21 @@ namespace Piduino {
       // new pin
 
       if (id < 0) {
-
-        stat = Piduino::db << "INSERT INTO gpio_pin(gpio_pin_type_id,logical_num,mcu_num,system_num) "
-               "VALUES(?,?,?,?)" << type << num.logical << num.mcu << num.system;
+        // auto-index
+        stat = Piduino::db << "INSERT INTO gpio_pin(gpio_pin_type_id) "
+               "VALUES(?)" << type;
       }
       else {
 
-        stat = Piduino::db << "INSERT INTO gpio_pin(id,gpio_pin_type_id,logical_num,mcu_num,system_num) "
-               "VALUES(?,?,?,?,?)" << id << type << num.logical << num.mcu << num.system;
+        stat = Piduino::db << "INSERT INTO gpio_pin(id,gpio_pin_type_id) "
+               "VALUES(?,?)" << id << type;
       }
       stat.exec();
       id = stat.last_insert_id();
+      if (type == TypeGpio) {
+        stat = Piduino::db << "INSERT INTO gpio_pin_number(gpio_pin_id,logical_num,mcu_num,system_num) "
+               "VALUES(?,?,?,?)" << id << num.logical << num.mcu << num.system;
+      }
       for (auto n = name.begin(); n != name.end(); ++n) {
 
         insertModeName (n->first, n->second);
@@ -172,13 +176,13 @@ namespace Piduino {
 
     num.row = pinRow;
     num.column = pinColumn;
-    
+
     if (id > 0) {
       // Chargement depuis database
       cppdb::result res;
 
       res = Piduino::db <<
-            "SELECT gpio_pin_type_id,logical_num,mcu_num,system_num "
+            "SELECT gpio_pin_type_id "
             " FROM gpio_pin "
             " WHERE "
             "   id=?"
@@ -186,10 +190,10 @@ namespace Piduino {
 
       if (!res.empty()) {
         int tid;
-        
-        res >> tid >> num.logical >> num.mcu >> num.system;
+
+        res >> tid;
         type = static_cast<Pin::Type> (tid);
-        
+
         res = Piduino::db <<
               "SELECT gpio_pin_name.name,gpio_pin_has_name.gpio_pin_mode_id "
               " FROM gpio_pin_has_name "
@@ -204,6 +208,15 @@ namespace Piduino {
 
           res >> pin_name >> pin_mode;
           name[static_cast<Pin::Mode> (pin_mode)] = pin_name;
+        }
+        res = Piduino::db <<
+              "SELECT logical_num,mcu_num,system_num "
+              " FROM gpio_pin_number "
+              " WHERE "
+              "   gpio_pin_id=?"
+              << id << cppdb::row;
+        if (!res.empty()) {
+          res >> num.logical >> num.mcu >> num.system;
         }
       }
     }
