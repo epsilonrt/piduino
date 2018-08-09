@@ -2,11 +2,7 @@
 -- Author:        epsilonrt
 -- Caption:       New Model
 -- Project:       Name of the project
-<<<<<<< HEAD
--- Changed:       2018-07-01 17:32
-=======
--- Changed:       2018-06-22 18:11
->>>>>>> 19a6f3b31e89b3cdf1ba20c0c3e03a584200f5d2
+-- Changed:       2018-08-07 11:08
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -129,6 +125,13 @@ CREATE TABLE "piduino"."soc"(
   "name" VARCHAR(45),
   "soc_family_id" INTEGER NOT NULL,
   "manufacturer_id" INTEGER NOT NULL,
+  "i2c_count" INTEGER NOT NULL DEFAULT 0,
+  "i2c_syspath" VARCHAR(256),
+  "spi_count" INTEGER NOT NULL DEFAULT 0,
+  "spi_cscount" INTEGER,
+  "spi_syspath" VARCHAR(256),
+  "serial_count" INTEGER NOT NULL DEFAULT 0,
+  "serial_syspath" VARCHAR(256),
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name"),
   CONSTRAINT "fk_soc_soc_family1"
@@ -152,7 +155,6 @@ CREATE TABLE "piduino"."gpio_pin_has_name"(
     FOREIGN KEY("gpio_pin_mode_id")
     REFERENCES "gpio_pin_mode"("id")
 );
-<<<<<<< HEAD
 CREATE TABLE "piduino"."revision"(
   "board_id" INTEGER NOT NULL,
   "revision" INTEGER PRIMARY KEY NOT NULL CHECK("revision">=0),
@@ -160,8 +162,6 @@ CREATE TABLE "piduino"."revision"(
     FOREIGN KEY("board_id")
     REFERENCES "board"("id")
 );
-=======
->>>>>>> 19a6f3b31e89b3cdf1ba20c0c3e03a584200f5d2
 CREATE TABLE "piduino"."soc_has_pin"(
   "soc_id" INTEGER NOT NULL,
   "gpio_pin_id" INTEGER NOT NULL,
@@ -172,7 +172,6 @@ CREATE TABLE "piduino"."soc_has_pin"(
     FOREIGN KEY("gpio_pin_id")
     REFERENCES "gpio_pin"("id")
 );
-<<<<<<< HEAD
 CREATE TABLE "piduino"."tag"(
   "board_id" INTEGER NOT NULL,
   "tag" VARCHAR(45) PRIMARY KEY NOT NULL,
@@ -180,8 +179,6 @@ CREATE TABLE "piduino"."tag"(
     FOREIGN KEY("board_id")
     REFERENCES "board"("id")
 );
-=======
->>>>>>> 19a6f3b31e89b3cdf1ba20c0c3e03a584200f5d2
 CREATE TABLE "piduino"."board"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "ram" INTEGER DEFAULT 0,
