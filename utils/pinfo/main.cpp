@@ -300,7 +300,7 @@ namespace Pinfo {
     if ( (flags & OPT_REV) && (db.board().revision() >= 0)) {
       cout << "Board Revision  : " << hex << showbase << db.board().revision() << noshowbase << dec << endl;
     }
-    if (flags & OPT_TAG)  {
+    if ((flags & OPT_TAG) && (db.board().tag().empty() == false))  {
 
       cout << "Board Tag       : " << db.board().tag() << endl;
     }
