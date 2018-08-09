@@ -2,7 +2,7 @@
 -- Author:        epsilonrt
 -- Caption:       New Model
 -- Project:       Name of the project
--- Changed:       2018-05-04 14:58
+-- Changed:       2018-06-22 18:11
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -137,6 +137,16 @@ CREATE TABLE "piduino"."gpio_pin_has_name"(
   CONSTRAINT "fk_gpio_pin_has_name_gpio_pin_mode1"
     FOREIGN KEY("gpio_pin_mode_id")
     REFERENCES "gpio_pin_mode"("id")
+);
+CREATE TABLE "piduino"."soc_has_pin"(
+  "soc_id" INTEGER NOT NULL,
+  "gpio_pin_id" INTEGER NOT NULL,
+  CONSTRAINT "fk_soc_has_gpio_pin_soc1"
+    FOREIGN KEY("soc_id")
+    REFERENCES "soc"("id"),
+  CONSTRAINT "fk_soc_has_gpio_pin_gpio_pin1"
+    FOREIGN KEY("gpio_pin_id")
+    REFERENCES "gpio_pin"("id")
 );
 CREATE TABLE "piduino"."board"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
