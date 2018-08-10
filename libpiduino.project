@@ -40,7 +40,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="i2c">
-      <File Name="src/i2c/i2c-dev.h"/>
+      <File Name="src/i2c/i2cdev.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="gpio">
       <VirtualDirectory Name="arch">
@@ -64,7 +64,9 @@
       <File Name="src/gpio/gpiopin-database.cpp"/>
       <File Name="src/gpio/gpiopwm.cpp"/>
     </VirtualDirectory>
-    <VirtualDirectory Name="spi"/>
+    <VirtualDirectory Name="spi">
+      <File Name="src/spi/spidev.cpp"/>
+    </VirtualDirectory>
     <File Name="src/clock.cpp"/>
     <File Name="src/scheduler.cpp"/>
     <File Name="src/board.cpp"/>
@@ -83,6 +85,9 @@
       <File Name="src/arduino/WString.cpp"/>
       <File Name="src/arduino/Core.cpp"/>
       <File Name="src/arduino/Stream.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="serial">
+      <File Name="src/serial/serialport.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
@@ -120,6 +125,9 @@
         <File Name="include/piduino/private/chardevice_p.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/flags.h"/>
+      <File Name="include/piduino/i2cdev.h"/>
+      <File Name="include/piduino/serialport.h"/>
+      <File Name="include/piduino/spidev.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>

@@ -61,15 +61,15 @@ set (hdr_arduino
 )
 
 set (hdr_i2c
-#  ${PIDUINO_INC_DIR}/piduino/i2c.h
+  ${PIDUINO_INC_DIR}/piduino/i2cdev.h
 )
 
 set (hdr_spi
-#  ${PIDUINO_INC_DIR}/piduino/spi.h
+  ${PIDUINO_INC_DIR}/piduino/spidev.h
 )
 
 set (hdr_serial
-#  ${PIDUINO_INC_DIR}/piduino/serial.h
+  ${PIDUINO_INC_DIR}/piduino/serialport.h
 )
 
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in

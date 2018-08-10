@@ -21,7 +21,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <piduino/soc.h>
 
 /**
  *  @defgroup piduino_system System
@@ -110,26 +109,6 @@ namespace Piduino {
           std::string _arch;
       };
 
-
-      class SpiDev {
-        public:
-          int id;
-          std::string path;
-          int cs;
-      };
-
-      class I2cDev {
-        public:
-          int id;
-          std::string path;
-      };
-
-      class SerialDev  {
-        public:
-          int id;
-          std::string path;
-      };
-
       // -----------------------------------------------------------------------
       //
       //                         System Class
@@ -167,10 +146,6 @@ namespace Piduino {
       inline const ArmbianInfo & armbianInfo() const {
         return _armbian;
       }
-
-      std::vector<I2cDev> findI2cBuses (const SoC & soc);
-      std::vector<SpiDev> findSpiBuses (const SoC & soc);
-      std::vector<SerialDev> findSerialPorts (const SoC & soc);
 
     protected:
       void readTotalRam();

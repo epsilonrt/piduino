@@ -196,18 +196,6 @@ namespace Piduino {
             return _manufacturer;
           }
 
-          inline const std::vector<System::I2cDev> & i2cDevices() const {
-            return _i2c_dev;
-          }
-
-          inline const std::vector<System::SpiDev> & spiDevices() const {
-            return _spi_dev;
-          }
-
-          inline const std::vector<System::SerialDev> & serialDevices() const {
-            return _serial_dev;
-          }
-
           inline unsigned long totalRam() const {
             return _ram;
           }
@@ -228,9 +216,6 @@ namespace Piduino {
           bool _found;
           std::string _tag;
           long _ram; // RAM en Mo
-          std::vector<System::I2cDev> _i2c_dev;
-          std::vector<System::SpiDev> _spi_dev;
-          std::vector<System::SerialDev> _serial_dev;
       };
 
       // -----------------------------------------------------------------------

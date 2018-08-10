@@ -15,10 +15,7 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include <sys/sysinfo.h>
-#include <unistd.h>
-#include <fcntl.h>
 #include <algorithm>
-#include <cstdio>
 #include <piduino/system.h>
 #include <piduino/configfile.h>
 
@@ -212,75 +209,6 @@ namespace Piduino {
       _core.partno = cfg.value<int> ("CPU part", 0);
       _core.revision = cfg.value<int> ("CPU revision", 0);
     }
-  }
-
-  // ---------------------------------------------------------------------------
-  std::vector<System::I2cDev>
-  System::findI2cBuses (const SoC & soc) {
-    std::vector<System::I2cDev> found;
-
-    for (int id = 0; id < soc.i2cCount() ; id++) {
-      char path[256];
-
-      ::snprintf (path, sizeof (path), soc.i2cSysPath().c_str(), id);
-      if (fileExist (std::string (path))) {
-        I2cDev dev;
-
-        dev.id = id;
-        dev.path = path;
-        found.push_back (dev);
-      }
-
-    }
-    return found;
-  }
-
-  // ---------------------------------------------------------------------------
-  std::vector<System::SpiDev>
-  System::findSpiBuses (const SoC & soc) {
-    std::vector<System::SpiDev> found;
-
-    for (int id = 0; id < soc.spiCount(); id++) {
-      char path[256];
-
-      for (int cs = 0; cs < soc.spiCsCount(); cs++) {
-
-        ::snprintf (path, sizeof (path), soc.spiSysPath().c_str(), id, cs);
-        if (fileExist (std::string (path))) {
-          SpiDev dev;
-
-          dev.id = id;
-          dev.cs = cs;
-          dev.path = path;
-          found.push_back (dev);
-        }
-      }
-    }
-    return found;
-  }
-
-  // ---------------------------------------------------------------------------
-  std::vector<System::SerialDev>
-  System::findSerialPorts (const SoC & soc) {
-    std::vector<System::SerialDev> found;
-
-    for (int id = 0; id < soc.serialCount(); id++) {
-      char path[256];
-      int fd;
-
-      ::snprintf (path, sizeof (path), soc.serialSysPath().c_str(), id);
-      fd = ::open (path, O_RDWR);
-      if (fd >= 0) {
-        if (::read (fd, path, 0) >= 0) {
-          SerialDev dev;
-          dev.id = id;
-          dev.path = path;
-          found.push_back (dev);
-        }
-        ::close (fd);
-      }
-    }
-    return found;
   }
 
 // -----------------------------------------------------------------------------
