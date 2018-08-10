@@ -15,8 +15,20 @@
  */
 #include <iostream>
 #include <string>
+#include <vector>
 #include <getopt.h>
 #include <piduino/database.h>
+#include <piduino/config.h>
+#if PIDUINO_WITH_I2C
+#include <piduino/i2cdev.h>
+#endif
+#if PIDUINO_WITH_SPI
+#include <piduino/spidev.h>
+#endif
+#if PIDUINO_WITH_SERIAL
+#include <piduino/serialport.h>
+#endif
+
 #include "version.h"
 
 /* public variables ========================================================= */
@@ -61,7 +73,17 @@ using namespace Pinfo;
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
-  const char *short_options = "srgmpbnitfIPSahvw";
+  const char *short_options = "srgmpbnitfahvw"
+#if PIDUINO_WITH_I2C
+                              "I"
+#endif
+#if PIDUINO_WITH_SPI
+                              "P"
+#endif
+#if PIDUINO_WITH_SERIAL
+                              "S"
+#endif
+                              ;
   static const struct option long_options[] = {
     {"soc",  no_argument, NULL, 's'},       // OPT_SOC
     {"revision",  no_argument, NULL, 'r'},  // OPT_REV
@@ -73,9 +95,15 @@ main (int argc, char **argv) {
     {"id",  no_argument, NULL, 'i'},        // OPT_ID
     {"tag",  no_argument, NULL, 't'},       // OPT_TAG
     {"family",  no_argument, NULL, 'f'},    // OPT_FAM
+#if PIDUINO_WITH_I2C
     {"i2c",  no_argument, NULL, 'I'},       // OPT_I2C
+#endif
+#if PIDUINO_WITH_SPI
     {"spi",  no_argument, NULL, 'P'},       // OPT_SPI
+#endif
+#if PIDUINO_WITH_SERIAL
     {"serial",  no_argument, NULL, 'S'},    // OPT_SER
+#endif
     {"all",  no_argument, NULL, 'a'},       // OPT_ALL
     {"warranty",  no_argument, NULL, 'w'},
     {"help",  no_argument, NULL, 'h'},
@@ -85,6 +113,7 @@ main (int argc, char **argv) {
 
   int i;
   uint16_t flags = 0, count = 0;
+  std::string str;
 
   do {
     i = getopt_long (argc, argv, short_options, long_options, NULL);
@@ -141,20 +170,26 @@ main (int argc, char **argv) {
         flags |= OPT_FAM;
         break;
 
+#if PIDUINO_WITH_I2C
       case 'I':
         count++;
         flags |= OPT_I2C;
         break;
+#endif
 
+#if PIDUINO_WITH_SPI
       case 'P':
         count++;
         flags |= OPT_SPI;
         break;
+#endif
 
+#if PIDUINO_WITH_SERIAL
       case 'S':
         count++;
         flags |= OPT_SER;
         break;
+#endif
 
       case 'a':
         count = -1;
@@ -243,21 +278,30 @@ main (int argc, char **argv) {
         case OPT_FAM:
           cout  << db.board().family().name() << endl;
           break;
+#if PIDUINO_WITH_I2C
         case OPT_I2C:
-          if (!db.board().i2cDevices().empty()) {
-            cout  << i2cBuses() << endl;
+          str = i2cBuses();
+          if (!str.empty()) {
+            cout  << str << endl;
           }
           break;
+#endif
+#if PIDUINO_WITH_SPI
         case OPT_SPI:
-          if (!db.board().spiDevices().empty()) {
-            cout  << spiBuses() << endl;
+          str = spiBuses();
+          if (!str.empty()) {
+            cout  << str << endl;
           }
           break;
+#endif
+#if PIDUINO_WITH_SERIAL
         case OPT_SER:
-          if (!db.board().serialDevices().empty()) {
-            cout  << serialPorts() << endl;
+          str = serialPorts();
+          if (!str.empty()) {
+            cout  << str << endl;
           }
           break;
+#endif
         default:
           exit (EXIT_FAILURE);
           break;
@@ -300,7 +344,7 @@ namespace Pinfo {
     if ( (flags & OPT_REV) && (db.board().revision() >= 0)) {
       cout << "Board Revision  : " << hex << showbase << db.board().revision() << noshowbase << dec << endl;
     }
-    if ((flags & OPT_TAG) && (db.board().tag().empty() == false))  {
+    if ( (flags & OPT_TAG) && (db.board().tag().empty() == false))  {
 
       cout << "Board Tag       : " << db.board().tag() << endl;
     }
@@ -317,18 +361,36 @@ namespace Pinfo {
 
       cout << "PCB Revision    : " << db.board().pcbRevision() << endl;
     }
-    if ( (flags & OPT_I2C) && (!db.board().i2cDevices().empty())) {
+#if PIDUINO_WITH_I2C
+    if (flags & OPT_I2C) {
+      std::string buses = i2cBuses();
 
-      cout << "I2C Buses       : " << i2cBuses() << endl;
-    }
-    if ( (flags & OPT_SPI) && (!db.board().spiDevices().empty())) {
+      if (!buses.empty()) {
 
-      cout << "SPI Buses       : " << spiBuses() << endl;
+        cout << "I2C Buses       : " << buses << endl;
+      }
     }
-    if ( (flags & OPT_SER) && (!db.board().serialDevices().empty())) {
+#endif
+#if PIDUINO_WITH_SPI
+    if (flags & OPT_SPI) {
+      std::string buses = spiBuses();
 
-      cout << "Serial Ports    : " << serialPorts() << endl;
+      if (!buses.empty()) {
+
+        cout << "SPI Buses       : " << buses << endl;
+      }
     }
+#endif
+#if PIDUINO_WITH_SERIAL
+    if (flags & OPT_SER) {
+      std::string ports = serialPorts();
+
+      if (!ports.empty()) {
+
+        cout << "Serial Ports    : " << ports << endl;
+      }
+    }
+#endif
   }
 
 // -----------------------------------------------------------------------------
@@ -384,6 +446,15 @@ namespace Pinfo {
     cout << "  -m  --mem       \tPrints the RAM size in megabytes" << endl;
     cout << "  -p  --pcb       \tPrints the revision number of the PCB in the form M.m" << endl;
     cout << "  -b  --builder   \tPrints the name of the manufacturer." << endl;
+#if PIDUINO_WITH_I2C
+    cout << "  -I  --i2c       \tPrints I2c buses available on the SoC." << endl;
+#endif
+#if PIDUINO_WITH_SPI
+    cout << "  -P  --spi       \tPrints SPI buses available on the SoC." << endl;
+#endif
+#if PIDUINO_WITH_SERIAL
+    cout << "  -S  --serial    \tPrints serial ports available on the SoC." << endl;
+#endif
     cout << "  -h  --help      \tPrints this message" << endl;
     cout << "  -v  --version   \tPrints version and exit" << endl;
   }
@@ -391,12 +462,12 @@ namespace Pinfo {
 // -----------------------------------------------------------------------------
   std::string i2cBuses() {
     std::string ret;
-    unsigned size = db.board().i2cDevices().size();
+    std::vector<I2cDev::Info> buses = I2cDev::availableBuses();
 
-    for (unsigned i = 0; i < size; i++) {
+    for (unsigned i = 0; i < buses.size(); i++) {
 
-      ret += db.board().i2cDevices() [i].path;
-      if (i < (size - 1)) {
+      ret += buses [i].path;
+      if (i < (buses.size() - 1)) {
         ret += std::string (",");
       }
     }
@@ -406,12 +477,12 @@ namespace Pinfo {
 // -----------------------------------------------------------------------------
   std::string spiBuses() {
     std::string ret;
-    unsigned size = db.board().spiDevices().size();
+    std::vector<SpiDev::Info> buses = SpiDev::availableBuses();
 
-    for (unsigned i = 0; i < size; i++) {
+    for (unsigned i = 0; i < buses.size(); i++) {
 
-      ret += db.board().spiDevices() [i].path;
-      if (i < (size - 1)) {
+      ret += buses [i].path;
+      if (i < (buses.size() - 1)) {
         ret += std::string (",");
       }
     }
@@ -421,12 +492,12 @@ namespace Pinfo {
 // -----------------------------------------------------------------------------
   std::string serialPorts() {
     std::string ret;
-    unsigned size = db.board().serialDevices().size();
+    std::vector<SerialPort::Info> ports = SerialPort::availablePorts();
 
-    for (unsigned i = 0; i < size; i++) {
+    for (unsigned i = 0; i < ports.size(); i++) {
 
-      ret += db.board().serialDevices() [i].path;
-      if (i < (size - 1)) {
+      ret += ports [i].path;
+      if (i < (ports.size() - 1)) {
         ret += std::string (",");
       }
     }
