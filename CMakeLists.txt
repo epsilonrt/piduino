@@ -49,6 +49,7 @@ set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDE_DIR include CACHE PATH
   "Installation directory for header files")
 set(INSTALL_ETC_DIR /etc CACHE PATH "Installation directory for configuration")
+set(INSTALL_CODELITE_DIR /usr/share/codelite CACHE PATH "Installation directory for codelite templates")
 
 set(DEF_INSTALL_CMAKE_DIR lib)
 set(DEF_INSTALL_DOC_DIR share/doc)
@@ -60,6 +61,7 @@ set(INSTALL_DOC_DIR ${DEF_INSTALL_DOC_DIR} CACHE PATH
   "Installation directory for documentation")
 set(INSTALL_DATA_DIR ${DEF_INSTALL_DATA_DIR} CACHE PATH
   "Installation directory for data")
+
 set (CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
@@ -76,7 +78,7 @@ set(PIDUINO_VERSION
   ${PIDUINO_VERSION_MAJOR}.${PIDUINO_VERSION_MINOR}.${PIDUINO_VERSION_PATCH})
 
 # Make relative paths absolute (needed later on)
-foreach(p LIB BIN INCLUDE CMAKE DATA DOC)
+foreach(p LIB BIN INCLUDE CMAKE DATA DOC CODELITE)
   set(var INSTALL_${p}_DIR)
   if(NOT IS_ABSOLUTE "${${var}}")
     set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")

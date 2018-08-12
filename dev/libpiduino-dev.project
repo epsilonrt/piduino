@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiduino-dev" Version="10.0.0" InternalType="Console">
+  <VirtualDirectory Name="codelite">
+    <VirtualDirectory Name="executable-piduino">
+      <File Name="codelite/executable-piduino/main.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
