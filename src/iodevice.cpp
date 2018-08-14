@@ -14,45 +14,47 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
+#include <cstring>
 #include <piduino/private/iodevice_p.h>
 
 namespace Piduino {
 
   // ---------------------------------------------------------------------------
-  IoDevice::Private::Private (bool _isSequential) :
-    openMode (OpenMode::NotOpen), isSequential (_isSequential) {}
+  IoDevice::Private::Private (IoDevice * q) :
+    q_ptr (q), openMode (OpenMode::NotOpen), isSequential (false), error (0) {}
 
   // ---------------------------------------------------------------------------
   IoDevice::Private::~Private()  {}
 
   // ---------------------------------------------------------------------------
-  IoDevice::IoDevice (IoDevice::Private &dd) : d (&dd) {
+  IoDevice::IoDevice (IoDevice::Private &dd) : d_ptr (&dd) {
 
   }
 
   // ---------------------------------------------------------------------------
-  IoDevice::IoDevice (bool isSequential) :
-    d (std::make_unique<Private> (isSequential))  {
+  IoDevice::IoDevice () :
+    d_ptr (new Private (this))  {
 
   }
 
   // ---------------------------------------------------------------------------
   IoDevice::~IoDevice() {
 
+    delete d_ptr;
   }
 
   // ---------------------------------------------------------------------------
   void
   IoDevice::setOpenMode (OpenMode m) {
 
-    d->openMode = m;
+    d_ptr->openMode = m;
   }
 
   // ---------------------------------------------------------------------------
   IoDevice::OpenMode
   IoDevice::openMode() const {
 
-    return d->openMode;
+    return d_ptr->openMode;
   }
 
   // ---------------------------------------------------------------------------
@@ -60,7 +62,9 @@ namespace Piduino {
   IoDevice::open (OpenMode m) {
 
     if (!isOpen()) {
+
       setOpenMode (m);
+      clearError();
     }
     return true;
   }
@@ -70,7 +74,7 @@ namespace Piduino {
   IoDevice::close() {
 
     if (isOpen()) {
-      d->errorString.clear();
+
       setOpenMode (OpenMode::NotOpen);
     }
   }
@@ -90,7 +94,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  bool 
+  bool
   IoDevice::isBuffered() const {
 
     return (openMode() & OpenMode::Unbuffered) != OpenMode::Unbuffered;
@@ -107,31 +111,57 @@ namespace Piduino {
   std::string
   IoDevice::errorString() const {
 
-    return d->errorString;
+    return d_ptr->errorString;
+  }
+
+  // ---------------------------------------------------------------------------
+  int
+  IoDevice::error() const {
+
+    return d_ptr->error;
   }
 
   // ---------------------------------------------------------------------------
   void
-  IoDevice::setErrorString (const std::string &errorString) {
+  IoDevice::setError (int error) {
 
-    d->errorString = errorString;
+    d_ptr->error = error;
+    d_ptr->errorString.assign (strerror (error));
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::setError () {
+
+    if (errno) {
+      d_ptr->error = errno;
+      d_ptr->errorString.assign (strerror (errno));
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::clearError () {
+
+    d_ptr->error = 0;
+    d_ptr->errorString.clear();
   }
 
   // ---------------------------------------------------------------------------
   bool
   IoDevice::isSequential() const {
 
-    return d->isSequential;
+    return d_ptr->isSequential;
   }
 
   // ---------------------------------------------------------------------------
   void IoDevice::setTextModeEnabled (bool enabled) {
 
     if (enabled) {
-      d->openMode |= OpenMode::Text;
+      d_ptr->openMode |= OpenMode::Text;
     }
     else {
-      d->openMode &= ~OpenMode::Text;
+      d_ptr->openMode &= ~OpenMode::Text;
     }
   }
 

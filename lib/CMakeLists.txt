@@ -26,6 +26,7 @@ WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
 file(GLOB src_piduino ${PIDUINO_SRC_DIR}/*.c ${PIDUINO_SRC_DIR}/*.cpp)
 
 set (hdr_piduino 
+  ${PIDUINO_INC_DIR}/piduino/global.h
   ${PIDUINO_INC_DIR}/piduino/clock.h
   ${PIDUINO_INC_DIR}/piduino/scheduler.h
   ${PIDUINO_INC_DIR}/piduino/iomap.h
@@ -37,6 +38,8 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/system.h
   ${PIDUINO_INC_DIR}/piduino/memory.h
   ${PIDUINO_INC_DIR}/piduino/ringbuffer.h
+  ${PIDUINO_INC_DIR}/piduino/linearbuffer.h
+  ${PIDUINO_INC_DIR}/piduino/fifo.h
   ${PIDUINO_INC_DIR}/piduino/flags.h
   ${PIDUINO_INC_DIR}/piduino/iodevice.h
   ${PIDUINO_INC_DIR}/piduino/chardevice.h

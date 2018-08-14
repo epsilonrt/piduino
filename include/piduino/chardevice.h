@@ -38,7 +38,7 @@ namespace Piduino {
       /**
        * Constructs a CharDevice object.
        */
-      explicit CharDevice (bool isSequential = false);
+      CharDevice ();
       
       /**
        * The destructor is virtual, and CharDevice is an abstract base class. 
@@ -393,7 +393,7 @@ namespace Piduino {
       virtual long readLineData (char *data, long maxlen);
 
     private:
-      std::unique_ptr<CharDevice::Private> d;
+      PIMP_DECLARE_PRIVATE (CharDevice)
   };
 }
 /**

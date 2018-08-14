@@ -14,31 +14,34 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef PIDUINO_GLOBAL_H
+#define PIDUINO_GLOBAL_H
 
-#ifndef PIDUINO_IODEVICE_PRIVATE_H
-#define PIDUINO_IODEVICE_PRIVATE_H
-
-#include <cerrno>
-#include <piduino/iodevice.h>
-
+/**
+ *  @defgroup piduino_global Global definitions
+ *
+ *  @{
+ */
+#define PIMP_D(Class) Class::Private * const d = d_func()
+#define PIMP_Q(Class) Class * const q = q_func()
+#define PIMP_DECLARE_PRIVATE(Class)\
+  inline Class::Private* d_func() {\
+    return reinterpret_cast<Class::Private*>(d_ptr);\
+  }\
+  inline const Class::Private* d_func() const {\
+    return reinterpret_cast<const Class::Private *>(d_ptr);\
+  }\
+  friend class Class::Private;
+#define PIMP_DECLARE_PUBLIC(Class) \
+  inline Class* q_func() { return reinterpret_cast<Class *>(q_ptr); } \
+  inline const Class* q_func() const { return reinterpret_cast<const Class *>(q_ptr); } \
+  friend class Class;
 namespace Piduino {
-
-  class IoDevice::Private {
-
-    public:
-      Private (IoDevice * q);
-      virtual ~Private();
-
-      IoDevice * const q_ptr;
-      
-      OpenMode openMode;
-      bool isSequential;
-      int error;
-      std::string errorString;
-      
-      PIMP_DECLARE_PUBLIC(IoDevice)
-  };
 }
 
+/**
+ *  @}
+ */
+
 /* ========================================================================== */
-#endif /* PIDUINO_IODEVICE_PRIVATE_H defined */
+#endif /* PIDUINO_GLOBAL_H defined */

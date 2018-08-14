@@ -20,6 +20,7 @@
 
 #include <piduino/memory.h>
 #include <piduino/flags.h>
+#include <piduino/global.h>
 #include <string>
 
 /**
@@ -44,7 +45,7 @@ namespace Piduino {
         Unbuffered = 0x0020
       };
 
-      explicit IoDevice(bool isSequential = false);
+      IoDevice ();
       virtual ~IoDevice();
 
       OpenMode openMode() const;
@@ -54,19 +55,19 @@ namespace Piduino {
       bool isBuffered() const;
       /**
        * Returns true if this device is sequential; otherwise returns false.
-       * 
-       * Sequential devices, as opposed to a random-access devices, have no 
+       *
+       * Sequential devices, as opposed to a random-access devices, have no
        * concept of a start, an end, a size, or a current position, and they
-       * do not support seeking. You can only read from the device when it 
-       * reports that data is available. The most common example of a sequential 
-       * device is a network socket. On Unix, special files such as /dev/zero 
+       * do not support seeking. You can only read from the device when it
+       * reports that data is available. The most common example of a sequential
+       * device is a network socket. On Unix, special files such as /dev/zero
        * and fifo pipes are sequential.
-       * 
-       * Regular files, on the other hand, do support random access. They have 
-       * both a size and a current position, and they also support seeking 
+       *
+       * Regular files, on the other hand, do support random access. They have
+       * both a size and a current position, and they also support seeking
        * backwards and forwards in the data stream. Regular files are non-sequential.
-       * 
-       * The QIODevice implementation returns false.
+       *
+       * The IoDevice implementation returns false.
        */
       virtual bool isSequential() const;
 
@@ -76,16 +77,22 @@ namespace Piduino {
       virtual bool open (OpenMode mode);
       virtual void close();
       std::string errorString() const;
+      int error() const;
 
     protected:
       class Private;
       IoDevice (Private &dd);
+      Private * d_ptr;
+      
       void setOpenMode (OpenMode openMode);
       void setSequential (bool enable);
-      void setErrorString (const std::string &errorString);
-
+      void setError ();
+      void setError (int error);
+      void setError (int error, const std::string &errorString);
+      void clearError();
+    
     private:
-      std::unique_ptr<IoDevice::Private> d;
+      PIMP_DECLARE_PRIVATE (IoDevice)
   };
   ENABLE_FLAGS_OPERATORS (IoDevice::OpenMode);
 }

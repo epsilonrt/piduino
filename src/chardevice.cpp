@@ -1,9 +1,9 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
- * CharDevice is a modified and simplified version of QIODevice, 
+ * CharDevice is a modified and simplified version of QIODevice,
  * from Qt according to the LGPL and Copyright (C) 2015 The Qt Company Ltd.
- * 
+ *
  * The Piduino Library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -20,8 +20,8 @@
 namespace Piduino {
 
   // ---------------------------------------------------------------------------
-  CharDevice::Private::Private (bool isSequential) :
-    IoDevice::Private (isSequential), firstRead (true),
+  CharDevice::Private::Private (CharDevice * q) :
+    IoDevice::Private (q), firstRead (true),
     pos (0), devicePos (0), baseReadLineDataCalled (false) {}
 
   // ---------------------------------------------------------------------------
@@ -33,8 +33,8 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  CharDevice::CharDevice (bool isSequential) :
-    IoDevice (*std::make_unique<Private> (isSequential))  {
+  CharDevice::CharDevice () :
+    IoDevice (*new Private (this))  {
 
   }
 
@@ -47,6 +47,8 @@ namespace Piduino {
   CharDevice::open (OpenMode mode) {
 
     if (!isOpen()) {
+      PIMP_D (CharDevice);
+
       if (IoDevice::open (mode) == false) {
 
         return false;
@@ -63,6 +65,8 @@ namespace Piduino {
   CharDevice::close() {
 
     if (isOpen()) {
+      PIMP_D (CharDevice);
+
       d->pos = 0;
       d->buffer.clear();
       d->firstRead = true;
@@ -73,7 +77,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   long
   CharDevice::pos() const {
-    return d->pos;
+    return d_func()->pos;
   }
 
   // ---------------------------------------------------------------------------
@@ -85,6 +89,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   bool
   CharDevice::seek (long pos) {
+    PIMP_D (CharDevice);
 
     if (!isOpen() || (pos < 0) || isSequential()) {
       return false;
@@ -113,7 +118,7 @@ namespace Piduino {
   bool
   CharDevice::atEnd() const {
 
-    return !isOpen() || (d->buffer.empty() && bytesAvailable() == 0);
+    return !isOpen() || (d_func()->buffer.empty() && bytesAvailable() == 0);
   }
 
   // ---------------------------------------------------------------------------
@@ -126,6 +131,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   long
   CharDevice::bytesAvailable() const {
+    PIMP_D (const CharDevice);
 
     if (!isSequential()) {
       return std::max (size() - d->pos, static_cast<long> (0));
@@ -143,6 +149,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   long
   CharDevice::read (char *data, long maxlen) {
+    PIMP_D (CharDevice);
 
     if (maxlen < 0) {
       return -1;
@@ -195,12 +202,12 @@ namespace Piduino {
           return readSoFar;
         }
 
-        if (isBuffered() && (maxlen < CHARDEVICE_BUFFERSIZE)) {
+        if (isBuffered() && (maxlen < d->buffer.bufferSize())) {
           // In buffered mode, we try to fill up the QIODevice buffer before
           // we do anything else.
           // buffer is empty at this point, try to fill it
 
-          int bytesToBuffer = CHARDEVICE_BUFFERSIZE;
+          int bytesToBuffer = d->buffer.bufferSize();
           char * writePointer = d->buffer.reserve (bytesToBuffer);
 
           // Make sure the device is positioned correctly.
@@ -296,6 +303,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   std::vector<char>
   CharDevice::read (long maxlen) {
+    PIMP_D (CharDevice);
     std::vector<char> result;
 
     if (maxlen < 0) {
@@ -315,13 +323,13 @@ namespace Piduino {
         // If resize fails, read incrementally.
         long readResult;
         do {
-          result.resize (std::min (static_cast<std::size_t> (maxlen), result.size() + CHARDEVICE_BUFFERSIZE));
+          result.resize (std::min (static_cast<std::size_t> (maxlen), result.size() + d->buffer.bufferSize()));
           readResult = read (result.data() + readBytes, result.size() - readBytes);
           if (readResult > 0 || readBytes == 0) {
             readBytes += readResult;
           }
         }
-        while (readResult == CHARDEVICE_BUFFERSIZE);
+        while (readResult == d->buffer.bufferSize());
       }
       else {
         readBytes = read (result.data(), result.size());
@@ -343,6 +351,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   std::vector<char>
   CharDevice::readAll() {
+    PIMP_D (CharDevice);
     std::vector<char> result;
     long readBytes = 0;
 
@@ -359,7 +368,7 @@ namespace Piduino {
       // Size is unknown, read incrementally.
       long readResult;
       do {
-        result.resize (result.size() + CHARDEVICE_BUFFERSIZE);
+        result.resize (result.size() + d->buffer.bufferSize());
         readResult = read (result.data() + readBytes, result.size() - readBytes);
         if (readResult > 0 || readBytes == 0) {
           readBytes += readResult;
@@ -387,6 +396,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   long
   CharDevice::readLine (char *data, long maxlen) {
+    PIMP_D (CharDevice);
 
     if (maxlen < 2) {
       return -1;
@@ -451,6 +461,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   std::vector<char>
   CharDevice::readLine (long maxlen) {
+    PIMP_D (CharDevice);
     std::vector<char> result;
 
     if (maxlen < 0) {
@@ -479,13 +490,13 @@ namespace Piduino {
       long readResult;
       do {
 
-        result.resize (std::min (static_cast<std::size_t> (maxlen), result.size() + CHARDEVICE_BUFFERSIZE));
+        result.resize (std::min (static_cast<std::size_t> (maxlen), result.size() + d->buffer.bufferSize()));
         readResult = readLine (result.data() + readBytes, result.size() - readBytes);
         if (readResult > 0 || readBytes == 0) {
           readBytes += readResult;
         }
       }
-      while (readResult == CHARDEVICE_BUFFERSIZE
+      while (readResult == d->buffer.bufferSize()
              && result[int (readBytes - 1)] != '\n');
     }
     else {
@@ -508,12 +519,13 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   bool
   CharDevice::canReadLine() const {
-    return d->buffer.canReadLine();
+    return d_func()->buffer.canReadLine();
   }
 
   // ---------------------------------------------------------------------------
   long
   CharDevice::write (const char *data, long len) {
+    PIMP_D (CharDevice);
 
     if ( (len < 0) || !isWritable() || !isOpen()) {
 
@@ -548,6 +560,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   long
   CharDevice::peek (char *data, long maxlen) {
+    PIMP_D (CharDevice);
     long readBytes = read (data, maxlen);
 
     if (readBytes <= 0) {
@@ -562,6 +575,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   std::vector<char>
   CharDevice::peek (long maxlen) {
+    PIMP_D (CharDevice);
     std::vector<char> result = read (maxlen);
 
     if (result.empty()) {
@@ -588,6 +602,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void
   CharDevice::ungetChar (char c) {
+    PIMP_D (CharDevice);
 
     if (!isReadable() || !isOpen()) {
       return;
@@ -612,6 +627,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   long
   CharDevice::readLineData (char *data, long maxlen) {
+    PIMP_D (CharDevice);
     long readSoFar = 0;
     char c;
     int lastReadReturn = 0;
