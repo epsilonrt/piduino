@@ -33,12 +33,16 @@ extern "C"{
 #define EULER 2.718281828459045235360287471352
 
 /* macros =================================================================== */
+
+#ifndef __cplusplus
 #ifndef min
 #define min(a,b) ((a)<(b)?(a):(b))
 #endif
 #ifndef max
 #define max(a,b) ((a)>(b)?(a):(b))
 #endif
+#endif
+
 #ifndef constrain
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 #endif
@@ -72,6 +76,7 @@ extern "C"{
 #include <cstring>
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 #include <piduino/gpio.h>
 
 #define EXTERN_C extern "C"

@@ -30,34 +30,47 @@ namespace Piduino {
     public:
 
       Fifo (uint16_t max) : _data (new uint8_t[max]), _size (max), _in (_data), _out (_data) {}
+      
       ~Fifo() {
 
         delete[] _data;
       }
+      
       void clear() {
 
         _in = _out = _data;
       }
+      
       uint16_t length() const {
 
         return (_in - _out) % _size;
       }
+      
+      uint16_t free() const {
+
+        return _size - length();
+      }
+      
       uint16_t size() const {
 
         return _size;
       }
+      
       uint8_t * data() const {
 
         return _data;
       }
+      
       uint8_t * in() const {
 
         return _in;
       }
+      
       uint8_t * out() const {
 
         return _out;
       }
+      
       uint16_t pull (uint8_t * buf, uint16_t max) {
 
         max = std::min (max, length());
@@ -65,13 +78,31 @@ namespace Piduino {
         _out += max;
         return max;
       }
+      
+      int pull() {
+        
+        if ( length()) {
+          return *_out++;
+        }
+        return -1;
+      }
+      
       uint16_t push (const uint8_t * buf, uint16_t len) {
 
-        len = std::min (len, _size);
+        len = std::min (len, free());
         ::memcpy (_in, buf, len);
         _in += len;
         return len;
       }
+      
+      int push(uint8_t b) {
+        if (free()) {
+          *_in++ = b;
+          return 0;
+        }
+        return -1;
+      }
+      
       void seek (uint16_t len) {
         
         len = std::min (len, static_cast<uint16_t>(_size - static_cast<uint16_t>(_out - _data)));

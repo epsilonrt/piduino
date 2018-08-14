@@ -118,8 +118,8 @@ namespace Piduino {
         return _spi_syspath;
       }
 
-      inline const std::string & serialSysPath() const {
-        return _serial_syspath;
+      inline const std::string & uartSysPath() const {
+        return _uart_syspath;
       }
 
       inline int i2cCount() const {
@@ -134,8 +134,8 @@ namespace Piduino {
         return _spi_cscount;
       }
 
-      inline int serialCount() const {
-        return _serial_count;
+      inline int uartCount() const {
+        return _uart_count;
       }
 
       void setId (Id i);
@@ -150,8 +150,8 @@ namespace Piduino {
       int _spi_count;
       int _spi_cscount;
       std::string _spi_syspath;
-      int _serial_count;
-      std::string _serial_syspath;
+      int _uart_count;
+      std::string _uart_syspath;
   };
 }
 /**

@@ -77,6 +77,7 @@ class String : public std::string {
     unsigned char concat (char c) {
 
       std::string::push_back (c);
+      return true;
     }
     //--------------------------------------------------------------------------
     unsigned char concat (unsigned char num) {

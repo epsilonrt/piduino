@@ -2,7 +2,7 @@
 -- Author:        epsilonrt
 -- Caption:       New Model
 -- Project:       Name of the project
--- Changed:       2018-08-09 16:40
+-- Changed:       2018-08-14 22:25
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -44,6 +44,9 @@ CREATE TABLE "piduino"."gpio"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "name" VARCHAR(45),
   "board_family_id" INTEGER NOT NULL,
+  "i2c_id" INTEGER,
+  "spi_id" INTEGER,
+  "uart_id" INTEGER,
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name"),
   CONSTRAINT "fk_gpio_board_family1"
@@ -130,8 +133,8 @@ CREATE TABLE "piduino"."soc"(
   "spi_count" INTEGER NOT NULL DEFAULT 0,
   "spi_cscount" INTEGER,
   "spi_syspath" VARCHAR(256),
-  "serial_count" INTEGER NOT NULL DEFAULT 0,
-  "serial_syspath" VARCHAR(256),
+  "uart_count" INTEGER NOT NULL DEFAULT 0,
+  "uart_syspath" VARCHAR(256),
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name"),
   CONSTRAINT "fk_soc_soc_family1"

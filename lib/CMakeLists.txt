@@ -61,6 +61,8 @@ set (hdr_arduino
   ${PIDUINO_INC_DIR}/piduino/arduino/Print.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Printable.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Stream.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Ciostream.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Wire.h
 )
 
 set (hdr_i2c

@@ -22,6 +22,8 @@
 
 #ifdef __cplusplus
 using namespace std;
+#include <Ciostream.h>
+Ciostream Console;
 #endif
 
 #ifndef EXTERN_C

@@ -18,7 +18,7 @@
 #include <vector>
 #include <getopt.h>
 #include <piduino/database.h>
-#include <piduino/config.h>
+#include <config.h>
 #if PIDUINO_WITH_I2C
 #include <piduino/i2cdev.h>
 #endif
@@ -462,7 +462,7 @@ namespace Pinfo {
 // -----------------------------------------------------------------------------
   std::string i2cBuses() {
     std::string ret;
-    std::vector<I2cDev::Info> buses = I2cDev::availableBuses();
+    std::map<int, I2cDev::Info> buses = I2cDev::availableBuses();
 
     for (unsigned i = 0; i < buses.size(); i++) {
 

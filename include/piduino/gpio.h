@@ -67,6 +67,9 @@ namespace Piduino {
         public:
           std::string name; ///< Nom de la carte
           long long id; ///< Database Id
+          int i2cId; ///< first I2c bus ID
+          int spiId; ///< first SPI bus ID
+          int uartId; ///< first UART ID
           std::vector<Connector::Descriptor> connector; ///< Descripteurs des connecteurs
           // -- functions
           Descriptor (long long gpioId = -1);
@@ -117,6 +120,27 @@ namespace Piduino {
        * @brief Nom de la carte
        */
       const std::string & name() const;
+
+      /**
+       * @brief Numéro du bus I2C par défaut du GPIO
+       * 
+       * Correspond aux broches 3 (SDA) et 5 (SCL) sur un RPi
+       */
+      int i2cId() const;
+
+      /**
+       * @brief Numéro du bus SPI par défaut du GPIO
+       * 
+       * Correspond aux broches 19 (MOSI), 21 (MISO), 23 (SCLK) et 24 (CE) sur un RPi
+       */
+      int spiId() const;
+
+      /**
+       * @brief Numéro de l'UART par défaut du GPIO
+       * 
+       * Correspond aux broches 8 (TXD) et 9 (RXD) sur un RPi
+       */
+      int uartId() const;
 
       /**
        * @brief Identifiant en base de données
@@ -286,7 +310,7 @@ namespace Piduino {
   //                      Piduino Gpio Global Object
   //
   // ---------------------------------------------------------------------------
-  extern Gpio gpio; ///< Piduino Gpio Global Object, must be open before using !
+  extern Gpio gpio; ///< Piduino Gpio Global Object
   /**
    * @}
    */

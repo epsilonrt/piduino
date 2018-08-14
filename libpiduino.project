@@ -63,6 +63,7 @@
       <File Name="src/gpio/gpioconnector-database.cpp"/>
       <File Name="src/gpio/gpiopin-database.cpp"/>
       <File Name="src/gpio/gpiopwm.cpp"/>
+      <File Name="lib/CMakeLists.txt"/>
     </VirtualDirectory>
     <VirtualDirectory Name="spi">
       <File Name="src/spi/spidev.cpp"/>
@@ -85,6 +86,8 @@
       <File Name="src/arduino/WString.cpp"/>
       <File Name="src/arduino/Core.cpp"/>
       <File Name="src/arduino/Stream.cpp"/>
+      <File Name="src/arduino/Wire.cpp"/>
+      <File Name="src/arduino/Ciostream.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="serial">
       <File Name="src/serial/serialport.cpp"/>
@@ -116,6 +119,8 @@
         <File Name="include/piduino/arduino/Arduino.h"/>
         <File Name="include/piduino/arduino/Printable.h"/>
         <File Name="include/piduino/arduino/Stream.h"/>
+        <File Name="include/piduino/arduino/Wire.h"/>
+        <File Name="include/piduino/arduino/Ciostream.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/chardevice.h"/>
       <File Name="include/piduino/ringbuffer.h"/>
@@ -123,11 +128,15 @@
       <VirtualDirectory Name="private">
         <File Name="include/piduino/private/iodevice_p.h"/>
         <File Name="include/piduino/private/chardevice_p.h"/>
+        <File Name="include/piduino/private/i2cdev_p.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/flags.h"/>
       <File Name="include/piduino/i2cdev.h"/>
       <File Name="include/piduino/serialport.h"/>
       <File Name="include/piduino/spidev.h"/>
+      <File Name="include/piduino/linearbuffer.h"/>
+      <File Name="include/piduino/global.h"/>
+      <File Name="include/piduino/fifo.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
@@ -239,9 +248,7 @@
     <File Name="lib/piduino-config-version.cmake.in"/>
     <File Name="lib/piduino-config.cmake.in"/>
     <File Name="lib/config.h.in"/>
-    <VirtualDirectory Name="resources">
-      <File Name="lib/CMakeLists.txt"/>
-    </VirtualDirectory>
+    <VirtualDirectory Name="resources"/>
   </VirtualDirectory>
   <VirtualDirectory Name="etc">
     <File Name="etc/piduino.conf.in"/>
