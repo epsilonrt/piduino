@@ -141,6 +141,33 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   bool
   Database::Board::probingSystem() {
+    std::string fn (PIDUINO_INSTALL_ETC_DIR);
+    fn += "/piduino.conf";
+
+    if (System::fileExist (fn)) {
+      ConfigFile cfg (fn);
+      std::string value
+
+      if (cfg.keyExists ("tag")) {
+        std::string t = cfg.value ("tag");
+
+        // BOARD Tag from /etc/piduino.conf found...
+        if (setTag (t)) {
+          
+          return true;
+        }
+      }
+
+      if (cfg.keyExists ("revision")) {
+        unsigned long r = cfg.value<unsigned long> ("revision");
+
+        // BOARD Revision from /etc/piduino.conf found...
+        if (setRevision (r)) {
+          
+          return true;
+        }
+      }
+    }
 
     if (system.armbianInfo().found()) {
 
