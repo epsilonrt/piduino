@@ -139,6 +139,7 @@ namespace Piduino {
         TypeSound, ///< Broche audio
         TypeVideo, ///< Broche video
         TypeNotConnected, ///< Broche non conectée
+        TypeNet, ///< Broche réseau
         TypeUnknown = -1
       };
 
