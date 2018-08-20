@@ -146,7 +146,6 @@ namespace Piduino {
 
     if (System::fileExist (fn)) {
       ConfigFile cfg (fn);
-      std::string value
 
       if (cfg.keyExists ("tag")) {
         std::string t = cfg.value ("tag");

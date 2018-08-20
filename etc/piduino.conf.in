@@ -1,2 +1,12 @@
 # PiDuino configuration file
 connection_info="sqlite3:db=@PIDUINO_INSTALL_DATA_DIR@/piduino.db"
+
+# Allows you to force the board tag (Armbian)
+# !! Be careful, this is at your own risk !!
+# !! Forcing an incorrect value may destroy GPIO pins !!
+#tag="nanopineocore"
+
+# Allows forcing the revision of the board (Raspbian)
+# !! Be careful, this is at your own risk !!
+# !! Forcing an incorrect value may destroy GPIO pins !!
+#revision=0xa02082
