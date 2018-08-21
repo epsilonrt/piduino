@@ -110,7 +110,7 @@ namespace Piduino {
             "   id=?"
             << id << cppdb::row;
       if (!res.empty()) {
-        res >> name >> i2cId >> spiId >> uartId;
+        res >> name >> defaultI2cBus >> defaultSpiBus >> defaultUart;
         res = Piduino::db <<
               "SELECT num,gpio_connector_id "
               " FROM gpio_has_connector "

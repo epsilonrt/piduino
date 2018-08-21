@@ -67,9 +67,9 @@ namespace Piduino {
         public:
           std::string name; ///< Nom de la carte
           long long id; ///< Database Id
-          int i2cId; ///< first I2c bus ID
-          int spiId; ///< first SPI bus ID
-          int uartId; ///< first UART ID
+          int defaultI2cBus; ///< first I2c bus ID
+          int defaultSpiBus; ///< first SPI bus ID
+          int defaultUart; ///< first UART ID
           std::vector<Connector::Descriptor> connector; ///< Descripteurs des connecteurs
           // -- functions
           Descriptor (long long gpioId = -1);
@@ -126,21 +126,21 @@ namespace Piduino {
        * 
        * Correspond aux broches 3 (SDA) et 5 (SCL) sur un RPi
        */
-      int i2cId() const;
+      int defaultI2cBus() const;
 
       /**
        * @brief Numéro du bus SPI par défaut du GPIO
        * 
        * Correspond aux broches 19 (MOSI), 21 (MISO), 23 (SCLK) et 24 (CE) sur un RPi
        */
-      int spiId() const;
+      int defaultSpiBus() const;
 
       /**
        * @brief Numéro de l'UART par défaut du GPIO
        * 
        * Correspond aux broches 8 (TXD) et 9 (RXD) sur un RPi
        */
-      int uartId() const;
+      int defaultUart() const;
 
       /**
        * @brief Identifiant en base de données

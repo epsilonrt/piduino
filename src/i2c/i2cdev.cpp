@@ -361,7 +361,7 @@ namespace Piduino {
   I2cDev::firstBus () {
     Info bus;
 
-    bus.id = gpio.i2cId();
+    bus.id = gpio.defaultI2cBus();
     bus.path = busPath (bus.id);
     return bus;
   }
