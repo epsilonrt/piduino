@@ -92,6 +92,7 @@ namespace Piduino {
     protected:
       class Private;
       I2cDev (Private &dd);
+      bool open (OpenMode mode);
 
     private:
       PIMP_DECLARE_PRIVATE (I2cDev)

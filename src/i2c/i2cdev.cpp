@@ -85,6 +85,12 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  bool I2cDev::open (OpenMode mode) {
+    
+    return IoDevice::open (mode);
+  }
+
+  // ---------------------------------------------------------------------------
   bool
   I2cDev::open (const char * path) {
 
@@ -106,7 +112,7 @@ namespace Piduino {
         return false;
       }
 
-      IoDevice::open (OpenMode::ReadWrite);
+      open (OpenMode::ReadWrite);
 
       if (! (i2c_funcs & I2C_FUNC_I2C)) {
 
