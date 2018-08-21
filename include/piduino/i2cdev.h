@@ -87,7 +87,7 @@ namespace Piduino {
 
       static std::map<int, Info> availableBuses ();
       static std::string busPath (int idBus);
-      static Info firstBus ();
+      static Info defaultBus ();
 
     protected:
       class Private;
