@@ -25,6 +25,7 @@
 
 #include "WString.h"
 #include "Printable.h"
+#include <piduino/arduino.h>
 
 #define DEC 10
 #define HEX 16

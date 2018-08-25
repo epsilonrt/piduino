@@ -253,12 +253,28 @@ namespace Piduino {
 
       /**
        * @brief Broche GPIO
+       * 
+       * Seules les broches de type Pin::TypeGpio sont accessibles à l'aide de 
+       * cette fonction. Les autres types de broches ne sont accessibles qu'à
+       * partir de Gpio::connector().
        *
        * @param num numéro de broche dans la numérotation \c numbering(). Déclenche
        * une exception std::out_of_range si la broche n'existe pas
        * @return référence sur la broche
        */
       Pin & pin (int num) const;
+
+      /**
+       * @brief Broche GPIO par identifiant de base de données
+       *
+       * Seules les broches de type Pin::TypeGpio sont accessibles à l'aide de 
+       * cette fonction. Les autres types de broches ne sont accessibles qu'à
+       * partir de Gpio::connector().
+       * 
+       * @param id identifiant de la broche dans la base de données.
+       * @return pointeur sur la broche, null si la broche n'existe pas.
+       */
+      Pin * pin (long long id) const;
 
       /**
        * @brief Liste des broches de type GPIO

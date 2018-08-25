@@ -17,12 +17,14 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
   Modified 2012 by Todd Krein (todd@krein.org) to implement repeated starts
+  Modified 2018 by Pascal JEAN for Piduino Library
 */
 
 #ifndef TwoWire_h
 #define TwoWire_h
 
 #include <piduino/i2cdev.h>
+#include <piduino/arduino.h>
 
 #define BUFFER_LENGTH 32
 

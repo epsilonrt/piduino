@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="rtc_bq32k" Version="10.0.0" InternalType="Console">
+<CodeLite_Project Name="memory_fram_mb85rs" Version="10.0.0" InternalType="Console">
   <Description/>
   <Dependencies/>
   <Settings Type="Executable">
@@ -95,8 +95,10 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="src">
-    <File Name="rtc_bq32k.cpp"/>
+    <File Name="memory_fram_mb85rs.cpp"/>
+    <File Name="mb85rs.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
+  <VirtualDirectory Name="include">
+    <File Name="mb85rs.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

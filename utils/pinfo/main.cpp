@@ -481,7 +481,7 @@ namespace Pinfo {
 
     for (unsigned i = 0; i < buses.size(); i++) {
 
-      ret += buses [i].path;
+      ret += buses [i].path();
       if (i < (buses.size() - 1)) {
         ret += std::string (",");
       }

@@ -62,7 +62,14 @@ set (hdr_arduino
   ${PIDUINO_INC_DIR}/piduino/arduino/Printable.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Stream.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Ciostream.h
+)
+
+set (hdr_arduino_i2c 
   ${PIDUINO_INC_DIR}/piduino/arduino/Wire.h
+)
+
+set (hdr_arduino_spi 
+  ${PIDUINO_INC_DIR}/piduino/arduino/SPI.h
 )
 
 set (hdr_i2c
@@ -85,6 +92,14 @@ set(hdr_public ${hdr_piduino} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 if (PIDUINO_WITH_ARDUINO)
   file(GLOB src_arduino ${PIDUINO_SRC_DIR}/arduino/*.cpp)
   list(APPEND hdr_public ${hdr_arduino})
+if (PIDUINO_WITH_I2C)
+  file(GLOB src_arduino_i2c ${PIDUINO_SRC_DIR}/arduino/i2c/*.cpp)
+  list(APPEND hdr_public ${hdr_arduino_i2c})
+endif (PIDUINO_WITH_I2C)
+if (PIDUINO_WITH_SPI)
+  file(GLOB src_arduino_spi ${PIDUINO_SRC_DIR}/arduino/spi/*.cpp)
+  list(APPEND hdr_public ${hdr_arduino_spi})
+endif (PIDUINO_WITH_SPI)
 endif (PIDUINO_WITH_ARDUINO)
 
 if (PIDUINO_WITH_GPIO)
@@ -113,7 +128,7 @@ endif (PIDUINO_WITH_SERIAL)
 #message ("hdr_public=${hdr_public}")
 
 set (libsrc ${src_piduino} 
-  ${src_arduino} ${src_gpio} ${src_gpio_arch} ${src_i2c} ${src_spi} ${src_serial}
+  ${src_arduino} ${src_arduino_i2c} ${src_arduino_spi} ${src_gpio} ${src_gpio_arch} ${src_i2c} ${src_spi} ${src_serial}
   )
 
 include_directories(BEFORE

@@ -6,18 +6,39 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="examples">
+    <VirtualDirectory Name="wire">
+      <VirtualDirectory Name="master_writer">
+        <File Name="examples/wire/master_writer/master_writer.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="digital_potentiometer">
+        <File Name="examples/wire/digital_potentiometer/digital_potentiometer.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="master_reader">
+        <File Name="examples/wire/master_reader/master_reader.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="rtc_bq32k">
+        <File Name="examples/wire/rtc_bq32k/rtc_bq32k.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="spi">
+      <VirtualDirectory Name="memory_fram_mb85rs">
+        <File Name="examples/spi/memory_fram_mb85rs/memory_fram_mb85rs.cpp"/>
+        <File Name="examples/spi/memory_fram_mb85rs/mb85rs.cpp"/>
+        <File Name="examples/spi/memory_fram_mb85rs/mb85rs.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="pressure_sensor_hsc">
+        <File Name="examples/spi/pressure_sensor_hsc/pressure_sensor_hsc.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
     <VirtualDirectory Name="noarduino">
       <VirtualDirectory Name="gpio">
         <VirtualDirectory Name="waitforint">
-          <File Name="examples/noarduino/gpio/waitforint/CMakeLists.txt"/>
           <File Name="examples/noarduino/gpio/waitforint/waitforint.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="blink">
-          <File Name="examples/noarduino/gpio/blink/CMakeLists.txt"/>
           <File Name="examples/noarduino/gpio/blink/blink.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="interrupt">
-          <File Name="examples/noarduino/gpio/interrupt/CMakeLists.txt"/>
           <File Name="examples/noarduino/gpio/interrupt/interrupt.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="fade">
@@ -25,11 +46,11 @@
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
-    <VirtualDirectory Name="blink">
-      <File Name="examples/blink/blink.cpp"/>
-    </VirtualDirectory>
     <VirtualDirectory Name="button">
       <File Name="examples/button/button.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="blink">
+      <File Name="examples/blink/blink.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="interrupt">
       <File Name="examples/interrupt/interrupt.cpp"/>
@@ -63,7 +84,6 @@
       <File Name="src/gpio/gpioconnector-database.cpp"/>
       <File Name="src/gpio/gpiopin-database.cpp"/>
       <File Name="src/gpio/gpiopwm.cpp"/>
-      <File Name="lib/CMakeLists.txt"/>
     </VirtualDirectory>
     <VirtualDirectory Name="spi">
       <File Name="src/spi/spidev.cpp"/>
@@ -86,8 +106,13 @@
       <File Name="src/arduino/WString.cpp"/>
       <File Name="src/arduino/Core.cpp"/>
       <File Name="src/arduino/Stream.cpp"/>
-      <File Name="src/arduino/Wire.cpp"/>
       <File Name="src/arduino/Ciostream.cpp"/>
+      <VirtualDirectory Name="i2c">
+        <File Name="src/arduino/i2c/Wire.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="spi">
+        <File Name="src/arduino/spi/SPI.cpp"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="serial">
       <File Name="src/serial/serialport.cpp"/>
@@ -121,6 +146,7 @@
         <File Name="include/piduino/arduino/Stream.h"/>
         <File Name="include/piduino/arduino/Wire.h"/>
         <File Name="include/piduino/arduino/Ciostream.h"/>
+        <File Name="include/piduino/arduino/SPI.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/chardevice.h"/>
       <File Name="include/piduino/ringbuffer.h"/>
@@ -129,6 +155,7 @@
         <File Name="include/piduino/private/iodevice_p.h"/>
         <File Name="include/piduino/private/chardevice_p.h"/>
         <File Name="include/piduino/private/i2cdev_p.h"/>
+        <File Name="include/piduino/private/spidev_p.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/flags.h"/>
       <File Name="include/piduino/i2cdev.h"/>
@@ -248,10 +275,13 @@
     <File Name="lib/piduino-config-version.cmake.in"/>
     <File Name="lib/piduino-config.cmake.in"/>
     <File Name="lib/config.h.in"/>
-    <VirtualDirectory Name="resources"/>
+    <VirtualDirectory Name="resources">
+      <File Name="lib/CMakeLists.txt"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="etc">
     <File Name="etc/piduino.conf.in"/>
+    <File Name="src/spi/spidev.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="database">
     <File Name="database/piduino-data.sql"/>

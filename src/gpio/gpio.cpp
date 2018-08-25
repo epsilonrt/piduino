@@ -246,6 +246,22 @@ namespace Piduino {
   };
 
   // ---------------------------------------------------------------------------
+  Pin *
+  Gpio::pin (long long id) const {
+
+    for (auto pair = _pin.cbegin(); pair != _pin.cend(); ++pair) {
+      std::shared_ptr<Pin> p = pair->second;
+
+      if (p->id() == id) {
+
+        return p.get();
+      }
+    }
+    
+    return 0;
+  }
+
+  // ---------------------------------------------------------------------------
   int
   Gpio::connectors() const {
 

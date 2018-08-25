@@ -19,7 +19,9 @@
 #define PIDUINO_SOC_H
 
 #include <string>
+#include <vector>
 #include <piduino/manufacturer.h>
+#include <piduino/gpiopin.h>
 
 /**
  *  @defgroup piduino_soc SoC
@@ -129,9 +131,9 @@ namespace Piduino {
       inline int spiCount() const {
         return _spi_count;
       }
-
-      inline int spiCsCount() const {
-        return _spi_cscount;
+      
+      inline const std::vector<Pin::SpiCs> & spiCs() const {
+        return _spi_cs;
       }
 
       inline int uartCount() const {
@@ -148,8 +150,8 @@ namespace Piduino {
       int _i2c_count;
       std::string _i2c_syspath;
       int _spi_count;
-      int _spi_cscount;
       std::string _spi_syspath;
+      std::vector<Pin::SpiCs> _spi_cs; ///< liste des broches de CS
       int _uart_count;
       std::string _uart_syspath;
   };

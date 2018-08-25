@@ -24,6 +24,7 @@
 
 #include <inttypes.h>
 #include "Print.h"
+#include <piduino/arduino.h>
 
 // compatability macros for testing
 /*

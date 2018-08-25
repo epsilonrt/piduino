@@ -43,15 +43,31 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   void SoC::setId (SoC::Id i)  {
 
-    cppdb::result res = Piduino::db << "SELECT name,soc_family_id,manufacturer_id,i2c_count,i2c_syspath,spi_count,spi_cscount,spi_syspath,uart_count,uart_syspath FROM soc WHERE id=?" << i << cppdb::row;
+    cppdb::result res = Piduino::db << "SELECT name,soc_family_id,manufacturer_id,i2c_count,i2c_syspath,spi_count,spi_syspath,uart_count,uart_syspath FROM soc WHERE id=?" << i << cppdb::row;
     if (!res.empty()) {
       int sfid;
       int mid;
 
       _id = i;
-      res >> _name >> sfid >> mid >> _i2c_count >> _i2c_syspath >> _spi_count >> _spi_cscount >> _spi_syspath >> _uart_count >> _uart_syspath;
+      res >> _name >> sfid >> mid >> _i2c_count >> _i2c_syspath >> _spi_count >>  _spi_syspath >> _uart_count >> _uart_syspath;
       _family.setId (static_cast<SoC::Family::Id> (sfid));
       _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
+
+      _spi_cs.clear();
+      res = Piduino::db <<
+            "SELECT soc_has_pin.gpio_pin_id,gpio_pin_spics.bus_id,gpio_pin_spics.cs_id,gpio_pin_spics.gpio_pin_mode_id "
+            "FROM soc_has_pin "
+            "INNER JOIN gpio_pin_spics ON gpio_pin_spics.gpio_pin_id = soc_has_pin.gpio_pin_id "
+            "WHERE soc_has_pin.soc_id=?" << _id;
+
+      while (res.next()) {
+        int pin_mode;
+        Pin::SpiCs cs;
+
+        res >> cs.pin >> cs.bus >> cs.cs >> pin_mode;
+        cs.mode = static_cast<Pin::Mode> (pin_mode);
+        _spi_cs.push_back (cs);
+      }
     }
   }
 }

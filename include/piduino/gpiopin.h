@@ -181,6 +181,14 @@ namespace Piduino {
           void insertModeName (Mode m, const std::string & n);
       };
 
+      class SpiCs {
+        public:
+          long long pin; ///< Pin database Id
+          int bus;  ///< SPI Bus number
+          int cs; ///< Chip select number
+          Pin::Mode mode; ///< Pin mode for this CS
+      };
+
       //------------------------------------------------------------------------
       //                          Opérations
       //------------------------------------------------------------------------

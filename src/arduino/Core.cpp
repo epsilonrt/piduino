@@ -17,6 +17,39 @@
 #include <piduino/arduino.h>
 #include <piduino/clock.h>
 #include <piduino/scheduler.h>
+#include "config.h"
+
+#if PIDUINO_WITH_SPI
+#include <SPI.h>
+#endif
+
+namespace Piduino {
+
+  // ---------------------------------------------------------------------------
+  bool pinLocked (int n) {
+#if PIDUINO_WITH_SPI
+    SpiDev * s = reinterpret_cast<SpiDev *> (&::SPI);
+    const SpiDev::Cs * cs;
+
+    if (s->isOpen()) {
+
+      cs = & s->info().cs();
+    }
+    else {
+
+      cs = & SpiDev::defaultBus().cs();
+    }
+    if (gpio.open()) {
+
+      if ( (cs->pin()->logicalNumber() == n) && (cs->pin()->mode() == cs->mode())) {
+
+        return true;
+      }
+    }
+#endif
+    return false;
+  }
+}
 
 using namespace Piduino;
 
@@ -46,29 +79,32 @@ unsigned long micros() {
 
 // -----------------------------------------------------------------------------
 void setPriority (int priority) {
-  
-  Scheduler::setRtPriority(priority);
+
+  Scheduler::setRtPriority (priority);
 }
 
 // -----------------------------------------------------------------------------
 void pinMode (int n, ArduinoPinMode mode) {
-  Pin::Pull p = Pin::PullOff;
-  Pin::Mode m = Pin::ModeOutput;
 
-  if (mode != OUTPUT) {
+  if (!pinLocked (n)) {
+    Pin::Pull p = Pin::PullOff;
+    Pin::Mode m = Pin::ModeOutput;
 
-    m = Pin::ModeInput;
-    if (mode == INPUT_PULLUP) {
-      p = Pin::PullUp;
+    if (mode != OUTPUT) {
+
+      m = Pin::ModeInput;
+      if (mode == INPUT_PULLUP) {
+        p = Pin::PullUp;
+      }
+      else if (mode == INPUT_PULLDOWN) {
+        p = Pin::PullDown;
+      }
     }
-    else if (mode == INPUT_PULLDOWN) {
-      p = Pin::PullDown;
-    }
-  }
 
-  if (gpio.open()) {
-    gpio.pin (n).setMode (m);
-    gpio.pin (n).setPull (p);
+    if (gpio.open()) {
+      gpio.pin (n).setMode (m);
+      gpio.pin (n).setPull (p);
+    }
   }
 }
 
@@ -91,16 +127,19 @@ int digitalRead (int n) {
 }
 
 // -----------------------------------------------------------------------------
-void analogWrite(int n, int v) {
-  unsigned int r = gpio.pin(n).dac().resolution();
-  
-  if (r > 8) {
-    v <<= r - 8;
+void analogWrite (int n, int v) {
+
+  if (!pinLocked (n)) {
+    unsigned int r = gpio.pin (n).dac().resolution();
+
+    if (r > 8) {
+      v <<= r - 8;
+    }
+    if (r < 8) {
+      v >>= 8 - r;
+    }
+    gpio.pin (n).analogWrite (v);
   }
-  if (r < 8) {
-    v >>= 8 - r;
-  }
-  gpio.pin(n).analogWrite (v);
 }
 
 // -----------------------------------------------------------------------------

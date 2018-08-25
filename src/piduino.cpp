@@ -24,6 +24,7 @@
 #include <csignal>
 #include <cstdlib>
 #include <memory>
+
 #if PIDUINO_WITH_I2C
 #if PIDUINO_WITH_ARDUINO
 #include <Wire.h>
@@ -32,10 +33,22 @@
 #endif
 #endif
 
+#if PIDUINO_WITH_SPI
+#if PIDUINO_WITH_ARDUINO
+#include <SPI.h>
+#else
+#include <piduino/spidev.h>
+#endif
+#endif
+
 using namespace std;
 
 #if PIDUINO_WITH_I2C && PIDUINO_WITH_ARDUINO
 TwoWire Wire;
+#endif
+
+#if PIDUINO_WITH_SPI && PIDUINO_WITH_ARDUINO
+SPIClass SPI;
 #endif
 
 namespace Piduino {
@@ -53,6 +66,9 @@ namespace Piduino {
 #endif
 #if PIDUINO_WITH_I2C && ! PIDUINO_WITH_ARDUINO
   I2cDev Wire;
+#endif
+#if PIDUINO_WITH_SPI && ! PIDUINO_WITH_ARDUINO
+  SpiDev SPI;
 #endif
 
 // -----------------------------------------------------------------------------

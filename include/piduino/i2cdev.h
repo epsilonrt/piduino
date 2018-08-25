@@ -99,10 +99,10 @@ namespace Piduino {
   };
   // ---------------------------------------------------------------------------
   //
-  //                      Piduino TwoWire Global Object
+  //                      Piduino I2cDev Global Object
   //
   // ---------------------------------------------------------------------------
-  extern I2cDev Wire; ///< Piduino TwoWire Global Object
+  extern I2cDev Wire; ///< Piduino I2cDev Global Object
 }
 /**
  *  @}

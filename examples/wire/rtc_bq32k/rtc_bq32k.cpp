@@ -1,5 +1,4 @@
 // I2C RTC BQ32000
-// by Pascal Jean <https://github.com/epsilonrt>
 
 // Demonstrates use of the Wire library
 // Controls BQ32000 Real Time Clock via I2C/TWI
@@ -9,6 +8,7 @@
 // and add Serial.begin(9600) in setup()
 
 // Created 16 August 2018
+// by Pascal JEAN https://github.com/epsilonrt
 
 // This example code is in the public domain.
 
