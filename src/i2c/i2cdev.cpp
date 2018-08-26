@@ -28,6 +28,12 @@
 
 namespace Piduino {
 
+// -----------------------------------------------------------------------------
+//
+//                         I2cDev::Private Class
+//
+// -----------------------------------------------------------------------------
+
   // ---------------------------------------------------------------------------
   I2cDev::Private::Private (I2cDev * q) :
     IoDevice::Private (q), fd (-1), state (Idle), txbuf (I2C_BLOCK_MAX), rxbuf (I2C_BLOCK_MAX) {
@@ -69,6 +75,43 @@ namespace Piduino {
     txbuf.clear();
   }
 
+// -----------------------------------------------------------------------------
+//
+//                           I2cDev::Info Class
+//
+// -----------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  bool 
+  I2cDev::Info::setPath (const std::string & p) {
+    
+    for (int i = 0; i < MaxBuses; i++) {
+      std::string bp = busPath(i);
+      
+      if (bp == p) {
+        
+        setId(i);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
+  std::string
+  I2cDev::Info::busPath (int idbus) {
+    char path[256];
+
+    ::snprintf (path, sizeof (path), db.board().soc().i2cSysPath().c_str(), idbus);
+    return std::string (path);
+  }
+
+// -----------------------------------------------------------------------------
+//
+//                             I2cDev Class
+//
+// -----------------------------------------------------------------------------
+
   // ---------------------------------------------------------------------------
   I2cDev::I2cDev (I2cDev::Private &dd) : IoDevice (dd) {
 
@@ -81,70 +124,68 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  I2cDev::~I2cDev() {
+  I2cDev::I2cDev (const char * path) : I2cDev() {
+
+    setBusPath (path);
   }
 
   // ---------------------------------------------------------------------------
-  bool I2cDev::open (OpenMode mode) {
-    
-    return IoDevice::open (mode);
+  I2cDev::I2cDev (const std::string & path) : I2cDev() {
+
+    setBusPath (path);
+  }
+
+  // ---------------------------------------------------------------------------
+  I2cDev::I2cDev (const Info & bus) : I2cDev() {
+
+    setBus (bus);
+  }
+
+  // ---------------------------------------------------------------------------
+  I2cDev::I2cDev (int id) : I2cDev() {
+
+    setBus (id);
+  }
+
+  // ---------------------------------------------------------------------------
+  I2cDev::~I2cDev() {
+
+    close();
   }
 
   // ---------------------------------------------------------------------------
   bool
-  I2cDev::open (const char * path) {
-
+  I2cDev::open (OpenMode mode) {
 
     if (!isOpen()) {
       unsigned long i2c_funcs;
       PIMP_D (I2cDev);
 
-      d->fd = ::open (path, O_RDWR);
+      d->flush();
+      d->rxbuf.clear();
+
+      d->fd = ::open (d->bus.path().c_str(), systemMode(mode));
       if (d->fd < 0) {
 
         setError();
         return false;
       }
 
-      if (::ioctl (d->fd, I2C_FUNCS, &i2c_funcs) < 0) {
+      if (IoDevice::open (mode)) {
 
-        setError();
-        return false;
+        if (::ioctl (d->fd, I2C_FUNCS, &i2c_funcs) < 0) {
+
+          setError();
+          close();
+        }
+        else if (! (i2c_funcs & I2C_FUNC_I2C)) {
+
+          setError (EOPNOTSUPP);
+          close();
+        }
       }
-
-      open (OpenMode::ReadWrite);
-
-      if (! (i2c_funcs & I2C_FUNC_I2C)) {
-
-        setError (EOPNOTSUPP);
-        close();
-      }
-
-      d->flush();
-      d->rxbuf.clear();
     }
     return isOpen();
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  I2cDev::open (const std::string & path) {
-
-    return open (path.c_str());
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  I2cDev::open (const Info & bus) {
-
-    return open (bus.path);
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  I2cDev::open (int idBus) {
-
-    return open (busPath (idBus));
   }
 
   // ---------------------------------------------------------------------------
@@ -162,6 +203,74 @@ namespace Piduino {
       d->state = Private::Idle;
       IoDevice::close();
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  I2cDev::setBus (const Info & bus) {
+    PIMP_D (I2cDev);
+
+    if (d->bus != bus) {
+
+      d->bus = bus;
+
+      if (isOpen()) {
+        OpenMode m = openMode();
+
+        close();
+        open (m);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  I2cDev::setBus (int id) {
+    PIMP_D (I2cDev);
+
+    if (d->bus.id() != id) {
+
+      d->bus.setId (id);
+      if (isOpen()) {
+        OpenMode m = openMode();
+
+        close();
+        open (m);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  I2cDev::setBusPath (const std::string & path) {
+    PIMP_D (I2cDev);
+
+    if (d->bus.path() != path) {
+
+      d->bus.setPath (path);
+      if (isOpen()) {
+        OpenMode m = openMode();
+
+        close();
+        open (m);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  I2cDev::setBusPath (const char * path) {
+    PIMP_D (I2cDev);
+    
+    setBusPath (std::string(path));
+  }
+
+  // ---------------------------------------------------------------------------
+  const I2cDev::Info &
+  I2cDev::bus() const {
+    PIMP_D (const I2cDev);
+
+    return d->bus;
   }
 
   // ---------------------------------------------------------------------------
@@ -327,14 +436,6 @@ namespace Piduino {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  std::string
-  I2cDev::busPath (int idbus) {
-    char path[256];
-
-    ::snprintf (path, sizeof (path), db.board().soc().i2cSysPath().c_str(), idbus);
-    return std::string (path);
-  }
 
   // ---------------------------------------------------------------------------
   std::map<int, I2cDev::Info>
@@ -342,13 +443,11 @@ namespace Piduino {
     std::map<int, I2cDev::Info> buses;
 
     for (int id = 0; id < db.board().soc().i2cCount() ; id++) {
-      std::string path = busPath (id);
+      std::string path = Info::busPath (id);
 
       if (System::fileExist (path)) {
-        Info bus;
+        Info bus(id);
 
-        bus.id = id;
-        bus.path = path;
         buses[id] = bus;
       }
 
@@ -359,11 +458,8 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   I2cDev::Info
   I2cDev::defaultBus () {
-    Info bus;
 
-    bus.id = gpio.defaultI2cBus();
-    bus.path = busPath (bus.id);
-    return bus;
+    return Info(gpio.defaultI2cBus());
   }
 
 }

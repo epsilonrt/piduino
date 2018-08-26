@@ -37,10 +37,12 @@ class TwoWire : public Piduino::I2cDev {
     TwoWire() : Piduino::I2cDev() {}
     virtual ~TwoWire() {}
     void begin() {
-      open (defaultBus());
+      setBus (defaultBus());
+      open ();
     }
     void begin (int id) {
-      open (id);
+      setBus (id);
+      open ();
     }
     void end() {
       close();

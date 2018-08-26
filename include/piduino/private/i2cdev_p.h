@@ -51,6 +51,7 @@ namespace Piduino {
       std::vector<i2c_msg> i2c_msgs;
       Fifo txbuf;
       Fifo rxbuf;
+      Info bus;
 
       PIMP_DECLARE_PUBLIC (I2cDev)
   };

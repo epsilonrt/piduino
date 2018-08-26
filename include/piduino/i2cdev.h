@@ -36,18 +36,46 @@ namespace Piduino {
 
       class Info {
         public:
-          int id;
-          std::string path;
+          static const int MaxBuses = 32;
+          Info(int id = 0) {
+            setId (id);
+          }
+          inline int id() const {
+            return _id;
+          }
+          inline void setId (int id) {
+            _id = id;
+            _path = busPath (id);
+          }
+          inline const std::string & path() const {
+            return _path;
+          }
+          bool setPath (const std::string & path);
+          bool operator== (const Info & other) {
+            return (_path == other._path) ;
+          }
+          static std::string busPath (int id);
+        
+        private:
+          int _id;
+          std::string _path;
       };
 
       I2cDev ();
+      I2cDev (const char * path);
+      I2cDev (const std::string & path);
+      I2cDev (const Info & bus);
+      I2cDev (int idBus);
       virtual ~I2cDev();
 
-      virtual bool open (const char * path);
-      virtual bool open (const std::string & path);
-      virtual bool open (const Info & bus);
-      virtual bool open (int idBus);
+      virtual bool open (OpenMode mode = OpenMode::ReadWrite);
       virtual void close();
+
+      void setBus (const Info & bus);
+      void setBus (int idBus);
+      const Info & bus() const;
+      void setBusPath (const char * path);
+      void setBusPath (const std::string & path);
 
       void beginTransmission (uint16_t slave);
       bool endTransmission (bool stop = true);
@@ -86,13 +114,11 @@ namespace Piduino {
       virtual void flush ();
 
       static std::map<int, Info> availableBuses ();
-      static std::string busPath (int idBus);
       static Info defaultBus ();
 
     protected:
       class Private;
       I2cDev (Private &dd);
-      bool open (OpenMode mode);
 
     private:
       PIMP_DECLARE_PRIVATE (I2cDev)
