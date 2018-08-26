@@ -36,7 +36,7 @@ namespace Piduino {
 
       if (s->isOpen()) {
 
-        cs = & s->info().cs();
+        cs = & s->bus().cs();
       }
       else {
 

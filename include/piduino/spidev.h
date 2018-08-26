@@ -49,14 +49,14 @@
  * constate que seuls des drivers spi-bcm2835.c (Raspberry Pi !), spi-davinci.c
  * et spi-imx.c gère cette possibilité.
  *
- * Le choix qui a été fait, pour l'instant dans le noyau Arduino de PiDuino 
- * (src/arduino/Core.cpp) est de laisser le driver spi gérer le signal CS sur 
- * les autres cartes  que les RaspberryPi. 
- * Dans ce cas, Les appels à pinMode() et donc à digitalWrite() n'ont aucun effet 
+ * Le choix qui a été fait, pour l'instant dans le noyau Arduino de PiDuino
+ * (src/arduino/Core.cpp) est de laisser le driver spi gérer le signal CS sur
+ * les autres cartes  que les RaspberryPi.
+ * Dans ce cas, Les appels à pinMode() et donc à digitalWrite() n'ont aucun effet
  * lorsqu'il s'agit de la broche correspondant au CS du bus SPI utilisé.
  * Cela permet d'assurer une compatibilité avec le code Arduino, tout en restant
- * compatible avec toutes les cartes Pi.Néanmoins,cela n'autorise pas 
- * l'utilisation d'une autre broche GPIO que celle du CS SPI sur les autres 
+ * compatible avec toutes les cartes Pi.Néanmoins,cela n'autorise pas
+ * l'utilisation d'une autre broche GPIO que celle du CS SPI sur les autres
  * cartes que Raspberry Pi (pour l'instant...).
  *
  *  @{
@@ -73,7 +73,7 @@ namespace Piduino {
 
       /**
        * @class Cs
-       * @brief
+       * @brief Broche de chip select d'un bus SPI
        */
       class Cs {
         public:
@@ -81,21 +81,27 @@ namespace Piduino {
 
           Cs() : _id (-1), _pin (0), _mode (Pin::ModeUnknown),
             _driverControl (true), _activeLevel (false) {}
+          
           inline int id() const {
             return _id;
           }
+          
           inline Pin * pin() const {
             return _pin;
           }
+          
           inline Pin::Mode mode() const {
             return _mode;
           }
+          
           inline bool driverControl() const {
             return _driverControl;
           }
+          
           inline bool activeLevel() const {
             return _activeLevel;
           }
+          
           bool setDriverControl (bool enable = false, bool activeLevel = false);
           bool get() const;
           void set (bool value);
@@ -121,65 +127,65 @@ namespace Piduino {
 
       /**
        * @class Info
-       * @brief
+       * @brief Informations sur un bus SPI
        */
       class Info {
         public:
-          friend class SpiDev;
-
-          Info() : _busId (0), _csId (0) {}
+          static const int MaxBuses = 32;
+          static const int MaxCs = 32;
+          
+          Info (int bus = 0, int cs = 0) {
+            setId (bus, cs);
+          }
+          
+          void setId (int bus, int cs = 0);
+          bool setPath (const std::string & path);
 
           inline int busId() const {
-            return _busId;
+            return _bus;
           }
+          
           inline int csId() const {
-            return _csId;
+            return _cs;
           }
+          
           inline const std::string & path() const {
             return _path;
           }
-          inline Cs & cs (int id)   {
-            return _csList.at (id);
-          }
-          inline const Cs & cs (int id) const  {
-            return static_cast<const Cs&> (_csList.at (id));
-          }
-          inline Cs & cs()   {
-            return cs (_csId);
-          }
-          inline const Cs & cs() const   {
-            return cs (_csId);
-          }
-          Pin * csPin (int id)  {
-            return cs (id).pin();
-          }
-          const Pin * csPin (int id) const  {
-            return static_cast<const Pin *> (cs (id).pin());
-          }
-          Pin * csPin()  {
-            return cs().pin();
-          }
-          const Pin * csPin() const  {
-            return cs().pin();
-          }
-          std::vector<int> csList() const;
 
-        protected:
-          inline void setBusId (int value) {
-            _busId = value;
+          inline const std::map<int, Cs> & csList() const {
+            return _csList;
           }
-          inline void setCsId (int value) {
-            _csId = value;
+
+          inline const Cs & cs() const   {
+            return _csList.at (_cs);
           }
-          inline void setPath (const std::string & value) {
-            _path = value;
+
+          bool operator== (const Info & other) {
+            return (_path == other._path) ;
           }
-          inline void insertCs (int csId, const Cs & value) {
-            _csList[csId] = value;
-          }
+
+          /**
+           * @brief Chemin système correspondant à un bus
+           * @param bus identifiant du bus
+           * @param cs identifiant du chip select
+           * @return Chemin du fichier dans /dev
+           */
+          static std::string busPath (int bus, int cs = 0);
+
+          /**
+           * @brief Recherche les informations sur le bus SPI spécifié dans la base
+           * de données de Piduino
+           * @param info informations en sortie sur le bus, inchangé si non trouvé
+           * @param idBus identifiant du bus à chercher
+           * @param idCs identifiant du chip select à chercher
+           * @return true si trouvé
+           */
+          static bool findBus (Info & info, int idBus, int idCs = 0);
+
         private:
-          int _busId; ///< numéro du bus
-          int _csId; ///< index du CS affecté par le driver spidev
+          int _bus; ///< numéro du bus
+          int _cs; ///< index du CS affecté par le driver spidev
           std::string _path; ///< chemin du bus dans /dev
           std::map<int, Cs> _csList; ///< liste des broches de CS du bus
       };
@@ -252,12 +258,28 @@ namespace Piduino {
 
       /**
        * @brief Constructeur par défaut
-       * @param settings Configuration de la liaison, par défaut les paramètres sont
-       * ceux définis par défaut dans le constructeur de Settings.
-       * @param idCs
-       * @return
        */
-      SpiDev (const Settings & settings = Settings());
+      SpiDev ();
+
+      /**
+       * @brief Constructeur à partir d'un bus
+       */
+      SpiDev (const Info & bus);
+
+      /**
+       * @brief Constructeur à partir identifiant de bus
+       */
+      explicit SpiDev (int idBus, int idCs = 0);
+
+      /**
+       * @brief Constructeur à partir chemin de bus
+       */
+      explicit SpiDev (const std::string & path);
+
+      /**
+       * @brief Constructeur à partir chemin de bus const char *
+       */
+      explicit SpiDev (const char * path);
 
       /**
        * @brief Destructeur
@@ -265,25 +287,53 @@ namespace Piduino {
       virtual ~SpiDev();
 
       /**
-       * @brief Ouverture d'un bus SPI
-       * La configuration settings() est appliquée à la liaison ouverte.
-       * @param idBus identifiant du bus 0..N
-       * @param idCs identifiant du chip select 0..C
+       * @brief Ouverture du bus SPI
+       * La configuration settings() est appliquée.
+       * @param mode mode d'ouverture
        * @return true si ouvert, false sinon, dans ce cas error() et
        * errorString() peuvent être utilisé pour connaître la raison.
        */
-      virtual bool open (int idBus, int idCs = 0);
-
-      /**
-       * @brief Surcharge de open() à partir d'une variable Info
-       */
-      virtual bool open (const Info & bus);
+      virtual bool open (OpenMode mode = OpenMode::ReadWrite);
 
       /**
        * @brief Fermeture du bus
        * Cette fonction est appelée par le destructeur
        */
       virtual void close();
+
+      /**
+       * @brief Modification du bus SPI
+       * Si la liaison ouverte, celle-ci est fermée, puis réouverte sur le
+       * nouveau bus.
+       * @param idBus identifiant du bus 0..N
+       * @param idCs identifiant du chip select 0..C
+       * @return true si ouvert, false sinon, dans ce cas error() et
+       * errorString() peuvent être utilisé pour connaître la raison.
+       */
+      void setBus (int idBus, int idCs = 0);
+
+      /**
+       * @brief Surcharge de setBus() à partir d'une variable Info
+       */
+      void setBus (const Info & bus);
+
+      /**
+       * @brief Modification du chemin du bus
+       * Si la liaison ouverte, celle-ci est fermée, puis réouverte sur le
+       * nouveau bus.
+       * @param path chemin dans /dev
+       */
+      void setBusPath (const std::string & path);
+
+      /**
+       * @brief Surcharge de setBusPath() à partir d'une variable const char *
+       */
+      void setBusPath (const char * path);
+
+      /**
+       * @brief Informations sur le bus
+       */
+      const Info & bus() const;
 
       /**
        * @brief Transfert d'un message en entrée-sortie
@@ -340,13 +390,6 @@ namespace Piduino {
        * Pas nécessaire après transfer()
        */
       void clear();
-
-      /**
-       * @brief Informations sur le bus
-       * Certaines informations ne sont valides qu'après ouverture du bus
-       * @return
-       */
-      const Info & info() const;
 
       /**
        * @brief Modification des réglages de la transmission
@@ -431,29 +474,9 @@ namespace Piduino {
        */
       static Info defaultBus ();
 
-      /**
-       * @brief Chemin système correspondant à un bus
-       * @param idBus identifiant du bus
-       * @param idCs identifiant du chip select
-       * @return Chemin du fichier dans /dev
-       */
-      static std::string busPath (int idBus, int idCs = 0);
-
-      /**
-       * @brief Recherche les informations sur le bus SPI spécifié dans la base
-       * de données de Piduino
-       * @param info informations en sortie sur le bus, inchangé si non trouvé
-       * @param idBus identifiant du bus à chercher
-       * @param idCs identifiant du chip select à chercher
-       * @return true si trouvé
-       */
-      static bool findBus (Info & info, int idBus, int idCs = 0);
-
     protected:
       class Private;
       SpiDev (Private &dd);
-      bool open (OpenMode mode);
-      int setCsDriverControl (bool enableAllCsDriverControl = false, bool csActiveLevel = false);
 
     private:
       PIMP_DECLARE_PRIVATE (SpiDev)

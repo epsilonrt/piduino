@@ -37,8 +37,8 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  SpiDev::Private::Private (SpiDev * q, const Settings & s) :
-    IoDevice::Private (q), fd (-1), settings (s) {
+  SpiDev::Private::Private (SpiDev * q) :
+    IoDevice::Private (q), fd (-1) {
 
     isSequential = true;
   }
@@ -234,15 +234,79 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  vector<int>
-  SpiDev::Info::csList() const {
-    vector<int> list;
+  bool
+  SpiDev::Info::setPath (const std::string & p) {
 
-    for (auto pair = _csList.cbegin(); pair != _csList.cend(); ++pair) {
+    for (int c = 0; c < MaxCs; c++) {
 
-      list.push_back (pair->first);
+      for (int b = 0; b < MaxBuses; b++) {
+        std::string bp = busPath (b, c);
+
+        if (bp == p) {
+
+          setId (b, c);
+          return true;
+        }
+      }
     }
-    return list;
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  SpiDev::Info::setId (int idBus, int idCs) {
+    const vector<Pin::SpiCs> & socCsList = db.board().soc().spiCs();
+
+    _bus = idBus;
+    _cs = idCs;
+    _path = busPath (idBus, idCs);
+    _csList.clear();
+
+    for (int i = 0; i < socCsList.size(); i++) {
+      const Pin::SpiCs & socCs = socCsList[i];
+
+      if (socCs.bus == idBus) {
+        Cs cs;
+
+        cs.setId (idCs);
+        cs.setMode (socCs.mode);
+        cs.setPin (gpio.pin (socCs.pin));
+        _csList[socCs.cs] = cs;
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  string
+  SpiDev::Info::busPath (int bus, int cs) {
+    char path[256];
+
+    ::snprintf (path, sizeof (path), db.board().soc().spiSysPath().c_str(), bus, cs);
+    return string (path);
+  }
+
+
+  // ---------------------------------------------------------------------------
+  bool
+  SpiDev::Info::findBus (SpiDev::Info & bus, int idBus, int idCs)  {
+    const vector<Pin::SpiCs> & socCsList = db.board().soc().spiCs();
+    bool found = false;
+
+    for (int i = 0; i < socCsList.size(); i++) {
+      const Pin::SpiCs & cs = socCsList[i];
+
+      if ( (cs.bus == idBus) && (cs.cs == idCs)) {
+
+        string path = busPath (idBus, idCs);
+        if (System::fileExist (path)) {
+
+          bus.setId (idBus, idCs);
+          found = true;
+        }
+      }
+    }
+
+    return found;
   }
 
 // -----------------------------------------------------------------------------
@@ -252,60 +316,64 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  SpiDev::SpiDev (SpiDev::Private &dd) : IoDevice (dd) {
+  SpiDev::SpiDev (SpiDev::Private & dd) : IoDevice (dd) {
 
   }
 
   // ---------------------------------------------------------------------------
-  SpiDev::SpiDev (const Settings & s) :
-    IoDevice (*new Private (this, s))  {
+  SpiDev::SpiDev () :
+    IoDevice (*new Private (this))  {
 
+  }
+
+  // ---------------------------------------------------------------------------
+  SpiDev::SpiDev (const char * path) : SpiDev() {
+
+    setBusPath (path);
+  }
+
+  // ---------------------------------------------------------------------------
+  SpiDev::SpiDev (const std::string & path) : SpiDev() {
+
+    setBusPath (path);
+  }
+
+  // ---------------------------------------------------------------------------
+  SpiDev::SpiDev (const Info & bus) : SpiDev() {
+
+    setBus (bus);
+  }
+
+  // ---------------------------------------------------------------------------
+  SpiDev::SpiDev (int idBus, int idCs) : SpiDev() {
+
+    setBus (idBus, idCs);
   }
 
   // ---------------------------------------------------------------------------
   SpiDev::~SpiDev() {
+
     close();
   }
 
   // ---------------------------------------------------------------------------
-  bool SpiDev::open (OpenMode mode) {
-
-    return IoDevice::open (mode);
-  }
-
-  // ---------------------------------------------------------------------------
   bool
-  SpiDev::open (int idBus, int idCs) {
+  SpiDev::open (OpenMode mode) {
 
     if (!isOpen()) {
       PIMP_D (SpiDev);
 
-      if (findBus (d->info, idBus, idCs)) {
+      d->fd = ::open (d->bus.path().c_str(), systemMode (mode));
+      if (d->fd < 0) {
 
-        d->fd = ::open (d->info.path().c_str(), O_RDWR);
-        if (d->fd < 0) {
-
-          setError();
-          return false;
-        }
-
-        open (OpenMode::ReadWrite);
-        d->setSettings();
+        setError();
+        return false;
       }
-      else {
+      d->setSettings();
 
-        setError (ENOENT);
-      }
+      IoDevice::open (mode);
     }
     return isOpen();
-  }
-
-
-  // ---------------------------------------------------------------------------
-  bool
-  SpiDev::open (const Info & info) {
-
-    return open (info.busId(), info.csId());
   }
 
   // ---------------------------------------------------------------------------
@@ -325,6 +393,66 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  void
+  SpiDev::setBus (const Info & bus) {
+    PIMP_D (SpiDev);
+
+    if (d->bus != bus) {
+
+      d->bus = bus;
+
+      if (isOpen()) {
+        OpenMode m = openMode();
+
+        close();
+        open (m);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  SpiDev::setBus (int idBus, int idCs) {
+    PIMP_D (SpiDev);
+
+    if ( (d->bus.busId() != idBus) || (d->bus.csId() != idCs)) {
+
+      d->bus.setId (idBus, idCs);
+      if (isOpen()) {
+        OpenMode m = openMode();
+
+        close();
+        open (m);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  SpiDev::setBusPath (const std::string & path) {
+    PIMP_D (SpiDev);
+
+    if (d->bus.path() != path) {
+
+      d->bus.setPath (path);
+      if (isOpen()) {
+        OpenMode m = openMode();
+
+        close();
+        open (m);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  SpiDev::setBusPath (const char * path) {
+    PIMP_D (SpiDev);
+
+    setBusPath (std::string (path));
+  }
+
+  // ---------------------------------------------------------------------------
   const SpiDev::Settings & SpiDev::settings() const {
     PIMP_D (const SpiDev);
 
@@ -340,10 +468,10 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   const SpiDev::Info &
-  SpiDev::info() const {
+  SpiDev::bus() const {
     PIMP_D (const SpiDev);
 
-    return d->info;
+    return d->bus;
   }
 
   // ---------------------------------------------------------------------------
@@ -372,7 +500,7 @@ namespace Piduino {
     PIMP_D (SpiDev);
 
     if (d->settings != settings) {
-      
+
       d->settings = settings;
       d->setSettings();
     }
@@ -492,76 +620,22 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  int SpiDev::write (const uint8_t *buffer, uint32_t len) {
+  int SpiDev::write (const uint8_t * buffer, uint32_t len) {
 
     return transfer (buffer, 0, len);
   }
 
   // ---------------------------------------------------------------------------
-  string
-  SpiDev::busPath (int idBus, int idCs) {
-    char path[256];
-
-    ::snprintf (path, sizeof (path), db.board().soc().spiSysPath().c_str(), idBus, idCs);
-    return string (path);
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  SpiDev::findBus (SpiDev::Info & info, int idBus, int idCs)  {
-    const vector<Pin::SpiCs> & csList = db.board().soc().spiCs();
-    bool found = false;
-
-    for (int i = 0; i < csList.size(); i++) {
-      const Pin::SpiCs & cs = csList[i];
-
-      if ( (cs.bus == idBus) && (cs.cs == idCs)) {
-
-        string path = busPath (idBus, idCs);
-        if (System::fileExist (path)) {
-          Cs csPin;
-
-          info.setBusId (idBus);
-          info.setCsId (idCs);
-          info.setPath (path);
-          csPin.setId (idCs);
-          csPin.setMode (cs.mode);
-          csPin.setPin (gpio.pin (cs.pin));
-          info.insertCs (cs.cs, csPin);
-          found = true;
-        }
-      }
-    }
-
-    if (found) {
-
-      for (int i = 0; i < csList.size(); i++) {
-        const Pin::SpiCs & cs = csList[i];
-
-        if ( (cs.bus == idBus) && (cs.cs != idCs)) {
-          Cs csPin;
-
-          csPin.setId (cs.cs);
-          csPin.setMode (cs.mode);
-          csPin.setPin (gpio.pin (cs.pin));
-          info.insertCs (cs.cs, csPin);
-        }
-      }
-    }
-    return found;
-  }
-
-  // ---------------------------------------------------------------------------
   SpiDev::Info
   SpiDev::defaultBus () {
-    Info info;
+    Info bus;
 
-    if (! findBus (info, gpio.defaultSpiBus())) {
+    if (! Info::findBus (bus, gpio.defaultSpiBus())) {
 
       throw system_error (ENOENT, system_category(),
                           "Default SPI Bus not found !");
     }
-    return info;
+    return bus;
   }
 
   // ---------------------------------------------------------------------------
@@ -571,18 +645,19 @@ namespace Piduino {
     const vector<Pin::SpiCs> & csList = db.board().soc().spiCs();
 
     for (int i = 0; i < csList.size(); i++) {
-      Info info;
+      Info bus;
       const Pin::SpiCs & cs = csList[i];
 
-      if (findBus (info, cs.bus, cs.cs)) {
+      if (Info::findBus (bus, cs.bus, cs.cs)) {
 
-        buses.push_back (info);
+        buses.push_back (bus);
       }
     }
 
     return buses;
   }
 
+#if 0
   // ---------------------------------------------------------------------------
   // TODO: Utilisation du flag SPI_NO_CS ?
   int
@@ -592,12 +667,12 @@ namespace Piduino {
     clearError();
     if (isOpen()) {
       PIMP_D (SpiDev);
-      vector<int> list = d->info.csList();
+      vector<int> list = d->bus.csList();
 
       ret = 0;
       for (int i = 0; i < list.size(); i++) {
 
-        d->info.cs (i).setDriverControl (enable, al);
+        d->bus.cs (i).setDriverControl (enable, al);
         ret++;
       }
     }
@@ -607,6 +682,7 @@ namespace Piduino {
     }
     return ret;
   }
+#endif
 
 }
 

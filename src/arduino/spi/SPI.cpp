@@ -20,15 +20,17 @@
 // Initialize the SPI library
 void SPIClass::begin() {
 
-  open (SpiDev::defaultBus());
-  setSettings(SPISettings());
+  setBus (defaultBus());
+  setSettings (SPISettings());
+  open ();
 }
 
 // -----------------------------------------------------------------------------
 void SPIClass::begin (int idBus, int idCs) {
 
-  open (idBus, idCs);
-  setSettings(SPISettings());
+  setBus (idBus, idCs);
+  setSettings (SPISettings());
+  open ();
 }
 
 // -----------------------------------------------------------------------------

@@ -26,12 +26,12 @@ namespace Piduino {
 
     public:
 
-      Private (SpiDev * q, const Settings & settings);
+      Private (SpiDev * q);
       virtual ~Private();
 
       int fd;
       Settings settings;
-      Info info;
+      Info bus;
       std::vector<Transfer *> tstack;
 
       void setMode ();
