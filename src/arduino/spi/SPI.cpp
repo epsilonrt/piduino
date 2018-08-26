@@ -94,7 +94,7 @@ void SPIClass::setBitOrder (uint8_t b) {
 // beginTransaction() to configure SPI settings.
 void SPIClass::setDataMode (uint8_t dataMode) {
 
-  setMode (dataMode);
+  setMode (dataMode | SPI_NO_CS);
 }
 
 // -----------------------------------------------------------------------------

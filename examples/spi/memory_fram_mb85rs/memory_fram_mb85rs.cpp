@@ -30,12 +30,13 @@
 
 byte buf[128];
 const size_t bufSize = sizeof (buf);
+unsigned long counter = 0;
 
 // <DANGER> Be careful !!! Before launching this program :
 //    -> Check that the pin below is well connected to the MB85RS CS Pin (1) ! <-
 // the other you need are controlled by the SPI library:
-// Mb85rs fram (10, 32768); // Pin 10 = SPI0_CS
-Mb85rs fram (27, 32768);
+Mb85rs fram (10, 32768); // Pin 10 = SPI0_CS
+// Mb85rs fram (27, 32768);
 
 void setup() {
 
@@ -47,7 +48,10 @@ void setup() {
 
 void loop () {
   // Press Ctrl+C to abort ...
-
+  Console.print ("# ");
+  Console.print (++counter);
+  Console.println (" ---------------------------------------------------------");
+  
   Mb85rs::DeviceId id = fram.deviceId ();
   Console.print ("Manufacturer ID   : 0x");
   fram.printHex (Console, id.manufacturerId, 2);
@@ -96,5 +100,5 @@ void loop () {
   fram.printBlock (Console, 0, buf, bufSize);
 
   Console.write ('\n');
-  delay (2000); // wait for a 10 seconds
+  delay (500); // wait for a 10 seconds
 }

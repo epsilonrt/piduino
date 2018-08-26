@@ -36,8 +36,8 @@ const double HscTemperatureZero = 50.0;
 // <DANGER> Be careful !!! Before launching this program :
 //    -> Check that the pin below is well connected to the HSC SS Pin (5) ! <-
 // the other you need are controlled by the SPI library:
-// const int chipSelectPin = 10; // Header Pin 24: GPIO8 for RPi, GPIOC3 for NanoPi
-const int chipSelectPin = 27;
+const int chipSelectPin = 10; // Header Pin 24: GPIO8 for RPi, GPIOC3 for NanoPi
+// const int chipSelectPin = 27;
 
 byte buf[4];
 SPISettings settings (700000, MSBFIRST, SPI_MODE0);

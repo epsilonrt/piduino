@@ -49,11 +49,15 @@
  * constate que seuls des drivers spi-bcm2835.c (Raspberry Pi !), spi-davinci.c
  * et spi-imx.c gère cette possibilité.
  *
- * Le choix qui a été fait, pour l'instant dans PiDuino est de laisser le driver
- * spi gérer le signal CS. Les appels à pinMode() et donc à digitalWrite() n'ont
- * aucun effet lorsqu'il s'agit de la broche correspondant au bus SPI utilisé.
+ * Le choix qui a été fait, pour l'instant dans le noyau Arduino de PiDuino 
+ * (src/arduino/Core.cpp) est de laisser le driver spi gérer le signal CS sur 
+ * les autres cartes  que les RaspberryPi. 
+ * Dans ce cas, Les appels à pinMode() et donc à digitalWrite() n'ont aucun effet 
+ * lorsqu'il s'agit de la broche correspondant au CS du bus SPI utilisé.
  * Cela permet d'assurer une compatibilité avec le code Arduino, tout en restant
- * compatible avec toutes les cartes Pi.
+ * compatible avec toutes les cartes Pi.Néanmoins,cela n'autorise pas 
+ * l'utilisation d'une autre broche GPIO que celle du CS SPI sur les autres 
+ * cartes que Raspberry Pi (pour l'instant...).
  *
  *  @{
  */

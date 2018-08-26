@@ -17,6 +17,7 @@
 #include <piduino/arduino.h>
 #include <piduino/clock.h>
 #include <piduino/scheduler.h>
+#include <piduino/database.h>
 #include "config.h"
 
 #if PIDUINO_WITH_SPI
@@ -27,26 +28,31 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   bool pinLocked (int n) {
+
 #if PIDUINO_WITH_SPI
-    SpiDev * s = reinterpret_cast<SpiDev *> (&::SPI);
-    const SpiDev::Cs * cs;
+    if (db.board().soc().family().id() != SoC::Family::BroadcomBcm2835) {
+      SpiDev * s = reinterpret_cast<SpiDev *> (&::SPI);
+      const SpiDev::Cs * cs;
 
-    if (s->isOpen()) {
+      if (s->isOpen()) {
 
-      cs = & s->info().cs();
-    }
-    else {
-
-      cs = & SpiDev::defaultBus().cs();
-    }
-    if (gpio.open()) {
-
-      if ( (cs->pin()->logicalNumber() == n) && (cs->pin()->mode() == cs->mode())) {
-
-        return true;
+        cs = & s->info().cs();
       }
+      else {
+
+        cs = & SpiDev::defaultBus().cs();
+      }
+      if (gpio.open()) {
+
+        if ( (cs->pin()->logicalNumber() == n) && (cs->pin()->mode() == cs->mode())) {
+
+          return true;
+        }
+      }
+
     }
 #endif
+
     return false;
   }
 }

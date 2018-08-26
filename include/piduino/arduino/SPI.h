@@ -56,7 +56,7 @@
 class SPISettings : public Piduino::SpiDev::Settings {
   public:
     SPISettings (uint32_t clock = 4000000, uint8_t bitOrder = MSBFIRST, uint8_t dataMode = SPI_MODE0) :
-      Piduino::SpiDev::Settings (clock, bitOrder, dataMode) {}
+      Piduino::SpiDev::Settings (clock, bitOrder, dataMode | SPI_NO_CS) {}
 };
 
 
