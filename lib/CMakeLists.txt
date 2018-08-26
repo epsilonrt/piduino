@@ -23,7 +23,8 @@ endif()
 
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
   
-file(GLOB src_piduino ${PIDUINO_SRC_DIR}/*.c ${PIDUINO_SRC_DIR}/*.cpp)
+file(GLOB src_piduino  ${PIDUINO_SRC_DIR}/*.cpp)
+list(REMOVE_ITEM src_piduino ${PIDUINO_SRC_DIR}/piduino.cpp)
 
 set (hdr_piduino 
   ${PIDUINO_INC_DIR}/piduino/global.h
@@ -127,8 +128,9 @@ endif (PIDUINO_WITH_SERIAL)
 
 #message ("hdr_public=${hdr_public}")
 
-set (libsrc ${src_piduino} 
-  ${src_arduino} ${src_arduino_i2c} ${src_arduino_spi} ${src_gpio} ${src_gpio_arch} ${src_i2c} ${src_spi} ${src_serial}
+set (libsrc ${PIDUINO_SRC_DIR}/piduino.cpp  
+  ${src_piduino} ${src_gpio} ${src_gpio_arch} ${src_i2c} ${src_spi} ${src_serial}
+  ${src_arduino} ${src_arduino_i2c} ${src_arduino_spi} 
   )
 
 include_directories(BEFORE
