@@ -43,14 +43,6 @@
 
 using namespace std;
 
-#if PIDUINO_WITH_I2C && PIDUINO_WITH_ARDUINO
-TwoWire Wire;
-#endif
-
-#if PIDUINO_WITH_SPI && PIDUINO_WITH_ARDUINO
-SPIClass SPI;
-#endif
-
 namespace Piduino {
 
 // -----------------------------------------------------------------------------
@@ -63,13 +55,13 @@ namespace Piduino {
   Clock clk;
 #if PIDUINO_WITH_GPIO
   Gpio gpio;
-#endif
 #if PIDUINO_WITH_I2C && ! PIDUINO_WITH_ARDUINO
   I2cDev Wire;
-#endif
+#endif // PIDUINO_WITH_I2C && ! PIDUINO_WITH_ARDUINO
 #if PIDUINO_WITH_SPI && ! PIDUINO_WITH_ARDUINO
   SpiDev SPI;
-#endif
+#endif // PIDUINO_WITH_SPI && ! PIDUINO_WITH_ARDUINO
+#endif // PIDUINO_WITH_GPIO
 
 // -----------------------------------------------------------------------------
   void closeall () {
@@ -91,6 +83,7 @@ namespace Piduino {
     exit (EXIT_SUCCESS);
   }
 
+
 // -----------------------------------------------------------------------------
   void __attribute__ ( (constructor (65535))) begin () {
 
@@ -105,4 +98,5 @@ namespace Piduino {
     closeall();
   }
 }
+
 /* ========================================================================== */

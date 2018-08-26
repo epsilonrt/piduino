@@ -106,4 +106,6 @@ void SPIClass::setClockDivider (uint8_t clockDiv) {
   setSpeedHz (baud);
 }
 
+SPIClass SPI;
+
 /* ========================================================================== */

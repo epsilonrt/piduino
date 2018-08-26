@@ -51,3 +51,5 @@ int TwoWire::requestFrom (uint16_t address, uint16_t quantity, uint32_t iaddress
   // perform blocking read into buffer
   return I2cDev::requestFrom (address, quantity, sendStop != 0);
 }
+
+TwoWire Wire;
