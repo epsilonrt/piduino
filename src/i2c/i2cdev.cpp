@@ -158,8 +158,8 @@ namespace Piduino {
   I2cDev::open (OpenMode mode) {
 
     if (!isOpen()) {
-      unsigned long i2c_funcs;
       PIMP_D (I2cDev);
+      unsigned long i2c_funcs;
 
       d->flush();
       d->rxbuf.clear();

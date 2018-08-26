@@ -62,10 +62,10 @@ namespace Piduino {
       };
 
       I2cDev ();
-      I2cDev (const char * path);
-      I2cDev (const std::string & path);
       I2cDev (const Info & bus);
-      I2cDev (int idBus);
+      explicit I2cDev (const char * path);
+      explicit I2cDev (const std::string & path);
+      explicit I2cDev (int idBus);
       virtual ~I2cDev();
 
       virtual bool open (OpenMode mode = OpenMode::ReadWrite);
