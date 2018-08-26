@@ -129,24 +129,24 @@ bool Mb85rs::writeEnabled() {
 }
 
 // -----------------------------------------------------------------------------
-void Mb85rs::printBlock (Stream & stream, size_t address, const uint8_t * data, size_t len) {
+void Mb85rs::printBlock (Print & console, size_t address, const uint8_t * data, size_t len) {
   const size_t bytes = 16;
 
   for (size_t i = 0; i < (len < bytes ? 1 : len / bytes); i++) {
 
-    printHex (stream, i * bytes + address, 8); // affiche l'adresse de début de ligne
-    stream.write (' ');
+    printHex (console, i * bytes + address, 8); // affiche l'adresse de début de ligne
+    console.write (' ');
     for (size_t j = 0; j < bytes && len > 0; j++) {
 
-      printHex (stream, *data++, 2); // affiche bytes octets par ligne
+      printHex (console, *data++, 2); // affiche bytes octets par ligne
       --len;
     }
-    stream.write ('\n');
+    console.write ('\n');
   }
 }
 
 // -----------------------------------------------------------------------------
-void Mb85rs::printHex (Stream & stream, uint32_t n, int width) {
+void Mb85rs::printHex (Print & console, uint32_t n, int width) {
   char str[9];
   const char * list[5] = {"%lX", "%02lX", "%04lX", "%06lX", "%08lX"};
   const char * format = list[0];
@@ -155,5 +155,5 @@ void Mb85rs::printHex (Stream & stream, uint32_t n, int width) {
     format = list[width >> 1];
   }
   sprintf (str, format, n); // affiche l'adresse de début de ligne
-  stream.print (str);
+  console.print (str);
 }

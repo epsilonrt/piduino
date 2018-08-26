@@ -18,7 +18,7 @@
 #define FUJITSU_MB85RS_LIBRARY_H
 
 #include <SPI.h>
-#include <Stream.h>
+#include <Print.h>
 
 // -----------------------------------------------------------------------------
 //
@@ -73,8 +73,8 @@ public:
       return _cspin;
     }
     
-    static void printBlock (Stream & stream, size_t address, const uint8_t * buffer, size_t len);
-    static void printHex (Stream & stream, uint32_t n, int width = 0);
+    static void printBlock (Print & console, size_t address, const uint8_t * buffer, size_t len);
+    static void printHex (Print & console, uint32_t n, int width = 0);
   
 private:
     void transfer (uint8_t * buffer, size_t len);

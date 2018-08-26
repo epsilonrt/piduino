@@ -50,7 +50,7 @@ void loop () {
   // Press Ctrl+C to abort ...
   Console.print ("# ");
   Console.print (++counter);
-  Console.println (" ---------------------------------------------------------");
+  Console.println (" -----------------------------------");
   
   Mb85rs::DeviceId id = fram.deviceId ();
   Console.print ("Manufacturer ID   : 0x");
