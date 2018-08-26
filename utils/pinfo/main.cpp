@@ -464,12 +464,13 @@ namespace Pinfo {
     std::string ret;
     std::map<int, I2cDev::Info> buses = I2cDev::availableBuses();
 
-    for (unsigned i = 0; i < buses.size(); i++) {
+    for (auto pair = buses.cbegin(); pair != buses.cend(); ++pair) {
 
-      ret += buses [i].path;
-      if (i < (buses.size() - 1)) {
-        ret += std::string (",");
+      const I2cDev::Info * bus = & pair->second;
+      if (ret.size()) {
+        ret.push_back (',');
       }
+      ret += bus->path();
     }
     return ret;
   }
