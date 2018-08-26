@@ -135,6 +135,17 @@ endif()
 
 add_definitions ( -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}" 
                   -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}")
+                  
+# Suppress GCC warnings
+# See https://gcc.gnu.org/gcc-7/changes.html
+# On ARM targets (arm*-*-*), a bug introduced in GCC 5 that affects conformance 
+# to the procedure call standard (AAPCS) has been fixed. The bug affects some 
+# C++ code where class objects are passed by value to functions and could result 
+# in incorrect or inconsistent code being generated. This is an ABI change. 
+# If the option -Wpsabi is enabled (on by default) the compiler will emit a 
+# diagnostic note for code that might be affected. 
+# <<< TODO >>> Fix this problem before compile with GCC 7 !
+add_compile_options(-Wno-psabi)
 
 add_subdirectory (dev)
 add_subdirectory (lib)
