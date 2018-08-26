@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
+#include <fcntl.h>
 #include <cstring>
 #include <piduino/private/iodevice_p.h>
 
@@ -170,6 +171,22 @@ namespace Piduino {
 
     return (openMode() & OpenMode::Text) == OpenMode::Text;
   }
+
+  // ---------------------------------------------------------------------------
+  int IoDevice::systemMode (OpenMode openMode) {
+    int m = O_RDONLY;
+
+    openMode &= OpenMode::ReadWrite;
+    if (openMode == OpenMode::WriteOnly) {
+      m = O_WRONLY;
+    }
+    else if (openMode == OpenMode::ReadWrite) {
+      m = O_RDWR;
+    }
+
+    return m;
+  }
+
 }
 
 /* ========================================================================== */

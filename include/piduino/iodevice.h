@@ -83,14 +83,15 @@ namespace Piduino {
       class Private;
       IoDevice (Private &dd);
       Private * d_ptr;
-      
+
       void setOpenMode (OpenMode openMode);
+      int systemMode (OpenMode openMode);
       void setSequential (bool enable);
       void setError ();
       void setError (int error);
       void setError (int error, const std::string &errorString);
       void clearError();
-    
+
     private:
       PIMP_DECLARE_PRIVATE (IoDevice)
   };
