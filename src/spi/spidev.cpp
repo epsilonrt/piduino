@@ -24,7 +24,7 @@
 #include <piduino/gpio.h>
 #include <piduino/database.h>
 #include <piduino/system.h>
-#include <piduino/private/spidev_p.h>
+#include "spidev_p.h"
 
 using namespace std;
 

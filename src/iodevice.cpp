@@ -16,16 +16,51 @@
  */
 #include <fcntl.h>
 #include <cstring>
-#include <piduino/private/iodevice_p.h>
+#include "iodevice_p.h"
 
 namespace Piduino {
 
   // ---------------------------------------------------------------------------
   IoDevice::Private::Private (IoDevice * q) :
-    q_ptr (q), openMode (OpenMode::NotOpen), isSequential (false), error (0) {}
+    q_ptr (q), openMode (NotOpen), isSequential (false), error (0) {}
 
   // ---------------------------------------------------------------------------
   IoDevice::Private::~Private()  {}
+
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::Private::setError (int error) {
+
+    error = error;
+    errorString.assign (strerror (error));
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::Private::setError (int error, const std::string & str) {
+
+    error = error;
+    errorString = str;
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::Private::setError () {
+
+    if (errno) {
+      error = errno;
+      errorString.assign (strerror (errno));
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::Private::clearError () {
+
+    error = 0;
+    errorString.clear();
+  }
 
   // ---------------------------------------------------------------------------
   IoDevice::IoDevice (IoDevice::Private &dd) : d_ptr (&dd) {
@@ -39,10 +74,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  IoDevice::~IoDevice() {
-
-    delete d_ptr;
-  }
+  IoDevice::~IoDevice() = default;
 
   // ---------------------------------------------------------------------------
   void
@@ -76,7 +108,7 @@ namespace Piduino {
 
     if (isOpen()) {
 
-      setOpenMode (OpenMode::NotOpen);
+      setOpenMode (NotOpen);
     }
   }
 
@@ -84,28 +116,28 @@ namespace Piduino {
   bool
   IoDevice::isOpen() const {
 
-    return openMode() != OpenMode::NotOpen;
+    return openMode() != NotOpen;
   }
 
   // ---------------------------------------------------------------------------
   bool
   IoDevice::isReadable() const {
 
-    return (openMode() & OpenMode::ReadOnly) == OpenMode::ReadOnly;
+    return (openMode() & ReadOnly);
   }
 
   // ---------------------------------------------------------------------------
   bool
   IoDevice::isBuffered() const {
 
-    return (openMode() & OpenMode::Unbuffered) != OpenMode::Unbuffered;
+    return ! (openMode() & Unbuffered);
   }
 
   // ---------------------------------------------------------------------------
   bool
   IoDevice::isWritable() const {
 
-    return (openMode() & OpenMode::WriteOnly) == OpenMode::WriteOnly;
+    return (openMode() & WriteOnly);
   }
 
   // ---------------------------------------------------------------------------
@@ -124,28 +156,30 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
+  IoDevice::setError (int error, const std::string & str) {
+
+    d_ptr->setError (error, str);
+  }
+
+  // ---------------------------------------------------------------------------
+  void
   IoDevice::setError (int error) {
 
-    d_ptr->error = error;
-    d_ptr->errorString.assign (strerror (error));
+    d_ptr->setError (error);
   }
 
   // ---------------------------------------------------------------------------
   void
   IoDevice::setError () {
 
-    if (errno) {
-      d_ptr->error = errno;
-      d_ptr->errorString.assign (strerror (errno));
-    }
+    d_ptr->setError();
   }
 
   // ---------------------------------------------------------------------------
   void
   IoDevice::clearError () {
 
-    d_ptr->error = 0;
-    d_ptr->errorString.clear();
+    d_ptr->clearError();
   }
 
   // ---------------------------------------------------------------------------
@@ -159,28 +193,28 @@ namespace Piduino {
   void IoDevice::setTextModeEnabled (bool enabled) {
 
     if (enabled) {
-      d_ptr->openMode |= OpenMode::Text;
+      d_ptr->openMode |= Text;
     }
     else {
-      d_ptr->openMode &= ~OpenMode::Text;
+      d_ptr->openMode &= ~Text;
     }
   }
 
   // ---------------------------------------------------------------------------
   bool IoDevice::isTextModeEnabled() const {
 
-    return (openMode() & OpenMode::Text) == OpenMode::Text;
+    return (openMode() & Text);
   }
 
   // ---------------------------------------------------------------------------
   int IoDevice::systemMode (OpenMode openMode) {
     int m = O_RDONLY;
 
-    openMode &= OpenMode::ReadWrite;
-    if (openMode == OpenMode::WriteOnly) {
+    openMode &= ReadWrite;
+    if (openMode == WriteOnly) {
       m = O_WRONLY;
     }
-    else if (openMode == OpenMode::ReadWrite) {
+    else if (openMode == ReadWrite) {
       m = O_RDWR;
     }
 

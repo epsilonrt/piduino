@@ -27,108 +27,86 @@
 
 namespace Piduino {
 
-  template<typename Flags>
-  struct EnableFlagsOperators {
-    static const bool enable = false;
+  template <typename EnumType, typename Underlying = int>
+  class Flags {
+      typedef Underlying Flags::* RestrictedBool;
+
+    public:
+      Flags(Underlying original = 0) : m_flags (original) {}
+      
+      Flags (const Flags& original) :
+        m_flags (original.m_flags)
+      {}
+
+      Flags& operator |= (const Flags& f) {
+        m_flags |= f.m_flags;
+        return *this;
+      }
+
+      Flags& operator ^= (const Flags& f) {
+        m_flags ^= f.m_flags;
+        return *this;
+      }
+
+      Flags& operator &= (const Flags& f) {
+        m_flags &= f.m_flags;
+        return *this;
+      }
+
+      friend Flags operator | (const Flags& f1, const Flags& f2) {
+        return Flags (f1) |= f2;
+      }
+      
+      friend Flags operator ^ (const Flags& f1, const Flags& f2) {
+        return Flags (f1) ^= f2;
+      }
+
+      friend Flags operator & (const Flags& f1, const Flags& f2) {
+        return Flags (f1) &= f2;
+      }
+
+      Flags operator ~() const {
+        Flags result (*this);
+        result.m_flags = ~result.m_flags;
+        return result;
+      }
+
+      operator RestrictedBool() const {
+        return m_flags ? &Flags::m_flags : 0;
+      }
+      
+      bool operator== (const Flags & other) {
+        return m_flags == other.m_flags;
+      }
+      
+      bool operator!= (const Flags & other) {
+        return m_flags != other.m_flags;
+      }
+      
+      void setFlags (Underlying flags) {
+        m_flags |= flags;
+      }
+      
+      void setFlag (EnumType singleFlag) {
+        setFlags(static_cast<Underlying> (singleFlag));
+      }
+      
+      void clearFlags (Underlying flags) {
+        m_flags &= ~flags;
+      }
+      
+      void clearFlag (EnumType singleFlag) {
+        clearFlags(static_cast<Underlying> (singleFlag));
+      }
+
+      Underlying value() const {
+        return m_flags;
+      }
+
+    protected:
+      Underlying  m_flags;
   };
-
-  template<typename Flags>
-  typename std::enable_if<EnableFlagsOperators<Flags>::enable, Flags>::type
-  operator | (Flags lhs, Flags rhs) {
-    using underlying = typename std::underlying_type<Flags>::type;
-    return static_cast<Flags> (
-             static_cast<underlying> (lhs) |
-             static_cast<underlying> (rhs)
-           );
-  }
-
-  template<typename Flags>
-  typename std::enable_if<EnableFlagsOperators<Flags>::enable, Flags>::type
-  operator & (Flags lhs, Flags rhs) {
-    using underlying = typename std::underlying_type<Flags>::type;
-    return static_cast<Flags> (
-             static_cast<underlying> (lhs) &
-             static_cast<underlying> (rhs)
-           );
-  }
-
-  template<typename Flags>
-  typename std::enable_if<EnableFlagsOperators<Flags>::enable, Flags>::type
-  operator ^ (Flags lhs, Flags rhs) {
-    using underlying = typename std::underlying_type<Flags>::type;
-    return static_cast<Flags> (
-             static_cast<underlying> (lhs) ^
-             static_cast<underlying> (rhs)
-           );
-  }
-
-  template<typename Flags>
-  bool
-  operator == (Flags lhs, Flags rhs) {
-    using underlying = typename std::underlying_type<Flags>::type;
-    return (
-             static_cast<underlying> (lhs) ==
-             static_cast<underlying> (rhs)
-           );
-  }
-
-  template<typename Flags>
-  bool
-  operator != (Flags lhs, Flags rhs) {
-
-    return ! (lhs == rhs);
-  }
-
-  template<typename Flags>
-  typename std::enable_if<EnableFlagsOperators<Flags>::enable, Flags>::type
-  operator |= (Flags lhs, Flags rhs) {
-    using underlying = typename std::underlying_type<Flags>::type;
-    lhs = static_cast<Flags> (
-            static_cast<underlying> (lhs) |
-            static_cast<underlying> (rhs)
-          );
-    return lhs;
-  }
-
-  template<typename Flags>
-  typename std::enable_if<EnableFlagsOperators<Flags>::enable, Flags>::type
-  operator &= (Flags lhs, Flags rhs) {
-    using underlying = typename std::underlying_type<Flags>::type;
-    lhs = static_cast<Flags> (
-            static_cast<underlying> (lhs) &
-            static_cast<underlying> (rhs)
-          );
-    return lhs;
-  }
-
-  template<typename Flags>
-  typename std::enable_if<EnableFlagsOperators<Flags>::enable, Flags>::type
-  operator ^= (Flags lhs, Flags rhs) {
-    using underlying = typename std::underlying_type<Flags>::type;
-    lhs = static_cast<Flags> (
-            static_cast<underlying> (lhs) ^
-            static_cast<underlying> (rhs)
-          );
-    return lhs;
-  }
-
-  template<typename Flags>
-  typename std::enable_if<EnableFlagsOperators<Flags>::enable, Flags>::type
-  operator ~ (Flags rhs) {
-    using underlying = typename std::underlying_type<Flags>::type;
-    return static_cast<Flags> (
-             ~static_cast<underlying> (rhs)
-           );
-  }
-  
-#define ENABLE_FLAGS_OPERATORS(T)     \
-  template<>                          \
-  struct EnableFlagsOperators<T>      \
-  {                                   \
-    static const bool enable = true;  \
-  }
 }
-
 
 /**
  *  @}

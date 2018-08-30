@@ -28,15 +28,20 @@ namespace Piduino {
     public:
       Private (IoDevice * q);
       virtual ~Private();
+      
+      void setError ();
+      void setError (int error);
+      void setError (int error, const std::string & errorString);
+      void clearError();
 
       IoDevice * const q_ptr;
-      
+
       OpenMode openMode;
       bool isSequential;
       int error;
       std::string errorString;
-      
-      PIMP_DECLARE_PUBLIC(IoDevice)
+
+      PIMP_DECLARE_PUBLIC (IoDevice)
   };
 }
 

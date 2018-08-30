@@ -165,6 +165,10 @@ namespace Piduino {
             return (_path == other._path) ;
           }
 
+          bool operator!= (const Info & other) {
+            return (_path != other._path) ;
+          }
+
           /**
            * @brief Chemin système correspondant à un bus
            * @param bus identifiant du bus
@@ -207,6 +211,10 @@ namespace Piduino {
           bool operator== (const Settings & other) {
             return (mode == other.mode) && (bitOrder == other.bitOrder) &&
                    (bitsPerWord == other.bitsPerWord) && (speedHz == other.speedHz);
+          }
+
+          bool operator!= (const Settings & other) {
+            return !(*this == other);
           }
 
           /*
@@ -293,7 +301,7 @@ namespace Piduino {
        * @return true si ouvert, false sinon, dans ce cas error() et
        * errorString() peuvent être utilisé pour connaître la raison.
        */
-      virtual bool open (OpenMode mode = OpenMode::ReadWrite);
+      virtual bool open (OpenMode mode = IoDevice::ReadWrite);
 
       /**
        * @brief Fermeture du bus

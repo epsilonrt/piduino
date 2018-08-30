@@ -54,6 +54,9 @@ namespace Piduino {
           bool operator== (const Info & other) {
             return (_path == other._path) ;
           }
+          bool operator!= (const Info & other) {
+            return (_path != other._path) ;
+          }
           static std::string busPath (int id);
         
         private:
@@ -68,7 +71,7 @@ namespace Piduino {
       explicit I2cDev (int idBus);
       virtual ~I2cDev();
 
-      virtual bool open (OpenMode mode = OpenMode::ReadWrite);
+      virtual bool open (OpenMode mode = IoDevice::ReadWrite);
       virtual void close();
 
       void setBus (const Info & bus);

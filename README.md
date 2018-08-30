@@ -40,17 +40,17 @@ What was done
 * Creation of SoC access layers for Broadcom BCM283X and AllWinner Hx.  
 * Creating `gpio` and` pinfo` utilities  
 * Switching iomap in C++  
-* Creating a purely virtual class IoDevice  
+* Creating a purely virtual class IoDevice  (and CharDevice)
 * analogWrite() with GPIO software PWM feature (Polling with thread) 
 * Emulate setup() and loop() for Arduino compatibility (in Arduino.h)
 * Cleaning the architecture detection  
+* I2C Bus API  
+* SPI Bus API  
+* Serial Port API  
 
 The rest of the things to do:
 
 * Tool for managing the database of boards with Qt  
-* Serial Port API  
-* I2C Bus API  
-* SPI Bus API  
 * Enabling daemon mode for loop()
 * analogWrite() with Software PWM feature (Kernel driver module)
 * analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
@@ -68,13 +68,14 @@ The compilation requires a compiler [g ++](https://gcc.gnu.org) managing [C++ 11
 The dependencies are as follows:
 
 * libcppdb-dev which provides [CppDB](http://cppcms.com/sql/cppdb/) for access to the database  
-* Qt5 if you want to compile the database management tool.
+* libudev-dev which provides [libudev](https://www.freedesktop.org/software/systemd/man/libudev.html) for enumerate devices  
+* Qt if you want to compile the database management tool [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman).
 
 
 ## Installation
 
     sudo apt-get update
-    sudo apt-get install libcppdb-dev pkg-config cmake libsqlite3-dev sqlite3
+    sudo apt-get install libcppdb-dev pkg-config cmake libsqlite3-dev sqlite3 libudev-dev
     git clone https://github.com/epsilonrt/piduino.git
     cd piduino
     git checkout dev

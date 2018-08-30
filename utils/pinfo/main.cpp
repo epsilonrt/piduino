@@ -482,26 +482,26 @@ namespace Pinfo {
 
     for (unsigned i = 0; i < buses.size(); i++) {
 
-      ret += buses [i].path();
-      if (i < (buses.size() - 1)) {
-        ret += std::string (",");
+      if (ret.size()) {
+        ret.push_back (',');
       }
+      ret += buses [i].path();
     }
     return ret;
   }
 
 // -----------------------------------------------------------------------------
   std::string serialPorts() {
+    const auto ports = SerialPort::Info::availablePorts();
     std::string ret;
-    std::vector<SerialPort::Info> ports = SerialPort::availablePorts();
 
-    for (unsigned i = 0; i < ports.size(); i++) {
-
-      ret += ports [i].path;
-      if (i < (ports.size() - 1)) {
-        ret += std::string (",");
+    for (const SerialPort::Info & port : ports) {
+      if (ret.size()) {
+        ret.push_back (',');
       }
+      ret += port.systemLocation();
     }
+
     return ret;
   }
 }

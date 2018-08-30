@@ -5,6 +5,32 @@
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
+  <VirtualDirectory Name="work">
+    <VirtualDirectory Name="Qt">
+      <VirtualDirectory Name="qtserialport">
+        <VirtualDirectory Name="src">
+          <VirtualDirectory Name="serialport">
+            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_osx.cpp"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialport.h"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_freebsd.cpp"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qwinoverlappedionotifier_p.h"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_p.h"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo.cpp"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_unix.cpp"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialport_unix.cpp"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialport.cpp"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo.h"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qwinoverlappedionotifier.cpp"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_win.cpp"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qtudev_p.h"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialportglobal.h"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialport_p.h"/>
+            <File Name="work/Qt/qtserialport/src/serialport/qserialport_win.cpp"/>
+          </VirtualDirectory>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <VirtualDirectory Name="examples">
     <VirtualDirectory Name="wire">
       <VirtualDirectory Name="master_writer">
@@ -62,6 +88,7 @@
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="i2c">
       <File Name="src/i2c/i2cdev.cpp"/>
+      <File Name="src/i2c/i2cdev_p.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="gpio">
       <VirtualDirectory Name="arch">
@@ -87,6 +114,7 @@
     </VirtualDirectory>
     <VirtualDirectory Name="spi">
       <File Name="src/spi/spidev.cpp"/>
+      <File Name="src/spi/spidev_p.h"/>
     </VirtualDirectory>
     <File Name="src/clock.cpp"/>
     <File Name="src/scheduler.cpp"/>
@@ -116,7 +144,12 @@
     </VirtualDirectory>
     <VirtualDirectory Name="serial">
       <File Name="src/serial/serialport.cpp"/>
+      <File Name="src/serial/serialportinfo.cpp"/>
+      <File Name="src/serial/serialport_p.h"/>
+      <File Name="src/serial/serialportinfo_p.h"/>
     </VirtualDirectory>
+    <File Name="src/chardevice_p.h"/>
+    <File Name="src/iodevice_p.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -151,12 +184,6 @@
       <File Name="include/piduino/chardevice.h"/>
       <File Name="include/piduino/ringbuffer.h"/>
       <File Name="include/piduino/memory.h"/>
-      <VirtualDirectory Name="private">
-        <File Name="include/piduino/private/iodevice_p.h"/>
-        <File Name="include/piduino/private/chardevice_p.h"/>
-        <File Name="include/piduino/private/i2cdev_p.h"/>
-        <File Name="include/piduino/private/spidev_p.h"/>
-      </VirtualDirectory>
       <File Name="include/piduino/flags.h"/>
       <File Name="include/piduino/i2cdev.h"/>
       <File Name="include/piduino/serialport.h"/>
@@ -164,6 +191,7 @@
       <File Name="include/piduino/linearbuffer.h"/>
       <File Name="include/piduino/global.h"/>
       <File Name="include/piduino/fifo.h"/>
+      <File Name="include/piduino/string.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>

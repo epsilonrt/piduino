@@ -34,7 +34,7 @@ namespace Piduino {
 
     public:
 
-      enum class OpenMode {
+      enum OpenModeFlag {
         NotOpen = 0x0000,
         ReadOnly = 0x0001,
         WriteOnly = 0x0002,
@@ -44,6 +44,7 @@ namespace Piduino {
         Text = 0x0010,
         Unbuffered = 0x0020
       };
+      typedef Flags<OpenModeFlag> OpenMode;
 
       IoDevice ();
       virtual ~IoDevice();
@@ -82,20 +83,19 @@ namespace Piduino {
     protected:
       class Private;
       IoDevice (Private &dd);
-      Private * d_ptr;
+      std::unique_ptr<Private> d_ptr;
 
       void setOpenMode (OpenMode openMode);
-      int systemMode (OpenMode openMode);
       void setSequential (bool enable);
       void setError ();
       void setError (int error);
       void setError (int error, const std::string &errorString);
       void clearError();
+      static int systemMode (OpenMode openMode);
 
     private:
       PIMP_DECLARE_PRIVATE (IoDevice)
   };
-  ENABLE_FLAGS_OPERATORS (IoDevice::OpenMode);
 }
 /**
  *  @}

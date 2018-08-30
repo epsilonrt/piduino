@@ -14,7 +14,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-#include <piduino/private/chardevice_p.h>
+#include "chardevice_p.h"
 #include <algorithm>
 
 namespace Piduino {
@@ -39,8 +39,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  CharDevice::~CharDevice() {
-  }
+  CharDevice::~CharDevice() = default;
 
   // ---------------------------------------------------------------------------
   bool
@@ -53,7 +52,7 @@ namespace Piduino {
 
         return false;
       }
-      d->pos = ( (mode & OpenMode::Append) == OpenMode::Append) ? size() : 0;
+      d->pos =  (mode & Append) ? size() : 0;
       d->buffer.clear();
       d->firstRead = true;
     }

@@ -24,7 +24,7 @@
 #include <piduino/gpio.h>
 #include <piduino/database.h>
 #include <piduino/system.h>
-#include <piduino/private/i2cdev_p.h>
+#include "i2cdev_p.h"
 
 namespace Piduino {
 
@@ -56,11 +56,11 @@ namespace Piduino {
       msgset.msgs = i2c_msgs.data();
       msgset.nmsgs = i2c_msgs.size();
 
-      q->clearError();
+      clearError();
       ret = ::ioctl (fd, I2C_RDWR, &msgset);
       if (ret < 0) {
 
-        q->setError();
+        setError();
       }
       return error == 0;
     }

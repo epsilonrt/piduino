@@ -17,6 +17,7 @@
 #ifndef PIDUINO_GLOBAL_H
 #define PIDUINO_GLOBAL_H
 
+#include <memory>
 /**
  *  @defgroup piduino_global Global definitions
  *
@@ -26,10 +27,10 @@
 #define PIMP_Q(Class) Class * const q = q_func()
 #define PIMP_DECLARE_PRIVATE(Class)\
   inline Class::Private* d_func() {\
-    return reinterpret_cast<Class::Private*>(d_ptr);\
+    return reinterpret_cast<Class::Private*>(d_ptr.get());\
   }\
   inline const Class::Private* d_func() const {\
-    return reinterpret_cast<const Class::Private *>(d_ptr);\
+    return reinterpret_cast<const Class::Private *>(d_ptr.get());\
   }\
   friend class Class::Private;
 #define PIMP_DECLARE_PUBLIC(Class) \

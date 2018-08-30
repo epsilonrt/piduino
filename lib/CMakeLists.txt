@@ -37,6 +37,7 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/database.h
   ${PIDUINO_INC_DIR}/piduino/configfile.h
   ${PIDUINO_INC_DIR}/piduino/system.h
+  ${PIDUINO_INC_DIR}/piduino/string.h
   ${PIDUINO_INC_DIR}/piduino/memory.h
   ${PIDUINO_INC_DIR}/piduino/ringbuffer.h
   ${PIDUINO_INC_DIR}/piduino/linearbuffer.h
