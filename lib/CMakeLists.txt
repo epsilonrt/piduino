@@ -45,6 +45,7 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/flags.h
   ${PIDUINO_INC_DIR}/piduino/iodevice.h
   ${PIDUINO_INC_DIR}/piduino/filedevice.h
+  ${PIDUINO_INC_DIR}/piduino/fileno.h
   ${PIDUINO_INC_DIR}/piduino/converter.h
   ${PIDUINO_INC_DIR}/piduino/pwm.h
 )

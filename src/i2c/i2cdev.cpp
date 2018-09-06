@@ -164,10 +164,10 @@ namespace Piduino {
       d->flush();
       d->rxbuf.clear();
 
-      d->fd = ::open (d->bus.path().c_str(), systemMode(mode));
+      d->fd = ::open (d->bus.path().c_str(), d->modeToPosixFlags(mode));
       if (d->fd < 0) {
 
-        setError();
+        d->setError();
         return false;
       }
 
@@ -175,12 +175,12 @@ namespace Piduino {
 
         if (::ioctl (d->fd, I2C_FUNCS, &i2c_funcs) < 0) {
 
-          setError();
+          d->setError();
           close();
         }
         else if (! (i2c_funcs & I2C_FUNC_I2C)) {
 
-          setError (EOPNOTSUPP);
+          d->setError (EOPNOTSUPP);
           close();
         }
       }
@@ -197,7 +197,7 @@ namespace Piduino {
 
       if (::close (d->fd)) {
 
-        setError();
+        d->setError();
       }
       d->fd = -1;
       d->state = Private::Idle;

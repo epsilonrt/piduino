@@ -48,53 +48,49 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void SpiDev::Private::setMode () {
-    PIMP_Q (SpiDev);
 
-    if (q->isOpen()) {
+    if (isOpen()) {
 
-      if (ioctl (fd, SPI_IOC_WR_MODE, &settings.mode) < 0) {
+      if (::ioctl (fd, SPI_IOC_WR_MODE, &settings.mode) < 0) {
 
-        q->setError();
+        setError();
       }
     }
   }
 
   // ---------------------------------------------------------------------------
   void SpiDev::Private::setSpeedHz () {
-    PIMP_Q (SpiDev);
 
-    if (q->isOpen()) {
+    if (isOpen()) {
 
-      if (ioctl (fd, SPI_IOC_WR_MAX_SPEED_HZ, &settings.speedHz) < 0) {
+      if (::ioctl (fd, SPI_IOC_WR_MAX_SPEED_HZ, &settings.speedHz) < 0) {
 
-        q->setError();
+        setError();
       }
     }
   }
 
   // ---------------------------------------------------------------------------
   void SpiDev::Private::setBitsPerWord () {
-    PIMP_Q (SpiDev);
 
-    if (q->isOpen()) {
+    if (isOpen()) {
 
-      if (ioctl (fd, SPI_IOC_WR_BITS_PER_WORD, &settings.bitsPerWord) < 0) {
+      if (::ioctl (fd, SPI_IOC_WR_BITS_PER_WORD, &settings.bitsPerWord) < 0) {
 
-        q->setError();
+        setError();
       }
     }
   }
 
   // ---------------------------------------------------------------------------
   void SpiDev::Private::setBitOrder () {
-    PIMP_Q (SpiDev);
 
-    if (q->isOpen()) {
+    if (isOpen()) {
       uint8_t b = settings.bitOrder ? 0 : 1;
 
-      if (ioctl (fd, SPI_IOC_WR_LSB_FIRST, &b) < 0) {
+      if (::ioctl (fd, SPI_IOC_WR_LSB_FIRST, &b) < 0) {
 
-        q->setError();
+        setError();
       }
 
     }
@@ -102,53 +98,49 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void SpiDev::Private::getMode () {
-    PIMP_Q (SpiDev);
 
-    if (q->isOpen()) {
+    if (isOpen()) {
 
-      if (ioctl (fd, SPI_IOC_RD_MODE, &settings.mode) < 0) {
+      if (::ioctl (fd, SPI_IOC_RD_MODE, &settings.mode) < 0) {
 
-        q->setError();
+        setError();
       }
     }
   }
 
   // ---------------------------------------------------------------------------
   void SpiDev::Private::getSpeedHz () {
-    PIMP_Q (SpiDev);
 
-    if (q->isOpen()) {
+    if (isOpen()) {
 
-      if (ioctl (fd, SPI_IOC_RD_MAX_SPEED_HZ, &settings.speedHz) < 0) {
+      if (::ioctl (fd, SPI_IOC_RD_MAX_SPEED_HZ, &settings.speedHz) < 0) {
 
-        q->setError();
+        setError();
       }
     }
   }
 
   // ---------------------------------------------------------------------------
   void SpiDev::Private::getBitsPerWord () {
-    PIMP_Q (SpiDev);
 
-    if (q->isOpen()) {
+    if (isOpen()) {
 
-      if (ioctl (fd, SPI_IOC_RD_BITS_PER_WORD, &settings.bitsPerWord) < 0) {
+      if (::ioctl (fd, SPI_IOC_RD_BITS_PER_WORD, &settings.bitsPerWord) < 0) {
 
-        q->setError();
+        setError();
       }
     }
   }
 
   // ---------------------------------------------------------------------------
   void SpiDev::Private::getBitOrder () {
-    PIMP_Q (SpiDev);
 
-    if (q->isOpen()) {
+    if (isOpen()) {
       uint8_t b;
 
-      if (ioctl (fd, SPI_IOC_RD_LSB_FIRST, &b) < 0) {
+      if (::ioctl (fd, SPI_IOC_RD_LSB_FIRST, &b) < 0) {
 
-        q->setError();
+        setError();
       }
       else {
 
@@ -363,10 +355,10 @@ namespace Piduino {
     if (!isOpen()) {
       PIMP_D (SpiDev);
 
-      d->fd = ::open (d->bus.path().c_str(), systemMode (mode));
+      d->fd = ::open (d->bus.path().c_str(), d->modeToPosixFlags (mode));
       if (d->fd < 0) {
 
-        setError();
+        d->setError();
         return false;
       }
       d->setSettings();
@@ -385,7 +377,7 @@ namespace Piduino {
 
       if (::close (d->fd)) {
 
-        setError();
+        d->setError();
       }
       d->fd = -1;
       IoDevice::close();
@@ -566,11 +558,11 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   int SpiDev::transfer () {
+    PIMP_D (SpiDev);
     int ret = -1;
 
-    clearError();
+    d->clearError();
     if (isOpen()) {
-      PIMP_D (SpiDev);
 
       unsigned int nofmsg = d->tstack.size();
       ret = 0;
@@ -590,9 +582,9 @@ namespace Piduino {
           spi_message[i].cs_change = d->tstack[i]->releaseCsAfter;
         }
 
-        ret = ioctl (d->fd, SPI_IOC_MESSAGE (nofmsg), spi_message);
+        ret = ::ioctl (d->fd, SPI_IOC_MESSAGE (nofmsg), spi_message);
         if (ret < 0) {
-          setError();
+          d->setError();
         }
         d->tstack.clear();
         delete[] spi_message;
@@ -600,7 +592,7 @@ namespace Piduino {
     }
     else {
 
-      setError (ENOTCONN);
+      d->setError (ENOTCONN);
     }
     return ret;
   }
