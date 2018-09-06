@@ -29,10 +29,13 @@ namespace Piduino {
       Private (IoDevice * q);
       virtual ~Private();
       
-      void setError ();
-      void setError (int error);
-      void setError (int error, const std::string & errorString);
-      void clearError();
+      virtual bool isOpen() const;
+      virtual void clearError();
+      virtual void setError ();
+      virtual void setError (int error);
+      virtual void setError (int error, const std::string & errorString);
+      
+      static int modeToPosixFlags (OpenMode mode);
 
       IoDevice * const q_ptr;
 

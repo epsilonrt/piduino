@@ -20,47 +20,11 @@
 
 namespace Piduino {
 
-  // ---------------------------------------------------------------------------
-  IoDevice::Private::Private (IoDevice * q) :
-    q_ptr (q), openMode (NotOpen), isSequential (false), error (0) {}
-
-  // ---------------------------------------------------------------------------
-  IoDevice::Private::~Private()  {}
-
-
-  // ---------------------------------------------------------------------------
-  void
-  IoDevice::Private::setError (int error) {
-
-    error = error;
-    errorString.assign (strerror (error));
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  IoDevice::Private::setError (int error, const std::string & str) {
-
-    error = error;
-    errorString = str;
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  IoDevice::Private::setError () {
-
-    if (errno) {
-      error = errno;
-      errorString.assign (strerror (errno));
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  IoDevice::Private::clearError () {
-
-    error = 0;
-    errorString.clear();
-  }
+// -----------------------------------------------------------------------------
+//
+//                             IoDevice Class
+//
+// -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
   IoDevice::IoDevice (IoDevice::Private &dd) : d_ptr (&dd) {
@@ -77,13 +41,6 @@ namespace Piduino {
   IoDevice::~IoDevice() = default;
 
   // ---------------------------------------------------------------------------
-  void
-  IoDevice::setOpenMode (OpenMode m) {
-
-    d_ptr->openMode = m;
-  }
-
-  // ---------------------------------------------------------------------------
   IoDevice::OpenMode
   IoDevice::openMode() const {
 
@@ -96,8 +53,8 @@ namespace Piduino {
 
     if (!isOpen()) {
 
-      setOpenMode (m);
-      clearError();
+      d_ptr->openMode = m;
+      d_ptr->clearError();
     }
     return true;
   }
@@ -108,15 +65,16 @@ namespace Piduino {
 
     if (isOpen()) {
 
-      setOpenMode (NotOpen);
+      d_ptr->openMode = NotOpen;
     }
   }
 
   // ---------------------------------------------------------------------------
   bool
   IoDevice::isOpen() const {
+    PIMP_D (const IoDevice);
 
-    return openMode() != NotOpen;
+    return d->isOpen();
   }
 
   // ---------------------------------------------------------------------------
@@ -155,34 +113,6 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  void
-  IoDevice::setError (int error, const std::string & str) {
-
-    d_ptr->setError (error, str);
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  IoDevice::setError (int error) {
-
-    d_ptr->setError (error);
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  IoDevice::setError () {
-
-    d_ptr->setError();
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  IoDevice::clearError () {
-
-    d_ptr->clearError();
-  }
-
-  // ---------------------------------------------------------------------------
   bool
   IoDevice::isSequential() const {
 
@@ -193,32 +123,98 @@ namespace Piduino {
   void IoDevice::setTextModeEnabled (bool enabled) {
 
     if (enabled) {
-      d_ptr->openMode |= Text;
+      d_ptr->openMode &= ~Binary;
     }
     else {
-      d_ptr->openMode &= ~Text;
+      d_ptr->openMode |= Binary;
     }
   }
 
   // ---------------------------------------------------------------------------
   bool IoDevice::isTextModeEnabled() const {
 
-    return (openMode() & Text);
+    return ! (openMode() & Binary);
+  }
+
+// -----------------------------------------------------------------------------
+//
+//                         IoDevice::Private Class
+//
+// -----------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  IoDevice::Private::Private (IoDevice * q) :
+    q_ptr (q), openMode (NotOpen), isSequential (false), error (0) {}
+
+  // ---------------------------------------------------------------------------
+  IoDevice::Private::~Private()  {}
+
+  // ---------------------------------------------------------------------------
+  bool
+  IoDevice::Private::isOpen() const {
+
+    return (openMode.value() != IoDevice::NotOpen);
   }
 
   // ---------------------------------------------------------------------------
-  int IoDevice::systemMode (OpenMode openMode) {
-    int m = O_RDONLY;
+  void
+  IoDevice::Private::setError (int error) {
 
-    openMode &= ReadWrite;
-    if (openMode == WriteOnly) {
-      m = O_WRONLY;
-    }
-    else if (openMode == ReadWrite) {
-      m = O_RDWR;
-    }
+    error = error;
+    errorString.assign (strerror (error));
+  }
 
-    return m;
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::Private::setError (int error, const std::string & str) {
+
+    error = error;
+    errorString = str;
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::Private::setError () {
+
+    if (errno) {
+      error = errno;
+      errorString.assign (strerror (errno));
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::Private::clearError () {
+
+    error = 0;
+    errorString.clear();
+  }
+
+  // ---------------------------------------------------------------------------
+  int IoDevice::Private::modeToPosixFlags (OpenMode mode) {
+    int flags = 0;
+
+    switch (mode.value() & ReadWrite) {
+      case WriteOnly:
+        flags = O_WRONLY;
+        break;
+      case ReadWrite:
+        flags = O_RDWR;
+        break;
+      default:
+        flags = O_RDONLY;
+        break;
+    }
+    
+    if (mode & Append) {
+      
+      flags |= O_APPEND;
+    }
+    if (mode & Truncate) {
+      
+      flags |= O_TRUNC;
+    }
+    return flags;
   }
 
 }

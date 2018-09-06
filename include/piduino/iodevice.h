@@ -22,6 +22,7 @@
 #include <piduino/flags.h>
 #include <piduino/global.h>
 #include <string>
+#include <ios>
 
 /**
  *  @defgroup piduino_iodevice IO Device
@@ -36,13 +37,14 @@ namespace Piduino {
 
       enum OpenModeFlag {
         NotOpen = 0x0000,
-        ReadOnly = 0x0001,
-        WriteOnly = 0x0002,
-        ReadWrite = ReadOnly | WriteOnly,
-        Append = 0x0004,
-        Truncate = 0x0008,
-        Text = 0x0010,
-        Unbuffered = 0x0020
+        Append = std::ios_base::app, ///< Set the stream's position indicator to the end of the stream before each output operation.
+        AtEnd = std::ios_base::ate, ///< Set the stream's position indicator to the end of the stream on opening.
+        Binary = std::ios_base::binary, ///< Consider stream as binary rather than text. 
+        ReadOnly = std::ios_base::in, ///< Allow input operations
+        WriteOnly = std::ios_base::out, ///< Allow output operations 
+        ReadWrite = ReadOnly | WriteOnly, ///< Allow input and output operations
+        Truncate = std::ios_base::trunc, ///< Any current content is discarded, assuming a length of zero on opening.
+        Unbuffered = (Truncate << 1)
       };
       typedef Flags<OpenModeFlag> OpenMode;
 
@@ -77,21 +79,13 @@ namespace Piduino {
 
       virtual bool open (OpenMode mode);
       virtual void close();
-      std::string errorString() const;
-      int error() const;
+      virtual std::string errorString() const;
+      virtual int error() const;
 
     protected:
       class Private;
       IoDevice (Private &dd);
       std::unique_ptr<Private> d_ptr;
-
-      void setOpenMode (OpenMode openMode);
-      void setSequential (bool enable);
-      void setError ();
-      void setError (int error);
-      void setError (int error, const std::string &errorString);
-      void clearError();
-      static int systemMode (OpenMode openMode);
 
     private:
       PIMP_DECLARE_PRIVATE (IoDevice)
