@@ -125,6 +125,7 @@
     <File Name="src/iodevice_p.h"/>
     <File Name="src/filedevice_p.h"/>
     <File Name="src/filedevice.cpp"/>
+    <File Name="src/fileno.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -166,6 +167,7 @@
       <File Name="include/piduino/fifo.h"/>
       <File Name="include/piduino/string.h"/>
       <File Name="include/piduino/filedevice.h"/>
+      <File Name="include/piduino/fileno.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
