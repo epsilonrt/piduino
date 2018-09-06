@@ -5,32 +5,6 @@
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="work">
-    <VirtualDirectory Name="Qt">
-      <VirtualDirectory Name="qtserialport">
-        <VirtualDirectory Name="src">
-          <VirtualDirectory Name="serialport">
-            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_osx.cpp"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialport.h"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_freebsd.cpp"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qwinoverlappedionotifier_p.h"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_p.h"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo.cpp"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_unix.cpp"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialport_unix.cpp"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialport.cpp"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo.h"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qwinoverlappedionotifier.cpp"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialportinfo_win.cpp"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qtudev_p.h"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialportglobal.h"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialport_p.h"/>
-            <File Name="work/Qt/qtserialport/src/serialport/qserialport_win.cpp"/>
-          </VirtualDirectory>
-        </VirtualDirectory>
-      </VirtualDirectory>
-    </VirtualDirectory>
-  </VirtualDirectory>
   <VirtualDirectory Name="examples">
     <VirtualDirectory Name="wire">
       <VirtualDirectory Name="master_writer">
@@ -128,7 +102,6 @@
     <File Name="src/iodevice.cpp"/>
     <File Name="src/converter.cpp"/>
     <File Name="src/pwm.cpp"/>
-    <File Name="src/chardevice.cpp"/>
     <VirtualDirectory Name="arduino">
       <File Name="src/arduino/Print.cpp"/>
       <File Name="src/arduino/WString.cpp"/>
@@ -141,6 +114,7 @@
       <VirtualDirectory Name="spi">
         <File Name="src/arduino/spi/SPI.cpp"/>
       </VirtualDirectory>
+      <File Name="include/piduino/arduino/Ciostream.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="serial">
       <File Name="src/serial/serialport.cpp"/>
@@ -148,8 +122,9 @@
       <File Name="src/serial/serialport_p.h"/>
       <File Name="src/serial/serialportinfo_p.h"/>
     </VirtualDirectory>
-    <File Name="src/chardevice_p.h"/>
     <File Name="src/iodevice_p.h"/>
+    <File Name="src/filedevice_p.h"/>
+    <File Name="src/filedevice.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -178,10 +153,8 @@
         <File Name="include/piduino/arduino/Printable.h"/>
         <File Name="include/piduino/arduino/Stream.h"/>
         <File Name="include/piduino/arduino/Wire.h"/>
-        <File Name="include/piduino/arduino/Ciostream.h"/>
         <File Name="include/piduino/arduino/SPI.h"/>
       </VirtualDirectory>
-      <File Name="include/piduino/chardevice.h"/>
       <File Name="include/piduino/ringbuffer.h"/>
       <File Name="include/piduino/memory.h"/>
       <File Name="include/piduino/flags.h"/>
@@ -192,6 +165,7 @@
       <File Name="include/piduino/global.h"/>
       <File Name="include/piduino/fifo.h"/>
       <File Name="include/piduino/string.h"/>
+      <File Name="include/piduino/filedevice.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
