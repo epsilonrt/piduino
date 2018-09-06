@@ -19,7 +19,7 @@
 
 #include <deque>
 #include <string>
-#include <piduino/chardevice.h>
+#include <piduino/filedevice.h>
 
 /**
  *  @defgroup piduino_serialport Serial port
@@ -29,41 +29,8 @@
  */
 namespace Piduino {
 
-  class SerialPort : public CharDevice {
-    public:
-
-      enum DataBits {
-        Data5 = 5,
-        Data6 = 6,
-        Data7 = 7,
-        Data8 = 8,
-        UnknownDataBits = -1
-      };
-
-      enum Parity {
-        NoParity = 'N',
-        EvenParity = 'E',
-        OddParity = 'O',
-        SpaceParity = 'S',
-        MarkParity = 'M',
-        UnknownParity = -1
-      };
-
-      enum StopBits {
-        OneStop = 1,
-        OneAndHalfStop = 3,
-        TwoStop = 2,
-        UnknownStopBits = -1
-      };
-
-      enum FlowControl {
-        NoFlowControl = ' ',
-        HardwareControl = 'H',
-        SoftwareControl = 'S',
-        Rs485AfterSendControl = 'R',
-        Rs485OnSendControl = 'r',
-        UnknownFlowControl = -1
-      };
+  class SerialPort : public FileDevice {
+  public:
 
       enum BaudRate {
         Baud1200 = 1200,
@@ -75,6 +42,39 @@ namespace Piduino {
         Baud57600 = 57600,
         Baud115200 = 115200,
         UnknownBaud = -1
+      };
+
+      enum DataBits {
+        Data5 = 5,
+        Data6 = 6,
+        Data7 = 7,
+        Data8 = 8,
+        UnknownDataBits = -1
+      };
+
+      enum StopBits {
+        OneStop = 1,
+        OneAndHalfStop = 3,
+        TwoStop = 2,
+        UnknownStopBits = -1
+      };
+
+      enum Parity {
+        NoParity = 'N',
+        EvenParity = 'E',
+        OddParity = 'O',
+        SpaceParity = 'S',
+        MarkParity = 'M',
+        UnknownParity = -1
+      };
+
+      enum FlowControl {
+        NoFlowControl = ' ',
+        HardwareControl = 'H',
+        SoftwareControl = 'S',
+        Rs485AfterSendControl = 'R',
+        Rs485OnSendControl = 'r',
+        UnknownFlowControl = -1
       };
 
       enum Direction  {
@@ -100,6 +100,42 @@ namespace Piduino {
       };
       typedef Flags<PinoutSignal> PinoutSignals;
 
+
+      /**
+       * @class Settings
+       * @brief
+       */
+      class Settings {
+        public:
+          Settings (int32_t baudRate = Baud9600, DataBits dataBits = Data8,
+                    Parity parity = NoParity, StopBits stopBits = OneStop,
+                    FlowControl flowControl = NoFlowControl);
+          bool operator== (const Settings & other);
+
+          std::string toString() const;
+          std::string dataBitsString() const;
+          std::string parityString() const;
+          std::string stopBitsString() const;
+          std::string flowControlString() const;
+
+          friend std::ostream& operator<< (std::ostream& os, const Settings & s);
+          static std::string dataBitsToString (DataBits dataBits);
+          static std::string parityToString (Parity parity);
+          static std::string stopBitsToString (StopBits stopBits);
+          static std::string flowControlToString (FlowControl flowControl);
+
+          int32_t inputBaudRate;
+          int32_t outputBaudRate;
+          DataBits dataBits;
+          Parity parity;
+          StopBits stopBits;
+          FlowControl flowControl;
+      };
+      
+      /**
+       * @class Info
+       * @brief 
+       */
       class Info {
 
         public:
@@ -150,51 +186,34 @@ namespace Piduino {
       };
 
       /**
-       * @class Settings
-       * @brief
-       */
-      class Settings {
-        public:
-          Settings (int32_t baudRate = Baud9600, DataBits dataBits = Data8,
-                    Parity parity = NoParity, StopBits stopBits = OneStop,
-                    FlowControl flowControl = NoFlowControl);
-          bool operator== (const Settings & other);
-
-          int32_t inputBaudRate;
-          int32_t outputBaudRate;
-          DataBits dataBits;
-          Parity parity;
-          StopBits stopBits;
-          FlowControl flowControl;
-      };
-
-      /**
        * @brief Constructeur par défaut
        */
       SerialPort ();
       SerialPort (const Info & info);
       SerialPort (const std::string & path);
 
-      virtual bool open (OpenMode mode = ReadWrite);
-      virtual void close();
-
       /**
        * @brief Destructeur
        */
       virtual ~SerialPort();
+      /**
+       * @brief Discards data
+       * Discards data written to the port but not transmitted, and/or data
+       * received but not read, depending on the value of directions
+       * @param directions
+       */
+      void discard (Directions directions);
 
       void setPort (const Info & info);
       void setPortName (const std::string & name);
-      void setSystemLocation (const std::string & location);
 
       std::string portName() const;
-      std::string systemLocation() const;
 
       bool setSettings (const Settings & settings);
       Settings settings() const;
 
-      bool setBaudRate (int32_t baudRate, Directions directions = Direction::AllDirections);
-      int32_t baudRate (Directions directions = Direction::AllDirections) const;
+      bool setBaudRate (int32_t baudRate, Directions directions = AllDirections);
+      int32_t baudRate (Directions directions = AllDirections) const;
 
       bool setDataBits (DataBits dataBits);
       DataBits dataBits() const;
@@ -216,12 +235,13 @@ namespace Piduino {
 
       PinoutSignals pinoutSignals();
 
+      bool sendBreak (int duration = 0);
+      bool setBreakEnabled (bool set = true);
+      bool isBreakEnabled() const;
+
     protected:
       class Private;
       SerialPort (Private &dd);
-
-      virtual long readData (char * data, long maxlen);
-      virtual long writeData (const char * data, long len);
 
     private:
       PIMP_DECLARE_PRIVATE (SerialPort)

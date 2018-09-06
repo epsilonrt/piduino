@@ -20,19 +20,20 @@
 #include <termios.h>
 #include <string>
 #include <piduino/serialport.h>
-#include "../chardevice_p.h"
+#include "../filedevice_p.h"
 
 namespace Piduino {
 
-  class SerialPort::Private : public CharDevice::Private {
+  class SerialPort::Private : public FileDevice::Private {
 
     public:
       Private (SerialPort * q);
       virtual ~Private();
 
-      bool open (SerialPort::OpenMode mode);
-      void close ();
-      bool flush ();
+      virtual bool open (OpenMode mode, int additionalPosixFlags = 0);
+      virtual void close();
+      
+      void tcflush (Directions directions);
 
       PinoutSignals pinoutSignals();
 
@@ -46,31 +47,32 @@ namespace Piduino {
       bool setStopBits ();
       bool setFlowControl ();
 
-      static std::string portNameToSystemLocation (const std::string & port);
-      static std::string portNameFromSystemLocation (const std::string & location);
-      static std::deque<int32_t> standardBaudRates();
+      bool sendBreak (int duration);
+      bool setBreakEnabled (bool set);
 
-      int fd;
-      struct termios restoredTermios;
-      bool settingsRestoredOnClose = true;
-      Settings settings;
-      std::string systemLocation;
-
-      PIMP_DECLARE_PUBLIC (SerialPort)
-
-    private:
       bool initialize (OpenMode mode);
       bool setStandardBaudRate (int32_t baudRate, Directions directions);
       bool setCustomBaudRate (int32_t baudRate, Directions directions);
       bool setTermios (const termios * tio);
       bool getTermios (termios * tio);
-
+      
       static void setTioCommonProps (termios * tio, OpenMode m);
       static void setTioDatabits (termios * tio, DataBits databits);
       static void setTioParity (termios * tio, Parity parity);
       static void setTioStopbits (termios * tio, StopBits stopbits);
       static void setTioFlowcontrol (termios * tio, FlowControl flowcontrol);
       static int32_t settingFromBaudRate (int32_t baudRate);
+
+      static std::string portNameToSystemLocation (const std::string & port);
+      static std::string portNameFromSystemLocation (const std::string & location);
+      static std::deque<int32_t> standardBaudRates();
+
+      struct termios restoredTermios;
+      bool settingsRestoredOnClose = true;
+      bool isBreakEnabled = false;
+      Settings settings;
+
+      PIMP_DECLARE_PUBLIC (SerialPort)
   };
 
 }

@@ -16,8 +16,8 @@ wiringPi is a solution planned for Raspberry Pi and even though it there are der
 These are the reasons that led me not to choose wiringPi:
 
 * Even if there is a similarity with Arduino programming, there is has differences that increase with time.  
-* wiringPi was designed in pure C, which is a definite brake on scalability and is not very consistent with Arduino (Arduino it's C ++ !)  
-* wiringPi was designed for the Raspberry Pi and its adaptation for other Pi boards is increasingly unthinkable, as and when measurement of the arrival of new Pi boards.
+* wiringPi was designed in pure C, which is a definite brake on scalability and is not very consistent with Arduino (The Arduino language is C++ !)  
+* wiringPi was designed for the Raspberry Pi and its adaptation for other Pi boards is increasingly unthinkable, as and when of the arrival of new Pi boards.
 
 What PiDuino offers:
 
