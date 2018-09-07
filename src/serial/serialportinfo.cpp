@@ -187,6 +187,13 @@ namespace Piduino {
 
     return !d ? std::string() : d->driver;
   }
+  
+  // ---------------------------------------------------------------------------
+  std::string SerialPort::Info::description() const {
+    PIMP_D (const Info);
+
+    return !d ? std::string() : d->description;
+  }
 
   // ---------------------------------------------------------------------------
   std::string SerialPort::Info::manufacturer() const {

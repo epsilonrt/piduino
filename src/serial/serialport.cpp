@@ -176,8 +176,6 @@ namespace Piduino {
         return std::string ("1");
       case TwoStop:
         return std::string ("2");
-      case OneAndHalfStop:
-        return std::string ("1.5");
       default:
         break;
     }
@@ -263,7 +261,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  void SerialPort::discard (Directions directions) {
+  void SerialPort::clear (Directions directions) {
 
     if (isOpen()) {
       PIMP_D (SerialPort);

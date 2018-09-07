@@ -35,6 +35,11 @@ namespace Piduino {
       FileDevice ();
       virtual ~FileDevice();
 
+      /**
+        Opens the file device using OpenMode \a mode, and then returns \c true if
+        successful; otherwise returns \c false and sets an error code which can be
+        obtained by calling the error() method.
+       */
       virtual bool open (OpenMode mode = ReadWrite | Binary);
       virtual void close();
 
@@ -48,10 +53,26 @@ namespace Piduino {
 
       virtual long read (char * buf, long n);
       std::string read (long n = -1);
-
+      
+      /**
+          Returns the number of incoming bytes that are waiting to be read.
+       */
       virtual int bytesAvailable();
-      virtual bool waitForReadyRead (int msecs);
-      virtual bool waitForBytesWritten (int msecs);
+      
+      /**
+        This function blocks until new data is available for reading and the
+        \l{QIODevice::}{readyRead()} signal has been emitted. The function
+        will timeout after \a msecs milliseconds; the default timeout is
+        30000 milliseconds. If \a msecs is -1, this function will not time out.
+       */
+      virtual bool waitForReadyRead (int msecs = 30000);
+      
+      /**
+        This function blocks until at least one byte has been written. The
+        function will timeout after \a msecs milliseconds; the default timeout is
+        30000 milliseconds. If \a msecs is -1, this function will not time out.
+       */
+      virtual bool waitForBytesWritten (int msecs = 30000);
 
     protected:
       class Private;

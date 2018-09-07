@@ -26,6 +26,11 @@
 
 namespace Piduino {
 
+  /**
+   * @brief Map a stream pointer to a file descriptor 
+   * 
+   * Returns the integer file descriptor associated with the C++ stream pointed to by stream. 
+   */
   template <typename charT, typename traits>
   int fileno (const std::basic_ios<charT, traits>& stream);
 }

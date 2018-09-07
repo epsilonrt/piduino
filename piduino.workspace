@@ -12,7 +12,7 @@
       <Project Name="libpiduino-dev" ConfigName="Debug"/>
       <Project Name="piduino-utils" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="libpiduino" ConfigName="Release"/>
       <Project Name="libpiduino-doc" ConfigName="Release"/>
