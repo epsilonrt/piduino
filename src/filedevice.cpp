@@ -41,6 +41,11 @@ namespace Piduino {
     IoDevice (*new Private (this)) {
 
   }
+  
+  // ---------------------------------------------------------------------------
+  FileDevice::FileDevice (const std::string & path) : FileDevice() {
+    setPath (path);
+  }
 
   // ---------------------------------------------------------------------------
   FileDevice::~FileDevice() {
@@ -54,7 +59,6 @@ namespace Piduino {
     if (!isOpen()) {
       PIMP_D (FileDevice);
 
-      d->clearError();
       if (d->open (mode)) {
 
         return IoDevice::open (mode);
@@ -77,6 +81,11 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void FileDevice::setPath (const std::string & path) {
     PIMP_D (FileDevice);
+    
+    if (isOpen()) {
+      
+      close();
+    }
 
     d->path = path;
   }
@@ -213,6 +222,12 @@ namespace Piduino {
     return false;
   }
 
+  // ---------------------------------------------------------------------------
+  std::iostream & FileDevice::ios() {
+    PIMP_D (FileDevice);
+    return d->stream;
+  }
+
 // -----------------------------------------------------------------------------
 //
 //                         FileDevice::Private Class
@@ -220,7 +235,7 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   // ---------------------------------------------------------------------------
   FileDevice::Private::Private (FileDevice * q) :
-    IoDevice::Private (q), fd (-1) {}
+    IoDevice::Private (q), fd (-1), stream (&iosbuf) {}
 
   // ---------------------------------------------------------------------------
   FileDevice::Private::~Private() = default;
@@ -240,6 +255,11 @@ namespace Piduino {
       success = false;
     }
     unlock();
+
+    ios::openmode iosmode = static_cast<ios::openmode> (mode.value() & IosModes);
+    __gnu_cxx::stdio_filebuf<char> buf (fd, iosmode);
+    iosbuf.swap (buf);
+
     return success;
   }
 
@@ -247,7 +267,7 @@ namespace Piduino {
   void FileDevice::Private::close() {
 
     unlock();
-    if (::close (fd) < 0) {
+    if (iosbuf.close() == 0) {
 
       setError();
     }

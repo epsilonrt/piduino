@@ -19,6 +19,7 @@
 #define PIDUINO_FILEDEVICE_PRIVATE_H
 
 #include <string>
+#include <ext/stdio_filebuf.h>
 #include <mutex>
 #include <piduino/filedevice.h>
 #include "iodevice_p.h"
@@ -54,6 +55,8 @@ namespace Piduino {
       }
 
       int fd;
+      __gnu_cxx::stdio_filebuf<char> iosbuf;
+      std::iostream stream;
       std::string path;
       std::mutex mutex;
 

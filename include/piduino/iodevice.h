@@ -44,6 +44,7 @@ namespace Piduino {
         WriteOnly = std::ios_base::out, ///< Allow output operations 
         ReadWrite = ReadOnly | WriteOnly, ///< Allow input and output operations
         Truncate = std::ios_base::trunc, ///< Any current content is discarded, assuming a length of zero on opening.
+        IosModes = Append | AtEnd | Binary | ReadOnly | WriteOnly | Truncate,
         Unbuffered = (Truncate << 1)
       };
       typedef Flags<OpenModeFlag> OpenMode;
