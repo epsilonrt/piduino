@@ -72,11 +72,26 @@ namespace Piduino {
                 return _name;
               }
 
+              inline const std::string & i2cSysPath() const {
+                return _i2c_syspath;
+              }
+
+              inline const std::string & spiSysPath() const {
+                return _spi_syspath;
+              }
+
+              inline const std::string & uartSysPath() const {
+                return _uart_syspath;
+              }
+
               void setId (Id i);
 
             private:
               Id _id;
               std::string _name;
+              std::string _i2c_syspath;
+              std::string _spi_syspath;
+              std::string _uart_syspath;
           };
 
           // -------------------------------------------------------------------
@@ -204,6 +219,27 @@ namespace Piduino {
             return _found;
           }
 
+          /**
+           * @brief Numéro du bus I2C par défaut
+           */
+          inline int defaultI2cBus() const {
+            return _default_i2c_id;
+          }
+
+          /**
+           * @brief Numéro du bus SPI par défaut
+           */
+          inline int defaultSpiBus() const {
+            return _default_spi_id;
+          }
+
+          /**
+           * @brief Numéro de l'UART par défaut
+           */
+          inline int defaultUart() const {
+            return _default_uart_id;
+          }
+
           friend std::ostream& operator<< (std::ostream& os, const Board& c);
 
         private:
@@ -216,6 +252,9 @@ namespace Piduino {
           bool _found;
           std::string _tag;
           long _ram; // RAM en Mo
+          int _default_i2c_id;
+          int _default_spi_id;
+          int _default_uart_id;
       };
 
       // -----------------------------------------------------------------------

@@ -104,13 +104,13 @@ namespace Piduino {
       cppdb::result res;
 
       res = Piduino::db <<
-            "SELECT name,i2c_id,spi_id,uart_id "
+            "SELECT name "
             " FROM gpio "
             " WHERE "
             "   id=?"
             << id << cppdb::row;
       if (!res.empty()) {
-        res >> name >> defaultI2cBus >> defaultSpiBus >> defaultUart;
+        res >> name;
         res = Piduino::db <<
               "SELECT num,gpio_connector_id "
               " FROM gpio_has_connector "

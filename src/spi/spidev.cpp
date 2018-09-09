@@ -273,7 +273,7 @@ namespace Piduino {
   SpiDev::Info::busPath (int bus, int cs) {
     char path[256];
 
-    ::snprintf (path, sizeof (path), db.board().soc().spiSysPath().c_str(), bus, cs);
+    ::snprintf (path, sizeof (path), db.board().family().spiSysPath().c_str(), bus, cs);
     return string (path);
   }
 
@@ -622,7 +622,7 @@ namespace Piduino {
   SpiDev::defaultBus () {
     Info bus;
 
-    if (! Info::findBus (bus, gpio.defaultSpiBus())) {
+    if (! Info::findBus (bus, db.board().defaultSpiBus())) {
 
       throw system_error (ENOENT, system_category(),
                           "Default SPI Bus not found !");

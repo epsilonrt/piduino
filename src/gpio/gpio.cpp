@@ -200,24 +200,6 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  int Gpio::defaultI2cBus() const {
-
-    return _descriptor->defaultI2cBus;
-  }
-
-  // ---------------------------------------------------------------------------
-  int Gpio::defaultSpiBus() const {
-
-    return _descriptor->defaultSpiBus;
-  }
-
-  // ---------------------------------------------------------------------------
-  int Gpio::defaultUart() const {
-
-    return _descriptor->defaultUart;
-  }
-
-  // ---------------------------------------------------------------------------
   long long
   Gpio::id() const {
 

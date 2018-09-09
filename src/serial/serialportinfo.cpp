@@ -103,7 +103,7 @@ namespace Piduino {
   std::string SerialPort::Info::Private::portIdToSystemLocation (int portId) {
     char path[256];
 
-    ::snprintf (path, sizeof (path), db.board().soc().uartSysPath().c_str(), portId);
+    ::snprintf (path, sizeof (path), db.board().family().uartSysPath().c_str(), portId);
     return std::string (path);
   }
 
@@ -305,7 +305,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   SerialPort::Info SerialPort::Info::defaultPort () {
-    std::string location = Private::portIdToSystemLocation (gpio.defaultUart());
+    std::string location = Private::portIdToSystemLocation (db.board().defaultUart());
     const auto ports = availablePorts();
 
     for (const Info & port : ports) {

@@ -102,7 +102,7 @@ namespace Piduino {
   I2cDev::Info::busPath (int idbus) {
     char path[256];
 
-    ::snprintf (path, sizeof (path), db.board().soc().i2cSysPath().c_str(), idbus);
+    ::snprintf (path, sizeof (path), db.board().family().i2cSysPath().c_str(), idbus);
     return std::string (path);
   }
 
@@ -459,7 +459,7 @@ namespace Piduino {
   I2cDev::Info
   I2cDev::defaultBus () {
 
-    return Info(gpio.defaultI2cBus());
+    return Info(db.board().defaultI2cBus());
   }
 
 }

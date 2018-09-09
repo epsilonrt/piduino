@@ -113,7 +113,8 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
   Database::Board::Board (int cpuinfoBoardRevision) :
-    _id (-1), _gpio_id (-1), _revision (-1), _found (false) {
+    _id (-1), _gpio_id (-1), _revision (-1), _found (false), _default_i2c_id (-1),
+    _default_spi_id (-1), _default_uart_id (-1) {
 
     _ram = system.totalRam();
     if (cpuinfoBoardRevision == -1) {
@@ -152,7 +153,7 @@ namespace Piduino {
 
         // BOARD Tag from /etc/piduino.conf found...
         if (setTag (t)) {
-          
+
           return true;
         }
       }
@@ -162,7 +163,7 @@ namespace Piduino {
 
         // BOARD Revision from /etc/piduino.conf found...
         if (setRevision (r)) {
-          
+
           return true;
         }
       }
@@ -194,7 +195,7 @@ namespace Piduino {
     if (Piduino::db.is_open()) {
 
       cppdb::result res = Piduino::db <<
-                          "SELECT id,pcb_revision,board_model_id,gpio_id,manufacturer_id"
+                          "SELECT id,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id"
                           " FROM board"
                           " INNER JOIN revision ON board.id = revision.board_id"
                           " WHERE revision.revision=?" << rev << cppdb::row;
@@ -202,7 +203,7 @@ namespace Piduino {
         int bmid;
         int mid;
 
-        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid;
+        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
         _model.setId (static_cast<Database::Board::Model::Id> (bmid));
         _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         _revision = rev;
@@ -219,7 +220,7 @@ namespace Piduino {
 
     if (Piduino::db.is_open()) {
       cppdb::result res = Piduino::db <<
-                          "SELECT id,pcb_revision,board_model_id,gpio_id,manufacturer_id"
+                          "SELECT id,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id"
                           " FROM board"
                           " INNER JOIN tag ON board.id = tag.board_id"
                           " WHERE tag.tag=?" << t << cppdb::row;
@@ -227,7 +228,7 @@ namespace Piduino {
         int bmid;
         int mid;
 
-        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid;
+        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
         _model.setId (static_cast<Database::Board::Model::Id> (bmid));
         _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         _tag = t;
@@ -306,13 +307,13 @@ namespace Piduino {
   Database::Board::Family::setId (Database::Board::Family::Id i)  {
 
     cppdb::result res =
-      Piduino::db << "SELECT name FROM board_family WHERE id=?"
+      Piduino::db << "SELECT name,i2c_syspath,spi_syspath,uart_syspath FROM board_family WHERE id=?"
       << i << cppdb::row;
 
     if (!res.empty()) {
 
       _id = i;
-      res >> _name;
+      res >> _name >> _i2c_syspath>>  _spi_syspath >> _uart_syspath;
     }
   }
 }

@@ -112,18 +112,6 @@ namespace Piduino {
         return _manufacturer;
       }
 
-      inline const std::string & i2cSysPath() const {
-        return _i2c_syspath;
-      }
-
-      inline const std::string & spiSysPath() const {
-        return _spi_syspath;
-      }
-
-      inline const std::string & uartSysPath() const {
-        return _uart_syspath;
-      }
-
       inline int i2cCount() const {
         return _i2c_count;
       }
@@ -148,12 +136,9 @@ namespace Piduino {
       Family _family;
       Manufacturer _manufacturer;
       int _i2c_count;
-      std::string _i2c_syspath;
       int _spi_count;
-      std::string _spi_syspath;
       std::vector<Pin::SpiCs> _spi_cs; ///< liste des broches de CS
       int _uart_count;
-      std::string _uart_syspath;
   };
 }
 /**
