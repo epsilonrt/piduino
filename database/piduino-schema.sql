@@ -2,7 +2,7 @@
 -- Author:        epsilonrt
 -- Caption:       New Model
 -- Project:       Name of the project
--- Changed:       2018-08-21 17:33
+-- Changed:       2018-09-09 16:56
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -31,6 +31,9 @@ CREATE TABLE "piduino"."gpio_pin_name"(
 CREATE TABLE "piduino"."board_family"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "name" VARCHAR(45),
+  "i2c_syspath" VARCHAR(256),
+  "spi_syspath" VARCHAR(256),
+  "uart_syspath" VARCHAR(256),
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name")
 );
@@ -73,9 +76,6 @@ CREATE TABLE "piduino"."gpio"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "name" VARCHAR(45),
   "board_family_id" INTEGER NOT NULL,
-  "i2c_id" INTEGER,
-  "spi_id" INTEGER,
-  "uart_id" INTEGER,
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name"),
   CONSTRAINT "fk_gpio_board_family1"
@@ -155,12 +155,8 @@ CREATE TABLE "piduino"."soc"(
   "soc_family_id" INTEGER NOT NULL,
   "manufacturer_id" INTEGER NOT NULL,
   "i2c_count" INTEGER NOT NULL DEFAULT 0,
-  "i2c_syspath" VARCHAR(256),
   "spi_count" INTEGER NOT NULL DEFAULT 0,
-  "spi_cscount" INTEGER,
-  "spi_syspath" VARCHAR(256),
   "uart_count" INTEGER NOT NULL DEFAULT 0,
-  "uart_syspath" VARCHAR(256),
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name"),
   CONSTRAINT "fk_soc_soc_family1"
@@ -194,6 +190,9 @@ CREATE TABLE "piduino"."board"(
   "board_model_id" INTEGER NOT NULL,
   "gpio_id" INTEGER NOT NULL,
   "manufacturer_id" INTEGER NOT NULL,
+  "default_i2c_id" INTEGER,
+  "default_spi_id" INTEGER,
+  "default_uart_id" INTEGER,
   CONSTRAINT "fk_board_board_model1"
     FOREIGN KEY("board_model_id")
     REFERENCES "board_model"("id"),
