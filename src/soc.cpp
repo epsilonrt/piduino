@@ -55,9 +55,9 @@ namespace Piduino {
 
       _spi_cs.clear();
       res = Piduino::db <<
-            "SELECT soc_has_pin.gpio_pin_id,gpio_pin_spics.bus_id,gpio_pin_spics.cs_id,gpio_pin_spics.gpio_pin_mode_id "
+            "SELECT soc_has_pin.pin_id,pin_spics.bus_id,pin_spics.cs_id,pin_spics.pin_mode_id "
             "FROM soc_has_pin "
-            "INNER JOIN gpio_pin_spics ON gpio_pin_spics.gpio_pin_id = soc_has_pin.gpio_pin_id "
+            "INNER JOIN pin_spics ON pin_spics.pin_id = soc_has_pin.pin_id "
             "WHERE soc_has_pin.soc_id=?" << _id;
 
       while (res.next()) {

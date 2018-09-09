@@ -38,18 +38,18 @@ namespace Piduino {
 
       if (id < 0) {
         // auto-index
-        stat = Piduino::db << "INSERT INTO gpio_pin(gpio_pin_type_id) "
+        stat = Piduino::db << "INSERT INTO pin(pin_type_id) "
                "VALUES(?)" << type;
       }
       else {
 
-        stat = Piduino::db << "INSERT INTO gpio_pin(id,gpio_pin_type_id) "
+        stat = Piduino::db << "INSERT INTO pin(id,pin_type_id) "
                "VALUES(?,?)" << id << type;
       }
       stat.exec();
       id = stat.last_insert_id();
       if (type == TypeGpio) {
-        stat = Piduino::db << "INSERT INTO gpio_pin_number(gpio_pin_id,logical_num,mcu_num,system_num) "
+        stat = Piduino::db << "INSERT INTO pin_number(pin_id,logical_num,mcu_num,system_num) "
                "VALUES(?,?,?,?)" << id << num.logical << num.mcu << num.system;
       }
       for (auto n = name.begin(); n != name.end(); ++n) {
@@ -73,29 +73,29 @@ namespace Piduino {
 
     for (auto it = name.begin(); it != name.end(); ++it) {
 
-      // Recherche tous les gpio_pin_id correspondants au nom et au mode courant
+      // Recherche tous les pin_id correspondants au nom et au mode courant
       res = Piduino::db <<
-            "SELECT gpio_pin_has_name.gpio_pin_id "
-            " FROM gpio_pin_has_name "
-            " INNER JOIN gpio_pin_name ON gpio_pin_has_name.gpio_pin_name_id = gpio_pin_name.id "
+            "SELECT pin_has_name.pin_id "
+            " FROM pin_has_name "
+            " INNER JOIN pin_name ON pin_has_name.pin_name_id = pin_name.id "
             " WHERE "
-            "   gpio_pin_name.name=? AND "
-            "   gpio_pin_has_name.gpio_pin_mode_id=?"
+            "   pin_name.name=? AND "
+            "   pin_has_name.pin_mode_id=?"
             << it->second << it->first;
 
       while (res.next()) {
         int match_count = 0;
         cppdb::result res2;
-        long long gpio_pin_id;
+        long long pin_id;
 
-        res >> gpio_pin_id;
-        // Pour chaque gpio_pin_id, vérifier qu'il correspond aux éléments du map
+        res >> pin_id;
+        // Pour chaque pin_id, vérifier qu'il correspond aux éléments du map
         res2 = Piduino::db <<
-               "SELECT gpio_pin_name.name,gpio_pin_has_name.gpio_pin_mode_id "
-               "  FROM gpio_pin_has_name "
-               "  INNER JOIN gpio_pin_name ON gpio_pin_has_name.gpio_pin_name_id=gpio_pin_name.id "
-               "  WHERE gpio_pin_has_name.gpio_pin_id=?"
-               << gpio_pin_id;
+               "SELECT pin_name.name,pin_has_name.pin_mode_id "
+               "  FROM pin_has_name "
+               "  INNER JOIN pin_name ON pin_has_name.pin_name_id=pin_name.id "
+               "  WHERE pin_has_name.pin_id=?"
+               << pin_id;
         while (res2.next()) {
           std::string n;
           Pin::Mode m;
@@ -110,7 +110,7 @@ namespace Piduino {
           }
         }
         if (match_count == name.size()) {
-          return gpio_pin_id;
+          return pin_id;
         }
       }
       break;
@@ -122,7 +122,7 @@ namespace Piduino {
   long long
   Pin::Descriptor::findName (const std::string & n) const {
     cppdb::result res =
-      Piduino::db << "SELECT id FROM gpio_pin_name WHERE name=?"
+      Piduino::db << "SELECT id FROM pin_name WHERE name=?"
       << n << cppdb::row;
     if (!res.empty()) {
       long long i;
@@ -137,11 +137,11 @@ namespace Piduino {
   Pin::Descriptor::hasModeName (Mode modeId, long long nameId) const {
     cppdb::result res =
       Piduino::db <<
-      "SELECT gpio_pin_name_id "
-      " FROM gpio_pin_has_name "
-      " WHERE  gpio_pin_id=? AND "
-      "   gpio_pin_name_id=? AND "
-      "   gpio_pin_mode_id=?"
+      "SELECT pin_name_id "
+      " FROM pin_has_name "
+      " WHERE  pin_id=? AND "
+      "   pin_name_id=? AND "
+      "   pin_mode_id=?"
       << id << nameId << modeId << cppdb::row;
     return !res.empty();
   }
@@ -156,7 +156,7 @@ namespace Piduino {
     if (name_id < 0) {
       // new name
 
-      stat = Piduino::db << "INSERT INTO gpio_pin_name(name) "
+      stat = Piduino::db << "INSERT INTO pin_name(name) "
              "VALUES(?)" << n;
       stat.exec();
       name_id = stat.last_insert_id();
@@ -164,7 +164,7 @@ namespace Piduino {
     }
     if (!hasModeName (m, name_id)) {
 
-      stat = Piduino::db << "INSERT INTO gpio_pin_has_name(gpio_pin_id,gpio_pin_name_id,gpio_pin_mode_id) "
+      stat = Piduino::db << "INSERT INTO pin_has_name(pin_id,pin_name_id,pin_mode_id) "
              "VALUES(?,?,?)" << id << name_id << m;
       stat.exec();
     }
@@ -182,8 +182,8 @@ namespace Piduino {
       cppdb::result res;
 
       res = Piduino::db <<
-            "SELECT gpio_pin_type_id "
-            " FROM gpio_pin "
+            "SELECT pin_type_id "
+            " FROM pin "
             " WHERE "
             "   id=?"
             << id << cppdb::row;
@@ -195,11 +195,11 @@ namespace Piduino {
         type = static_cast<Pin::Type> (tid);
 
         res = Piduino::db <<
-              "SELECT gpio_pin_name.name,gpio_pin_has_name.gpio_pin_mode_id "
-              " FROM gpio_pin_has_name "
-              " INNER JOIN gpio_pin_name ON gpio_pin_name.id = gpio_pin_has_name.gpio_pin_name_id "
+              "SELECT pin_name.name,pin_has_name.pin_mode_id "
+              " FROM pin_has_name "
+              " INNER JOIN pin_name ON pin_name.id = pin_has_name.pin_name_id "
               " WHERE "
-              "   gpio_pin_has_name.gpio_pin_id=?"
+              "   pin_has_name.pin_id=?"
               << id;
 
         while (res.next()) {
@@ -211,9 +211,9 @@ namespace Piduino {
         }
         res = Piduino::db <<
               "SELECT logical_num,mcu_num,system_num "
-              " FROM gpio_pin_number "
+              " FROM pin_number "
               " WHERE "
-              "   gpio_pin_id=?"
+              "   pin_id=?"
               << id << cppdb::row;
         if (!res.empty()) {
           res >> num.logical >> num.mcu >> num.system;

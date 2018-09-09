@@ -56,7 +56,7 @@ namespace Piduino {
         if (!hasPin (pin[i])) {
 
           stat.reset();
-          stat = Piduino::db << "INSERT INTO gpio_connector_has_pin(gpio_connector_id,gpio_pin_id,row,column) "
+          stat = Piduino::db << "INSERT INTO gpio_connector_has_pin(gpio_connector_id,pin_id,row,column) "
                  "VALUES(?,?,?,?)" << id << pin[i].id << pin[i].num.row << pin[i].num.column;
           stat.exec();
         }
@@ -75,10 +75,10 @@ namespace Piduino {
   bool
   Connector::Descriptor:: hasPin (const Pin::Descriptor & p) const {
     cppdb::result res =
-      Piduino::db << "SELECT gpio_pin_id "
+      Piduino::db << "SELECT pin_id "
       "FROM gpio_connector_has_pin "
       "WHERE gpio_connector_id=? AND "
-      "gpio_pin_id=? AND "
+      "pin_id=? AND "
       "row=? AND "
       "column=?"
       << id << p.id << p.num.row << p.num.column << cppdb::row;
@@ -105,17 +105,17 @@ namespace Piduino {
 
       res >> connector_id;
       res2 = Piduino::db <<
-             "SELECT gpio_pin_id,row,column "
+             "SELECT pin_id,row,column "
              " FROM gpio_connector_has_pin "
              " WHERE "
              "   gpio_connector_id=?"
              << connector_id;
 
       while (res2.next()) {
-        long long gpio_pin_id;
+        long long pin_id;
         int r, c;
 
-        res2 >> gpio_pin_id >> r >> c;
+        res2 >> pin_id >> r >> c;
 
         for (int i = 0; i < pin.size(); i++) {
           const Pin::Descriptor & p = pin[i];
@@ -127,7 +127,7 @@ namespace Piduino {
               pin_id = p.findId();
             }
 
-            if (pin_id == gpio_pin_id) {
+            if (pin_id == pin_id) {
               match_count++;
             }
             else {
@@ -165,7 +165,7 @@ namespace Piduino {
         res >> name >> rows >> fid;
         family.setId (static_cast<Connector::Family::Id> (fid));
         res = Piduino::db <<
-              "SELECT gpio_pin_id,row,column"
+              "SELECT pin_id,row,column"
               " FROM gpio_connector_has_pin "
               " WHERE "
               "   gpio_connector_id=?"
