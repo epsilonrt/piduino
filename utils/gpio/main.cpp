@@ -598,10 +598,10 @@ usage () {
 
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
   cout << "valid options are :" << endl;
-  cout << "  -g\tUse the SOC pins numbers rather than SysIo pin numbers." << endl;
-  cout << "  -s\tUse the System pin numbers rather than SysIo pin numbers." << endl;
+  cout << "  -g\tUse the SOC pins numbers rather than PiDuino pin numbers." << endl;
+  cout << "  -s\tUse the System pin numbers rather than PiDuino pin numbers." << endl;
   cout << "  -f\tForce to use SysFS interface (/sys/class/gpio)." << endl;
-  cout << "  -1\tUse the connector pin numbers rather than SysIo pin numbers." << endl;
+  cout << "  -1\tUse the connector pin numbers rather than PiDuino pin numbers." << endl;
   cout << "    \ta number is written in the form C.P, eg: 1.5 denotes pin 5 of connector #1." << endl;
   cout << "  -v\tOutput the current version including the board informations." << endl;
   cout << "  -h\tPrint this message and exit" << endl << endl;

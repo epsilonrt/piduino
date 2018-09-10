@@ -265,7 +265,7 @@ namespace Piduino {
        * @brief Génération signal analogique
        * Le type de signal dépend de la plate-forme, la plupart du temps, il
        * s'agit d'un signal PWM. \n
-       * Le mode de la borche est éventuellement modifié afin de générer le 
+       * Le mode de la broche est éventuellement modifié afin de générer le 
        * signal demandé.
        * @param value valeur entre dac().min() et dac().max()
        */

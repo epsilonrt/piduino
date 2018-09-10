@@ -6,6 +6,17 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="examples">
+    <VirtualDirectory Name="communication">
+      <VirtualDirectory Name="ASCIITable">
+        <File Name="examples/communication/ASCIITable/ASCIITable.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ReadASCIIString">
+        <File Name="examples/communication/ReadASCIIString/READASCIIString.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ASCIIPing">
+        <File Name="examples/communication/ASCIIPing/ASCIIPing.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
     <VirtualDirectory Name="wire">
       <VirtualDirectory Name="master_writer">
         <File Name="examples/wire/master_writer/master_writer.cpp"/>
