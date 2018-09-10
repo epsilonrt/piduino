@@ -104,17 +104,18 @@
     <File Name="src/pwm.cpp"/>
     <VirtualDirectory Name="arduino">
       <File Name="src/arduino/Print.cpp"/>
-      <File Name="src/arduino/WString.cpp"/>
       <File Name="src/arduino/Core.cpp"/>
       <File Name="src/arduino/Stream.cpp"/>
-      <File Name="src/arduino/Ciostream.cpp"/>
       <VirtualDirectory Name="i2c">
         <File Name="src/arduino/i2c/Wire.cpp"/>
       </VirtualDirectory>
       <VirtualDirectory Name="spi">
         <File Name="src/arduino/spi/SPI.cpp"/>
       </VirtualDirectory>
-      <File Name="include/piduino/arduino/Ciostream.h"/>
+      <VirtualDirectory Name="serial">
+        <File Name="src/arduino/serial/HardwareSerial.cpp"/>
+      </VirtualDirectory>
+      <File Name="src/arduino/Ciostream.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="serial">
       <File Name="src/serial/serialport.cpp"/>
@@ -155,6 +156,8 @@
         <File Name="include/piduino/arduino/Stream.h"/>
         <File Name="include/piduino/arduino/Wire.h"/>
         <File Name="include/piduino/arduino/SPI.h"/>
+        <File Name="include/piduino/arduino/Ciostream.h"/>
+        <File Name="include/piduino/arduino/HardwareSerial.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/ringbuffer.h"/>
       <File Name="include/piduino/memory.h"/>

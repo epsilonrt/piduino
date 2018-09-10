@@ -19,10 +19,14 @@
 #define __ARDUINO_H__
 
 #include <piduino/arduino.h>
+#include <piduino/config.h>
 
 #ifdef __cplusplus
 using namespace std;
 #include <Ciostream.h>
+#if PIDUINO_WITH_SERIAL
+#include <HardwareSerial.h>
+#endif
 Ciostream Console;
 #endif
 
@@ -47,6 +51,10 @@ int main (int __arduino_argc, char **__arduino_argv) {
   argv = __arduino_argv;
 #else
 int main () {
+#endif
+
+#if PIDUINO_WITH_SERIAL && defined(__cplusplus)
+    HardwareSerial::setupAvailablePorts();
 #endif
 
 #ifndef ARDUINO_NOSETUP

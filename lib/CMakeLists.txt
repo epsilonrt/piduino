@@ -75,6 +75,10 @@ set (hdr_arduino_spi
   ${PIDUINO_INC_DIR}/piduino/arduino/SPI.h
 )
 
+set (hdr_arduino_serial 
+  ${PIDUINO_INC_DIR}/piduino/arduino/HardwareSerial.h
+)
+
 set (hdr_i2c
   ${PIDUINO_INC_DIR}/piduino/i2cdev.h
 )
@@ -103,6 +107,10 @@ if (PIDUINO_WITH_SPI)
   file(GLOB src_arduino_spi ${PIDUINO_SRC_DIR}/arduino/spi/*.cpp)
   list(APPEND hdr_public ${hdr_arduino_spi})
 endif (PIDUINO_WITH_SPI)
+if (PIDUINO_WITH_SERIAL)
+  file(GLOB src_arduino_serial ${PIDUINO_SRC_DIR}/arduino/serial/*.cpp)
+  list(APPEND hdr_public ${hdr_arduino_serial})
+endif (PIDUINO_WITH_SERIAL)
 endif (PIDUINO_WITH_ARDUINO)
 
 if (PIDUINO_WITH_GPIO)
@@ -132,7 +140,7 @@ endif (PIDUINO_WITH_SERIAL)
 
 set (libsrc ${PIDUINO_SRC_DIR}/piduino.cpp  
   ${src_piduino} ${src_gpio} ${src_gpio_arch} ${src_i2c} ${src_spi} ${src_serial}
-  ${src_arduino} ${src_arduino_i2c} ${src_arduino_spi} 
+  ${src_arduino} ${src_arduino_i2c} ${src_arduino_spi} ${src_arduino_serial}
   )
 
 include_directories(BEFORE
