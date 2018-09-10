@@ -1,0 +1,125 @@
+#!/bin/bash
+#----------------------------------------------------------------------------
+
+PIDUINO_TEMPLATE_DIR=@PIDUINO_INSTALL_DATA_DIR@/template
+PIDUINO_EXAMPLES_DIR=@PIDUINO_INSTALL_EXAMPLES_DIR@
+
+#----------------------------------------------------------------------------
+
+
+if [ ! -d ${PIDUINO_TEMPLATE_DIR} ]; then
+cat << EOF
+<<ERROR>> root directory has not been located.
+You must install SysIO correctly (sudo make install)
+EOF
+exit 1
+fi
+
+usage()
+{
+cat << EOF
+usage: $(basename $0) [Options] [project_name]
+
+This script creates a new project for PiDuino. 
+
+ARGUMENT
+  [project_name] name of the project to create. If the project name is not 
+  provided, the name of the current directory is used.
+OPTIONS:
+  -h Show this message
+  -f Forces the overwriting of existing files.
+  -g Add the created files to the git repository of the current directory
+  -s Also create a C++ source file
+  -a Indicates that the project to create is a Arduino Like project
+  -e Copy examples in the current directory.
+EOF
+}
+
+while getopts ":fgsaeh" opt; do
+  case $opt in
+    f)
+      FORCE="ON"
+      ;;
+    g)
+      GIT="ON"
+      ;;
+    s)
+      SOURCE="ON"
+      ;;
+    a)
+      ARDUINO="ON"
+      ;;
+    h)
+      usage
+      exit 1
+      ;;
+    e)
+      cp -a "$PIDUINO_EXAMPLES_DIR" ./piduino-examples
+      echo "the examples have been copied $PWD/piduino-examples"
+      exit 0
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+PROJECT_DIR=$(pwd)
+
+if [ $# -lt 1 ]; then
+  PROJECT_NAME=$(basename ${PROJECT_DIR})
+else
+  PROJECT_NAME=$1
+fi
+
+PROJECT_FILE=${PROJECT_DIR}/${PROJECT_NAME}.project
+WORKSPACE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.workspace
+CMAKELISTS_FILE=${PROJECT_DIR}/CMakeLists.txt
+
+SOURCE_FILE=${PROJECT_DIR}/${PROJECT_NAME}.cpp
+
+#echo "PROJECT_DIR=$PROJECT_DIR"
+#echo "PROJECT_FILE=$PROJECT_FILE"
+
+if [ -f ${PROJECT_FILE} ]; then
+  echo "$PROJECT_FILE exists !"
+  if [ "_$FORCE" = "_" ]; then
+    echo "Error: you need to put the -f option to overwrite the file !"
+    exit 1
+  fi
+fi
+
+if [ "_$ARDUINO" = "_ON" ]; then
+  cp ${PIDUINO_TEMPLATE_DIR}/arduino/CMakeLists.txt ${CMAKELISTS_FILE}
+  cp ${PIDUINO_TEMPLATE_DIR}/arduino/template.project ${PROJECT_FILE}
+  cp ${PIDUINO_TEMPLATE_DIR}/arduino/template.workspace ${WORKSPACE_FILE}
+else
+  cp ${PIDUINO_TEMPLATE_DIR}/CMakeLists.txt ${CMAKELISTS_FILE}
+  cp ${PIDUINO_TEMPLATE_DIR}/template.project ${PROJECT_FILE}
+  cp ${PIDUINO_TEMPLATE_DIR}/template.workspace ${WORKSPACE_FILE}
+fi
+sed -i -e "s#template#$PROJECT_NAME#g" ${CMAKELISTS_FILE}
+sed -i -e "s#template#$PROJECT_NAME#g" ${PROJECT_FILE}
+sed -i -e "s#template#$PROJECT_NAME#g" ${WORKSPACE_FILE}
+if [ "_$GIT" = "_ON" ]; then
+  git add ${PROJECT_FILE} ${WORKSPACE_FILE} ${CMAKELISTS_FILE}
+fi
+
+
+if [ "_$SOURCE" = "_ON" ]; then
+  if [ "_$ARDUINO" = "_ON" ]; then
+    cp ${PIDUINO_TEMPLATE_DIR}/arduino/template.cpp ${SOURCE_FILE}
+  else
+    cp ${PIDUINO_TEMPLATE_DIR}/template.cpp ${SOURCE_FILE}
+  fi
+  sed -i -e "s#template#$PROJECT_NAME#g" ${SOURCE_FILE}
+  if [ "_$GIT" = "_ON" ]; then
+    git add ${SOURCE_FILE}
+  fi
+fi
+
+exit 0
