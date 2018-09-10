@@ -23,17 +23,40 @@ What PiDuino offers:
 
 * A programming interface [API](https://en.wikipedia.org/wiki/Application_programming_interface) same as Arduino except adding `#include <Arduino.h>`at the beginning of the program. It does not prohibit offering extensions of the API but provided that stay as independent as possible from the platform and not to make the code incompatible with Arduino. It makes sense to think that users who want to stay in the Arduino world use C ++, PiDuino is intended for this use case. Nevertheless some functions can be used in C (`pinMode ()`, `digitalWrite ()`, ...). An API in Python is planned thanks to [Swig](http://www.swig.org/).
 
-* The **description of Pi boards** that is based on an "Object" model stored **in a database** (SQLite by default), allowing a simple user to add a new "variant" card Pi **WITHOUT** programming.
+* The **description of Pi boards** that is based on an "Object" model stored **in a database** (SQLite by default), allowing a simple user to add a new Pi board "variant" **WITHOUT** programming.
 
-* An object design in C++ with a clear separation of the part specific to the platform. Support for new SoCs is summarizes to add a part "driver" in the directory `src/arch`
+* An object design in C++ with a clear separation of the part specific to the platform. Support for new SoCs is summarizes to add a part "driver" in the directory `src/gpio/arch`
 
-* Utilities for manipulating GPIO (`gpio`) signals, retrieve information from the board (`pinfo`) or manage the Pi boards database.
+* Utilities for manipulating GPIO signals: `gpio`, retrieve information from the board: `pinfo` or manage the Pi boards database: `pidbman`
 
 ## Road Map
 
 **PiDuino is in development**, version 0.2 currently but the completed parts are functional on Broadcom SoC BCM283X and AllWinner Hx.
 
-What was done
+The list of models present in the database is as follows:
+
+* NanoPi Core  
+* NanoPi Core with Mini Shield  
+* NanoPi Core2  
+* NanoPi Core2 with Mini Shield  
+* NanoPi M1  
+* NanoPi M1+  
+* NanoPi Neo  
+* NanoPi Neo 2  
+* NanoPi Neo Air  
+* NanoPi Neo+ 2  
+* RaspberryPi 2  
+* RaspberryPi 3  
+* RaspberryPi A  
+* RaspberryPi A+  
+* RaspberryPi B  
+* RaspberryPi B+  
+* RaspberryPi Compute Module  
+* RaspberryPi Compute Module 3  
+* RaspberryPi Zero  
+* RaspberryPi Zero Wifi  
+
+**What was done ?**
 
 * GPIO modeling, GPIO connectors and pins  
 * Creation of database model and addition of all variants of Raspberry Pi, Nano Pi Neo, Neo2, Neo Plus 2, M1, M1 Plus.  
@@ -52,7 +75,7 @@ What was done
 
 The rest of the things to do:
 
-* Tool for managing the database of boards with Qt  
+* `pidbman` for managing the database of boards with Qt (in development [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman)) 
 * Enabling daemon mode for loop()
 * analogWrite() with Software PWM feature (Kernel driver module)
 * analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
@@ -63,7 +86,7 @@ The rest of the things to do:
 
 ## Dependencies
 
-The compilation requires a compiler [g ++](https://gcc.gnu.org) managing [C++ 11](https://en.wikipedia.org/wiki/C%2B%2B11), the compilation has been made with gcc version 6.3.0 20170516. This compiler is usually installed with a complete tool chain on Linux systems used on Pi boards.
+The compilation requires a compiler [g ++](https://gcc.gnu.org) managing [C++11](https://en.wikipedia.org/wiki/C%2B%2B11), the compilation has been made with gcc version 6.3.0 20170516. This compiler is usually installed with a complete tool chain on Linux systems used on Pi boards.
 
 The dependencies are as follows:
 
@@ -102,30 +125,35 @@ To generate documentation in HTML format, you must install the pre-requisites:
 
 ## Examples
 
-The [examples/](https://github.com/epsilonrt/piduino/tree/master/examples) folder 
+The [examples](https://github.com/epsilonrt/piduino/tree/master/examples) folder 
 contains examples from the Arduino world that are can be used directly with 
 PiDuino. The only thing to add is the line:
 
-    #include <Arduino.h>
+```c++
+#include <Arduino.h>
+```
 
-Here is the source code of the example [Blink] () that flashes a led:
+Here is the source code of the example [Blink](https://github.com/epsilonrt/piduino/blob/master/examples/blink/blink.cpp) 
+that flashes a led:
 
-    #include <Arduino.h> // all the magic is here ;-)
+```c++
+#include <Arduino.h> // all the magic is here ;-)
 
-    const int ledPin = 0; // Header Pin 11: GPIO17 for RPi, GPIOA0 for NanoPi
+const int ledPin = 0; // Header Pin 11: GPIO17 for RPi, GPIOA0 for NanoPi
 
-    void setup() {
-      // initialize digital pin ledPin as an output.
-      pinMode (ledPin, OUTPUT);
-    }
+void setup() {
+  // initialize digital pin ledPin as an output.
+  pinMode (ledPin, OUTPUT);
+}
 
-    void loop () {
-      // Press Ctrl+C to abort ...
-      digitalWrite (ledPin, HIGH);  // turn the LED on (HIGH is the voltage level)
-      delay (1000);                 // wait for a second
-      digitalWrite (ledPin, LOW);   // turn the LED off by making the voltage LOW
-      delay (1000);                 // wait for a second
-    }
+void loop () {
+  // Press Ctrl+C to abort ...
+  digitalWrite (ledPin, HIGH);  // turn the LED on (HIGH is the voltage level)
+  delay (1000);                 // wait for a second
+  digitalWrite (ledPin, LOW);   // turn the LED off by making the voltage LOW
+  delay (1000);                 // wait for a second
+}
+```
 
 Obviously, you need to know the pin number where you connected the LED ! 
 This number depends on your model of Pi board, to know it quickly, we can type 
@@ -169,12 +197,12 @@ To have a more user-friendly development environment, it is advisable to use
 [Codelite](http://epsilonrt.fr/index.php/2018/05/21/utilisation-de-codelite-sous-nanopi/), 
 the installation of PiDuino adds a program template for PiDuino:
 
-![PiDuino template for Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/dev/doc/images/codelite-1.png)
+![PiDuino template for Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-1.png)
 
 In Codelite, one can not only compile, but also edit and especially to debug 
 the program:
 
-![Debugging with Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/dev/doc/images/codelite-2.png)
+![Debugging with Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-2.png)
     
 ## Utilities
 
