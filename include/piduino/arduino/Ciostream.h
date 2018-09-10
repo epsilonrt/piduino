@@ -21,23 +21,19 @@
 #include "Stream.h"
 #include <piduino/arduino.h>
 
-class Ciostream : public Stream
-{
+class Ciostream : public Stream {
 
   public:
-    virtual int available();
-    virtual int read();
-    virtual int peek();
-    virtual void flush();
-    
+    inline Ciostream() {
+      os().clear();
+      is().clear();
+    }
     void begin (unsigned long speed_dummy, uint8_t config = 0) {}
     void end() {}
 
-    virtual size_t write(uint8_t);
-    virtual size_t write(const uint8_t *buffer, size_t size);
-
-    Ciostream();
-    virtual ~Ciostream() {}
+  protected:
+    virtual std::ostream & os();
+    virtual std::istream & is();
 };
 
 #endif

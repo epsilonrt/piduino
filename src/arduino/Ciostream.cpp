@@ -14,63 +14,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include <iostream>
 #include <Ciostream.h>
 
-using namespace std;
-
 // -----------------------------------------------------------------------------
-Ciostream::Ciostream() {
+std::ostream & Ciostream::os() {
 
-  cout.clear();
-  cin.clear();
+  return std::cout;
 }
 
 // -----------------------------------------------------------------------------
-int Ciostream::available() {
-  int length;
+std::istream & Ciostream::is() {
 
-  cin.seekg (0, cin.end);
-  length = cin.tellg();
-  cin.seekg (0, cin.beg);
-  return length;
-}
-
-// -----------------------------------------------------------------------------
-int Ciostream::read() {
-
-  if (cin.peek() != std::iostream::traits_type::eof()) {
-    uint8_t c;
-    cin >> c;
-    return c;
-  }
-  return -1;
-}
-
-// -----------------------------------------------------------------------------
-int Ciostream::peek() {
-
-  return cin.peek();
-}
-
-// -----------------------------------------------------------------------------
-size_t Ciostream::write (uint8_t c) {
-
-  cout.put (c);
-  return cout.good() ? 1 : -1;
-}
-
-// -----------------------------------------------------------------------------
-size_t Ciostream::write (const uint8_t *buffer, size_t size) {
-
-  cout.write (reinterpret_cast<const char *>(buffer), size);
-  return cout.good() ? size : -1;
-}
-
-// -----------------------------------------------------------------------------
-void Ciostream::flush() {
-  
-  cout.flush();
+  return std::cin;
 }
 
 /* ========================================================================== */
