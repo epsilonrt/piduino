@@ -430,6 +430,12 @@ namespace Piduino {
            * @param other
            */
           bool operator== (const Info & other);
+          
+          /**
+           * @brief
+           * @param other
+           */
+          bool operator!= (const Info & other);
 
           /**
             Returns the name of the serial port.

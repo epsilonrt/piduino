@@ -168,6 +168,12 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  bool SerialPort::Info::operator!= (const Info & other) {
+
+    return ! this->operator ==(other);
+  }
+
+  // ---------------------------------------------------------------------------
   std::string SerialPort::Info::portName() const {
     PIMP_D (const Info);
 
