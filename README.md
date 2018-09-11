@@ -29,6 +29,8 @@ differences that increase with time.
 and is not very consistent with Arduino (The Arduino language is C++ !)  
 * wiringPi was designed for the Raspberry Pi and its adaptation for other Pi 
 boards is increasingly unthinkable, as and when of the arrival of new Pi boards.
+Just go to the [ArmBian](https://www.armbian.com/download/) 
+website to see the multitude of Pi models !
 
 What PiDuino offers:
 
@@ -85,7 +87,7 @@ The list of models present in the database is as follows:
 * Creation of SoC access layers for Broadcom BCM283X and AllWinner Hx.  
 * Creating `gpio` and `pinfo` utilities  
 * Switching iomap in C++  
-* Creating a purely virtual class IoDevice  (and CharDevice)
+* Creating virtual classes IoDevice and FileDevice
 * analogWrite() with GPIO software PWM feature (Polling with thread) 
 * Emulate setup() and loop() for Arduino compatibility (in Arduino.h)
 * Cleaning the architecture detection  
@@ -99,6 +101,7 @@ The rest of the things to do:
 
 * `pidbman` for managing the database of boards with Qt (in development [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman)) 
 * Enabling daemon mode for loop()
+* Hardware PWM Pin support
 * analogWrite() with Software PWM feature (Kernel driver module)
 * analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
 * analogRead() with external ADC or Sensor ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
