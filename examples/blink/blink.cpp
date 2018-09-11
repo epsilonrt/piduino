@@ -5,8 +5,9 @@
 // Created 8 March 2018
 
 // This example code is in the public domain.
-
-#include <Arduino.h> // all the magic is here ;-)
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#endif
 
 // <DANGER> Be careful !!! Before launching this program :
 //    -> Check that the pin below is well connected to an LED ! <-

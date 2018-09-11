@@ -12,7 +12,9 @@
 
   http://www.arduino.cc/en/Tutorial/Button
 */
-#include <Arduino.h> // all the magic is here ;-)
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#endif
 
 // constants won't change. They're used here to set pin numbers:
 // <DANGER> Be careful !!! Before launching this program :

@@ -22,7 +22,6 @@
 // by Pascal JEAN https://github.com/epsilonrt
 
 // This example code is in the public domain.
-
 #ifdef __unix__
 #include <Arduino.h>  // Piduino, all the magic is here ;-)
 #else
