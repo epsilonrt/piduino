@@ -21,11 +21,19 @@ These are the reasons that led me not to choose wiringPi:
 
 What PiDuino offers:
 
-* A programming interface [API](https://en.wikipedia.org/wiki/Application_programming_interface) same as Arduino except adding `#include <Arduino.h>`at the beginning of the program. It does not prohibit offering extensions of the API but provided that stay as independent as possible from the platform and not to make the code incompatible with Arduino. It makes sense to think that users who want to stay in the Arduino world use C ++, PiDuino is intended for this use case. Nevertheless some functions can be used in C (`pinMode ()`, `digitalWrite ()`, ...). An API in Python is planned thanks to [Swig](http://www.swig.org/).
+* A programming interface [API](https://en.wikipedia.org/wiki/Application_programming_interface)
+same as Arduino except adding `#include <Arduino.h>`at the beginning of the program. 
+It does not prohibit offering extensions of the API but provided that stay as independent
+as possible from the platform and not to make the code incompatible with Arduino. 
+It makes sense to think that users who want to stay in the Arduino world use C ++, 
+PiDuino is intended for this use case. Nevertheless some functions can be used in 
+C (`pinMode ()`, `digitalWrite ()`, ...).
 
-* The **description of Pi boards** that is based on an "Object" model stored **in a database** (SQLite by default), allowing a simple user to add a new Pi board "variant" **WITHOUT** programming.
+* The **description of Pi boards** that is based on an "Object" model stored 
+**in a database** (SQLite by default), allowing a simple user to add a new Pi board "variant" **WITHOUT** programming.
 
-* An object design in C++ with a clear separation of the part specific to the platform. Support for new SoCs is summarizes to add a part "driver" in the directory `src/gpio/arch`
+* An object design in C++ with a clear separation of the part specific to the platform. 
+Support for new SoCs is summarizes to add a part "driver" in the directory `src/gpio/arch`
 
 * Utilities for manipulating GPIO signals: `gpio`, retrieve information from the board: `pinfo` or manage the Pi boards database: `pidbman`
 
