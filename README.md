@@ -31,7 +31,7 @@ What PiDuino offers:
 
 ## Road Map
 
-**PiDuino is in development**, version 0.2 currently but the completed parts are functional on Broadcom SoC BCM283X and AllWinner Hx.
+**PiDuino is in development**, version 0.3 currently but the completed parts are functional on Broadcom SoC BCM283X and AllWinner Hx.
 
 The list of models present in the database is as follows:
 
@@ -122,8 +122,41 @@ To generate documentation in HTML format, you must install the pre-requisites:
 
     sudo apt-get install doxygen doxygen-latex doxygen-doc doxygen-gui graphviz
     make doc
+    
+## Configuration
 
-## Examples
+The PI board model is dynamically detected when starting the Piduino program by comparing the signature of the board with the database.
+
+It is possible to force the Pi model choice by using the `/etc/piduino.conf` configuration file.
+
+This may be necessary when it is not possible for the program to detect the configuration of the board.
+For example, in the case of the NanoPi Neo Core/Core2, we can indicate that the board is on its shield, in this case, the display of the connector by the command `gpio readall` will be adapted.
+
+Pi board model detection uses two methods:  
+* The first method, which applies to Raspberry Pi boards, reads the `/proc/cpuinfo` file to get the microprocessor model in the `Hardware` field and especially the `Revision` field. This revision number is compared with the database to deduce the RaspberryPi model.
+* The second method, which applies to boards using ArmBian, comes from reading `/etc/armbian-release` or `/etc/friendlyelec-release` to get board model in `BOARD`. We compare this signature with the database to deduce the RaspberryPi model.
+
+In the `/etc/piduino.conf` configuration file, we will find these two possibilities, which must be filled in (one or the other, but never the two!).
+
+For example if we want to indicate that our NanoPi Neo Core2 is installed on its shield, we will put the `tag` field value `nanopineocore2shield`:
+
+    # PiDuino configuration file
+    connection_info="sqlite3:db=/usr/local/share/piduino/piduino.db"
+
+    # Allows you to force the board tag (Armbian)
+    # !! Be careful, this is at your own risk !!
+    # !! Forcing an incorrect value may destroy GPIO pins !!
+    tag="nanopineocore2shield"
+
+    # Allows forcing the revision of the board (Raspbian)
+    # !! Be careful, this is at your own risk !!
+    # !! Forcing an incorrect value may destroy GPIO pins !!
+    #revision=0xa02082
+
+It can be seen that the configuration file also contains the address of the database to use.
+The database is by default a local SQLite3 file, but the database can be installed on a MySQL server for example (for the format of the connection_info line see the documentation of [CPPDB](http://cppcms.com/sql/cppdb/connstr.html))
+
+## First Example, Blink !
 
 The [examples](https://github.com/epsilonrt/piduino/tree/master/examples) folder 
 contains examples from the Arduino world that are can be used directly with 
@@ -203,7 +236,92 @@ In Codelite, one can not only compile, but also edit and especially to debug
 the program:
 
 ![Debugging with Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-2.png)
-    
+
+## Second Example
+
+the second example  [rtc_bq32k](https://github.com/epsilonrt/piduino/blob/master/examples/wire/rtc_bq32k/rtc_bq32k.cpp),
+uses the Wire library to read the time in a BQ32000 RTC circuit. 
+
+It allows to discover 2 important differences between an Arduino board and a Pi board:  
+1. First, on a Pi board, the human-machine interface (screen and keyboard) is done on the command line (the console !). On Arduino, the serial port is used.
+2. On a Pi board, a program can finish to give the user a hand. On Arduino, the program never stops (_in fact on a Linux system, the kernel program never stops either..._)
+
+To solve the first problem, PiDuino defines a Console object whose
+the usage is identical to the Serial object (it is a class derived from Stream).
+
+In order to allow compilation on both platforms without modifying the source code,
+we can add at the beginning of the sketch a block that tests if the target platform is
+a Unix/Linux system (PiDuino), if so, the inclusion of the file
+`Arduino.h` is done, otherwise we define a Console alias which corresponds to
+Serial, ie the human-machine interface is on the serial port.
+
+```c++
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#else
+// Defines the serial port as the console on the Arduino platform
+#define Console Serial
+#endif
+
+#include <Wire.h>
+
+void printBcdDigit (byte val, bool end = false) {
+  val = (val / 16 * 10) + (val % 16); // BCD to DEC
+
+  if (val < 10) {
+    Console.write ('0'); // leading zero
+  }
+  if (end) {
+
+    Console.println (val);
+  }
+  else {
+
+    Console.print (val);
+    Console.write (':');
+  }
+}
+
+void setup() {
+
+  Console.begin (115200);
+  Wire.begin(); // Starting the i2c master
+}
+
+void loop() {
+
+  Wire.beginTransmission (0x68); // start of the frame for the RTC at slave address 0x68
+  Wire.write (0); // write the address of the register in the RTC, 0 first register
+  Wire.endTransmission (false); // restart condition
+  Wire.requestFrom (0x68, 3); // 3-byte read request
+
+  if (Wire.available() == 3) { // if the 3 bytes have been read
+    byte sec = Wire.read();
+    byte min = Wire.read();
+    byte hour = Wire.read() & 0x3F; // remove CENT_EN and CENT LSB bits
+
+    // time display
+    printBcdDigit (hour);
+    printBcdDigit (min);
+    printBcdDigit (sec, true);
+  }
+  exit (0); // exit the loop() function without ever coming back.
+  // On Arduino, exit() performs an infinite loop as explained on
+  // https://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html
+  // on a Pi board, exit () stops the program by returning the supplied value.
+}
+```
+
+To solve the second problem, it is possible to use on the 2
+platforms the `exit ()` function (which is defined in the [standard library](https://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html)).
+
+This function, compatible with both platforms, allows to stop the execution
+the loop () function. 
+
+On a Unix / Linux system, it stops the program and returns to the command line, 
+on Arduino, it performs an infinite loop (after calling the 
+[destructor](https://en.wikipedia.org/wiki/Destructor_(computer_programming)) of C ++ objects).
+
 ## Utilities
 
 The `pinfo`command allows to know the information on the Pi board:

@@ -6,15 +6,19 @@
 // https://sensing.honeywell.com/spi-comms-digital-ouptu-pressure-sensors-tn-008202-3-en-final-30may12.pdf
 
 // Console is used with PIDUINO as Serial with ARDUINO.
-// If you want to use this example with ARDUINO, replace Console with Serial 
-// and add Serial.begin(9600) in setup()
 
 // Created 22 August 2018
 // by Pascal JEAN https://github.com/epsilonrt
 
 // This example code is in the public domain.
 
-#include <Arduino.h> // all the magic is here ;-)
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#else
+// Defines the serial port as the console on the Arduino platform
+#define Console Serial
+#endif
+
 #include <SPI.h>
 
 /* constants ================================================================ */
@@ -43,6 +47,8 @@ byte buf[4];
 SPISettings settings (700000, MSBFIRST, SPI_MODE0);
 
 void setup() {
+
+  Console.begin (115200);
 
   // start the SPI library:
   SPI.begin();

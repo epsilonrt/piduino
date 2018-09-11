@@ -9,11 +9,18 @@
 
 // This example code is in the public domain.
 
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#else
+// Defines the serial port as the console on the Arduino platform
+#define Console Serial
+#endif
 
-#include <Arduino.h>
 #include <Wire.h>
 
 void setup() {
+
+  Console.begin (115200);
   Wire.begin();        // join i2c bus (address optional for master)
 }
 
