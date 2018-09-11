@@ -4,20 +4,31 @@ Arduino on Pi boards, the best of both worlds.
 
 ## Abstract
 
-PiDuino was born from a question from one of my students who asked me why programming input-output on NanoPi was not as simple as on [Arduino](https://www.arduino.cc/).
+PiDuino was born from a question from one of my students who asked me why 
+programming input-output on NanoPi was not as simple as on [Arduino](https://www.arduino.cc/).
 
-PiDuino therefore aims to respond to this need: _API (PIO, Serial port, I2C bus and SPI ...) on Pi boards ([Raspberry Pi](https://www.raspberrypi.org/), [Nano Pi](http://www.nanopi.org/),[Orange Pi](http://www.orangepi.org/), [Banana Pi](http://www.banana-pi.org/), [Beagle Board](https://beagleboard.org/) ...) as close as possible to that of Arduino._
+PiDuino therefore aims to respond to this need: _API (PIO, Serial port, I2C bus 
+and SPI ...) on Pi boards ([Raspberry Pi](https://www.raspberrypi.org/), 
+[Nano Pi](http://www.nanopi.org/),[Orange Pi](http://www.orangepi.org/), 
+[Banana Pi](http://www.banana-pi.org/), [Beagle Board](https://beagleboard.org/) ...) 
+as close as possible to that of Arduino._
 
-There are some projects that have sought to meet this need but only to propose a solution for a Pi card model.
+There are some projects that have sought to meet this need but only to propose 
+a solution for a Pi card model.
 
 The best known is probably [wiringPi](https://github.com/WiringPi).
-wiringPi is a solution planned for Raspberry Pi and even though it there are derivative versions on other Pi boards, these versions are "lame" versions from a computing point of view of the original version.
+wiringPi is a solution planned for Raspberry Pi and even though it there are 
+derivative versions on other Pi boards, these versions are "lame" versions from 
+a computing point of view of the original version.
 
 These are the reasons that led me not to choose wiringPi:
 
-* Even if there is a similarity with Arduino programming, there is has differences that increase with time.  
-* wiringPi was designed in pure C, which is a definite brake on scalability and is not very consistent with Arduino (The Arduino language is C++ !)  
-* wiringPi was designed for the Raspberry Pi and its adaptation for other Pi boards is increasingly unthinkable, as and when of the arrival of new Pi boards.
+* Even if there is a similarity with Arduino programming, there is has 
+differences that increase with time.  
+* wiringPi was designed in pure C, which is a definite brake on scalability 
+and is not very consistent with Arduino (The Arduino language is C++ !)  
+* wiringPi was designed for the Raspberry Pi and its adaptation for other Pi 
+boards is increasingly unthinkable, as and when of the arrival of new Pi boards.
 
 What PiDuino offers:
 
@@ -30,16 +41,19 @@ PiDuino is intended for this use case. Nevertheless some functions can be used i
 C (`pinMode ()`, `digitalWrite ()`, ...).
 
 * The **description of Pi boards** that is based on an "Object" model stored 
-**in a database** (SQLite by default), allowing a simple user to add a new Pi board "variant" **WITHOUT** programming.
+**in a database** (SQLite by default), allowing a simple user to add a new Pi 
+board "variant" **WITHOUT** programming.
 
 * An object design in C++ with a clear separation of the part specific to the platform. 
 Support for new SoCs is summarizes to add a part "driver" in the directory `src/gpio/arch`
 
-* Utilities for manipulating GPIO signals: `gpio`, retrieve information from the board: `pinfo` or manage the Pi boards database: `pidbman`
+* Utilities for manipulating GPIO signals: `gpio`, retrieve information from the 
+board: `pinfo` or manage the Pi boards database: `pidbman`
 
 ## Road Map
 
-**PiDuino is in development**, version 0.3 currently but the completed parts are functional on Broadcom SoC BCM283X and AllWinner Hx.
+**PiDuino is in development**, version 0.3 currently but the completed parts are 
+functional on Broadcom SoC BCM283X and AllWinner Hx.
 
 The list of models present in the database is as follows:
 
@@ -108,7 +122,6 @@ The dependencies are as follows:
     sudo apt-get install libcppdb-dev pkg-config cmake libsqlite3-dev sqlite3 libudev-dev
     git clone https://github.com/epsilonrt/piduino.git
     cd piduino
-    git checkout dev
     mkdir cmake-build-Release
     cd cmake-build-Release
     cmake ..
@@ -133,20 +146,33 @@ To generate documentation in HTML format, you must install the pre-requisites:
     
 ## Configuration
 
-The PI board model is dynamically detected when starting the Piduino program by comparing the signature of the board with the database.
+The PI board model is dynamically detected when starting the Piduino program by 
+comparing the signature of the board with the database.
 
-It is possible to force the Pi model choice by using the `/etc/piduino.conf` configuration file.
+It is possible to force the Pi model choice by using the `/etc/piduino.conf` 
+configuration file.
 
-This may be necessary when it is not possible for the program to detect the configuration of the board.
-For example, in the case of the NanoPi Neo Core/Core2, we can indicate that the board is on its shield, in this case, the display of the connector by the command `gpio readall` will be adapted.
+This may be necessary when it is not possible for the program to detect 
+the configuration of the board.
+
+For example, in the case of the NanoPi Neo Core/Core2, we can indicate that the 
+board is on its shield, in this case, the display of the connector by the 
+command `gpio readall` will be adapted.
 
 Pi board model detection uses two methods:  
-* The first method, which applies to Raspberry Pi boards, reads the `/proc/cpuinfo` file to get the microprocessor model in the `Hardware` field and especially the `Revision` field. This revision number is compared with the database to deduce the RaspberryPi model.
-* The second method, which applies to boards using ArmBian, comes from reading `/etc/armbian-release` or `/etc/friendlyelec-release` to get board model in `BOARD`. We compare this signature with the database to deduce the RaspberryPi model.
+* The first method, which applies to Raspberry Pi boards, reads the 
+`/proc/cpuinfo` file to get the microprocessor model in the `Hardware` field and 
+especially the `Revision` field. This revision number is compared with the 
+database to deduce the RaspberryPi model.  
+* The second method, which applies to boards using ArmBian, comes from reading 
+`/etc/armbian-release` or `/etc/friendlyelec-release` to get board model in 
+`BOARD`. We compare this signature with the database to deduce the RaspberryPi model.
 
-In the `/etc/piduino.conf` configuration file, we will find these two possibilities, which must be filled in (one or the other, but never the two!).
+In the `/etc/piduino.conf` configuration file, we will find these two 
+possibilities, which must be filled in (one or the other, but never the two!).
 
-For example if we want to indicate that our NanoPi Neo Core2 is installed on its shield, we will put the `tag` field value `nanopineocore2shield`:
+For example if we want to indicate that our NanoPi Neo Core2 is installed on 
+its shield, we will put the `tag` field value `nanopineocore2shield`:
 
     # PiDuino configuration file
     connection_info="sqlite3:db=/usr/local/share/piduino/piduino.db"
@@ -161,8 +187,10 @@ For example if we want to indicate that our NanoPi Neo Core2 is installed on its
     # !! Forcing an incorrect value may destroy GPIO pins !!
     #revision=0xa02082
 
-It can be seen that the configuration file also contains the address of the database to use.
-The database is by default a local SQLite3 file, but the database can be installed on a MySQL server for example (for the format of the connection_info line see the documentation of [CPPDB](http://cppcms.com/sql/cppdb/connstr.html))
+It can be seen that the configuration file also contains the address of the 
+database to use. The database is by default a local SQLite3 file, but the 
+database can be installed on a MySQL server for example (for the format of the 
+`connection_info` line see the documentation of [CPPDB](http://cppcms.com/sql/cppdb/connstr.html))
 
 ## First Example, Blink !
 
@@ -251,11 +279,13 @@ the second example  [rtc_bq32k](https://github.com/epsilonrt/piduino/blob/master
 uses the Wire library to read the time in a BQ32000 RTC circuit. 
 
 It allows to discover 2 important differences between an Arduino board and a Pi board:  
-1. First, on a Pi board, the human-machine interface (screen and keyboard) is done on the command line (the console !). On Arduino, the serial port is used.
-2. On a Pi board, a program can finish to give the user a hand. On Arduino, the program never stops (_in fact on a Linux system, the kernel program never stops either..._)
+1. First, on a Pi board, the human-machine interface (screen and keyboard) is 
+done on the command line (the console !). On Arduino, the serial port is used.
+2. On a Pi board, a program can finish to give the user a hand. On Arduino, 
+the program never stops (_in fact on a Linux system, the kernel program never stops either..._)
 
-To solve the first problem, PiDuino defines a Console object whose
-the usage is identical to the Serial object (it is a class derived from Stream).
+To solve the first problem, PiDuino defines a `Console` object whose
+the usage is identical to the `Serial` object (it is a class derived from `Stream`).
 
 In order to allow compilation on both platforms without modifying the source code,
 we can add at the beginning of the sketch a block that tests if the target platform is
@@ -321,8 +351,8 @@ void loop() {
 ```
 
 To solve the second problem, it is possible to use on the 2
-platforms the `exit ()` function (which is defined in the [standard library](https://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html)).
-
+platforms the `exit ()` function (which is defined in the 
+[standard library](https://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html)).
 This function, compatible with both platforms, allows to stop the execution
 the loop () function. 
 
