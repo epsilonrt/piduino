@@ -10,14 +10,6 @@
       <File Name="codelite/executable-piduino/main.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <VirtualDirectory Name="template">
-    <VirtualDirectory Name="arduino">
-      <File Name="template/arduino/template.cpp"/>
-      <File Name="template/arduino/CMakeLists.txt"/>
-    </VirtualDirectory>
-    <File Name="template/template.cpp"/>
-    <File Name="template/CMakeLists.txt"/>
-  </VirtualDirectory>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="resources">
@@ -114,16 +106,10 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="bin">
-    <File Name="bin/armbian-board"/>
-    <File Name="bin/hardware-cpu"/>
     <File Name="bin/git-version"/>
-    <File Name="bin/piduino-prj.in"/>
   </VirtualDirectory>
   <VirtualDirectory Name="cmake">
-    <File Name="cmake/PiBoardInfo.cmake"/>
     <File Name="cmake/GitVersion.cmake"/>
-    <File Name="cmake/Findrt.cmake"/>
-    <File Name="cmake/Findmath.cmake"/>
     <File Name="cmake/FindCppDb.cmake"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
