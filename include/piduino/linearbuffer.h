@@ -19,11 +19,16 @@
 #define PIDUINO_LINEARBUFFER_H
 
 #include <cstring>
+#include <ctsdio>
+#include <stdio.h>
+
+#ifndef BUFSIZ
+#define BUFSIZ 8192
+#endif
 
 /**
  *  @defgroup piduino_linearbuffer Linear Buffer
  *
- *  Ce module fournit informations concernant la carte cible.
  *  @{
  */
 
@@ -32,7 +37,7 @@ namespace Piduino {
 
     public:
       //--------------------------------------------------------------------
-      LinearBuffer (size_t s = 16384) : _buffersize (s), _capacity (0), _pwrite (0), _pread (0), _buf (0) {}
+      LinearBuffer (size_t s = BUFSIZ) : _buffersize (s), _capacity (0), _pwrite (0), _pread (0), _buf (0) {}
       //--------------------------------------------------------------------
       ~LinearBuffer() {
         delete [] _buf;
