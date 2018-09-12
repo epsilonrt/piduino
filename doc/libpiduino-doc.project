@@ -5,34 +5,6 @@
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="gpio">
-    <VirtualDirectory Name="interrupt">
-      <File Name="../examples/gpio/interrupt/interrupt.cpp"/>
-      <File Name="../examples/gpio/interrupt/CMakeLists.txt"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="blink">
-      <File Name="../examples/gpio/blink/blink.cpp"/>
-      <File Name="../examples/gpio/blink/CMakeLists.txt"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="waitforint">
-      <File Name="../examples/gpio/waitforint/CMakeLists.txt"/>
-      <File Name="../examples/gpio/waitforint/waitforint.cpp"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
-  <VirtualDirectory Name="arduino">
-    <VirtualDirectory Name="interrupt">
-      <File Name="../examples/arduino/interrupt/interrupt.cpp"/>
-      <File Name="../examples/arduino/interrupt/CMakeLists.txt"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="button">
-      <File Name="../examples/arduino/button/CMakeLists.txt"/>
-      <File Name="../examples/arduino/button/button.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="blink">
-      <File Name="../examples/arduino/blink/blink.cpp"/>
-      <File Name="../examples/arduino/blink/CMakeLists.txt"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">

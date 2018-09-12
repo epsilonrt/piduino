@@ -18,7 +18,9 @@
 
   http://www.arduino.cc/en/Tutorial/ASCIITable
 */
-#include <Arduino.h>
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#endif
 
 void setup() {
   //Initialize serial and wait for port to open:

@@ -17,15 +17,17 @@
 // Pin 8 VDD    --> VDD (3.3V)
 
 // Console is used with PIDUINO as Serial with ARDUINO.
-// If you want to use this example with ARDUINO, replace Console with Serial
-// and add Serial.begin(9600) in setup()
 
 // Created 23 August 2018
 // by Pascal JEAN https://github.com/epsilonrt
 
 // This example code is in the public domain.
-
-#include <Arduino.h> // all the magic is here ;-)
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#else
+// Defines the serial port as the console on the Arduino platform
+#define Console Serial
+#endif
 #include "mb85rs.h"
 
 byte buf[128];
@@ -40,6 +42,7 @@ Mb85rs fram (10, 32768); // Pin 10 = SPI0_CS
 
 void setup() {
 
+  Console.begin (115200);
   // start the SPI library:
   SPI.begin();
   // setting up fram
@@ -51,7 +54,7 @@ void loop () {
   Console.print ("# ");
   Console.print (++counter);
   Console.println (" -----------------------------------");
-  
+
   Mb85rs::DeviceId id = fram.deviceId ();
   Console.print ("Manufacturer ID   : 0x");
   fram.printHex (Console, id.manufacturerId, 2);
@@ -92,7 +95,7 @@ void loop () {
   }
   Console.println ("\nData written:");
   fram.printBlock (Console, 0, buf, bufSize);
-  
+
   fram.write (0, buf, bufSize);
 
   fram.read (0, buf, bufSize);

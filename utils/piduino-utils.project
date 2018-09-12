@@ -102,4 +102,14 @@
   </Settings>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
+  <VirtualDirectory Name="gpio">
+    <File Name="gpio/exception.cpp"/>
+    <File Name="gpio/main.cpp"/>
+    <File Name="gpio/CMakeLists.txt"/>
+    <File Name="gpio/exception.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="pinfo">
+    <File Name="pinfo/main.cpp"/>
+    <File Name="pinfo/CMakeLists.txt"/>
+  </VirtualDirectory>
 </CodeLite_Project>

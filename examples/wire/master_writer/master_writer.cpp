@@ -8,9 +8,9 @@
 // Created 29 March 2006
 
 // This example code is in the public domain.
-
-
-#include <Arduino.h>
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#endif
 #include <Wire.h>
 
 void setup() {

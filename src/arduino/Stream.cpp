@@ -110,26 +110,6 @@ int Stream::available() {
   return is().rdbuf()->in_avail();
 }
 
-void Stream::setTimeout (unsigned long timeout) { // sets the maximum number of milliseconds to wait
-  _timeout = timeout;
-}
-
-// find returns true if the target string is found
-bool  Stream::find (char *target) {
-  return findUntil (target, NULL);
-}
-
-// reads data from the stream until the target string of given length is found
-// returns true if target string is found, false if timed out
-bool Stream::find (char *target, size_t length) {
-  return findUntil (target, length, NULL, 0);
-}
-
-// as find but search ends if the terminator string is found
-bool  Stream::findUntil (char *target, char *terminator) {
-  return findUntil (target, strlen (target), terminator, strlen (terminator));
-}
-
 // reads data from the stream until the target string of the given length is found
 // search terminated if the terminator string is found
 // returns true if target string is found, false if terminated or timed out
@@ -167,13 +147,6 @@ bool Stream::findUntil (char *target, size_t targetLen, char *terminator, size_t
 }
 
 
-// returns the first valid (long) integer value from the current position.
-// initial characters that are not digits (or the minus sign) are skipped
-// function is terminated by the first character that is not a digit.
-long Stream::parseInt() {
-  return parseInt (NO_SKIP_CHAR); // terminate on first non-digit character (or timeout)
-}
-
 // as above but a given skipChar is ignored
 // this allows format characters (typically commas) in values to be ignored
 long Stream::parseInt (char skipChar) {
@@ -207,11 +180,6 @@ long Stream::parseInt (char skipChar) {
   return value;
 }
 
-
-// as parseInt but returns a floating point value
-float Stream::parseFloat() {
-  return parseFloat (NO_SKIP_CHAR);
-}
 
 // as above but the given skipChar is ignored
 // this allows format characters (typically commas) in values to be ignored
@@ -316,4 +284,36 @@ String Stream::readStringUntil (char terminator) {
     c = timedRead();
   }
   return ret;
+}
+
+void Stream::setTimeout (unsigned long timeout) { // sets the maximum number of milliseconds to wait
+  _timeout = timeout;
+}
+
+// find returns true if the target string is found
+bool  Stream::find (char *target) {
+  return findUntil (target, NULL);
+}
+
+// reads data from the stream until the target string of given length is found
+// returns true if target string is found, false if timed out
+bool Stream::find (char *target, size_t length) {
+  return findUntil (target, length, NULL, 0);
+}
+
+// as find but search ends if the terminator string is found
+bool  Stream::findUntil (char *target, char *terminator) {
+  return findUntil (target, strlen (target), terminator, strlen (terminator));
+}
+
+// returns the first valid (long) integer value from the current position.
+// initial characters that are not digits (or the minus sign) are skipped
+// function is terminated by the first character that is not a digit.
+long Stream::parseInt() {
+  return parseInt (NO_SKIP_CHAR); // terminate on first non-digit character (or timeout)
+}
+
+// as parseInt but returns a floating point value
+float Stream::parseFloat() {
+  return parseFloat (NO_SKIP_CHAR);
 }

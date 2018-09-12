@@ -38,13 +38,6 @@ readBytesBetween( pre_string, terminator, buffer, length)
 */
 
 class Stream : public Print {
-  protected:
-    virtual std::istream & is() = 0;
-    unsigned long _timeout;      // number of milliseconds to wait for the next char before aborting timed read
-    unsigned long _startMillis;  // used for timeout measurement
-    virtual int timedRead();    // protected method to read stream with timeout
-    virtual int timedPeek();    // protected method to peek stream with timeout
-    virtual int peekNextDigit(); // returns the next numeric digit in the stream or -1 if timeout
 
   public:
     virtual int available();
@@ -95,6 +88,14 @@ class Stream : public Print {
     // this allows format characters (typically commas) in values to be ignored
 
     float parseFloat (char skipChar); // as above but the given skipChar is ignored
+
+  protected:
+    virtual std::istream & is() = 0;
+    virtual int timedRead();    // protected method to read stream with timeout
+    virtual int timedPeek();    // protected method to peek stream with timeout
+    virtual int peekNextDigit(); // returns the next numeric digit in the stream or -1 if timeout
+    unsigned long _timeout;      // number of milliseconds to wait for the next char before aborting timed read
+    unsigned long _startMillis;  // used for timeout measurement
 };
 
 #endif

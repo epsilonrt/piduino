@@ -176,8 +176,31 @@ void HardwareSerial::begin (unsigned long baud, uint8_t config) {
 }
 
 // -----------------------------------------------------------------------------
+void HardwareSerial::begin (unsigned long baud, const String & name, uint8_t config) {
+  
+  setPortName(name);
+  begin(baud,config);
+}
+
+// -----------------------------------------------------------------------------
 void HardwareSerial::end() {
   port->close();
+}
+
+// -----------------------------------------------------------------------------
+int HardwareSerial::read() {
+  uint8_t c;
+
+  if (port->read (reinterpret_cast<char *> (&c), 1) != 1) {
+    return -1;
+  }
+  return c;
+}
+
+// -----------------------------------------------------------------------------
+int HardwareSerial::available() {
+
+  return port->bytesAvailable();
 }
 
 // -----------------------------------------------------------------------------
@@ -196,5 +219,6 @@ std::istream & HardwareSerial::is() {
 
   return port->ios();
 }
+
 
 /* ========================================================================== */

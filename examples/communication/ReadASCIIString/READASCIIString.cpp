@@ -18,7 +18,9 @@
 
   This example code is in the public domain.
 */
-#include <Arduino.h>
+#ifdef __unix__
+#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#endif
 
 // <DANGER> Be careful !!! Before launching this program :
 //    -> Check that the pins below is well connected to an LED ! <-

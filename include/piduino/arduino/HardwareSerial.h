@@ -72,13 +72,16 @@ class HardwareSerial : public Stream {
     void begin (unsigned long baud, uint8_t config = SERIAL_8N1);
     void end();
 
+    virtual int read();
+    virtual int available();
     virtual int availableForWrite (void);
     operator bool() {
       return true;
     }
     using Print::write;
 
-    // Piduino
+    // PiDuino Only, Not for Arduino, 
+    void begin (unsigned long baud, const String & portName, uint8_t config = SERIAL_8N1); 
     inline void setPath (const std::string & path) {
       port->setPath (path);
     }
