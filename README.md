@@ -52,8 +52,6 @@ Support for new SoCs is summarizes to add a part "driver" in the directory `src/
 * Utilities for manipulating GPIO signals: `gpio`, retrieve information from the 
 board: `pinfo` or manage the Pi boards database: `pidbman`
 
-## Road Map
-
 **PiDuino is in development**, version 0.3 currently but the completed parts are 
 functional on Broadcom SoC BCM283X and AllWinner Hx.
 
@@ -80,120 +78,6 @@ The list of models present in the database is as follows:
 * RaspberryPi Zero  
 * RaspberryPi Zero Wifi  
 
-**What was done ?**
-
-* GPIO modeling, GPIO connectors and pins  
-* Creation of database model and addition of all variants of Raspberry Pi, Nano Pi Neo, Neo2, Neo Plus 2, M1, M1 Plus.  
-* Creation of SoC access layers for Broadcom BCM283X and AllWinner Hx.  
-* Creating `gpio` and `pinfo` utilities  
-* Switching iomap in C++  
-* Creating virtual classes IoDevice and FileDevice
-* analogWrite() with GPIO software PWM feature (Polling with thread) 
-* Emulate setup() and loop() for Arduino compatibility (in Arduino.h)
-* Cleaning the architecture detection  
-* I2C Bus API  
-* SPI Bus API  
-* Serial Port API  
-* Arduino Classes (String, Print, Stream....)  
-* Update README  
-
-The rest of the things to do:
-
-* `pidbman` for managing the database of boards with Qt (in development [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman)) 
-* Enabling daemon mode for loop()
-* Hardware PWM Pin support
-* analogWrite() with Software PWM feature (Kernel driver module)
-* analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
-* analogRead() with external ADC or Sensor ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
-* Man Pages for Utilities  
-* Database Doxygen Documentation (English)  
-* Creating a web page
-
-## Dependencies
-
-The compilation requires a compiler [g ++](https://gcc.gnu.org) managing [C++11](https://en.wikipedia.org/wiki/C%2B%2B11), the compilation has been made with gcc version 6.3.0 20170516. This compiler is usually installed with a complete tool chain on Linux systems used on Pi boards.
-
-The dependencies are as follows:
-
-* libcppdb-dev which provides [CppDB](http://cppcms.com/sql/cppdb/) for access to the database  
-* libudev-dev which provides [libudev](https://www.freedesktop.org/software/systemd/man/libudev.html) for enumerate devices  
-* Qt if you want to compile the database management tool [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman).
-
-## Installation
-
-    sudo apt-get update
-    sudo apt-get install libcppdb-dev pkg-config cmake libsqlite3-dev sqlite3 libudev-dev
-    git clone https://github.com/epsilonrt/piduino.git
-    cd piduino
-    mkdir cmake-build-Release
-    cd cmake-build-Release
-    cmake ..
-    make 
-    sudo make install
-    sudo ldconfig
-
-To uninstall:
-
-     cd cmake-build-Release
-     sudo make uninstall
-
-You can also generate Debian packages with:
-
-     make package
-     sudo dpkg -i * .deb
-
-To generate documentation in HTML format, you must install the pre-requisites:
-
-    sudo apt-get install doxygen doxygen-latex doxygen-doc doxygen-gui graphviz
-    make doc
-    
-## Configuration
-
-The PI board model is dynamically detected when starting the Piduino program by 
-comparing the signature of the board with the database.
-
-It is possible to force the Pi model choice by using the `/etc/piduino.conf` 
-configuration file.
-
-This may be necessary when it is not possible for the program to detect 
-the configuration of the board.
-
-For example, in the case of the NanoPi Neo Core/Core2, we can indicate that the 
-board is on its shield, in this case, the display of the connector by the 
-command `gpio readall` will be adapted.
-
-Pi board model detection uses two methods:  
-* The first method, which applies to Raspberry Pi boards, reads the 
-`/proc/cpuinfo` file to get the microprocessor model in the `Hardware` field and 
-especially the `Revision` field. This revision number is compared with the 
-database to deduce the RaspberryPi model.  
-* The second method, which applies to boards using ArmBian, comes from reading 
-`/etc/armbian-release` or `/etc/friendlyelec-release` to get board model in 
-`BOARD`. We compare this signature with the database to deduce the RaspberryPi model.
-
-In the `/etc/piduino.conf` configuration file, we will find these two 
-possibilities, which must be filled in (one or the other, but never the two!).
-
-For example if we want to indicate that our NanoPi Neo Core2 is installed on 
-its shield, we will put the `tag` field value `nanopineocore2shield`:
-
-    # PiDuino configuration file
-    connection_info="sqlite3:db=/usr/local/share/piduino/piduino.db"
-
-    # Allows you to force the board tag (Armbian)
-    # !! Be careful, this is at your own risk !!
-    # !! Forcing an incorrect value may destroy GPIO pins !!
-    tag="nanopineocore2shield"
-
-    # Allows forcing the revision of the board (Raspbian)
-    # !! Be careful, this is at your own risk !!
-    # !! Forcing an incorrect value may destroy GPIO pins !!
-    #revision=0xa02082
-
-It can be seen that the configuration file also contains the address of the 
-database to use. The database is by default a local SQLite3 file, but the 
-database can be installed on a MySQL server for example (for the format of the 
-`connection_info` line see the documentation of [CPPDB](http://cppcms.com/sql/cppdb/connstr.html))
 
 ## First Example, Blink !
 
@@ -479,3 +363,120 @@ The `-h`option allows to know the different possible actions:
         Waits  for  the  interrupt  to happen. It's a non-busy wait.
       pwm <pin> <value>
         Write a PWM value (0-1023) to the given pin (pwm pin only).
+
+## Road Map
+
+**What was done ?**
+
+* GPIO modeling, GPIO connectors and pins  
+* Creation of database model and addition of all variants of Raspberry Pi, Nano Pi Neo, Neo2, Neo Plus 2, M1, M1 Plus.  
+* Creation of SoC access layers for Broadcom BCM283X and AllWinner Hx.  
+* Creating `gpio` and `pinfo` utilities  
+* Switching iomap in C++  
+* Creating virtual classes IoDevice and FileDevice
+* analogWrite() with GPIO software PWM feature (Polling with thread) 
+* Emulate setup() and loop() for Arduino compatibility (in Arduino.h)
+* Cleaning the architecture detection  
+* I2C Bus API  
+* SPI Bus API  
+* Serial Port API  
+* Arduino Classes (String, Print, Stream....)  
+* Update README  
+
+The rest of the things to do:
+
+* `pidbman` for managing the database of boards with Qt (in development [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman)) 
+* Enabling daemon mode for loop()
+* Hardware PWM Pin support
+* analogWrite() with Software PWM feature (Kernel driver module)
+* analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
+* analogRead() with external ADC or Sensor ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
+* Man Pages for Utilities  
+* Database Doxygen Documentation (English)  
+* Creating a web page
+
+## Dependencies
+
+The compilation requires a compiler [g ++](https://gcc.gnu.org) managing [C++11](https://en.wikipedia.org/wiki/C%2B%2B11), the compilation has been made with gcc version 6.3.0 20170516. This compiler is usually installed with a complete tool chain on Linux systems used on Pi boards.
+
+The dependencies are as follows:
+
+* libcppdb-dev which provides [CppDB](http://cppcms.com/sql/cppdb/) for access to the database  
+* libudev-dev which provides [libudev](https://www.freedesktop.org/software/systemd/man/libudev.html) for enumerate devices  
+* Qt if you want to compile the database management tool [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman).
+
+## Installation
+
+    sudo apt-get update
+    sudo apt-get install libcppdb-dev pkg-config cmake libsqlite3-dev sqlite3 libudev-dev
+    git clone https://github.com/epsilonrt/piduino.git
+    cd piduino
+    mkdir cmake-build-Release
+    cd cmake-build-Release
+    cmake ..
+    make 
+    sudo make install
+    sudo ldconfig
+
+To uninstall:
+
+     cd cmake-build-Release
+     sudo make uninstall
+
+You can also generate Debian packages with:
+
+     make package
+     sudo dpkg -i * .deb
+
+To generate documentation in HTML format, you must install the pre-requisites:
+
+    sudo apt-get install doxygen doxygen-latex doxygen-doc doxygen-gui graphviz
+    make doc
+    
+## Configuration
+
+The PI board model is dynamically detected when starting the Piduino program by 
+comparing the signature of the board with the database.
+
+It is possible to force the Pi model choice by using the `/etc/piduino.conf` 
+configuration file.
+
+This may be necessary when it is not possible for the program to detect 
+the configuration of the board.
+
+For example, in the case of the NanoPi Neo Core/Core2, we can indicate that the 
+board is on its shield, in this case, the display of the connector by the 
+command `gpio readall` will be adapted.
+
+Pi board model detection uses two methods:  
+* The first method, which applies to Raspberry Pi boards, reads the 
+`/proc/cpuinfo` file to get the microprocessor model in the `Hardware` field and 
+especially the `Revision` field. This revision number is compared with the 
+database to deduce the RaspberryPi model.  
+* The second method, which applies to boards using ArmBian, comes from reading 
+`/etc/armbian-release` or `/etc/friendlyelec-release` to get board model in 
+`BOARD`. We compare this signature with the database to deduce the RaspberryPi model.
+
+In the `/etc/piduino.conf` configuration file, we will find these two 
+possibilities, which must be filled in (one or the other, but never the two!).
+
+For example if we want to indicate that our NanoPi Neo Core2 is installed on 
+its shield, we will put the `tag` field value `nanopineocore2shield`:
+
+    # PiDuino configuration file
+    connection_info="sqlite3:db=/usr/local/share/piduino/piduino.db"
+
+    # Allows you to force the board tag (Armbian)
+    # !! Be careful, this is at your own risk !!
+    # !! Forcing an incorrect value may destroy GPIO pins !!
+    tag="nanopineocore2shield"
+
+    # Allows forcing the revision of the board (Raspbian)
+    # !! Be careful, this is at your own risk !!
+    # !! Forcing an incorrect value may destroy GPIO pins !!
+    #revision=0xa02082
+
+It can be seen that the configuration file also contains the address of the 
+database to use. The database is by default a local SQLite3 file, but the 
+database can be installed on a MySQL server for example (for the format of the 
+`connection_info` line see the documentation of [CPPDB](http://cppcms.com/sql/cppdb/connstr.html))
