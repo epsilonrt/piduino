@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include <piduino/arduino.h>
+#include <Arduino.h>
 #include <piduino/clock.h>
 #include <piduino/scheduler.h>
 #include <piduino/database.h>

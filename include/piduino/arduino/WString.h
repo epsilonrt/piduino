@@ -18,7 +18,7 @@
 #ifndef __WSTRING_H__
 #define __WSTRING_H__
 
-#include <piduino/arduino.h>
+#include <Arduino.h>
 
 #ifdef __cplusplus
 #include <piduino/string.h>

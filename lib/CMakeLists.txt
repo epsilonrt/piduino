@@ -58,7 +58,7 @@ set (hdr_gpio
 )
 
 set (hdr_arduino 
-  ${PIDUINO_INC_DIR}/piduino/arduino.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Piduino.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Arduino.h
   ${PIDUINO_INC_DIR}/piduino/arduino/WString.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Print.h

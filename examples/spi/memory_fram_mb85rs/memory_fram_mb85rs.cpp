@@ -23,7 +23,7 @@
 
 // This example code is in the public domain.
 #ifdef __unix__
-#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#include <Piduino.h>  // All the magic is here ;-)
 #else
 // Defines the serial port as the console on the Arduino platform
 #define Console Serial

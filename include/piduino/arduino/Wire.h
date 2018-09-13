@@ -24,7 +24,7 @@
 #define TwoWire_h
 
 #include <piduino/i2cdev.h>
-#include <piduino/arduino.h>
+#include <Arduino.h>
 
 #define BUFFER_LENGTH 32
 

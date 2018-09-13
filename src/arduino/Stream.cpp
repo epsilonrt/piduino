@@ -20,7 +20,7 @@
  parsing functions based on TextFinder library by Michael Margolis
  */
 
-#include <piduino/arduino.h>
+#include <Arduino.h>
 #include <Stream.h>
 
 #define PARSE_TIMEOUT 1000  // default number of milli-seconds to wait

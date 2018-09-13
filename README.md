@@ -35,7 +35,7 @@ website to see the multitude of Pi models !
 What PiDuino offers:
 
 * A programming interface [API](https://en.wikipedia.org/wiki/Application_programming_interface)
-same as Arduino except adding `#include <Arduino.h>`at the beginning of the program. 
+same as Arduino except adding `#include <Piduino.h>`at the beginning of the program. 
 It does not prohibit offering extensions of the API but provided that stay as independent
 as possible from the platform and not to make the code incompatible with Arduino. 
 It makes sense to think that users who want to stay in the Arduino world use C ++, 
@@ -86,14 +86,14 @@ contains examples from the Arduino world that are can be used directly with
 PiDuino. The only thing to add is the line:
 
 ```c++
-#include <Arduino.h>
+#include <Piduino.h>
 ```
 
 Here is the source code of the example [Blink](https://github.com/epsilonrt/piduino/blob/master/examples/blink/blink.cpp) 
 that flashes a led:
 
 ```c++
-#include <Arduino.h> // all the magic is here ;-)
+#include <Piduino.h> // all the magic is here ;-)
 
 const int ledPin = 0; // Header Pin 11: GPIO17 for RPi, GPIOA0 for NanoPi
 
@@ -177,12 +177,12 @@ the usage is identical to the `Serial` object (it is a class derived from `Strea
 In order to allow compilation on both platforms without modifying the source code,
 we can add at the beginning of the sketch a block that tests if the target platform is
 a Unix/Linux system (PiDuino), if so, the inclusion of the file
-`Arduino.h` is done, otherwise we define a Console alias which corresponds to
+`Piduino.h` is done, otherwise we define a Console alias which corresponds to
 Serial, ie the human-machine interface is on the serial port.
 
 ```c++
 #ifdef __unix__
-#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#include <Piduino.h>  // All the magic is here ;-)
 #else
 // Defines the serial port as the console on the Arduino platform
 #define Console Serial

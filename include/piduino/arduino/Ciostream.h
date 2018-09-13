@@ -19,7 +19,7 @@
 #define Ciostream_h
 
 #include "Stream.h"
-#include <piduino/arduino.h>
+#include <Arduino.h>
 
 class Ciostream : public Stream {
 

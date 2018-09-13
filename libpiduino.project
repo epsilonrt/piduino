@@ -144,7 +144,6 @@
       <File Name="include/piduino/clock.h"/>
       <File Name="include/piduino/gpiopin.h"/>
       <File Name="include/piduino/scheduler.h"/>
-      <File Name="include/piduino/arduino.h"/>
       <File Name="include/piduino/gpiodevice.h"/>
       <File Name="include/piduino/board.h"/>
       <File Name="include/piduino/iomap.h"/>
@@ -162,13 +161,14 @@
       <VirtualDirectory Name="arduino">
         <File Name="include/piduino/arduino/WString.h"/>
         <File Name="include/piduino/arduino/Print.h"/>
-        <File Name="include/piduino/arduino/Arduino.h"/>
         <File Name="include/piduino/arduino/Printable.h"/>
         <File Name="include/piduino/arduino/Stream.h"/>
         <File Name="include/piduino/arduino/Wire.h"/>
         <File Name="include/piduino/arduino/SPI.h"/>
         <File Name="include/piduino/arduino/Ciostream.h"/>
         <File Name="include/piduino/arduino/HardwareSerial.h"/>
+        <File Name="include/piduino/arduino/Piduino.h"/>
+        <File Name="include/piduino/arduino/Arduino.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/ringbuffer.h"/>
       <File Name="include/piduino/memory.h"/>
@@ -285,7 +285,6 @@
     <File Name="COPYING.LESSER"/>
     <File Name="README.md"/>
     <File Name="cmake_uninstall.cmake.in"/>
-    <File Name="TODO.md"/>
   </VirtualDirectory>
   <VirtualDirectory Name="lib">
     <File Name="lib/piduino.pc.in"/>

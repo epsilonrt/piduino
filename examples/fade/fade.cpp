@@ -9,7 +9,7 @@
   http://www.arduino.cc/en/Tutorial/Fade
 */
 #ifdef __unix__
-#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#include <Piduino.h>  // All the magic is here ;-)
 #endif
 
 

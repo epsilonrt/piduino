@@ -9,7 +9,7 @@
 
 // This example code is in the public domain.
 #ifdef __unix__
-#include <Arduino.h>  // Piduino, all the magic is here ;-)
+#include <Piduino.h>  // All the magic is here ;-)
 #endif
 #include <Wire.h>
 
