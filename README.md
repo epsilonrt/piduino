@@ -9,7 +9,7 @@ programming input-output on NanoPi was not as simple as on [Arduino](https://www
 
 PiDuino therefore aims to respond to this need: 
 
-->**An Application Programming Interface (API) on Pi boards as close as possible to that of Arduino.**<-
+<p align="center"><b>An Application Programming Interface (API) on Pi boards as close as possible to that of Arduino.</b></p>
 
 This API must allow to use GPIO, Serial port, I2C bus and SPI... on 
 [Raspberry Pi](https://www.raspberrypi.org/), 
