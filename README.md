@@ -7,11 +7,15 @@ Arduino on Pi boards, the best of both worlds.
 PiDuino was born from a question from one of my students who asked me why 
 programming input-output on NanoPi was not as simple as on [Arduino](https://www.arduino.cc/).
 
-PiDuino therefore aims to respond to this need: _API (PIO, Serial port, I2C bus 
-and SPI ...) on Pi boards ([Raspberry Pi](https://www.raspberrypi.org/), 
+PiDuino therefore aims to respond to this need: 
+
+->**An Application Programming Interface (API) on Pi boards as close as possible to that of Arduino.**<-
+
+This API must allow to use GPIO, Serial port, I2C bus and SPI... on 
+[Raspberry Pi](https://www.raspberrypi.org/), 
 [Nano Pi](http://www.nanopi.org/),[Orange Pi](http://www.orangepi.org/), 
-[Banana Pi](http://www.banana-pi.org/), [Beagle Board](https://beagleboard.org/) ...) 
-as close as possible to that of Arduino._
+[Banana Pi](http://www.banana-pi.org/), [Beagle Board](https://beagleboard.org/)... 
+boards as on an Arduino board.
 
 There are some projects that have sought to meet this need but only to propose 
 a solution for a Pi card model.
