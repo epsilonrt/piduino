@@ -56,13 +56,19 @@ namespace Piduino {
 
       void reverse();
       void replace (const String& str1, const String& str2);
-      String & operator += (unsigned char num);
-      String & operator += (int num);
-      String & operator += (unsigned int num);
-      String & operator += (long num);
-      String & operator += (unsigned long num);
-
       inline void replace (char c1, char c2);
+      void toLowerCase ();
+      void toUpperCase ();
+      
+      inline String & operator += (const String& str);
+      inline String & operator += (const char * str);
+      inline String & operator += (char c);
+      inline String & operator += (unsigned char num);
+      inline String & operator += (int num);
+      inline String & operator += (unsigned int num);
+      inline String & operator += (long num);
+      inline String & operator += (unsigned long num);
+
       inline void concat (const String &str);
       inline void concat (const char *cstr);
       inline void concat (char c);
@@ -74,8 +80,6 @@ namespace Piduino {
       inline void ltrim ();
       inline void rtrim ();
       inline void trim ();
-      void toLowerCase ();
-      void toUpperCase ();
 
       // Relationnals/Conditionnals
 
@@ -114,13 +118,60 @@ namespace Piduino {
       static inline String toString (unsigned short num, unsigned char base = 10);
       static inline String toString (unsigned char num, unsigned char base = 10);
   };
+  
+  //------------------------------------------------------------------------
+  inline String & String::operator += (const String& str) {
 
+    concat(str);
+    return (*this);
+  }
+  //------------------------------------------------------------------------
+  inline String & String::operator += (const char * str) {
+
+    concat(str);
+    return (*this);
+  }
+  //------------------------------------------------------------------------
+  inline String & String::operator += (char c) {
+
+    concat(c);
+    return (*this);
+  }
+  //------------------------------------------------------------------------
+  inline String & String::operator += (unsigned char num) {
+
+    concat (num);
+    return (*this);
+  }
+  //------------------------------------------------------------------------
+  inline String & String::operator += (int num) {
+
+    concat (num);
+    return (*this);
+  }
+  //------------------------------------------------------------------------
+  inline String & String::operator += (unsigned int num) {
+
+    concat (num);
+    return (*this);
+  }
+  //------------------------------------------------------------------------
+  inline String & String::operator += (long num) {
+
+    concat (num);
+    return (*this);
+  }
+  //------------------------------------------------------------------------
+  inline String & String::operator += (unsigned long num)  {
+
+    concat (num);
+    return (*this);
+  }
   //------------------------------------------------------------------------
   inline void String::reserve (unsigned int size) {
 
     std::string::reserve (size);
   }
-
   //------------------------------------------------------------------------
   inline void String::replace (char c1, char c2) {
 

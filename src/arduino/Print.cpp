@@ -17,7 +17,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  Modified 23 November 2006 by David A. Mellis
- Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) to piduino library
+ Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) for piduino library
  */
 
 #include <stdlib.h>
@@ -29,46 +29,29 @@
 
 using namespace std;
 
-// Protected Methods ///////////////////////////////////////////////////////////
-void Print::setWriteError (int err) {
-}
-
 // Public Methods //////////////////////////////////////////////////////////////
-Print::Print() = default;
-Print::~Print() = default;
 
-int Print::getWriteError() {
-
-  return static_cast<int> (os().rdstate());
-}
-
-void Print::clearWriteError() {
-
-  os().clear();
-}
-
-size_t Print::write (const char *str) {
-
-  os() << str << flush;
-  return os().good() ? strlen (str) : -1;
-}
-
-size_t Print::write (uint8_t b) {
-
-  os() << static_cast<char>(b) << flush;
-  return os().good() ? 1 : -1;
-}
-
+/* default implementation: may be overridden */
 size_t Print::write (const uint8_t *buffer, size_t size) {
-
-  os().write (reinterpret_cast<const char *> (buffer), size);
-  os().flush();
-  return os().good() ? size : -1;
+  size_t n = 0;
+  while (size--) {
+    if (write (*buffer++)) {
+      n++;
+    }
+    else {
+      break;
+    }
+  }
+  return n;
 }
 
-size_t Print::println () {
-  os() << endl;
-  return os().good() ? 2 : -1;
+/* default implementation: may be overridden */
+size_t Print::writeln() {
+  return write ("\r\n");
+}
+
+size_t Print::println() {
+  return writeln();
 }
 
 size_t Print::print (const String &s) {

@@ -14,37 +14,36 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
+#include <Console.h>
+#include <unistd.h>
 
-#ifndef PIDUINO_FILEDEVICE_PRIVATE_H
-#define PIDUINO_FILEDEVICE_PRIVATE_H
+using namespace std;
 
-#include <piduino/filedevice.h>
-#include "iodevice_p.h"
+// -----------------------------------------------------------------------------
+void PiConsole::begin (__attribute__ ( (__unused__)) unsigned long,
+                       __attribute__ ( (__unused__)) uint8_t) {
 
-namespace Piduino {
+  Terminal::begin();
+  _notifier.start (STDIN_FILENO);
+}
 
-  /**
-   * @class FileDevice::Private
-   * @brief
-   */
-  class FileDevice::Private  : public IoDevice::Private {
+// -----------------------------------------------------------------------------
+void PiConsole::end () {
 
-    public:
-      Private (FileDevice * q);
-      virtual ~Private();
+  _notifier.terminate();
+  Terminal::end();
+}
 
-      virtual bool open (OpenMode mode, int additionalPosixFlags = 0);
-      virtual void close();
+// -----------------------------------------------------------------------------
+ostream & PiConsole::os() {
 
-      virtual int ioctl (int req);
-      virtual int ioctl (int req, void *);
+  return cout;
+}
 
-      int fd;
-      std::string path;
+// -----------------------------------------------------------------------------
+Piduino::TerminalNotifier & PiConsole::notifier() {
 
-      PIMP_DECLARE_PUBLIC (FileDevice)
-  };
+  return _notifier;
 }
 
 /* ========================================================================== */
-#endif /* PIDUINO_FILEDEVICE_PRIVATE_H defined */

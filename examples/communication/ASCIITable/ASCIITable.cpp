@@ -70,8 +70,10 @@ void loop() {
 
   // if printed last visible character '~' or 126, stop:
   if (thisByte == 126) {    // you could also use if (thisByte == '~') {
-    delay (10000);
-    thisByte = 33;
+    exit (0); // exit the loop() function without ever coming back.
+    // On Arduino, exit() performs an infinite loop as explained on
+    // https://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html
+    // on a Pi board, exit () stops the program by returning the supplied value.
   }
   else {
     // go on to the next character

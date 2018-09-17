@@ -74,6 +74,7 @@ HardwareSerial::~HardwareSerial() = default;
 void HardwareSerial::begin (unsigned long baud, uint8_t config) {
   SerialPort::Settings s (baud);
 
+  Terminal::begin();
   switch (config) {
     case SERIAL_5N1:
       s.dataBits = SerialPort::Data5;
@@ -172,53 +173,38 @@ void HardwareSerial::begin (unsigned long baud, uint8_t config) {
       break;
   }
   port->setSettings (s);
-  port->open();
+  port->setBaudRate(baud);
+  if (port->open()) {
+    Terminal::begin();
+  }
 }
 
 // -----------------------------------------------------------------------------
 void HardwareSerial::begin (unsigned long baud, const String & name, uint8_t config) {
-  
-  setPortName(name);
-  begin(baud,config);
+
+  setPortName (name);
+  begin (baud, config);
 }
 
 // -----------------------------------------------------------------------------
 void HardwareSerial::end() {
+  
+  Terminal::end();
   port->close();
 }
 
 // -----------------------------------------------------------------------------
-int HardwareSerial::read() {
-  uint8_t c;
-
-  if (port->read (reinterpret_cast<char *> (&c), 1) != 1) {
-    return -1;
-  }
-  return c;
-}
-
-// -----------------------------------------------------------------------------
-int HardwareSerial::available() {
-
-  return port->bytesAvailable();
-}
-
-// -----------------------------------------------------------------------------
-int HardwareSerial::availableForWrite (void) {
-  return 0;
-}
-
-// -----------------------------------------------------------------------------
+// virtual
 std::ostream & HardwareSerial::os() {
 
-  return port->ios();
+  return *port;
 }
 
 // -----------------------------------------------------------------------------
-std::istream & HardwareSerial::is() {
+// virtual
+Piduino::TerminalNotifier & HardwareSerial::notifier() {
 
-  return port->ios();
+  return port->notifier();
 }
-
 
 /* ========================================================================== */

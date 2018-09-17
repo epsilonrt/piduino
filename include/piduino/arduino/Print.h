@@ -15,8 +15,8 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-  
-  Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) to piduino library
+
+  Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) for piduino library
 */
 
 #ifndef Print_h
@@ -37,27 +37,44 @@
 
 class Print {
   private:
+    int write_error;
     size_t printNumber (unsigned long, uint8_t);
     size_t printFloat (double, uint8_t);
 
   protected:
-    virtual std::ostream & os() = 0;
-    virtual void setWriteError (int err = 1);
+    void setWriteError (int err = 1) {
+      write_error = err;
+    }
+    // Piduino
+    virtual size_t writeln();
 
   public:
-    Print();
-    virtual ~Print();
+    Print() : write_error (0) {}
 
-    virtual int getWriteError();
-    virtual void clearWriteError();
+    int getWriteError() {
+      return write_error;
+    }
+    void clearWriteError() {
+      setWriteError (0);
+    }
 
-    virtual size_t write (uint8_t b);
+    virtual size_t write (uint8_t) = 0;
     virtual size_t write (const uint8_t *buffer, size_t size);
-    virtual size_t write (const char *str);
-    inline size_t write(unsigned long n) { return write((uint8_t)n); }
-    inline size_t write(long n) { return write((uint8_t)n); }
-    inline size_t write(unsigned int n) { return write((uint8_t)n); }
-    inline size_t write(int n) { return write((uint8_t)n); }
+    size_t write (const char *str) {
+      if (str == NULL) {
+        return 0;
+      }
+      return write ( (const uint8_t *) str, strlen (str));
+    }
+    size_t write (const char *buffer, size_t size) {
+      return write ( (const uint8_t *) buffer, size);
+    }
+
+    // default to zero, meaning "a single write may block"
+    // should be overriden by subclasses with buffering
+    virtual int availableForWrite() {
+      return 0;
+    }
 
     size_t print (const String &);
     size_t print (const char[]);
@@ -68,7 +85,6 @@ class Print {
     size_t print (long, int = DEC);
     size_t print (unsigned long, int = DEC);
     size_t print (double, int = 2);
-    size_t print (double);
     size_t print (const Printable&);
 
     virtual size_t println ();
@@ -82,6 +98,11 @@ class Print {
     size_t println (unsigned long, int = DEC);
     size_t println (double, int = 2);
     size_t println (const Printable&);
+
+    virtual void flush() {
+      /* Empty implementation for backward compatibility */
+    }
+
 };
 
 #endif

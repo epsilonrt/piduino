@@ -41,10 +41,14 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/memory.h
   ${PIDUINO_INC_DIR}/piduino/ringbuffer.h
   ${PIDUINO_INC_DIR}/piduino/linearbuffer.h
+  ${PIDUINO_INC_DIR}/piduino/threadsafebuffer.h
   ${PIDUINO_INC_DIR}/piduino/fifo.h
   ${PIDUINO_INC_DIR}/piduino/flags.h
   ${PIDUINO_INC_DIR}/piduino/iodevice.h
   ${PIDUINO_INC_DIR}/piduino/filedevice.h
+  ${PIDUINO_INC_DIR}/piduino/filestream.h
+  ${PIDUINO_INC_DIR}/piduino/terminal.h
+  ${PIDUINO_INC_DIR}/piduino/terminalnotifier.h
   ${PIDUINO_INC_DIR}/piduino/fileno.h
   ${PIDUINO_INC_DIR}/piduino/converter.h
   ${PIDUINO_INC_DIR}/piduino/pwm.h
@@ -64,7 +68,8 @@ set (hdr_arduino
   ${PIDUINO_INC_DIR}/piduino/arduino/Print.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Printable.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Stream.h
-  ${PIDUINO_INC_DIR}/piduino/arduino/Ciostream.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Terminal.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Console.h
 )
 
 set (hdr_arduino_i2c 

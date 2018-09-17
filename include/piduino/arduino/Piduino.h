@@ -22,11 +22,11 @@
 
 #ifdef __cplusplus
 using namespace std;
-#include <Ciostream.h>
+#include <Console.h>
 #if PIDUINO_WITH_SERIAL
 #include <HardwareSerial.h>
 #endif
-Ciostream Console;
+PiConsole Console;
 #endif
 
 #ifndef EXTERN_C

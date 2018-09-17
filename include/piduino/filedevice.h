@@ -19,7 +19,6 @@
 #define PIDUINO_FILEDEVICE_H
 
 #include <string>
-#include <iostream>
 #include <piduino/iodevice.h>
 
 /**
@@ -109,21 +108,13 @@ namespace Piduino {
       int fd() const;
 
       /**
-        Returns the std::iostream associated with the file.
-
-        This stream makes it possible to perform, on the file, all the
-        operations provided by the standard library.
-      */
-      std::iostream & ios();
-
-      /**
           Writes at most \a maxSize bytes of data from \a data to the
           device. Returns the number of bytes that were actually written, or
           -1 if an error occurred.
 
           \sa read()
       */
-      virtual long write (const char * data, long maxSize);
+      virtual ssize_t write (const char * data, size_t maxSize);
 
       /**
         @overload
@@ -132,9 +123,9 @@ namespace Piduino {
         device. Returns the number of bytes that were actually written, or
         -1 if an error occurred.
 
-        \sa read(), writeData()
+        \sa read()
       */
-      long write (const char * str);
+      ssize_t write (const char * str);
 
       /** 
           @overload
@@ -144,7 +135,7 @@ namespace Piduino {
 
           \sa read()
       */
-      long write (const std::string & str);
+      ssize_t write (const std::string & str);
 
       /**
         Reads at most \a maxSize bytes from the device into \a data, and
@@ -159,38 +150,7 @@ namespace Piduino {
 
         \sa write()
       */
-      virtual long read (char * data, long maxSize);
-
-      /**
-        @overload
-
-        Reads at most \a maxSize bytes from the device, and returns the
-        data read as a std::string.
-
-        This function has no way of reporting errors; returning an empty
-        std::string can mean either that no data was currently available
-        for reading, or that an error occurred.
-      */
-      std::string read (long maxSize = -1);
-
-      /**
-          Returns the number of incoming bytes that are waiting to be read.
-       */
-      virtual int bytesAvailable();
-
-      /**
-        This function blocks until new data is available for reading. The
-        function will timeout after \a msecs milliseconds; the default timeout is
-        30000 milliseconds. If \a msecs is -1, this function will not time out.
-       */
-      virtual bool waitForReadyRead (int msecs = 30000);
-
-      /**
-        This function blocks until at least one byte has been written. The
-        function will timeout after \a msecs milliseconds; the default timeout is
-        30000 milliseconds. If \a msecs is -1, this function will not time out.
-       */
-      virtual bool waitForBytesWritten (int msecs = 30000);
+      virtual ssize_t read (char * data, size_t maxSize);
 
     protected:
       class Private;

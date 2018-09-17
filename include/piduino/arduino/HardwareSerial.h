@@ -19,6 +19,7 @@
   Modified 28 September 2010 by Mark Sproul
   Modified 14 August 2012 by Alarus
   Modified 3 December 2013 by Matthijs Kooijman
+  Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) for piduino library
 */
 
 #ifndef HardwareSerial_h
@@ -26,7 +27,7 @@
 
 #include <deque>
 #include <piduino/serialport.h>
-#include "Stream.h"
+#include "Terminal.h"
 
 class HardwareSerial;
 
@@ -61,7 +62,7 @@ extern HardwareSerial & Serial3;
 #define SERIAL_7O2 0x3C
 #define SERIAL_8O2 0x3E
 
-class HardwareSerial : public Stream {
+class HardwareSerial : public Terminal {
 
   public:
     HardwareSerial ();
@@ -72,26 +73,23 @@ class HardwareSerial : public Stream {
     void begin (unsigned long baud, uint8_t config = SERIAL_8N1);
     void end();
 
-    virtual int read();
-    virtual int available();
-    virtual int availableForWrite (void);
     operator bool() {
       return true;
     }
-    using Print::write;
 
-    // PiDuino Only, Not for Arduino, 
-    void begin (unsigned long baud, const String & portName, uint8_t config = SERIAL_8N1); 
-    inline void setPath (const std::string & path) {
+    // PiDuino Only, Not for Arduino,
+    void begin (unsigned long baud, const String & portName, uint8_t config = SERIAL_8N1);
+    
+    inline void setPath (const String & path) {
       port->setPath (path);
     }
-    inline std::string path() const {
+    inline String path() const {
       return port->path();
     }
-    inline void setPortName (const std::string & name) {
+    inline void setPortName (const String & name) {
       port->setPortName (name);
     }
-    inline std::string portName() const {
+    inline String portName() const {
       return port->portName();
     }
     inline void setPort (const Piduino::SerialPort::Info & info) {
@@ -103,8 +101,10 @@ class HardwareSerial : public Stream {
     static std::deque<HardwareSerial> availablePorts;
 
   protected:
-    virtual std::ostream & os(); // for Print
-    virtual std::istream & is(); // for Stream
+    virtual std::ostream & os();
+    virtual Piduino::TerminalNotifier & notifier();
+  
+  private:
     std::shared_ptr<Piduino::SerialPort> port;
 };
 

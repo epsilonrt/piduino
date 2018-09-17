@@ -16,7 +16,6 @@
  */
 #include <unistd.h>
 #include <fcntl.h>
-#include <poll.h>
 #include <cstring>
 #include <sys/ioctl.h>
 #include "filedevice_p.h"
@@ -105,11 +104,12 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  long FileDevice::read (char * buf, long n) {
+  // virtual
+  ssize_t FileDevice::read (char * buf, size_t n) {
 
-    if (isOpen()) {
+    if (openMode() & ReadOnly) {
       PIMP_D (FileDevice);
-      long ret = ::read (d->fd, buf, n);
+      ssize_t ret = ::read (d->fd, buf, n);
       if (ret < 0) {
         d->setError();
       }
@@ -119,11 +119,12 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  long FileDevice::write (const char * buf, long n) {
+  // virtual
+  ssize_t FileDevice::write (const char * buf, size_t n) {
 
-    if (isOpen()) {
+    if (openMode() & WriteOnly) {
       PIMP_D (FileDevice);
-      long ret = ::write (d->fd, buf, n);
+      ssize_t ret = ::write (d->fd, buf, n);
       if (ret < 0) {
 
         d->setError();
@@ -134,98 +135,15 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  long FileDevice::write (const char * str) {
+  ssize_t FileDevice::write (const char * str) {
 
     return write (str, strlen (str));
   }
 
   // ---------------------------------------------------------------------------
-  long FileDevice::write (const std::string & str) {
+  ssize_t FileDevice::write (const std::string & str) {
 
     return write (str.c_str(), str.size());
-  }
-
-  // ---------------------------------------------------------------------------
-  std::string FileDevice::read (long n) {
-    std::string str;
-
-    if (n < 0) {
-
-      n = bytesAvailable();
-    }
-
-    if (n > 0) {
-      long len;
-
-      str.resize (n, 0);
-      len = read (&str[0], n);
-
-      if (len <= 0)  {
-
-        str.resize (0);
-      }
-      else if (len != n) {
-
-        str.resize (len);
-      }
-    }
-    return str;
-  }
-
-  // ---------------------------------------------------------------------------
-  int FileDevice::bytesAvailable() {
-    PIMP_D (FileDevice);
-    int ret;
-    int bytesQueued = 0;
-
-    ret = d->ioctl (FIONREAD, &bytesQueued);
-
-    if (ret < 0) {
-
-      bytesQueued = ret;
-    }
-    return bytesQueued;
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  FileDevice::waitForReadyRead (int msecs) {
-
-    if (bytesAvailable() == 0) {
-      PIMP_D (FileDevice);
-      bool readyToRead = false;
-      bool readyToWrite = false;
-
-      if (d->poll (&readyToRead, &readyToWrite, true, false, msecs) > 0) {
-
-        return readyToRead;
-      }
-    }
-    return false;
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  FileDevice::waitForBytesWritten (int msecs) {
-
-    if (isOpen()) {
-      PIMP_D (FileDevice);
-      bool readyToRead = false;
-      bool readyToWrite = false;
-
-      if (d->poll (&readyToRead, &readyToWrite, false, true, msecs) > 0) {
-
-        return readyToWrite;
-      }
-    }
-
-    return false;
-  }
-
-  // ---------------------------------------------------------------------------
-  std::iostream & FileDevice::ios() {
-    PIMP_D (FileDevice);
-    return d->stream;
   }
 
 // -----------------------------------------------------------------------------
@@ -235,7 +153,7 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   // ---------------------------------------------------------------------------
   FileDevice::Private::Private (FileDevice * q) :
-    IoDevice::Private (q), fd (-1), stream (&iosbuf) {}
+    IoDevice::Private (q), fd (-1) {}
 
   // ---------------------------------------------------------------------------
   FileDevice::Private::~Private() = default;
@@ -248,17 +166,11 @@ namespace Piduino {
     additionalPosixFlags &= ~static_cast<int> (O_ACCMODE | O_APPEND | O_TRUNC);
     additionalPosixFlags |= modeToPosixFlags (mode);
 
-    lock();
     fd = ::open (path.c_str(), additionalPosixFlags);
     if (fd == -1) {
       setError ();
       success = false;
     }
-    unlock();
-
-    ios::openmode iosmode = static_cast<ios::openmode> (mode.value() & IosModes);
-    __gnu_cxx::stdio_filebuf<char> buf (fd, iosmode);
-    iosbuf.swap (buf);
 
     return success;
   }
@@ -266,8 +178,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void FileDevice::Private::close() {
 
-    unlock();
-    if (iosbuf.close() == 0) {
+    if (::close(fd) != 0) {
 
       setError();
     }
@@ -278,9 +189,7 @@ namespace Piduino {
   int FileDevice::Private::ioctl (int req) {
     int ret;
 
-    lock();
     ret = ::ioctl (fd, req);
-    unlock();
     if (ret < 0) {
       setError();
     }
@@ -291,55 +200,12 @@ namespace Piduino {
   int FileDevice::Private::ioctl (int req, void * arg) {
     int ret;
 
-    lock();
     ret = ::ioctl (fd, req, arg);
-    unlock();
     if (ret < 0) {
       setError();
     }
     return ret;
   }
-
-  // ---------------------------------------------------------------------------
-  int
-  FileDevice::Private::poll (bool *selectForRead, bool *selectForWrite,
-                             bool checkRead, bool checkWrite,
-                             int msecs) {
-    int ret;
-    struct pollfd pfd = { fd, 0, 0 };
-
-    if (checkRead) {
-      pfd.events |= POLLIN;
-    }
-
-    if (checkWrite) {
-      pfd.events |= POLLOUT;
-    }
-
-    lock();
-    ret = ::poll (&pfd, 1, msecs);
-    unlock();
-
-    if (ret < 0) {
-      setError ();
-      return ret;
-    }
-
-    if (ret == 0) {
-      setError (ETIMEDOUT);
-      return ret;
-    }
-
-    if (pfd.revents & POLLNVAL) {
-      setError (EBADF);
-      return -1;
-    }
-
-    *selectForWrite = ( (pfd.revents & POLLOUT) != 0);
-    *selectForRead  = ( (pfd.revents & POLLIN) != 0);
-    return ret;
-  }
-
 }
 
 /* ========================================================================== */

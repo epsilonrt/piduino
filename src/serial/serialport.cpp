@@ -217,13 +217,13 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  SerialPort::SerialPort (SerialPort::Private &dd) : FileDevice (dd) {
+  SerialPort::SerialPort (SerialPort::Private &dd) : Terminal (dd) {
 
   }
 
   // ---------------------------------------------------------------------------
   SerialPort::SerialPort () :
-    FileDevice (*new Private (this))  {
+    Terminal (*new Private (this))  {
 
   }
 
@@ -261,7 +261,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  void SerialPort::clear (Directions directions) {
+  void SerialPort::discard (Directions directions) {
 
     if (isOpen()) {
       PIMP_D (SerialPort);
@@ -510,9 +510,8 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   SerialPort::Private::Private (SerialPort * q) :
-    FileDevice::Private (q) {
+    Terminal::Private (q) {
 
-    isSequential = true;
   }
 
   // ---------------------------------------------------------------------------
@@ -521,13 +520,11 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   bool SerialPort::Private::open (OpenMode mode, int additionalPosixFlags) {
 
-    if (FileDevice::Private::open (mode, O_NOCTTY | O_NONBLOCK)) {
+    if (Terminal::Private::open (mode, O_NOCTTY | O_NONBLOCK)) {
 
-      lock();
       // Acquire non-blocking exclusive lock
       if (::flock (fd, LOCK_EX | LOCK_NB) == 0) {
 
-        unlock();
         if (initialize (mode)) {
 
           return true;
@@ -579,7 +576,6 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void SerialPort::Private::close () {
 
-    unlock();
     if (settingsRestoredOnClose) {
       ::tcsetattr (fd, TCSANOW, &restoredTermios);
     }
@@ -592,17 +588,15 @@ namespace Piduino {
 
       setError();
     }
-    FileDevice::Private::close();
+    Terminal::Private::close();
   }
 
   // ---------------------------------------------------------------------------
   void SerialPort::Private::tcflush (Directions directions) {
     int ret;
 
-    lock();
     ret = ::tcflush (fd, (directions == AllDirections)
                      ? TCIOFLUSH : (directions & Input) ? TCIFLUSH : TCOFLUSH);
-    unlock();
 
     if (ret == -1) {
       setError ();
@@ -613,9 +607,7 @@ namespace Piduino {
   bool SerialPort::Private::sendBreak (int duration) {
     int ret;
 
-    lock();
     ret = ::tcsendbreak (fd, duration);
-    unlock();
 
     if (ret < 0) {
       setError ();
@@ -946,9 +938,7 @@ namespace Piduino {
   bool SerialPort::Private::setTermios (const termios *tio) {
     int ret;
 
-    lock();
     ret = ::tcsetattr (fd, TCSANOW, tio);
-    unlock();
 
     if (ret < 0) {
 
@@ -964,9 +954,7 @@ namespace Piduino {
 
     ::memset (tio, 0, sizeof (termios));
 
-    lock();
     ret = ::tcgetattr (fd, tio);
-    unlock();
 
     if (ret < 0) {
 

@@ -126,7 +126,8 @@
       <VirtualDirectory Name="serial">
         <File Name="src/arduino/serial/HardwareSerial.cpp"/>
       </VirtualDirectory>
-      <File Name="src/arduino/Ciostream.cpp"/>
+      <File Name="src/arduino/Console.cpp"/>
+      <File Name="src/arduino/Terminal.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="serial">
       <File Name="src/serial/serialport.cpp"/>
@@ -138,6 +139,13 @@
     <File Name="src/filedevice_p.h"/>
     <File Name="src/filedevice.cpp"/>
     <File Name="src/fileno.cpp"/>
+    <File Name="src/string.cpp"/>
+    <File Name="src/filestream.cpp"/>
+    <File Name="src/filestream_p.h"/>
+    <File Name="src/terminalnotifier.cpp"/>
+    <File Name="src/terminalnotifier_p.h"/>
+    <File Name="src/terminal.cpp"/>
+    <File Name="src/terminal_p.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -165,10 +173,11 @@
         <File Name="include/piduino/arduino/Stream.h"/>
         <File Name="include/piduino/arduino/Wire.h"/>
         <File Name="include/piduino/arduino/SPI.h"/>
-        <File Name="include/piduino/arduino/Ciostream.h"/>
         <File Name="include/piduino/arduino/HardwareSerial.h"/>
         <File Name="include/piduino/arduino/Piduino.h"/>
         <File Name="include/piduino/arduino/Arduino.h"/>
+        <File Name="include/piduino/arduino/Console.h"/>
+        <File Name="include/piduino/arduino/Terminal.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/ringbuffer.h"/>
       <File Name="include/piduino/memory.h"/>
@@ -182,6 +191,11 @@
       <File Name="include/piduino/string.h"/>
       <File Name="include/piduino/filedevice.h"/>
       <File Name="include/piduino/fileno.h"/>
+      <File Name="include/piduino/readnotifier.h"/>
+      <File Name="include/piduino/threadsafebuffer.h"/>
+      <File Name="include/piduino/filestream.h"/>
+      <File Name="include/piduino/terminalnotifier.h"/>
+      <File Name="include/piduino/terminal.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>

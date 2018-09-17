@@ -119,37 +119,7 @@ namespace Piduino {
       std::string::replace (found, str1.length(), str2);
     }
   }
-
-  //------------------------------------------------------------------------
-  String & String::operator += (unsigned char num) {
-
-    concat (num);
-    return (*this);
-  }
-  //------------------------------------------------------------------------
-  String & String::operator += (int num) {
-
-    concat (num);
-    return (*this);
-  }
-  //------------------------------------------------------------------------
-  String & String::operator += (unsigned int num) {
-
-    concat (num);
-    return (*this);
-  }
-  //------------------------------------------------------------------------
-  String & String::operator += (long num) {
-
-    concat (num);
-    return (*this);
-  }
-  //------------------------------------------------------------------------
-  String & String::operator += (unsigned long num)  {
-
-    concat (num);
-    return (*this);
-  }
+  
   //------------------------------------------------------------------------
   void String::toLowerCase () {
     std::transform (cbegin(), cend(), begin(),

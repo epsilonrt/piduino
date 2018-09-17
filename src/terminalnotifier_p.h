@@ -14,18 +14,36 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include <Ciostream.h>
+#ifndef PIDUINO_TERMIONOTIFIER_PRIVATE_H
+#define PIDUINO_TERMIONOTIFIER_PRIVATE_H
 
-// -----------------------------------------------------------------------------
-std::ostream & Ciostream::os() {
+#include <future>
+#include <thread>
+#include <termios.h>
+#include <piduino/global.h>
+#include <piduino/terminalnotifier.h>
+#include <piduino/threadsafebuffer.h>
 
-  return std::cout;
-}
+namespace Piduino {
 
-// -----------------------------------------------------------------------------
-std::istream & Ciostream::is() {
+  class TerminalNotifier::Private {
+    public:
 
-  return std::cin;
+      Private (TerminalNotifier * q);
+      virtual ~Private();
+      static void * notifyThread (std::future<void> run, TerminalNotifier::Private * d);
+      static int poll (int fd, unsigned long timeout_ms);
+
+      TerminalNotifier * const q_ptr;
+      int fd;
+      struct termios pterm;
+      ThreadSafeBuffer<char> buf;
+      std::thread thread;
+      std::promise<void> stop;
+
+      PIMP_DECLARE_PUBLIC (TerminalNotifier)
+  };
 }
 
 /* ========================================================================== */
+#endif /* PIDUINO_TERMIONOTIFIER_PRIVATE_H defined */

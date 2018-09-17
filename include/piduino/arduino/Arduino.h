@@ -1,21 +1,25 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef PIDUINO_ARDUINO_H
-#define PIDUINO_ARDUINO_H
+/*
+  Arduino.h - Main include file for the Arduino SDK
+  Copyright (c) 2005-2013 Arduino Team.  All right reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  
+  Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) for piduino library
+*/
+#ifndef Arduino_h
+#define Arduino_h
 
 #ifndef __DOXYGEN__
 
@@ -303,4 +307,4 @@ EXTERN_C void setPriority (int priority);
 */
 
 /* ========================================================================== */
-#endif /*PIDUINO_ARDUINO_H defined */
+#endif /*Arduino_h defined */

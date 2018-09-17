@@ -19,7 +19,7 @@
 
 #include <deque>
 #include <string>
-#include <piduino/filedevice.h>
+#include <piduino/terminal.h>
 
 /**
  *  @defgroup piduino_serialport Serial port
@@ -75,7 +75,7 @@ namespace Piduino {
 
       @endlist
    */
-  class SerialPort : public FileDevice {
+  class SerialPort : public Terminal {
     public:
 
       /**
@@ -582,7 +582,7 @@ namespace Piduino {
         @note The serial port has to be open before trying to clear any buffered
         data; otherwise returns @c false and sets the NotOpenError error code.
        */
-      void clear (Directions directions);
+      void discard (Directions directions = AllDirections);
 
       /**
         Sets the port stored in the serial port info instance @a serialPortInfo.

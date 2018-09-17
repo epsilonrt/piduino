@@ -15,25 +15,32 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef Ciostream_h
-#define Ciostream_h
+#ifndef PIDUINO_FILESTREAM_PRIVATE_H
+#define PIDUINO_FILESTREAM_PRIVATE_H
 
-#include "Stream.h"
-#include <Arduino.h>
+#include <ext/stdio_filebuf.h>
+#include <piduino/filestream.h>
+#include "filedevice_p.h"
 
-class Ciostream : public Stream {
+namespace Piduino {
 
-  public:
-    inline Ciostream() {
-      os().clear();
-      is().clear();
-    }
-    void begin (unsigned long speed_dummy, uint8_t config = 0) {}
-    void end() {}
+  /**
+   * @class FileStream::Private
+   * @brief
+   */
+  class FileStream::Private  : public FileDevice::Private {
 
-  protected:
-    virtual std::ostream & os();
-    virtual std::istream & is();
-};
+    public:
+      Private (FileStream * q);
 
-#endif
+      virtual bool open (OpenMode mode, int additionalPosixFlags = 0);
+      virtual void close();
+
+      __gnu_cxx::stdio_filebuf<char> iosbuf;
+
+      PIMP_DECLARE_PUBLIC (FileStream)
+  };
+}
+
+/* ========================================================================== */
+#endif /* PIDUINO_FILESTREAM_PRIVATE_H defined */

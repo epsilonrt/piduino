@@ -40,6 +40,12 @@ namespace Piduino {
         Append = std::ios_base::app, ///< Set the stream's position indicator to the end of the stream before each output operation.
         AtEnd = std::ios_base::ate, ///< Set the stream's position indicator to the end of the stream on opening.
         Binary = std::ios_base::binary, ///< Consider stream as binary rather than text. 
+        /*
+         * Text mode
+         * When reading, the end-of-line terminators are translated to '\n'. 
+         * When writing, the end-of-line terminators are translated to the 
+         * local encoding, for example '\r\n' for Win32.
+         */
         ReadOnly = std::ios_base::in, ///< Allow input operations
         WriteOnly = std::ios_base::out, ///< Allow output operations 
         ReadWrite = ReadOnly | WriteOnly, ///< Allow input and output operations

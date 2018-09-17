@@ -20,11 +20,11 @@
 #include <termios.h>
 #include <string>
 #include <piduino/serialport.h>
-#include "../filedevice_p.h"
+#include "../terminal_p.h"
 
 namespace Piduino {
 
-  class SerialPort::Private : public FileDevice::Private {
+  class SerialPort::Private : public Terminal::Private {
 
     public:
       Private (SerialPort * q);
