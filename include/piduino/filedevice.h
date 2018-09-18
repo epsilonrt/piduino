@@ -54,6 +54,11 @@ namespace Piduino {
       FileDevice ();
 
       /**
+        Constructs a FileDevice object from an open file descriptor.
+      */
+      FileDevice (int fd);
+
+      /**
         Constructs a new file object to represent the file with the given \a path.
       */
       FileDevice (const std::string & path);
@@ -99,6 +104,8 @@ namespace Piduino {
         \sa setPath()
       */
       virtual std::string path() const;
+      
+      bool setFd (int fd);
 
       /**
         Returns the file descriptor of the file, if it is open, else returns -1.
@@ -106,6 +113,8 @@ namespace Piduino {
         Do not use the ::close() function with this descriptor !
       */
       int fd() const;
+      
+      bool isOurFile() const;
 
       /**
           Writes at most \a maxSize bytes of data from \a data to the

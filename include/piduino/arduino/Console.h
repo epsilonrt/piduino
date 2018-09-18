@@ -19,10 +19,12 @@
 #define Piconsole_h
 
 #include "Terminal.h"
+#include <piduino/filedevice.h>
 
 class PiConsole : public Terminal {
 
   public:
+    PiConsole();
     virtual void begin (unsigned long speed_dummy = 0, uint8_t config_dummy = 0);
     virtual void end();
 
@@ -31,6 +33,7 @@ class PiConsole : public Terminal {
     virtual Piduino::TerminalNotifier & notifier();
 
   private:
+    Piduino::FileDevice _keyb;
     Piduino::TerminalNotifier _notifier;
 };
 #endif

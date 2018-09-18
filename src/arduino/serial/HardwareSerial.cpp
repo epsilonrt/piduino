@@ -15,6 +15,7 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include <HardwareSerial.h>
+#include <piduino/database.h>
 
 using namespace Piduino;
 using namespace std;
@@ -54,17 +55,17 @@ void HardwareSerial::setupAvailablePorts() {
 
 // -----------------------------------------------------------------------------
 HardwareSerial::HardwareSerial () :
-  port (new Piduino::SerialPort ()) {
+  port (new Piduino::SerialPort ()), writelnDelay (0) {
 }
 
 // -----------------------------------------------------------------------------
 HardwareSerial::HardwareSerial (const Piduino::SerialPort::Info & serialPortInfo) :
-  port (new Piduino::SerialPort (serialPortInfo)) {
+  port (new Piduino::SerialPort (serialPortInfo)), writelnDelay (0) {
 }
 
 // -----------------------------------------------------------------------------
 HardwareSerial::HardwareSerial (const String & path) :
-  port (new Piduino::SerialPort (path)) {
+  port (new Piduino::SerialPort (path)), writelnDelay (0) {
 }
 
 // -----------------------------------------------------------------------------
@@ -173,9 +174,14 @@ void HardwareSerial::begin (unsigned long baud, uint8_t config) {
       break;
   }
   port->setSettings (s);
-  port->setBaudRate(baud);
+  port->setBaudRate (baud);
   if (port->open()) {
     Terminal::begin();
+    if (portName().startsWith ("ttyS")  &&
+        (db.board().soc().family().id() == SoC::Family::AllwinnerH)) {
+      writelnDelay = 500; // to avoid buffer overflow on SoC Allwinner
+      // TODO: Analyze the sun8i driver code to understand why this is needed !
+    }
   }
 }
 
@@ -183,12 +189,19 @@ void HardwareSerial::begin (unsigned long baud, uint8_t config) {
 void HardwareSerial::begin (unsigned long baud, const String & name, uint8_t config) {
 
   setPortName (name);
+  begin (baud, name.c_str());
+}
+
+// -----------------------------------------------------------------------------
+void HardwareSerial::begin (unsigned long baud, const char * name, uint8_t config) {
+
+  setPortName (name);
   begin (baud, config);
 }
 
 // -----------------------------------------------------------------------------
 void HardwareSerial::end() {
-  
+
   Terminal::end();
   port->close();
 }
@@ -205,6 +218,14 @@ std::ostream & HardwareSerial::os() {
 Piduino::TerminalNotifier & HardwareSerial::notifier() {
 
   return port->notifier();
+}
+
+// -----------------------------------------------------------------------------
+size_t HardwareSerial::writeln() {
+  
+  size_t ret = ::Terminal::writeln();
+  delayMicroseconds (writelnDelay);
+  return ret;
 }
 
 /* ========================================================================== */

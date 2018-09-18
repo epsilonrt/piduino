@@ -40,10 +40,15 @@ namespace Piduino {
     IoDevice (*new Private (this)) {
 
   }
-  
+
   // ---------------------------------------------------------------------------
   FileDevice::FileDevice (const std::string & path) : FileDevice() {
     setPath (path);
+  }
+
+  // ---------------------------------------------------------------------------
+  FileDevice::FileDevice (int fd) : FileDevice() {
+    setFd (fd);
   }
 
   // ---------------------------------------------------------------------------
@@ -55,7 +60,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   bool FileDevice::open (OpenMode mode) {
 
-    if (!isOpen()) {
+    if (!isOpen() && isOurFile()) {
       PIMP_D (FileDevice);
 
       if (d->open (mode)) {
@@ -69,7 +74,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void FileDevice::close() {
 
-    if (isOpen()) {
+    if (isOpen() && isOurFile()) {
       PIMP_D (FileDevice);
 
       d->close();
@@ -80,13 +85,11 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void FileDevice::setPath (const std::string & path) {
     PIMP_D (FileDevice);
-    
-    if (isOpen()) {
-      
-      close();
-    }
 
+    close();
     d->path = path;
+    d->ourFile = true;
+    d->fd = -1;
   }
 
   // ---------------------------------------------------------------------------
@@ -97,10 +100,58 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  bool FileDevice::setFd (int fdesc) {
+
+    if (fdesc != fd()) {
+
+      int flags = fcntl (fdesc, F_GETFL, 0);
+
+      if (flags >= 0) {
+        PIMP_D (FileDevice);
+        OpenMode m = NotOpen;
+
+        close();
+        switch (flags & O_ACCMODE) {
+          case O_RDONLY:
+            m = ReadOnly;
+            break;
+          case O_WRONLY:
+            m = WriteOnly;
+            break;
+          case O_RDWR:
+            m = ReadWrite;
+            break;
+        }
+
+        if (m != NotOpen) {
+
+          if (flags & O_APPEND) {
+
+            m |= Append;
+          }
+          d->fd = fdesc;
+          d->ourFile = false;
+          d->path.clear();
+          return IoDevice::open (m);
+        }
+      }
+    }
+    return isOpen();
+  }
+
+
+  // ---------------------------------------------------------------------------
   int FileDevice::fd() const {
     PIMP_D (const FileDevice);
 
     return d->fd;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool FileDevice::isOurFile() const {
+    PIMP_D (const FileDevice);
+
+    return d->ourFile;
   }
 
   // ---------------------------------------------------------------------------
@@ -109,11 +160,36 @@ namespace Piduino {
 
     if (openMode() & ReadOnly) {
       PIMP_D (FileDevice);
-      ssize_t ret = ::read (d->fd, buf, n);
-      if (ret < 0) {
+      ssize_t len = ::read (d->fd, buf, n);
+
+      if (len < 0) {
         d->setError();
       }
-      return ret;
+      else if (! (openMode() & IoDevice::Binary)) {
+        /*
+         * Text mode
+         * When reading, the end-of-line terminators are translated to '\n'.
+         */
+        for (size_t i = 0; i < len; i++) {
+
+          if (buf[i] == '\r') {
+
+            buf[i] = '\n'; // change \r to \n
+            if (i < (len - 1)) {
+              if (buf[i + 1] == '\n') { // shift left all chars to erase \n
+
+                for (size_t j = i + 1; j < (len - 1); j++) {
+
+                  buf[j] = buf[j + 1];
+                }
+                buf[len - 1] = 0;
+                len --;
+              }
+            }
+          }
+        }
+      }
+      return len;
     }
     return -1;
   }
@@ -124,12 +200,12 @@ namespace Piduino {
 
     if (openMode() & WriteOnly) {
       PIMP_D (FileDevice);
-      ssize_t ret = ::write (d->fd, buf, n);
-      if (ret < 0) {
+      ssize_t len = ::write (d->fd, buf, n);
+      if (len < 0) {
 
         d->setError();
       }
-      return ret;
+      return len;
     }
     return -1;
   }
@@ -153,32 +229,31 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
   // ---------------------------------------------------------------------------
   FileDevice::Private::Private (FileDevice * q) :
-    IoDevice::Private (q), fd (-1) {}
+    IoDevice::Private (q), fd (-1), ourFile (true) {}
 
   // ---------------------------------------------------------------------------
   FileDevice::Private::~Private() = default;
 
   // ---------------------------------------------------------------------------
-  bool FileDevice::Private::open (OpenMode mode, int additionalPosixFlags) {
+  bool FileDevice::Private::open (OpenMode m, int additionalPosixFlags) {
     PIMP_Q (FileDevice);
-    bool success = true;
 
     additionalPosixFlags &= ~static_cast<int> (O_ACCMODE | O_APPEND | O_TRUNC);
-    additionalPosixFlags |= modeToPosixFlags (mode);
+    additionalPosixFlags |= modeToPosixFlags (m);
 
     fd = ::open (path.c_str(), additionalPosixFlags);
     if (fd == -1) {
       setError ();
-      success = false;
+      return false;
     }
 
-    return success;
+    return IoDevice::Private::open(m);
   }
 
   // ---------------------------------------------------------------------------
   void FileDevice::Private::close() {
 
-    if (::close(fd) != 0) {
+    if (::close (fd) != 0) {
 
       setError();
     }

@@ -19,6 +19,7 @@
 
 #include <string>
 #include <piduino/global.h>
+#include <piduino/filedevice.h>
 
 /**
  *  @defgroup piduino_terminalnotifier Read Notifier
@@ -33,10 +34,10 @@ namespace Piduino {
    */
   class TerminalNotifier {
     public:
-      TerminalNotifier ();
+      TerminalNotifier (FileDevice * io);
       virtual ~TerminalNotifier();
 
-      bool start (int fd);
+      bool start ();
       void terminate();
       bool isRunning() const;
 

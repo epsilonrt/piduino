@@ -62,7 +62,7 @@ extern HardwareSerial & Serial3;
 #define SERIAL_7O2 0x3C
 #define SERIAL_8O2 0x3E
 
-class HardwareSerial : public Terminal {
+class HardwareSerial : public ::Terminal {
 
   public:
     HardwareSerial ();
@@ -77,24 +77,34 @@ class HardwareSerial : public Terminal {
       return true;
     }
 
-    // PiDuino Only, Not for Arduino,
+    // PiDuino Extension, Not for Arduino !
+    void begin (unsigned long baud, const char * portName, uint8_t config = SERIAL_8N1);
     void begin (unsigned long baud, const String & portName, uint8_t config = SERIAL_8N1);
-    
-    inline void setPath (const String & path) {
-      port->setPath (path);
-    }
-    inline String path() const {
-      return port->path();
-    }
-    inline void setPortName (const String & name) {
-      port->setPortName (name);
-    }
-    inline String portName() const {
-      return port->portName();
-    }
-    inline void setPort (const Piduino::SerialPort::Info & info) {
-      port->setPort (info);
-    }
+
+    inline void setPath (const String & path);
+    inline String path() const;
+    inline void setPortName (const String & name);
+    inline String portName() const;
+    inline void setPort (const Piduino::SerialPort::Info & info);
+
+    inline bool setBaudRate (int32_t baudRate, Piduino::SerialPort::Directions directions = Piduino::SerialPort::AllDirections);
+    inline int32_t baudRate (Piduino::SerialPort::Directions directions = Piduino::SerialPort::AllDirections) const;
+    inline bool setDataBits (Piduino::SerialPort::DataBits dataBits);
+    inline Piduino::SerialPort::DataBits dataBits() const;
+    inline bool setParity (Piduino::SerialPort::Parity parity);
+    inline Piduino::SerialPort::Parity parity() const;
+    inline bool setStopBits (Piduino::SerialPort::StopBits stopBits);
+    inline Piduino::SerialPort::StopBits stopBits() const;
+    inline bool setFlowControl (Piduino::SerialPort::FlowControl flowControl);
+    inline Piduino::SerialPort::FlowControl flowControl() const;
+    inline bool setDataTerminalReady (bool set);
+    inline bool isDataTerminalReady();
+    inline bool setRequestToSend (bool set);
+    inline bool isRequestToSend();
+    inline Piduino::SerialPort::PinoutSignals pinoutSignals();
+    inline bool sendBreak (int duration = 0);
+    inline bool setBreakEnabled (bool set = true);
+    inline bool isBreakEnabled() const;
 
     static void setupAvailablePorts();
     static const int numberOfPorts = 4;
@@ -103,9 +113,82 @@ class HardwareSerial : public Terminal {
   protected:
     virtual std::ostream & os();
     virtual Piduino::TerminalNotifier & notifier();
-  
+    virtual size_t writeln();
+
   private:
     std::shared_ptr<Piduino::SerialPort> port;
+    int writelnDelay; // to avoid buffer overflow on SoC Allwinner
 };
+
+inline void HardwareSerial::setPath (const String & path) {
+  port->setPath (path);
+}
+inline String HardwareSerial::path() const {
+  return port->path();
+}
+inline void HardwareSerial::setPortName (const String & name) {
+  port->setPortName (name);
+}
+inline String HardwareSerial::portName() const {
+  return port->portName();
+}
+inline void HardwareSerial::setPort (const Piduino::SerialPort::Info & info) {
+  port->setPort (info);
+}
+inline bool HardwareSerial::setBaudRate (int32_t baudRate, Piduino::SerialPort::Directions directions) {
+  return port->setBaudRate (baudRate, directions);
+}
+inline int32_t HardwareSerial::baudRate (Piduino::SerialPort::Directions directions) const {
+  return port->baudRate (directions);
+}
+inline bool HardwareSerial::setDataBits (Piduino::SerialPort::DataBits dataBits) {
+  return port->setDataBits (dataBits);
+}
+inline Piduino::SerialPort::DataBits HardwareSerial::dataBits() const {
+  return port->dataBits();
+}
+inline bool HardwareSerial::setParity (Piduino::SerialPort::Parity parity) {
+  return port->setParity (parity);
+}
+inline Piduino::SerialPort::Parity HardwareSerial::parity() const {
+  return port->parity();
+}
+inline bool HardwareSerial::setStopBits (Piduino::SerialPort::StopBits stopBits) {
+  return port->setStopBits (stopBits);
+}
+inline Piduino::SerialPort::StopBits HardwareSerial::stopBits() const {
+  return port->stopBits();
+}
+inline bool HardwareSerial::setFlowControl (Piduino::SerialPort::FlowControl flowControl) {
+  return port->setFlowControl (flowControl);
+}
+inline Piduino::SerialPort::FlowControl HardwareSerial::flowControl() const {
+  return port->flowControl();
+}
+inline bool HardwareSerial::setDataTerminalReady (bool set) {
+  return port->setDataTerminalReady (set);
+}
+inline bool HardwareSerial::isDataTerminalReady() {
+  return port->isDataTerminalReady();
+}
+inline bool HardwareSerial::setRequestToSend (bool set) {
+  return port->setRequestToSend (set);
+}
+inline bool HardwareSerial::isRequestToSend() {
+  return port->isRequestToSend();
+}
+inline Piduino::SerialPort::PinoutSignals HardwareSerial::pinoutSignals() {
+  return port->pinoutSignals();
+}
+inline bool HardwareSerial::sendBreak (int duration) {
+  return port->sendBreak (duration);
+}
+inline bool HardwareSerial::setBreakEnabled (bool set) {
+  return port->setBreakEnabled (set);
+}
+inline bool HardwareSerial::isBreakEnabled() const {
+  return port->isBreakEnabled();
+}
+
 
 #endif

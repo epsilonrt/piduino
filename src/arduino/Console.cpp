@@ -20,11 +20,16 @@
 using namespace std;
 
 // -----------------------------------------------------------------------------
+PiConsole::PiConsole() : _keyb(STDIN_FILENO), _notifier(&_keyb) {
+
+}
+
+// -----------------------------------------------------------------------------
 void PiConsole::begin (__attribute__ ( (__unused__)) unsigned long,
                        __attribute__ ( (__unused__)) uint8_t) {
 
   Terminal::begin();
-  _notifier.start (STDIN_FILENO);
+  _notifier.start ();
 }
 
 // -----------------------------------------------------------------------------

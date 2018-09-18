@@ -37,7 +37,13 @@ namespace Piduino {
     public:
       // Constructors
       String() : std::string() {}
+      String (const String & s, size_t pos, size_t len = std::string::npos) : std::string (s,pos,len) {}
+      String (const char * s) : std::string (s) {}
+      String (const char * s, size_t n) : std::string (s,n) {}
+      String (size_t n, char c) : std::string (n,c) {}
       String (const std::string &s) : std::string (s) {}
+      String (const std::string & s, size_t pos, size_t len = std::string::npos) : std::string (s,pos,len) {}
+
       explicit String (unsigned char n, unsigned char base = 10) : String (toString (n, base)) {}
       explicit String (int n, unsigned char base = 10) : String (toString (n, base)) {}
       explicit String (unsigned int n, unsigned char base = 10) : String (toString (n, base)) {}
@@ -59,7 +65,7 @@ namespace Piduino {
       inline void replace (char c1, char c2);
       void toLowerCase ();
       void toUpperCase ();
-      
+
       inline String & operator += (const String& str);
       inline String & operator += (const char * str);
       inline String & operator += (char c);
@@ -118,23 +124,23 @@ namespace Piduino {
       static inline String toString (unsigned short num, unsigned char base = 10);
       static inline String toString (unsigned char num, unsigned char base = 10);
   };
-  
+
   //------------------------------------------------------------------------
   inline String & String::operator += (const String& str) {
 
-    concat(str);
+    concat (str);
     return (*this);
   }
   //------------------------------------------------------------------------
   inline String & String::operator += (const char * str) {
 
-    concat(str);
+    concat (str);
     return (*this);
   }
   //------------------------------------------------------------------------
   inline String & String::operator += (char c) {
 
-    concat(c);
+    concat (c);
     return (*this);
   }
   //------------------------------------------------------------------------

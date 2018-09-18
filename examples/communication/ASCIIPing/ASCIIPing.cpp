@@ -14,6 +14,10 @@ void setup() {
   
   // initialize serial:
   Serial.begin (115200);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+
   Serial.println ("Press any key...");
 }
 
@@ -25,7 +29,8 @@ void loop () {
     int c = Serial.read(); //  read it !
     if (c > 0) { // if the reading was successful ...
 
-      Serial.write (c); // write the character on the port
+      Serial.write (c); // write the character on the buffer
+      Serial.flush(); // flush the buffer on the serial port
     }
   }
 }

@@ -29,7 +29,10 @@ namespace Piduino {
       Private (IoDevice * q);
       virtual ~Private();
       
+      virtual bool open (OpenMode mode);
+      virtual void close();
       virtual bool isOpen() const;
+      
       virtual void clearError();
       virtual void setError ();
       virtual void setError (int error);

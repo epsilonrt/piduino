@@ -39,8 +39,8 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  TerminalNotifier::TerminalNotifier () :
-    d_ptr (new Private (this))  {
+  TerminalNotifier::TerminalNotifier (FileDevice * io) :
+    d_ptr (new Private (this, io))  {
 
   }
 
@@ -51,19 +51,20 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  bool TerminalNotifier::start (int fd) {
+  bool TerminalNotifier::start () {
+    PIMP_D (TerminalNotifier);
 
-    if (!isRunning()) {
+    if (!isRunning() && (d->io->openMode() & IoDevice::ReadOnly)) {
       struct termios term;
 
       // Get the current terminal settings so that only
       // the settings we want to change are changed
-      if (tcgetattr (fd, &term) == -1) {
+      if (tcgetattr (d->io->fd(), &term) == -1) {
         return false;
       }
 
       // Save the original terminal settings
-      d_ptr->pterm = term;
+      d->pterm = term;
 
       // turn buffering off
       term.c_lflag &= ~ICANON;
@@ -73,17 +74,15 @@ namespace Piduino {
       term.c_cc[VTIME] = 0;
 
       // Apply the changed settings
-      if (tcsetattr (fd, TCSANOW, &term) == -1) {
+      if (tcsetattr (d->io->fd(), TCSANOW, &term) == -1) {
         return false;
       }
 
-      d_ptr->fd = fd;
-
       // Fetch std::future object associated with promise
-      std::future<void> running = d_ptr->stop.get_future();
+      std::future<void> running = d->stopRead.get_future();
 
       // Starting Thread & move the future object in lambda function by reference
-      d_ptr->thread = std::thread (&Private::notifyThread, std::move (running), d_ptr.get());
+      d->readThread = std::thread (&Private::readNotifier, std::move (running), d);
 
     }
     return isRunning();
@@ -95,18 +94,16 @@ namespace Piduino {
     if (isRunning()) {
 
       // Set the value in promise
-      d_ptr->stop.set_value();
+      d_ptr->stopRead.set_value();
       // Wait for thread to join
-      d_ptr->thread.join();
-
-      d_ptr->fd = -1;
+      d_ptr->readThread.join();
     }
   }
 
   // ---------------------------------------------------------------------------
   bool TerminalNotifier::isRunning() const {
 
-    return d_ptr->thread.joinable();
+    return d_ptr->readThread.joinable();
   }
 
   // ---------------------------------------------------------------------------
@@ -164,24 +161,25 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  TerminalNotifier::Private::Private (TerminalNotifier * q) :
-    q_ptr (q), fd (-1) {}
+  TerminalNotifier::Private::Private (TerminalNotifier * q, FileDevice * iofile) :
+    q_ptr (q), io (iofile) {}
 
   // ---------------------------------------------------------------------------
   TerminalNotifier::Private::~Private() = default;
 
   // ---------------------------------------------------------------------------
-  void * TerminalNotifier::Private::notifyThread (std::future<void> run, TerminalNotifier::Private * d) {
+  void * TerminalNotifier::Private::readNotifier (std::future<void> run, TerminalNotifier::Private * d) {
     int len = 0;
 
-    while ( (run.wait_for (std::chrono::milliseconds (1)) == std::future_status::timeout) && (len >= 0)) {
+    while ( (run.wait_for (std::chrono::milliseconds (1)) == std::future_status::timeout) &&
+            (len >= 0) && (d->io->openMode() & IoDevice::ReadOnly)) {
 
-      len = poll (d->fd, 50);
+      len = poll (d->io->fd(), 50);
       if (len > 0) {
         long ret;
         std::vector<char> v (len);
 
-        ret = ::read (d->fd, v.data(), len);
+        ret = d->io->FileDevice::read (v.data(), len);
         if (ret > 0) {
           if (ret != len) {
             v.resize (ret);
@@ -190,7 +188,7 @@ namespace Piduino {
         }
       }
     }
-    tcsetattr (d->fd, TCSANOW, &d->pterm);
+    tcsetattr (d->io->fd(), TCSANOW, &d->pterm);
     return 0;
   }
 

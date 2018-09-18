@@ -40,6 +40,7 @@ namespace Piduino {
       virtual int ioctl (int req, void *);
 
       int fd;
+      bool ourFile;
       std::string path;
 
       PIMP_DECLARE_PUBLIC (FileDevice)

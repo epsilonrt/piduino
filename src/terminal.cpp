@@ -138,7 +138,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Terminal::Private::Private (Terminal * q) :
-    FileStream::Private (q) {
+    FileStream::Private (q), notifier(q) {
       
     isSequential = true;
   }
@@ -148,7 +148,7 @@ namespace Piduino {
 
     if (FileStream::Private::open (mode, additionalPosixFlags)) {
 
-      if (notifier.start (fd)) {
+      if (notifier.start ()) {
 
         return true;
       }

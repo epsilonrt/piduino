@@ -53,8 +53,7 @@ namespace Piduino {
 
     if (!isOpen()) {
 
-      d_ptr->openMode = m;
-      d_ptr->clearError();
+      d_ptr->open (m);
     }
     return true;
   }
@@ -65,7 +64,7 @@ namespace Piduino {
 
     if (isOpen()) {
 
-      d_ptr->openMode = NotOpen;
+      d_ptr->close();
     }
   }
 
@@ -157,6 +156,22 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  bool
+  IoDevice::Private::open (OpenMode m) {
+
+    openMode = m;
+    clearError();
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  IoDevice::Private::close() {
+
+    openMode = NotOpen;
+  }
+
+  // ---------------------------------------------------------------------------
   void
   IoDevice::Private::setError (int error) {
 
@@ -205,13 +220,13 @@ namespace Piduino {
         flags = O_RDONLY;
         break;
     }
-    
+
     if (mode & Append) {
-      
+
       flags |= O_APPEND;
     }
     if (mode & Truncate) {
-      
+
       flags |= O_TRUNC;
     }
     return flags;

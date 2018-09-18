@@ -29,17 +29,17 @@ namespace Piduino {
   class TerminalNotifier::Private {
     public:
 
-      Private (TerminalNotifier * q);
+      Private (TerminalNotifier * q, FileDevice * iofile);
       virtual ~Private();
-      static void * notifyThread (std::future<void> run, TerminalNotifier::Private * d);
+      static void * readNotifier (std::future<void> run, TerminalNotifier::Private * d);
       static int poll (int fd, unsigned long timeout_ms);
 
       TerminalNotifier * const q_ptr;
-      int fd;
+      FileDevice * io;
       struct termios pterm;
       ThreadSafeBuffer<char> buf;
-      std::thread thread;
-      std::promise<void> stop;
+      std::thread readThread;
+      std::promise<void> stopRead;
 
       PIMP_DECLARE_PUBLIC (TerminalNotifier)
   };

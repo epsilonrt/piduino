@@ -22,6 +22,7 @@
 
 #ifdef __cplusplus
 using namespace std;
+using namespace Piduino;
 #include <Console.h>
 #if PIDUINO_WITH_SERIAL
 #include <HardwareSerial.h>
