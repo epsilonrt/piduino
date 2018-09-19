@@ -22,7 +22,5 @@ if(NOT CPACK_PACKAGE_DIRECTORY)
   set(CPACK_PACKAGE_DIRECTORY ${CMAKE_BINARY_DIR}/packages)
 endif()
 
-add_subdirectory (gpio)
+add_subdirectory (pido)
 add_subdirectory (pinfo)
-#add_subdirectory (i2c)
-#add_subdirectory (serial)

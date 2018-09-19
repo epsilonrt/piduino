@@ -53,7 +53,7 @@ board "variant" **WITHOUT** programming.
 * An object design in C++ with a clear separation of the part specific to the platform. 
 Support for new SoCs is summarizes to add a part "driver" in the directory `src/gpio/arch`
 
-* Utilities for manipulating GPIO signals: `gpio`, retrieve information from the 
+* Utilities for manipulating GPIO signals: `pido`, retrieve information from the 
 board: `pinfo` or manage the Pi boards database: `pidbman`
 
 **PiDuino is in development**, version 0.3 currently but the completed parts are 
@@ -117,7 +117,7 @@ void loop () {
 
 Obviously, you need to know the pin number where you connected the LED ! 
 This number depends on your model of Pi board, to know it quickly, we can type 
-the command `gpio readall 1`, which gives us, for example, the following display 
+the command `pido readall 1`, which gives us, for example, the following display 
 on a Raspberry Pi B:
 
                                         P1 (#1)
@@ -253,26 +253,14 @@ on Arduino, it performs an infinite loop (after calling the
 
 ## Utilities
 
-The `pinfo`command allows to know the information on the Pi board:
+### pido, to do something on the Pi board
 
-    Name            : RaspberryPi B
-    Family          : RaspberryPi
-    Database Id     : 9
-    Manufacturer    : Sony
-    Board Revision  : 0xe
-    SoC             : Bcm2708 (Broadcom)
-    Memory          : 512MB
-    GPIO Id         : 2
-    PCB Revision    : 2
-    Serial Ports    : /dev/ttyAMA0
+The `pido`command allows you to modify the mode, the pull resistance, to read 
+or write logical or analogical states (PWM) ... 
 
-The command displays only information in the list, `-h`, allows to know the 
-different options.
+On a raspberry pi model B, this allows to do for example:
 
-The `gpio`command allows you to modify the mode, the pull resistance, to read 
-or write logical or analogical states (PWM) ... Its syntax is simple.
-
-    $ gpio readall
+    $ pido readall
                                         P1 (#1)
     +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
     | sOc | iNo |   Name   | Mode | V | Ph || Ph | V | Mode |   Name   | iNo | sOc |
@@ -304,39 +292,145 @@ or write logical or analogical states (PWM) ... Its syntax is simple.
     |     |     |      GND |      |   |  7 || 8  |   |      | GND      |     |     |
     +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
 
+On a NanoPi Neo Plus 2, this allows to display for example:
 
-For example, to put pin number 0 in output:
+    $ pido readall
+                                              CON1 (#1)
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    |     |     |     3.3V |      |      |   |  1 || 2  |   |      |      | 5V       |     |     |
+    |  12 |   8 |  I2C0SDA | ALT2 |  OFF |   |  3 || 4  |   |      |      | 5V       |     |     |
+    |  11 |   9 |  I2C0SCK | ALT2 |  OFF |   |  5 || 6  |   |      |      | GND      |     |     |
+    |  91 |   7 |  GPIOG11 |  OFF |  OFF |   |  7 || 8  |   | OFF  | ALT2 | UART1TX  | 15  | 86  |
+    |     |     |      GND |      |      |   |  9 || 10 |   | OFF  | ALT2 | UART1RX  | 16  | 87  |
+    |   0 |   0 |   GPIOA0 |  OFF |  OFF |   | 11 || 12 |   | OFF  | OFF  | GPIOA6   | 1   | 6   |
+    |   2 |   2 |   GPIOA2 |  OFF |  OFF |   | 13 || 14 |   |      |      | GND      |     |     |
+    |   3 |   3 |   GPIOA3 |  OFF |  OFF |   | 15 || 16 |   | OFF  | OFF  | GPIOG8   | 4   | 88  |
+    |     |     |     3.3V |      |      |   | 17 || 18 |   | OFF  | OFF  | GPIOG9   | 5   | 89  |
+    |  22 |  12 |   GPIOC0 |  OFF |  OFF |   | 19 || 20 |   |      |      | GND      |     |     |
+    |  23 |  13 |   GPIOC1 |  OFF |  OFF |   | 21 || 22 |   | OFF  | OFF  | GPIOA1   | 6   | 1   |
+    |  24 |  14 |   GPIOC2 |  OFF |  OFF |   | 23 || 24 |   | UP   | OFF  | GPIOC3   | 10  | 25  |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
 
-    $ gpio mode 0 out
+                     DBG_UART (#2)
+    +-----+-----+----------+------+------+---+----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph |
+    +-----+-----+----------+------+------+---+----+
+    |     |     |      GND |      |      |   |  1 |
+    |     |     |       5V |      |      |   |  2 |
+    |   4 |  17 |  UART0TX | ALT2 |  OFF |   |  3 |
+    |   5 |  18 |  UART0RX | ALT2 |   UP |   |  4 |
+    +-----+-----+----------+------+------+---+----+
+
+                       INNER (#3)
+    +-----+-----+----------+------+------+---+----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph |
+    +-----+-----+----------+------+------+---+----+
+    |  10 |  19 |  GPIOA10 |  OFF |  OFF |   |  1 |
+    | 104 |  32 |  PWR_LED |  OUT |  OFF | 1 |  2 |
+    +-----+-----+----------+------+------+---+----+
+
+                       CON2 (#4)
+    +-----+-----+----------+------+------+---+----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph |
+    +-----+-----+----------+------+------+---+----+
+    |     |     |       5V |      |      |   |  1 |
+    |     |     |  USB-DP1 |      |      |   |  2 |
+    |     |     |  USB-DM1 |      |      |   |  3 |
+    |     |     |  USB-DP2 |      |      |   |  4 |
+    |     |     |  USB-DM2 |      |      |   |  5 |
+    | 105 |  20 |  GPIOL11 |  OFF |  OFF |   |  6 |
+    |  17 |  11 |  GPIOA17 |  OFF |  OFF |   |  7 |
+    |  18 |  31 |  GPIOA18 |  OFF |  OFF |   |  8 |
+    |  19 |  30 |  GPIOA19 |  OFF |  OFF |   |  9 |
+    |  20 |  21 |  GPIOA20 |  OUT |  OFF | 0 | 10 |
+    |  21 |  22 |  GPIOA21 |  OFF |  OFF |   | 11 |
+    |     |     |      GND |      |      |   | 12 |
+    +-----+-----+----------+------+------+---+----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph |
+    +-----+-----+----------+------+------+---+----+
+
+As can be seen above, on a NanoPi Neo Plus 2, there are 4 "connectors", 
+the connector `INNER` corresponds to internal signals to the card which can be 
+useful to handle (here one has the signal of the Led ON and the Led STATUS (GPIOA10)).
+
+Note also that in the case of the NanoPi, the `readall` command displays a 
+column `Pull` which allows to display the state of the pull resistor 
+(this feature is not available on a raspberry pi because the BCM2835 does 
+not can not do that).
+
+We can specify the `readall` command, the number of the connector to display 
+(the number of the connector is displayed above its table after the `#`), 
+for example:
+
+    $ pido readall 1
+                                              CON1 (#1)
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    |     |     |     3.3V |      |      |   |  1 || 2  |   |      |      | 5V       |     |     |
+    |  12 |   8 |  I2C0SDA | ALT2 |  OFF |   |  3 || 4  |   |      |      | 5V       |     |     |
+    |  11 |   9 |  I2C0SCK | ALT2 |  OFF |   |  5 || 6  |   |      |      | GND      |     |     |
+    |  91 |   7 |  GPIOG11 |  OFF |  OFF |   |  7 || 8  |   | OFF  | ALT2 | UART1TX  | 15  | 86  |
+    |     |     |      GND |      |      |   |  9 || 10 |   | OFF  | ALT2 | UART1RX  | 16  | 87  |
+    |   0 |   0 |   GPIOA0 |  OFF |  OFF |   | 11 || 12 |   | OFF  | OFF  | GPIOA6   | 1   | 6   |
+    |   2 |   2 |   GPIOA2 |  OFF |  OFF |   | 13 || 14 |   |      |      | GND      |     |     |
+    |   3 |   3 |   GPIOA3 |  OFF |  OFF |   | 15 || 16 |   | OFF  | OFF  | GPIOG8   | 4   | 88  |
+    |     |     |     3.3V |      |      |   | 17 || 18 |   | OFF  | OFF  | GPIOG9   | 5   | 89  |
+    |  22 |  12 |   GPIOC0 |  OFF |  OFF |   | 19 || 20 |   |      |      | GND      |     |     |
+    |  23 |  13 |   GPIOC1 |  OFF |  OFF |   | 21 || 22 |   | OFF  | OFF  | GPIOA1   | 6   | 1   |
+    |  24 |  14 |   GPIOC2 |  OFF |  OFF |   | 23 || 24 |   | UP   | OFF  | GPIOC3   | 10  | 25  |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+
+To put pin number 0 in output:
+
+    $ pido mode 0 out
+
+By default, it is the numbering of the `iNo` column that is used, but we 
+could also designate the signal` 0` by `1.11`:
+
+    $ pido mode 1.11 out
+
+This notation `C.N`, makes it possible to quickly designate the pin` N` 
+(here 11) of the `C` connector (here 1).
 
 To put this output in high state:
 
-    $ gpio write 0 1
+    $ pido write 0 1
 
 To put it in the low state:
 
-    $ gpio write 0 0
+    $ pido write 0 0
 
 You can also toggle the state:
 
-    $ gpio toggle 0
+    $ pido toggle 0
+    
+Or generate a square signal on the pin :
+
+    $ pido blink 0 100
 
 To put it in input with pull-up resistor:
 
-     $ gpio mode 0 in
-     $ gpio pull 0 up
+    $ pido mode 0 in
+    $ pido pull 0 up
 
 And to read it:
 
-    $ gpio read 0
+    $ pido read 0
 
 Or we can wait for a falling front on this entry:
 
-    $ gpio wfi 0 falling
+    $ pido wfi 0 falling
 
 The `-h`option allows to know the different possible actions:
 
-    usage : gpio [ options ] [ command ]  [ parameters ] [ options ]
+    usage : pido [ options ] [ command ]  [ parameters ] [ options ]
     Allow the user easy access to the GPIO pins.
 
     valid options are :
@@ -368,6 +462,41 @@ The `-h`option allows to know the different possible actions:
       pwm <pin> <value>
         Write a PWM value (0-1023) to the given pin (pwm pin only).
 
+### pinfo, to retrieve information on the Pi board
+
+The `pinfo`command allows to know the information on the Pi board.
+
+On a Raspberry Pi model B :
+
+    $ pinfo
+    Name            : RaspberryPi B
+    Family          : RaspberryPi
+    Database Id     : 9
+    Manufacturer    : Sony
+    Board Revision  : 0xe
+    SoC             : Bcm2708 (Broadcom)
+    Memory          : 512MB
+    GPIO Id         : 2
+    PCB Revision    : 2
+    Serial Ports    : /dev/ttyAMA0
+
+On a NanoPi Neo Plus 2:
+
+    $ pinfo
+    Name            : NanoPi Neo+ 2
+    Family          : NanoPi
+    Database Id     : 36
+    Manufacturer    : Friendly ARM
+    Board Tag       : nanopineoplus2
+    SoC             : H5 (Allwinner)
+    Memory          : 1024MB
+    GPIO Id         : 4
+    I2C Buses       : /dev/i2c-0
+    Serial Ports    : /dev/ttyS0,/dev/ttyS1
+
+The command displays only information in the list, `-h`, allows to know the 
+different options.
+
 ## Road Map
 
 **What was done ?**
@@ -375,7 +504,7 @@ The `-h`option allows to know the different possible actions:
 * GPIO modeling, GPIO connectors and pins  
 * Creation of database model and addition of all variants of Raspberry Pi, Nano Pi Neo, Neo2, Neo Plus 2, M1, M1 Plus.  
 * Creation of SoC access layers for Broadcom BCM283X and AllWinner Hx.  
-* Creating `gpio` and `pinfo` utilities  
+* Creating `pido` and `pinfo` utilities  
 * Switching iomap in C++  
 * Creating virtual classes IoDevice and FileDevice
 * analogWrite() with GPIO software PWM feature (Polling with thread) 
@@ -450,7 +579,7 @@ the configuration of the board.
 
 For example, in the case of the NanoPi Neo Core/Core2, we can indicate that the 
 board is on its shield, in this case, the display of the connector by the 
-command `gpio readall` will be adapted.
+command `pido readall` will be adapted.
 
 Pi board model detection uses two methods:  
 * The first method, which applies to Raspberry Pi boards, reads the 

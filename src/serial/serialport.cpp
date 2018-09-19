@@ -26,7 +26,6 @@
 #include <sys/file.h>
 #include <linux/serial.h>
 #include <piduino/database.h>
-#include <piduino/gpio.h>
 #include <piduino/clock.h>
 #include <piduino/string.h>
 #include "serialport_p.h"

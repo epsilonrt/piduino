@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="piduino-utils" Database="" Version="10.0.0">
-  <Project Name="piduino-utils" Path="piduino-utils.project" Active="No"/>
-  <Project Name="gpio" Path="gpio/gpio/gpio.project" Active="Yes"/>
+  <Project Name="piduino-utils" Path="piduino-utils.project" Active="Yes"/>
+  <Project Name="pido" Path="pido/dev/pido.project" Active="No"/>
+  <Project Name="pinfo" Path="pinfo/dev/pinfo.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
-      <Project Name="piduino-utils" ConfigName="Debug"/>
       <Project Name="gpio" ConfigName="Debug"/>
+      <Project Name="piduino-utils" ConfigName="Debug"/>
+      <Project Name="pido" ConfigName="Debug"/>
+      <Project Name="pinfo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
-      <Project Name="piduino-utils" ConfigName="Release"/>
       <Project Name="gpio" ConfigName="Release"/>
+      <Project Name="piduino-utils" ConfigName="Release"/>
+      <Project Name="pido" ConfigName="Release"/>
+      <Project Name="pinfo" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -26,7 +26,6 @@
 #include <linux/serial.h>
 #include <libudev.h>
 #include <algorithm>
-#include <piduino/gpio.h>
 #include <piduino/database.h>
 #include <piduino/serialport.h>
 #include "serialportinfo_p.h"

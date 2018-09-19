@@ -1,17 +1,17 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
  *
- * Piduino gpio tool is free software: you can redistribute it and/or modify
+ * Piduino pido tool is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Piduino gpio tool is distributed in the hope that it will be useful,
+ * Piduino pido tool is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Piduino gpio tool.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Piduino pido tool.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
 #include <fstream>
@@ -57,12 +57,12 @@ void toggle (int argc, char * argv[]);
 void blink (int argc, char * argv[]);
 void readall (int argc, char * argv[]);
 void wfi (int argc, char * argv[]);
-void warranty (int argc, char * argv[]);
 void pwm (int argc, char * argv[]); // TODO
 
 Pin * getPin (char * c_str);
 void usage ();
 void version ();
+void warranty ();
 void sig_handler (int sig);
 vector<string> split (const string& s, char seperator);
 
@@ -86,13 +86,12 @@ main (int argc, char **argv) {
     {"blink", blink},
     {"wfi", wfi},
     {"readall", readall},
-    {"warranty", warranty},
     {"pwm", pwm} // TODO
   };
 
   try {
     /* Traitement options ligne de commande */
-    while ( (opt = getopt (argc, argv, "gs1dhfv")) != -1) {
+    while ( (opt = getopt (argc, argv, "gs1dhfvw")) != -1) {
 
       switch (opt) {
 
@@ -123,6 +122,11 @@ main (int argc, char **argv) {
 
         case 'v':
           version();
+          exit (EXIT_SUCCESS);
+          break;
+
+        case 'w':
+          warranty();
           exit (EXIT_SUCCESS);
           break;
 
@@ -560,33 +564,31 @@ sig_handler (int sig) {
 void
 version() {
 
-  cout << "Piduino gpio version " << VERSION_SHORT << endl;
+  cout << "Piduino pido version " << VERSION_SHORT << endl;
   cout << "Copyright © 2018 " << authors << ", " << website << endl;
   cout << "This program comes with ABSOLUTELY NO WARRANTY." << endl;
   cout << "This is free software, and you are welcome to redistribute it" << endl;
-  cout << "under certain conditions; type 'gpio warranty' for details." << endl << endl;
-  cout << "Pi Board details:" << endl;
-  cout << db.board();
+  cout << "under certain conditions; type 'pido -w' for details." << endl << endl;
 }
 
 // -----------------------------------------------------------------------------
 void
-warranty (int argc, char * argv[]) {
+warranty () {
   cout <<
        "Copyright © 2018 " << authors << ", All rights reserved.\n\n"
 
-       " Piduino pinfo is free software: you can redistribute it and/or modify\n"
+       " Piduino pido is free software: you can redistribute it and/or modify\n"
        " it under the terms of the GNU General Public License as published by\n"
        " the Free Software Foundation, either version 3 of the License, or\n"
        " (at your option) any later version.\n\n"
 
-       "  Piduino pinfo is distributed in the hope that it will be useful,\n"
+       "  Piduino pido is distributed in the hope that it will be useful,\n"
        " but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
        " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
        " GNU General Public License for more details.\n\n"
 
        " You should have received a copy of the GNU General Public License\n"
-       " along with Piduino pinfo. If not, see <http://www.gnu.org/licenses/>.\n";
+       " along with Piduino pido. If not, see <http://www.gnu.org/licenses/>.\n";
 }
 
 // -----------------------------------------------------------------------------
@@ -603,7 +605,8 @@ usage () {
   cout << "  -f\tForce to use SysFS interface (/sys/class/gpio)." << endl;
   cout << "  -1\tUse the connector pin numbers rather than PiDuino pin numbers." << endl;
   cout << "    \ta number is written in the form C.P, eg: 1.5 denotes pin 5 of connector #1." << endl;
-  cout << "  -v\tOutput the current version including the board informations." << endl;
+  cout << "  -v\tOutput the current version and exit." << endl;
+  cout << "  -w\tOutput the warranty and exit." << endl;
   cout << "  -h\tPrint this message and exit" << endl << endl;
 
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789

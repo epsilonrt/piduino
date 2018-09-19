@@ -9,15 +9,15 @@
 // 1- Connect the irqPin to another pin of the GPIO connector with a wire 
 // (eg Pin 10: Pin Header 24, GPIOC3 for NanoPi, GPIO8 for RaspberryPi).
 
-// 2- Configure pin 10 as output with the gpio utility:
-// $ gpio mode 10 out
+// 2- Configure pin 10 as output with the pido utility:
+// $ pido mode 10 out
 
 // 3- Run this program:
 // $ sudo ./interrupt
 // You must be root to run this program (use sudo) !
 
-// 4- Generate a clock signal on pin 10 with the gpio utility:
-// $ gpio blink 10 100
+// 4- Generate a clock signal on pin 10 with the pido utility:
+// $ pido blink 10 100
 
 // 5- The console should display the time differences between edges (100ms):
 //  Press Ctrl+C to abort ...

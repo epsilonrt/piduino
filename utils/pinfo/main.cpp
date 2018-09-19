@@ -406,7 +406,7 @@ namespace Pinfo {
 
 // -----------------------------------------------------------------------------
   void
-  warranty (void) {
+  warranty () {
     cout <<
          "Copyright © 2018 " << authors << ", All rights reserved.\n\n"
 
@@ -457,6 +457,7 @@ namespace Pinfo {
 #endif
     cout << "  -h  --help      \tPrints this message" << endl;
     cout << "  -v  --version   \tPrints version and exit" << endl;
+    cout << "  -w  --warranty  \tOutput the warranty and exit." << endl;
   }
 
 // -----------------------------------------------------------------------------

@@ -100,16 +100,16 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="gpio">
-    <File Name="gpio/exception.cpp"/>
-    <File Name="gpio/main.cpp"/>
-    <File Name="gpio/CMakeLists.txt"/>
-    <File Name="gpio/exception.h"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="pinfo">
     <File Name="pinfo/main.cpp"/>
     <File Name="pinfo/CMakeLists.txt"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
+  <VirtualDirectory Name="pido">
+    <File Name="pido/exception.h"/>
+    <File Name="pido/exception.cpp"/>
+    <File Name="pido/CMakeLists.txt"/>
+    <File Name="pido/main.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

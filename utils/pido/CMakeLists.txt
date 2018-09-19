@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 
 # Project name
-project(gpio)
+project(pido)
 
 # This setting is useful for providing JSON file used by CodeLite for code completion
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
@@ -120,8 +120,8 @@ endif(WIN32)
 # Place your code here
 #}}}}
 
-add_executable(gpio ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})
-target_link_libraries(gpio ${LINK_OPTIONS})
+add_executable(pido ${RC_SRCS} ${CXX_SRCS} ${C_SRCS})
+target_link_libraries(pido ${LINK_OPTIONS})
 
 
 
@@ -131,7 +131,7 @@ target_link_libraries(gpio ${LINK_OPTIONS})
 if(NOT INSTALL_BIN_DIR)
   set(INSTALL_BIN_DIR bin)
 else()
-  add_dependencies (gpio piduino-shared)
+  add_dependencies (pido piduino-shared)
 endif()
 install(TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_BIN_DIR}" 
         PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID COMPONENT utils)

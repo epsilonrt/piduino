@@ -1,17 +1,17 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino gpio tool.
- * Piduino gpio tool is free software: you can redistribute it and/or modify
+ * This file is part of the Piduino pido tool.
+ * Piduino pido tool is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Piduino gpio tool is distributed in the hope that it will be useful,
+ * Piduino pido tool is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Piduino gpio tool.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Piduino pido tool.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
 #include <sstream>
