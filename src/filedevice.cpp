@@ -20,6 +20,8 @@
 #include <sys/ioctl.h>
 #include "filedevice_p.h"
 
+#define FILEDEVICE_CRNL 0
+
 using namespace std;
 
 namespace Piduino {
@@ -165,6 +167,7 @@ namespace Piduino {
       if (len < 0) {
         d->setError();
       }
+#if FILEDEVICE_CRNL
       else if (! (openMode() & IoDevice::Binary)) {
         /*
          * Text mode
@@ -189,6 +192,7 @@ namespace Piduino {
           }
         }
       }
+#endif
       return len;
     }
     return -1;
@@ -247,7 +251,7 @@ namespace Piduino {
       return false;
     }
 
-    return IoDevice::Private::open(m);
+    return IoDevice::Private::open (m);
   }
 
   // ---------------------------------------------------------------------------

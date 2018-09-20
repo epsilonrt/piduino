@@ -538,6 +538,12 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   inline bool SerialPort::Private::initialize (OpenMode mode) {
 
+    // Check if the file descriptor is pointing to a TTY device or not.
+    if (!isatty (fd)) {
+
+      return false;
+    }
+
 #ifdef TIOCEXCL
     ioctl (TIOCEXCL);
 #endif
@@ -986,13 +992,26 @@ namespace Piduino {
   void SerialPort::Private::setTioCommonProps (termios *tio, OpenMode m) {
 
     ::cfmakeraw (tio);
+    /* cfmakeraw() ... The terminal attributes are set as follows:
+     * termios_p->c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
+     *           | INLCR | IGNCR | ICRNL | IXON);
+     * termios_p->c_oflag &= ~OPOST;
+     * termios_p->c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+     * termios_p->c_cflag &= ~(CSIZE | PARENB);
+     * termios_p->c_cflag |= CS8;
+     */
 
-    tio->c_cflag |= CLOCAL;
-    tio->c_lflag &= ~ (ICANON | ECHO | ECHOE | ISIG | IEXTEN);
-    tio->c_oflag &= ~OPOST;
+    // tio->c_oflag = CR3 | NL1 | VT1;
+    
+    if (!(m & IoDevice::Binary)) {
+      tio->c_iflag |= ICRNL;
+      tio->c_oflag |= ONLCR;
+    }
+    
     tio->c_cc[VTIME] = 0;
     tio->c_cc[VMIN] = 0;
 
+    tio->c_cflag |= CLOCAL;
     if (m & ReadOnly) {
       tio->c_cflag |= CREAD;
     }
