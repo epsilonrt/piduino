@@ -80,6 +80,8 @@ class HardwareSerial : public ::Terminal {
     // PiDuino Extension, Not for Arduino !
     void begin (unsigned long baud, const char * portName, uint8_t config = SERIAL_8N1);
     void begin (unsigned long baud, const String & portName, uint8_t config = SERIAL_8N1);
+    inline void setWritelnDelay (unsigned long delay);
+    inline unsigned long writelnDelay() const;
 
     inline void setPath (const String & path);
     inline String path() const;
@@ -117,9 +119,15 @@ class HardwareSerial : public ::Terminal {
 
   private:
     std::shared_ptr<Piduino::SerialPort> port;
-    int writelnDelay; // to avoid buffer overflow on SoC Allwinner
+    unsigned long _writelnDelay; // to avoid buffer overflow on SoC Allwinner
 };
 
+inline void HardwareSerial::setWritelnDelay (unsigned long d) {
+  _writelnDelay = d;
+}
+inline unsigned long HardwareSerial::writelnDelay() const {
+  return _writelnDelay;
+}
 inline void HardwareSerial::setPath (const String & path) {
   port->setPath (path);
 }

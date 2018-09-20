@@ -55,17 +55,17 @@ void HardwareSerial::setupAvailablePorts() {
 
 // -----------------------------------------------------------------------------
 HardwareSerial::HardwareSerial () :
-  port (new Piduino::SerialPort ()), writelnDelay (0) {
+  port (new Piduino::SerialPort ()), _writelnDelay (0) {
 }
 
 // -----------------------------------------------------------------------------
 HardwareSerial::HardwareSerial (const Piduino::SerialPort::Info & serialPortInfo) :
-  port (new Piduino::SerialPort (serialPortInfo)), writelnDelay (0) {
+  port (new Piduino::SerialPort (serialPortInfo)), _writelnDelay (0) {
 }
 
 // -----------------------------------------------------------------------------
 HardwareSerial::HardwareSerial (const String & path) :
-  port (new Piduino::SerialPort (path)), writelnDelay (0) {
+  port (new Piduino::SerialPort (path)), _writelnDelay (0) {
 }
 
 // -----------------------------------------------------------------------------
@@ -179,8 +179,15 @@ void HardwareSerial::begin (unsigned long baud, uint8_t config) {
     Terminal::begin();
     if (portName().startsWith ("ttyS")  &&
         (db.board().soc().family().id() == SoC::Family::AllwinnerH)) {
-      writelnDelay = 500; // to avoid buffer overflow on SoC Allwinner
+
+      _writelnDelay = 500; // to avoid buffer overflow on SoC Allwinner
       // TODO: Analyze the sun8i driver code to understand why this is needed !
+    }
+    else if (portName().startsWith ("ttyAMA")  &&
+             (db.board().soc().family().id() == SoC::Family::BroadcomBcm2835)) {
+
+      _writelnDelay = 4000; // to avoid buffer overflow on Bcm2835 
+      // TODO: Analyze the Bcm2835 driver code to understand why this is needed !
     }
   }
 }
@@ -222,9 +229,9 @@ Piduino::TerminalNotifier & HardwareSerial::notifier() {
 
 // -----------------------------------------------------------------------------
 size_t HardwareSerial::writeln() {
-  
+
   size_t ret = ::Terminal::writeln();
-  delayMicroseconds (writelnDelay);
+  delayMicroseconds (_writelnDelay);
   return ret;
 }
 
