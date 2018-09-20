@@ -11,7 +11,7 @@
 #endif
 
 void setup() {
-  
+
   // initialize serial:
   Serial.begin (115200);
   while (!Serial) {
@@ -31,6 +31,10 @@ void loop () {
 
       Serial.write (c); // write the character on the buffer
       Serial.flush(); // flush the buffer on the serial port
+#ifdef __unix__
+      Console.write (c); // write the character on the buffer
+      Console.flush(); // flush the buffer on the console
+#endif
     }
   }
 }

@@ -22,9 +22,19 @@
 #include <Piduino.h>  // All the magic is here ;-)
 #endif
 
+unsigned long baud = 115200;
+
 void setup() {
+#ifdef __unix__
+  if (argc > 1) {
+
+    String b (argv[1]);
+    baud = b.toInt();
+    Console.println (baud);
+  }
+#endif
   //Initialize serial and wait for port to open:
-  Serial.begin (115200);
+  Serial.begin (baud);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
@@ -70,6 +80,7 @@ void loop() {
 
   // if printed last visible character '~' or 126, stop:
   if (thisByte == 126) {    // you could also use if (thisByte == '~') {
+    //thisByte = 33;
     exit (0); // exit the loop() function without ever coming back.
     // On Arduino, exit() performs an infinite loop as explained on
     // https://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html
