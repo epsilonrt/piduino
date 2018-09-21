@@ -403,6 +403,7 @@ blink (int argc, char * argv[]) {
     }
 
     pin->setMode (Pin::ModeOutput);
+    period /= 2;
 
     // sig_handler() intercepte le CTRL+C
     signal (SIGINT, sig_handler);

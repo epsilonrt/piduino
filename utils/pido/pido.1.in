@@ -1,0 +1,183 @@
+.TH PIDO 1 "@DATE_DAY@ @DATE_MONTH_STR@ @DATE_YEAR@" "PIDUINO @PIDUINO_VERSION_MAJOR@.@PIDUINO_VERSION_MINOR@.@PIDUINO_VERSION_PATCH@" "Easy access to the GPIO pins"
+
+.SH NAME
+pido \- Allow the user easy access to the GPIO pins.
+
+.SH SYNOPSIS
+\fBpido\fR [\fB\-g1sf\fR] {\fBmode\fR \fIpin\fR [\fIvalue\fR] | 
+\fBpull\fR \fIpin\fR [\fIvalue\fR] |
+\fBwrite\fR \fIpin\fR \fIvalue\fR |
+\fBtoggle\fR \fIpin\fR |
+\fBblink\fR \fIpin\fR [\fIvalue\fR] |
+\fBpwm\fR \fIpin\fR \fIvalue\fR |
+\fBread\fR \fIpin\fR |
+\fBwfi\fR \fIpin\fR \fIedge\fR  [\fItimeout_ms\fR] |
+\fBreadall\fR [\fIconnector\fR] |
+{\fB\-v\fR} | {\fB\-w\fR} | {\fB\-h\fR}}
+
+.SH DESCRIPTION
+.PP
+\fBpido\fR is a command line tool to allow the user easy access to the GPIO pins
+on a Pi board. It's designed for simple testing and diagnostic purposes, but can 
+be used in shell scripts for general if somewhat slow control of the GPIO pins.
+
+\fBpido\fR use the piduino library https://github.com/epsilonrt/piduino, board 
+model detection is automatic and uses a database allowing a simple user to add 
+a new Pi board "variant" \fBwithout\fR programming.
+
+.TP
+\fBmode\fR \fIpin\fR [\fBin\fR | \fBout\fR | \fBoff\fR | \fBpwm\fR | \fBalt{0..9}\fR]
+Gets the current mode if no value is supplied.
+
+Sets a pin into \fIinput\fR, \fIoutput\fR, \fIpwm\fR, \fIalt{0..9}\fR or \fIoff\fR mode. 
+Disabling a pin with \fIoff\fR is only available on some SoC model (c.f. datasheet).
+
+The ALT modes can also be set using \fIalt0\fR, \fIalt1\fR,  ... \fIalt9\fR.
+The number of alternative modes available depends on the SoC model (c.f. datasheet).
+
+.TP
+\fBpull\fR \fIpin\fR [\fBup\fR | \fBdown\fR | \fBoff\fR]
+Gets the current state of the resistor if no value is supplied. This feature is 
+only available on some SoC models (c.f. datasheet).
+
+Use \fIup\fR, \fIdown\fR or \fIoff\fR to set the internal pull-up, pull-down or 
+off (tristate) controls.
+
+.TP
+\fBwrite\fR \fIpin\fR \fB0\fR | \fB1\fR
+Write the given value (0 or 1) to the pin. You need to set the pin
+to output mode first.
+
+.TP
+\fBtoggle\fR \fIpin\fR
+Changes the state of a GPIO pin; 0 to 1, or 1 to 0. You need to set the pin
+to output mode first.
+
+.TP
+\fBblink\fR \fIpin\fR [\fIms_period\fR]
+Blinks the given pin on/off. Press Control-C to exit. The flashing period in 
+milliseconds can be specified otherwise its default value is 1000 
+(can not be less than 1 ms).
+
+Note: This command explicitly sets the pin to output mode.
+
+.TP
+\fBpwm\fR \fIpin\fR \fIvalue\fR
+Write a PWM value (0-1023) to the given pin. The pin needs to be put
+into PWM mode first. The pin must have hardware PWM functionality (c.f. datasheet).
+
+.TP
+\fBread\fR \fIpin\fR
+Read the digital value of the given pin and print 0 or 1 to represent the
+respective logic levels.
+
+.TP
+\fBwfi\fR \fIpin\fR \fBrising\fR | \fBfalling\fR | \fBboth\fR [\fItimeout_ms\fR]
+This set the given pin to the supplied interrupt mode: rising, falling
+or both then waits for the interrupt to happen. It's a non-busy wait,
+so does not consume and CPU while it's waiting.
+
+.TP
+\fBreadall\fR [\fIconnector\fR]
+Output a table of all GPIO pins values. The values represent the actual values read
+if the pin is in input mode, or the last value written if the pin is in output
+mode. All connectors are displayed by default, to display only one connector, 
+just specify its number (listed above the table).
+
+.SH OPTIONS
+
+.TP
+.B \-g
+Use the SoC pins numbers rather than PiDuino pin numbers.
+
+.TP
+.B \-1
+Use the connector pin numbers rather than PiDuino pin numbers. A number is 
+written in the form C.N, eg: 1.5 denotes pin 5 of connector 1.
+
+.TP
+.B \-s
+Use the System pin numbers rather than PiDuino pin numbers.
+
+.TP
+.B \-f
+Force to use SysFS interface (/sys/class/gpio) to control pin features.
+
+.TP
+.B \-v
+Show the piduino version.
+
+.TP
+.B \-w
+Show the warranty notice.
+
+.TP
+.B \-h
+Show a short usage summary.
+
+.SH ENVIRONMENT
+.RE
+.PP
+PIDUINO_CONN_INFO
+.RS 4
+If set, this variable allows the user to force the location of the PiDuino 
+database used by pido. It supports SQLite3, MySQL, PostgreSQL as well as a 
+connection to ODBC out of the box. See http://cppcms.com/sql/cppdb/connstr.html
+for the syntax.
+
+.SH FILES
+.RE
+.PP
+/etc/piduino.conf
+.RS 4
+PiDuino configuration file to force the board model to use or to indicate the 
+location of the PiDuino database.
+.RE
+.PP
+@PIDUINO_INSTALL_DATA_DIR@/piduino.db
+.RS 4
+PiDuino local SQLite 3 database file by default.
+ 
+.SH EXAMPLES
+.TP 2.2i
+\fBpido mode\fR 0 \fBout\fR # Set pin 0 to output
+.PP
+The physical numbering in the form C.N, for example \fI1.11\fR, makes it 
+possible to quickly designate the pin N (here 11) of the C connector (here 1).
+
+The quickest way to get a list of the pin differences is to run the command :
+.PP
+\fBpido readall\fR
+.PP
+\fBpido mode\fR 1.11 \fBout\fR # Set pin 11 of connector 1 to output (same as pin 0 on NanoPi, RaspberryPi)
+.PP
+\fBpido write\fR 0 1 # Set pin 0 to high
+.PP
+\fBpido toggle\fR 0 # Toggle the state of pin 0
+.PP
+\fBpido blink\fR 0 100 # Blink pin 0 with a period of 100 ms
+.PP
+\fBpido mode\fR 0 \fBin\fR # Set pin 0 to input
+.PP
+\fBpido pull\fR 0 \fBup\fR # Set pin 0 pull-up resistor
+.PP
+\fBpido read\fR 0 # Read pin 0
+.PP
+\fBpido wfi\fR 0 \fBfalling\fR # Wait for an interruption on a falling edge of pin 0
+
+.SH SEE ALSO
+.PP
+\fBpinfo\fR(1)
+.PP
+PiDuino's Wiki page https://github.com/epsilonrt/piduino/wiki/PiDuino
+
+.SH "REPORTING BUGS"
+Please report bugs to https://github.com/epsilonrt/piduino/issues
+
+.SH AUTHOR
+Pascal JEAN, aka epsilonrt
+
+.SH COPYRIGHT
+Copyright (c) 2018 Pascal JEAN
+This is free software; see the source for copying conditions. There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

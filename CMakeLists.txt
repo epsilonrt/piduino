@@ -73,8 +73,13 @@ find_package(CppDb REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules (LIBUDEV REQUIRED libudev)
 
+find_package(Gzip)
+
 set (PIDUINO_CFLAGS_OTHER ${CMAKE_THREAD_LIBS_INIT} ${LIBUDEV_CFLAGS})
 set (PIDUINO_LDFLAGS_OTHER  ${CPPDB_LDFLAGS} ${LIBUDEV_LDFLAGS} -lpthread)
+
+include (GetDate)
+GetDate(DATE_)
 
 include (GitVersion)
 GetGitVersion(PIDUINO_VERSION)

@@ -62,6 +62,14 @@ endif()
 
 WriteGitVersionFile(${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
+configure_file(${PROJECT_NAME}.1.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.1 @ONLY)
+if (GZIP_FOUND)
+  gzip_compress(${PROJECT_NAME}_man ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.1 ${CMAKE_BINARY_DIR}/${PROJECT_NAME}.1.gz)
+  set(TARGET_MANPAGE_NAME "${PROJECT_NAME}.1.gz")
+else()
+  set(TARGET_MANPAGE_NAME "${PROJECT_NAME}.1")
+endif()
+
 # --- SysIo End. Do not edit by hand -------------------------------------------
 #}}}}
 
@@ -124,6 +132,12 @@ if(NOT INSTALL_BIN_DIR)
 else()
   add_dependencies (pinfo piduino-shared)
 endif()
+
 install(TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_BIN_DIR}" 
         PERMISSIONS ${PROGRAM_PERMISSIONS_DEFAULT} SETUID COMPONENT utils)
+
+install(FILES
+  "${CMAKE_BINARY_DIR}/${TARGET_MANPAGE_NAME}"
+  DESTINATION "${INSTALL_DATA_DIR}/man/man1" COMPONENT utils)
+
 #}}}}

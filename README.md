@@ -428,39 +428,7 @@ Or we can wait for a falling front on this entry:
 
     $ pido wfi 0 falling
 
-The `-h`option allows to know the different possible actions:
-
-    usage : pido [ options ] [ command ]  [ parameters ] [ options ]
-    Allow the user easy access to the GPIO pins.
-
-    valid options are :
-      -g	Use the SOC pins numbers rather than PiDuino pin numbers.
-      -s	Use the System pin numbers rather than PiDuino pin numbers.
-      -f	Force to use SysFS interface (/sys/class/gpio).
-      -1	Use the connector pin numbers rather than PiDuino pin numbers.
-          a number is written in the form C.P, eg: 1.5 denotes pin 5 of connector #1.
-      -v	Output the current version including the board informations.
-      -h	Print this message and exit
-
-    valid commands are :
-      mode <pin> <in/out/off/pwm/alt{0..9}>
-        Get/Set a pin mode into input, output, off, alt0..9 or pwm mode.
-      pull <pin> <up/down/off>
-        Get/Set the internal pull-up, pull-down or off controls.
-      read <pin>
-        Read the digital value of the given pin (0 or 1)
-      readall [#connector]
-        Output a table of all connectors with pins informations.
-      write <pin> <value>
-        Write the given value (0 or 1) to the given pin (output).
-      toggle <pin>
-        Changes the state of a GPIO pin; 0 to 1, or 1 to 0 (output).
-      blink <pin> [period]
-        Blinks the given pin on/off (explicitly sets the pin to output).
-      wfi <pin> <rising/falling/both> [timeout_ms]
-        Waits  for  the  interrupt  to happen. It's a non-busy wait.
-      pwm <pin> <value>
-        Write a PWM value (0-1023) to the given pin (pwm pin only).
+See also `pido(1)` manpage.
 
 ### pinfo, to retrieve information on the Pi board
 
@@ -494,8 +462,7 @@ On a NanoPi Neo Plus 2:
     I2C Buses       : /dev/i2c-0
     Serial Ports    : /dev/ttyS0,/dev/ttyS1
 
-The command displays only information in the list, `-h`, allows to know the 
-different options.
+See also `pinfo(1)` manpage.
 
 ## Road Map
 
@@ -515,18 +482,18 @@ different options.
 * Serial Port API  
 * Arduino Classes (String, Print, Stream....)  
 * Update README  
+* Man Pages for pido and pinfo  
 
 The rest of the things to do:
 
+* Hardware PWM Pin support
+* Creating a web page
 * `pidbman` for managing the database of boards with Qt (in development [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman)) 
 * Enabling daemon mode for loop()
-* Hardware PWM Pin support
 * analogWrite() with Software PWM feature (Kernel driver module)
 * analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
 * analogRead() with external ADC or Sensor ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
-* Man Pages for Utilities  
 * Database Doxygen Documentation (English)  
-* Creating a web page
 
 ## Dependencies
 

@@ -1,0 +1,151 @@
+.TH PINFO 1 "@DATE_DAY@ @DATE_MONTH_STR@ @DATE_YEAR@" "PIDUINO @PIDUINO_VERSION_MAJOR@.@PIDUINO_VERSION_MINOR@.@PIDUINO_VERSION_PATCH@" "Obtain information about the Pi board"
+
+.SH NAME
+pinfo \- Allow the user obtain information about the Pi board.
+
+.SH SYNOPSIS
+\fBpinfo\fR [\fB\-anfisrtgmpbIPSvwh\fR]
+
+.SH DESCRIPTION
+.PP
+\fBpinfo\fR is a command line tool to allow the user obtain information about 
+the Pi board.
+
+\fBpinfo\fR use the piduino library https://github.com/epsilonrt/piduino, board 
+model detection is automatic and uses a database allowing a simple user to add 
+a new Pi board "variant" \fBwithout\fR programming.
+
+If only one information is requested, it is displayed without formatting,
+otherwise each information is displayed on a line preceded by its name.
+
+.SH OPTIONS
+
+.RE
+.PP
+\fB\-a\fR, \fB\-\-all\fR
+.RS 4
+Show all informations (default)
+.RE
+.PP
+\fB\-n\fR, \fB\-\-name\fR
+.RS 4
+Show the "human-readable" name of the board.
+.RE
+.PP
+\fB\-f\fR, \fB\-\-family\fR
+.RS 4
+Show the board family (raspberrypi, nanopi, ...)
+.RE
+.PP
+\fB\-i\fR, \fB\-\-id\fR
+.RS 4
+Show the piduino database id (for debug purpose)
+.RE
+.PP
+\fB\-s\fR, \fB\-\-soc\fR
+.RS 4
+Show the SoC model (bcm2708 ...)
+.RE
+.PP
+\fB\-r\fR, \fB\-\-revision\fR
+.RS 4
+Show the revision number of the board in hexadecimal (prefixed by 0x).
+.RE
+.PP
+\fB\-t\fR, \fB\-\-tag\fR
+.RS 4
+Show the identifier tag of the board.
+.RE
+.PP
+\fB\-g\fR, \fB\-\-gpio\fR
+.RS 4
+Show the revision number of the GPIO in decimal
+.RE
+.PP
+\fB\-m\fR, \fB\-\-mem\fR
+.RS 4
+Show the RAM size in megabytes
+.RE
+.PP
+\fB\-p\fR, \fB\-\-pcb\fR
+.RS 4
+Show the revision number of the PCB in the form M.m
+.RE
+.PP
+\fB\-b\fR, \fB\-\-builder\fR
+.RS 4
+Show the name of the manufacturer.
+.RE
+.PP
+\fB\-I\fR, \fB\-\-i2c\fR
+.RS 4
+Show I2c buses available on the SoC.
+.RE
+.PP
+\fB\-P\fR, \fB\-\-spi\fR
+.RS 4
+Show SPI buses available on the SoC.
+.RE
+.PP
+\fB\-S\fR, \fB\-\-serial\fR
+.RS 4
+Show serial ports available on the SoC.
+.RE
+.PP
+\fB\-v\fR, \fB\-\-version\fR
+.RS 4
+Show the piduino version.
+.RE
+.PP
+\fB\-w\fR, \fB\-\-warranty\fR
+.RS 4
+Show the warranty notice.
+.RE
+.PP
+\fB\-h\fR, \fB\-\-help\fR
+.RS 4
+Show a short usage summary.
+
+.SH RETURN VALUES
+Returns 0 if the board was found, 1 otherwise.
+
+.SH ENVIRONMENT
+.RE
+.PP
+PIDUINO_CONN_INFO
+.RS 4
+If set, this variable allows the user to force the location of the PiDuino 
+database used by pinfo. It supports SQLite3, MySQL, PostgreSQL as well as a 
+connection to ODBC out of the box. See http://cppcms.com/sql/cppdb/connstr.html
+for the syntax.
+
+.SH FILES
+.RE
+.PP
+/etc/piduino.conf
+.RS 4
+PiDuino configuration file to force the board model to use or to indicate the 
+location of the PiDuino database.
+.RE
+.PP
+@PIDUINO_INSTALL_DATA_DIR@/piduino.db
+.RS 4
+PiDuino local SQLite 3 database file by default.
+ 
+
+.SH SEE ALSO
+.PP
+\fBpido\fR(1)
+.PP
+PiDuino's Wiki page https://github.com/epsilonrt/piduino/wiki/PiDuino
+
+.SH "REPORTING BUGS"
+Please report bugs to https://github.com/epsilonrt/piduino/issues
+
+.SH AUTHOR
+Pascal JEAN, aka epsilonrt
+
+.SH COPYRIGHT
+Copyright (c) 2018 Pascal JEAN
+This is free software; see the source for copying conditions. There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

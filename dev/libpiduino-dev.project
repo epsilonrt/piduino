@@ -111,6 +111,8 @@
   <VirtualDirectory Name="cmake">
     <File Name="cmake/GitVersion.cmake"/>
     <File Name="cmake/FindCppDb.cmake"/>
+    <File Name="cmake/GetDate.cmake"/>
+    <File Name="cmake/FindGzip.cmake"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
