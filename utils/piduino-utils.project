@@ -105,8 +105,6 @@
     <File Name="pinfo/CMakeLists.txt"/>
     <File Name="pinfo/pinfo.1.in"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <VirtualDirectory Name="pido">
     <File Name="pido/exception.h"/>
     <File Name="pido/exception.cpp"/>
@@ -114,4 +112,6 @@
     <File Name="pido/main.cpp"/>
     <File Name="pido/pido.1.in"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

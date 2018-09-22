@@ -15,55 +15,46 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PIDUINO_CONVERTER_H
-#define PIDUINO_CONVERTER_H
+#ifndef PIDUINO_GPIOPWM_PRIVATE_H
+#define PIDUINO_GPIOPWM_PRIVATE_H
 
-#include <string>
-#include <piduino/iodevice.h>
-
-/**
- *  @defgroup piduino_converter A/D or D/A Converter
- *  @{
- */
+#include <atomic>
+#include <thread>
+#include <mutex>
+#include <piduino/gpiopwm.h>
+#include "../pwm_p.h"
 
 namespace Piduino {
 
-  class Converter : public IoDevice {
+  /**
+   * @class GpioPwm::Private
+   * @brief
+   */
+  class GpioPwm::Private  : public Pwm::Private {
 
     public:
-      enum Type {
-        AnalogToDigital,
-        DigitalToAnalog,
-        None = -1
-      };
+      Private (GpioPwm * q, Pin * pin, unsigned int resolution, unsigned long freq);
+      virtual ~Private();
 
-      Converter();
-      virtual ~Converter();
-
-      Type type() const;
-      bool bipolar() const;
-      unsigned int resolution() const;
-      virtual long max() const;
-      virtual long min() const;
-      
-      virtual bool open (IoDevice::OpenMode mode = IoDevice::ReadWrite);
+      virtual bool open (OpenMode mode);
+      virtual bool isOpen() const;
       virtual void close();
       virtual long read();
       virtual bool write (long value);
 
-      static const std::string & deviceName();
+      Pin * pin;
+      long value;
+      long freq;
+      std::atomic<int> flag;  // communication avec le thread
+      std::thread thread;
 
-    protected:
-      class Private;
-      Converter (Private &dd);
+      static const int FlagRun = 1;
+      static const int FlagValueUpdated = 2;
+      static void * generator (std::atomic<int> & flag, GpioPwm::Private * d);
 
-    private:
-      PIMP_DECLARE_PRIVATE (Converter)
+      PIMP_DECLARE_PUBLIC (GpioPwm)
   };
 }
-/**
- *  @}
- */
 
 /* ========================================================================== */
-#endif /*PIDUINO_CONVERTER_H defined */
+#endif /* PIDUINO_GPIOPWM_PRIVATE_H defined */

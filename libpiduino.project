@@ -96,6 +96,7 @@
       <File Name="src/gpio/gpioconnector-database.cpp"/>
       <File Name="src/gpio/gpiopin-database.cpp"/>
       <File Name="src/gpio/gpiopwm.cpp"/>
+      <File Name="src/gpio/gpiopwm_p.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="spi">
       <File Name="src/spi/spidev.cpp"/>
@@ -146,6 +147,8 @@
     <File Name="src/terminalnotifier_p.h"/>
     <File Name="src/terminal.cpp"/>
     <File Name="src/terminal_p.h"/>
+    <File Name="src/converter_p.h"/>
+    <File Name="src/pwm_p.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
     <VirtualDirectory Name="piduino">
@@ -196,6 +199,7 @@
       <File Name="include/piduino/filestream.h"/>
       <File Name="include/piduino/terminalnotifier.h"/>
       <File Name="include/piduino/terminal.h"/>
+      <File Name="include/piduino/socpwm.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>

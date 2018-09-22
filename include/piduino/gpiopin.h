@@ -578,6 +578,7 @@ namespace Piduino {
        *
        * @param parent pointeur sur le GPIO parent
        * @param desc pointeur sur la description
+       * @param dacName nom du convertisseur numérique-analogique à utiliser pour analogWrite()
        */
       Pin (Connector * parent, const Descriptor * desc, const std::string & dacName = "GpioPwm");
       

@@ -17,81 +17,117 @@
 #include <iostream>
 #include <chrono>
 #include <piduino/scheduler.h>
-#include <piduino/gpiopwm.h>
+#include "gpiopwm_p.h"
 
 using namespace std::chrono;
 
 namespace Piduino {
 
-  std::string GpioPwm::_name = "GpioPwm";
+// -----------------------------------------------------------------------------
+//
+//                             GpioPwm Class
+//
+// -----------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  GpioPwm::GpioPwm (GpioPwm::Private &dd) : Pwm (dd) {}
+
+  // ---------------------------------------------------------------------------
+  GpioPwm::GpioPwm (Pin * p, unsigned int r, unsigned long f) :
+    Pwm (*new Private (this, p, r, f)) { }
+
+  // ---------------------------------------------------------------------------
+  GpioPwm::~GpioPwm() = default;
+
+  // ---------------------------------------------------------------------------
+  // static
+  const std::string & GpioPwm::deviceName() {
+    static std::string dn ("GpioPwm");
+
+    return dn;
+  }
+
+  // ---------------------------------------------------------------------------
+  const Pin &
+  GpioPwm::pin() const {
+    PIMP_D (const GpioPwm);
+
+    return *d->pin;
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  GpioPwm::frequency() const {
+    PIMP_D (const GpioPwm);
+
+    return d->freq;
+  }
+
+// -----------------------------------------------------------------------------
+//
+//                         GpioPwm::Private Class
+//
+// -----------------------------------------------------------------------------
   typedef time_point<high_resolution_clock, nanoseconds> nanos_t;
   typedef duration<double, std::nano> nanod_t;
 
   // ---------------------------------------------------------------------------
-  GpioPwm::GpioPwm (Pin * p, unsigned int r, unsigned long c) :
-    Pwm (r), _pin (p), _value (0), _clk (c), _flag (0)  {
-
-  }
+  GpioPwm::Private::Private (GpioPwm * q, Pin * p, unsigned int r, unsigned long c) :
+    Pwm::Private (q, r), pin (p), value (0), freq (c), flag (0) {}
 
   // ---------------------------------------------------------------------------
-  GpioPwm::~GpioPwm() {
-
-  }
+  GpioPwm::Private::~Private() = default;
 
   // ---------------------------------------------------------------------------
   bool
-  GpioPwm::isOpen() const {
+  GpioPwm::Private::open (OpenMode mode) {
 
-    return _thread.joinable();
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  GpioPwm::open () {
-
-    if (!isOpen()) {
-
-      if (Pwm::open (ReadWrite)) {
-
-        _flag = FlagRun | FlagValueUpdated;
-        _thread = std::thread (generator, std::ref (_flag), this);
-      }
-    }
-    return isOpen();
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  GpioPwm::close() {
-
+    flag = FlagRun | FlagValueUpdated; 
+    thread = std::thread (generator, std::ref (flag), this);
     if (isOpen()) {
 
-      _flag &= ~FlagRun;
-      _thread.join();
-      Pwm::close();
+      return Pwm::Private::open (mode);
     }
+    return false;
+  }
+
+  // --------------------------------------------------------------------------
+  void
+  GpioPwm::Private::close() {
+
+    flag &= ~FlagRun;
+    thread.join();
+    Pwm::Private::close();
   }
 
   // ---------------------------------------------------------------------------
-  Pin *
-  GpioPwm::pin() const {
+  bool
+  GpioPwm::Private::isOpen() const {
 
-    return _pin;
+    return thread.joinable();
   }
 
   // ---------------------------------------------------------------------------
-  const std::string &
-  GpioPwm::name() const {
+  bool
+  GpioPwm::Private::write (long v) {
 
-    return _name;
+    value = v;
+    flag |= FlagValueUpdated;
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  GpioPwm::Private::read() {
+
+    return value;
   }
 
   // ---------------------------------------------------------------------------
   void *
-  GpioPwm::generator (std::atomic<int> & flag, GpioPwm * pwm) {
-    nanod_t T (1E9 / static_cast<double> (pwm->clock())) ;
-    double D = pwm->max() - pwm->min();
-    Pin * p = pwm->pin();
+  GpioPwm::Private::generator (std::atomic<int> & flag, GpioPwm::Private * d) {
+    nanod_t T (1E9 / static_cast<double> (d->freq)) ;
+    double D = d->max() - d->min();
+    Pin * pin = d->pin;
 
     if ( (T > nanod_t (0)) && (D > 0)) {
       nanod_t ton;
@@ -99,7 +135,7 @@ namespace Piduino {
 
       nanos_t next = time_point_cast<nanos_t::duration>
                      (high_resolution_clock::time_point (high_resolution_clock::now()));
-      p->write (false);
+      pin->write (false);
 
       Scheduler::setRtPriority (90);
 
@@ -108,7 +144,7 @@ namespace Piduino {
 
           if (flag & FlagValueUpdated) {
 
-            ton = nanod_t ( (static_cast<double> (pwm->read()) * T) / D) ;
+            ton = nanod_t ( (static_cast<double> (d->value) * T) / D) ;
             toff = T - ton;
             flag &= ~FlagValueUpdated;
           }
@@ -117,14 +153,14 @@ namespace Piduino {
 
             next += duration_cast<nanoseconds> (toff);
             std::this_thread::sleep_until (next);
-            p->write (true);
+            pin->write (true);
           }
 
           if (toff > nanod_t (0)) {
-            
+
             next += duration_cast<nanoseconds> (ton);
             std::this_thread::sleep_until (next);
-            p->write (false);
+            pin->write (false);
           }
         }
       }
@@ -137,42 +173,8 @@ namespace Piduino {
 
       }
     }
-    p->write (false);
+    pin->write (false);
     return 0;
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  GpioPwm::write (long v) {
-    if (v < min()) {
-      v = min();
-    }
-    if (v > max()) {
-      v = max();
-    }
-    _value = v;
-    _flag |= FlagValueUpdated;
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  GpioPwm::setClock (long c) {
-
-    _clk = c;
-  }
-
-  // ---------------------------------------------------------------------------
-  long
-  GpioPwm::clock() const {
-
-    return _clk;
-  }
-
-  // ---------------------------------------------------------------------------
-  long
-  GpioPwm::read() {
-
-    return _value;
   }
 }
 

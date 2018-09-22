@@ -15,55 +15,27 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PIDUINO_CONVERTER_H
-#define PIDUINO_CONVERTER_H
+#ifndef PIDUINO_PWM_PRIVATE_H
+#define PIDUINO_PWM_PRIVATE_H
 
-#include <string>
-#include <piduino/iodevice.h>
-
-/**
- *  @defgroup piduino_converter A/D or D/A Converter
- *  @{
- */
+#include <piduino/pwm.h>
+#include "converter_p.h"
 
 namespace Piduino {
 
-  class Converter : public IoDevice {
+  /**
+   * @class Pwm::Private
+   * @brief
+   */
+  class Pwm::Private  : public Converter::Private {
 
     public:
-      enum Type {
-        AnalogToDigital,
-        DigitalToAnalog,
-        None = -1
-      };
+      Private (Pwm * q, unsigned int resolution = 10);
+      virtual ~Private();
 
-      Converter();
-      virtual ~Converter();
-
-      Type type() const;
-      bool bipolar() const;
-      unsigned int resolution() const;
-      virtual long max() const;
-      virtual long min() const;
-      
-      virtual bool open (IoDevice::OpenMode mode = IoDevice::ReadWrite);
-      virtual void close();
-      virtual long read();
-      virtual bool write (long value);
-
-      static const std::string & deviceName();
-
-    protected:
-      class Private;
-      Converter (Private &dd);
-
-    private:
-      PIMP_DECLARE_PRIVATE (Converter)
+      PIMP_DECLARE_PUBLIC (Pwm)
   };
 }
-/**
- *  @}
- */
 
 /* ========================================================================== */
-#endif /*PIDUINO_CONVERTER_H defined */
+#endif /* PIDUINO_PWM_PRIVATE_H defined */

@@ -14,20 +14,37 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include <piduino/pwm.h>
+#include "pwm_p.h"
 
 namespace Piduino {
 
+// -----------------------------------------------------------------------------
+//
+//                             Pwm Class
+//
+// -----------------------------------------------------------------------------
+
   // ---------------------------------------------------------------------------
-  Pwm::Pwm (unsigned int r) :
-    Converter(Converter::DigitalToAnalog, r, false)  {
-
-  }
+  Pwm::Pwm (Pwm::Private &dd) : Converter (dd) {}
 
   // ---------------------------------------------------------------------------
-  Pwm::~Pwm() {
+  Pwm::Pwm () : Converter (*new Private (this)) {}
 
-  }
+  // ---------------------------------------------------------------------------
+  Pwm::~Pwm() = default;
+
+// -----------------------------------------------------------------------------
+//
+//                         Pwm::Private Class
+//
+// -----------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  Pwm::Private::Private (Pwm * q, unsigned int r) :
+    Converter::Private (q, DigitalToAnalog, r, false) {}
+
+  // ---------------------------------------------------------------------------
+  Pwm::Private::~Private() = default;
 
 }
 

@@ -30,14 +30,17 @@ namespace Piduino {
   class Pwm : public Converter {
 
     public:
-      Pwm (unsigned int resolution);
+      Pwm ();
       virtual ~Pwm();
+      virtual long frequency() const { return 0; }
+      virtual bool setFrequency (long freq) const { return false; }
 
-      virtual void setClock (long clk) = 0;
-      virtual long clock() const = 0;
-      virtual long read() = 0;
-      virtual void write (long value) = 0;
+    protected:
+      class Private;
+      Pwm (Private &dd);
 
+    private:
+      PIMP_DECLARE_PRIVATE (Pwm)
   };
 }
 /**

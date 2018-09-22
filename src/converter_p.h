@@ -15,55 +15,38 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PIDUINO_CONVERTER_H
-#define PIDUINO_CONVERTER_H
+#ifndef PIDUINO_CONVERTER_PRIVATE_H
+#define PIDUINO_CONVERTER_PRIVATE_H
 
-#include <string>
-#include <piduino/iodevice.h>
-
-/**
- *  @defgroup piduino_converter A/D or D/A Converter
- *  @{
- */
+#include <piduino/converter.h>
+#include "iodevice_p.h"
 
 namespace Piduino {
 
-  class Converter : public IoDevice {
+  /**
+   * @class Converter::Private
+   * @brief
+   */
+  class Converter::Private  : public IoDevice::Private {
 
     public:
-      enum Type {
-        AnalogToDigital,
-        DigitalToAnalog,
-        None = -1
-      };
+      Private (Converter * q, Type type = None, unsigned int resolution = 8, bool bipolar = false);
+      virtual ~Private();
 
-      Converter();
-      virtual ~Converter();
-
-      Type type() const;
-      bool bipolar() const;
-      unsigned int resolution() const;
-      virtual long max() const;
-      virtual long min() const;
-      
-      virtual bool open (IoDevice::OpenMode mode = IoDevice::ReadWrite);
+      virtual bool open (OpenMode mode);
       virtual void close();
       virtual long read();
       virtual bool write (long value);
+      virtual long max() const;
+      virtual long min() const;
 
-      static const std::string & deviceName();
+      Type type;
+      bool bipolar;
+      unsigned int resolution;
 
-    protected:
-      class Private;
-      Converter (Private &dd);
-
-    private:
-      PIMP_DECLARE_PRIVATE (Converter)
+      PIMP_DECLARE_PUBLIC (Converter)
   };
 }
-/**
- *  @}
- */
 
 /* ========================================================================== */
-#endif /*PIDUINO_CONVERTER_H defined */
+#endif /* PIDUINO_CONVERTER_PRIVATE_H defined */

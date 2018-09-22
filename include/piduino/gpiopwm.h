@@ -18,9 +18,6 @@
 #ifndef PIDUINO_GPIOPWM_H
 #define PIDUINO_GPIOPWM_H
 
-#include <atomic>
-#include <thread>
-#include <mutex>
 #include <piduino/pwm.h>
 #include <piduino/gpiopin.h>
 
@@ -30,38 +27,24 @@
  */
 
 namespace Piduino {
-  class GpioPwm;
 
   class GpioPwm : public Pwm {
 
     public:
-      GpioPwm (Pin * pin, unsigned int resolution = 10, unsigned long clock = 1000);
+      GpioPwm (Pin * pin, unsigned int resolution = 10, unsigned long freq = 100);
       virtual ~GpioPwm();
 
-      virtual bool open ();
-      virtual void close();
-      virtual bool isOpen() const;
-      Pin * pin() const;
-
-      virtual long clock() const;
-      virtual long read();
-      virtual void write (long value);
-      virtual const std::string & name() const;
+      const Pin & pin() const;
+      virtual long frequency() const;
+      
+      static const std::string & deviceName();
 
     protected:
-      virtual void setClock (long clk);
+      class Private;
+      GpioPwm (Private &dd);
 
     private:
-      Pin * _pin;
-      long _value;
-      long _clk;
-      static std::string _name;
-
-      std::atomic<int> _flag;  // communication avec le thread
-      static const int FlagRun = 1;
-      static const int FlagValueUpdated = 2;
-      std::thread _thread;
-      static void * generator (std::atomic<int> & flag, GpioPwm * pwm);
+      PIMP_DECLARE_PRIVATE (GpioPwm)
   };
 }
 /**
