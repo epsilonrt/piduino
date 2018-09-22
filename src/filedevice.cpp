@@ -65,10 +65,7 @@ namespace Piduino {
     if (!isOpen() && isOurFile()) {
       PIMP_D (FileDevice);
 
-      if (d->open (mode)) {
-
-        return IoDevice::open (mode);
-      }
+      return d->open (mode);
     }
     return isOpen();
   }
@@ -80,7 +77,6 @@ namespace Piduino {
       PIMP_D (FileDevice);
 
       d->close();
-      IoDevice::close();
     }
   }
 
@@ -262,6 +258,7 @@ namespace Piduino {
       setError();
     }
     fd = -1;
+    IoDevice::Private::close();
   }
 
   // ---------------------------------------------------------------------------
