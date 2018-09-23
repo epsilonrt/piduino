@@ -97,6 +97,8 @@
       <File Name="src/gpio/gpiopin-database.cpp"/>
       <File Name="src/gpio/gpiopwm.cpp"/>
       <File Name="src/gpio/gpiopwm_p.h"/>
+      <File Name="src/gpio/socpwm.cpp"/>
+      <File Name="src/gpio/socpwm_p.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="spi">
       <File Name="src/spi/spidev.cpp"/>

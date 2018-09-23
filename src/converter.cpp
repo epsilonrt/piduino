@@ -137,8 +137,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  // static
-  const std::string & Converter::deviceName() {
+  const std::string & Converter::deviceName() const {
     static std::string dn;
 
     return dn;

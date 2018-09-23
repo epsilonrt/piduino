@@ -37,7 +37,7 @@ namespace Piduino {
       const Pin & pin() const;
       virtual long frequency() const;
       
-      static const std::string & deviceName();
+      virtual const std::string & deviceName() const;
 
     protected:
       class Private;

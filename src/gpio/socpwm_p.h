@@ -15,27 +15,46 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PIDUINO_PWM_PRIVATE_H
-#define PIDUINO_PWM_PRIVATE_H
+#ifndef PIDUINO_SOCPWM_PRIVATE_H
+#define PIDUINO_SOCPWM_PRIVATE_H
 
-#include <piduino/pwm.h>
-#include "converter_p.h"
+#include <piduino/socpwm.h>
+#include "../pwm_p.h"
 
 namespace Piduino {
 
   /**
-   * @class Pwm::Private
+   * @class SocPwm::Private
    * @brief
    */
-  class Pwm::Private  : public Converter::Private {
+  class SocPwm::Private  : public Pwm::Private {
 
     public:
-      Private (Pwm * q);
+      Private (SocPwm * q, Pin * pin);
       virtual ~Private();
+      
+      // IoDevice::Private
+      virtual bool isOpen() const;
 
-      PIMP_DECLARE_PUBLIC (Pwm)
+      // Converter::Private
+      virtual bool open (OpenMode mode) { return false; }
+      virtual void close() {}
+      // virtual long read();
+      // virtual bool write (long value);
+
+      // SocPwm::Private
+      virtual bool isNull() const { return true; }
+      virtual long frequency() const { return 0; }
+      virtual bool setFrequency (long freq) const { return false; }
+
+      static bool isPwmPin (const Pin * pin) { return false; }
+      static const std::string & deviceName();
+
+      Pin * pin;
+
+      PIMP_DECLARE_PUBLIC (SocPwm)
   };
 }
 
 /* ========================================================================== */
-#endif /* PIDUINO_PWM_PRIVATE_H defined */
+#endif /* PIDUINO_SOCPWM_PRIVATE_H defined */

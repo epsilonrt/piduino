@@ -15,50 +15,43 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PIDUINO_CONVERTER_H
-#define PIDUINO_CONVERTER_H
+#ifndef PIDUINO_SOCPWM_H
+#define PIDUINO_SOCPWM_H
 
-#include <string>
-#include <piduino/iodevice.h>
+#include <piduino/pwm.h>
+#include <piduino/gpiopin.h>
 
 /**
- *  @defgroup piduino_converter A/D or D/A Converter
+ *  @defgroup piduino_gpiopwm GPIO PWM generator
  *  @{
  */
 
 namespace Piduino {
 
-  class Converter : public IoDevice {
+  class SocPwm : public Pwm {
 
     public:
-      enum Type {
-        AnalogToDigital,
-        DigitalToAnalog,
-        None = -1
-      };
-
-      Converter();
-      virtual ~Converter();
-
-      Type type() const;
-      bool bipolar() const;
-      unsigned int resolution() const;
-      virtual long max() const;
-      virtual long min() const;
+      SocPwm (Pin * pin);
+      virtual ~SocPwm();
       
-      virtual bool open (IoDevice::OpenMode mode = IoDevice::ReadWrite);
-      virtual void close();
-      virtual long read();
-      virtual bool write (long value);
-
+      // Converter
       virtual const std::string & deviceName() const;
+      
+      // Pwm
+      virtual long frequency() const;
+      virtual bool setFrequency (long freq);
+      
+      // SocPwm
+      const Pin * pin() const;
+      bool isNull() const;
+      bool isPwmPin (const Pin * pin) const;
 
     protected:
       class Private;
-      Converter (Private &dd);
+      SocPwm (Private &dd);
 
     private:
-      PIMP_DECLARE_PRIVATE (Converter)
+      PIMP_DECLARE_PRIVATE (SocPwm)
   };
 }
 /**
@@ -66,4 +59,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*PIDUINO_CONVERTER_H defined */
+#endif /*PIDUINO_SOCPWM_H defined */

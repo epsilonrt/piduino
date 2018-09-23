@@ -40,8 +40,7 @@ namespace Piduino {
   GpioPwm::~GpioPwm() = default;
 
   // ---------------------------------------------------------------------------
-  // static
-  const std::string & GpioPwm::deviceName() {
+  const std::string & GpioPwm::deviceName() const {
     static std::string dn ("GpioPwm");
 
     return dn;
@@ -72,8 +71,10 @@ namespace Piduino {
   typedef duration<double, std::nano> nanod_t;
 
   // ---------------------------------------------------------------------------
-  GpioPwm::Private::Private (GpioPwm * q, Pin * p, unsigned int r, unsigned long c) :
-    Pwm::Private (q, r), pin (p), value (0), freq (c), flag (0) {}
+  GpioPwm::Private::Private (GpioPwm * q, Pin * p, unsigned int r, unsigned long f) :
+    Pwm::Private (q),  pin (p), value (0), freq (f), flag (0) {
+    resolution = r;
+  }
 
   // ---------------------------------------------------------------------------
   GpioPwm::Private::~Private() = default;
@@ -82,8 +83,8 @@ namespace Piduino {
   bool
   GpioPwm::Private::open (OpenMode mode) {
 
-    pin->setMode(Pin::ModeOutput);
-    flag = FlagRun | FlagValueUpdated; 
+    pin->setMode (Pin::ModeOutput);
+    flag = FlagRun | FlagValueUpdated;
     thread = std::thread (generator, std::ref (flag), this);
     if (isOpen()) {
 

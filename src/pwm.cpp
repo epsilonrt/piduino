@@ -40,8 +40,8 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  Pwm::Private::Private (Pwm * q, unsigned int r) :
-    Converter::Private (q, DigitalToAnalog, r, false) {}
+  Pwm::Private::Private (Pwm * q) :
+    Converter::Private (q, DigitalToAnalog) {}
 
   // ---------------------------------------------------------------------------
   Pwm::Private::~Private() = default;
