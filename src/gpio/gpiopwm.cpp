@@ -82,6 +82,7 @@ namespace Piduino {
   bool
   GpioPwm::Private::open (OpenMode mode) {
 
+    pin->setMode(Pin::ModeOutput);
     flag = FlagRun | FlagValueUpdated; 
     thread = std::thread (generator, std::ref (flag), this);
     if (isOpen()) {

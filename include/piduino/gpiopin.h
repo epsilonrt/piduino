@@ -364,7 +364,18 @@ namespace Piduino {
       /**
        * @brief DAC utilisé par la broche
        */
-      Converter & dac();
+      Converter * dac();
+      
+      /**
+       * @brief Affecte un convertisseur analogique-numérique
+       * @param dac
+       */
+      bool setDac (Converter * dac);
+      
+      /**
+       * @brief Retire le convertisseur analogique-numérique
+       */
+      void resetDac ();
 
       /**
        * @brief Numéro de la broche dans la numérotation logique \c NumberingLogical
@@ -580,7 +591,7 @@ namespace Piduino {
        * @param desc pointeur sur la description
        * @param dacName nom du convertisseur numérique-analogique à utiliser pour analogWrite()
        */
-      Pin (Connector * parent, const Descriptor * desc, const std::string & dacName = "GpioPwm");
+      Pin (Connector * parent, const Descriptor * desc);
       
       /**
        * @brief Desctructeur
@@ -623,7 +634,6 @@ namespace Piduino {
       std::thread _thread;
       
       std::shared_ptr<Converter> _dac;
-      std::string _dacName;
 
       static const std::map<Pull, std::string> _pulls;
       static const std::map<Type, std::string> _types;

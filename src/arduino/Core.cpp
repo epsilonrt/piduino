@@ -18,6 +18,7 @@
 #include <piduino/clock.h>
 #include <piduino/scheduler.h>
 #include <piduino/database.h>
+#include <piduino/gpiopwm.h>
 #include "config.h"
 
 #if PIDUINO_WITH_SPI
@@ -134,9 +135,16 @@ int digitalRead (int n) {
 
 // -----------------------------------------------------------------------------
 void analogWrite (int n, int v) {
+  
+  if (gpio.pin (n).dac() == nullptr) {
+    
+    if (! gpio.pin (n).setDac (new GpioPwm(&gpio.pin (n), 8))) {
+      return;
+    }
+  }
 
   if (!pinLocked (n)) {
-    unsigned int r = gpio.pin (n).dac().resolution();
+    unsigned int r = gpio.pin (n).dac()->resolution();
 
     if (r > 8) {
       v <<= r - 8;
