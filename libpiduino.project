@@ -83,8 +83,12 @@
             <File Name="src/gpio/arch/arm/allwinner/allwinner_h.h"/>
           </VirtualDirectory>
           <VirtualDirectory Name="broadcom">
-            <File Name="src/gpio/arch/arm/broadcom/broadcom_bcm2835.h"/>
-            <File Name="src/gpio/arch/arm/broadcom/broadcom_bcm2835.cpp"/>
+            <File Name="src/gpio/arch/arm/broadcom/bcm2835.h"/>
+            <File Name="src/gpio/arch/arm/broadcom/gpio_bcm2835.cpp"/>
+            <File Name="src/gpio/arch/arm/broadcom/gpio_bcm2835.h"/>
+            <File Name="src/gpio/arch/arm/broadcom/pwm_bcm2835.cpp"/>
+            <File Name="src/gpio/arch/arm/broadcom/pwm_bcm2835.h"/>
+            <File Name="src/gpio/arch/arm/broadcom/bcm2835.cpp"/>
           </VirtualDirectory>
         </VirtualDirectory>
       </VirtualDirectory>
@@ -203,6 +207,7 @@
       <File Name="include/piduino/terminal.h"/>
       <File Name="include/piduino/socpwm.h"/>
     </VirtualDirectory>
+    <File Name="utils/pido/CMakeLists.txt"/>
   </VirtualDirectory>
   <Description/>
   <Dependencies/>

@@ -25,12 +25,15 @@ class Exception: public std::exception {
       CommandExpected = 1,
       UnknownCommand,
       ArgumentExpected,
+      BadArguments,
       IllegalMode,
       PinNumberExpected,
       NotBinaryValue,
       NotPwmValue,
       NotOutputPin,
-      NotPwmPin
+      NotPwmPin,
+      PwmOpenError,
+      PwmWriteError
     };
 
     explicit Exception (Exception::Code code, int value = 0);

@@ -483,10 +483,11 @@ See also `pinfo(1)` manpage.
 * Arduino Classes (String, Print, Stream....)  
 * Update README  
 * Man Pages for pido and pinfo  
+* Hardware PWM Pin support for BCM2835
 
 The rest of the things to do:
 
-* Hardware PWM Pin support
+* Hardware PWM Pin support for AllWinner SoC
 * Creating a web page
 * `pidbman` for managing the database of boards with Qt (in development [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman)) 
 * Enabling daemon mode for loop()

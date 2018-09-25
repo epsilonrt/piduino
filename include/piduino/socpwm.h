@@ -14,40 +14,83 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-
 #ifndef PIDUINO_SOCPWM_H
 #define PIDUINO_SOCPWM_H
 
+#include <climits>
 #include <piduino/pwm.h>
 #include <piduino/gpiopin.h>
 
 /**
- *  @defgroup piduino_gpiopwm GPIO PWM generator
+ *  @defgroup piduino_gpiopwm SoC PWM generator
  *  @{
  */
-
 namespace Piduino {
-
+  /**
+   * @class SocPwm
+   * @brief
+   */
   class SocPwm : public Pwm {
 
     public:
-      SocPwm (Pin * pin);
+      SocPwm (Pin * pin = nullptr);
       virtual ~SocPwm();
-      
+
       // Converter
+      virtual int resolution() const;
+      virtual int setResolution (int resolution);
+      virtual void setEnable (bool enable);
+      virtual bool isEnabled () const;
       virtual const std::string & deviceName() const;
-      
+
       // Pwm
       virtual long frequency() const;
-      virtual bool setFrequency (long freq);
-      
+      virtual long setFrequency (long freq);
+
       // SocPwm
+      bool hasEngine() const; // no engine !
+      bool hasPin() const;
       const Pin * pin() const;
-      bool isNull() const;
-      bool isPwmPin (const Pin * pin) const;
+
+      class Private;
+
+      /**
+       * @class Engine
+       * @brief
+       */
+      class Engine {
+
+        public:
+          Engine (Private * d, Pin * p) : parent (d), pin (p) {}
+
+          virtual bool open (OpenMode mode) = 0;
+          virtual void close() = 0;
+          virtual const std::string & deviceName() const = 0;
+
+          // isOpen () checked before calling this functions
+          virtual long frequency() const = 0;
+          virtual int  resolution() const = 0;
+          virtual long max() const;
+          virtual long min() const;
+          virtual bool setFrequency (long freq) { return -1; }
+          virtual bool setResolution (int resolution) { return -1; }
+
+          // hasPin () checked before calling this functions
+          virtual long read() = 0;
+          virtual bool write (long value) = 0;
+          virtual void setEnable (bool enable) = 0;
+          virtual bool isEnabled () const = 0;
+          //---
+
+          inline void run() { setEnable (true); }
+          inline void stop() { setEnable (false); }
+          inline bool hasPin() const { return pin != nullptr; }
+
+          Private * parent;
+          Pin * pin;
+      };
 
     protected:
-      class Private;
       SocPwm (Private &dd);
 
     private:

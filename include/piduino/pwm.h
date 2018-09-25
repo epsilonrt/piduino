@@ -32,7 +32,7 @@ namespace Piduino {
     public:
       Pwm ();
       virtual ~Pwm();
-      virtual long frequency() const { return 0; }
+      virtual long frequency() const = 0;
       virtual bool setFrequency (long freq) const { return false; }
 
     protected:

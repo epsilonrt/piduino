@@ -18,6 +18,8 @@
 #ifndef PIDUINO_IOMAP_H
 #define PIDUINO_IOMAP_H
 
+#include <piduino/global.h>
+
 /**
  *  @defgroup piduino_iomap Accès mémoire IO
  *
@@ -51,7 +53,7 @@ namespace Piduino {
        * @param size taille de la zone à projeter en octets
        * @return true si ouverte, false si erreur
        */
-      bool open (unsigned long base, unsigned int size);
+      bool open (off_t base, size_t size);
 
       /**
        * @brief Fermeture d'une projection mémoire
@@ -63,14 +65,14 @@ namespace Piduino {
        * @param offset offset à l'intérieur de la zone en sizeof(int)
        * @return le pointeur sur le registre, NULL si erreur
        */
-      volatile unsigned int * io (unsigned int offset = 0) const;
+      volatile uint32_t * io (size_t offset = 0) const;
 
       /**
        * @brief Pointeur d'accès aux registres
        * @param offset offset à l'intérieur de la zone en sizeof(int)
        * @return le pointeur sur le registre, NULL si erreur
        */
-      volatile unsigned int * operator [] (unsigned int offset) const {
+      volatile uint32_t * operator [] (size_t offset) const {
 
         return io (offset);
       }
@@ -86,22 +88,22 @@ namespace Piduino {
       /**
        * @brief Adresse de base de la zone projetée
        */
-      inline unsigned long base() const {
+      inline off_t base() const {
         return _base;
       }
 
       /**
        * @brief Taille de la zone projetée
        */
-      inline unsigned int size() const {
+      inline size_t size() const {
         return _size;
       }
 
     private:
-      unsigned long _base; /*< adresse de base de la zone */
-      unsigned int _size; /*< Taille de la zone */
-      int _fd;           /*< descripteur d'accès à la zone mémoire */
-      void * _map;         /*< pointeur de la zone */
+      off_t _base;  /*< adresse de base de la zone */
+      size_t _size; /*< Taille de la zone */
+      int _fd;      /*< descripteur d'accès à la zone mémoire */
+      void * _map;  /*< pointeur de la zone */
   };
 }
 /**
@@ -109,4 +111,4 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /*PIDUINO_IOMAP_H defined */
+#endif /* PIDUINO_IOMAP_H defined */

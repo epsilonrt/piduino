@@ -21,12 +21,16 @@
 #include <vector>
 #include <cstdlib>
 #include <csignal>
+#include <cmath>
 #include <unistd.h>
 #include <piduino/clock.h>
 #include <piduino/gpio.h>
+#include <piduino/socpwm.h>
 #include <piduino/database.h>
 #include "exception.h"
 #include "version.h"
+
+//#undef NDEBUG
 
 using namespace std;
 using namespace Piduino;
@@ -34,6 +38,8 @@ using namespace Piduino;
 /* constants ================================================================ */
 const string authors = "Pascal JEAN";
 const string website = "https://github.com/epsilonrt/piduino";
+const int pwmDefaultFreq = 1000;
+const long pwmDefautResolution = 10;
 
 /* types ==================================================================== */
 typedef void (*func) (int argc, char * argv[]);
@@ -43,7 +49,7 @@ Pin::Numbering numbering = Pin::NumberingLogical;
 int pinnumber = -1;
 int connector = -1;
 bool physicalNumbering = false;
-Pin * pin = 0;
+Pin * pin = nullptr;
 bool debug = false;
 bool forceSysFs = false;
 int useSysFsBeforeWfi = -1;
@@ -57,7 +63,9 @@ void toggle (int argc, char * argv[]);
 void blink (int argc, char * argv[]);
 void readall (int argc, char * argv[]);
 void wfi (int argc, char * argv[]);
-void pwm (int argc, char * argv[]); // TODO
+void pwm (int argc, char * argv[]);
+void pwmr (int argc, char * argv[]);
+void pwmf (int argc, char * argv[]);
 
 Pin * getPin (char * c_str);
 void usage ();
@@ -65,6 +73,7 @@ void version ();
 void warranty ();
 void sig_handler (int sig);
 vector<string> split (const string& s, char seperator);
+void debug_pwm (SocPwm & p);
 
 /* public variables ========================================================= */
 // Nom du programme en cours
@@ -86,7 +95,9 @@ main (int argc, char **argv) {
     {"blink", blink},
     {"wfi", wfi},
     {"readall", readall},
-    {"pwm", pwm} // TODO
+    {"pwm", pwm}, // TODO
+    {"pwmr", pwmr}, // TODO
+    {"pwmf", pwmf} // TODO
   };
 
   try {
@@ -155,7 +166,7 @@ main (int argc, char **argv) {
   catch (Exception& e) {
 
     cerr << __progname << ": " << e.what() << " !" << endl;
-    cerr << __progname << " -h for help." << endl;
+    cerr << __progname << " -h or man " << __progname << " for help." << endl;
     ret = -1;
   }
   catch (out_of_range& e) {
@@ -471,24 +482,109 @@ pwm (int argc, char * argv[]) {
 
     throw Exception (Exception::ArgumentExpected);
   }
-  else {
-    int value;
 
-    pin = getPin (argv[optind]);
-    value = stoi (string (argv[optind + 1]));
-    if ( (value < 0) || (value > 1023)) {
+  pin = getPin (argv[optind]);
+  if (pin->mode() != Pin::ModePwm) {
 
-      throw Exception (Exception::NotPwmValue, value);
-    }
+    throw Exception (Exception::NotPwmPin, pin->logicalNumber());
+  }
+  long value = stol (string (argv[optind + 1]));
 
-    if (pin->mode () != Pin::ModePwm) {
+  SocPwm socpwm (pin);
+  if (!socpwm.open()) {
 
-      throw Exception (Exception::NotPwmPin, pinnumber);
-    }
-
-    cerr << __FUNCTION__ << "() not yet implemented (TODO) !" << endl;
+    throw Exception (Exception::PwmOpenError, pin->logicalNumber());
   }
 
+  if (socpwm.frequency() == 0) {
+
+    socpwm.setResolution (pwmDefautResolution);
+    socpwm.setFrequency (pwmDefaultFreq);
+#ifndef NDEBUG
+    cout << "Set frequency  to " << socpwm.frequency() << endl;
+    cout << "Set resolution to " << socpwm.resolution() << endl;
+#endif
+  }
+
+  if ( (value < socpwm.min()) || (value > socpwm.max())) {
+
+    throw Exception (Exception::NotPwmValue, value);
+  }
+
+  if (!socpwm.write (value)) {
+
+    throw Exception (Exception::PwmWriteError, pin->logicalNumber());
+  }
+  socpwm.run();
+  debug_pwm (socpwm);
+  socpwm.close();
+}
+
+/* -----------------------------------------------------------------------------
+  pwmr <pin> <range>
+ */
+void
+pwmr (int argc, char * argv[]) {
+  int paramc = (argc - optind);
+
+  if (paramc < 2) {
+
+    throw Exception (Exception::ArgumentExpected);
+  }
+
+  pin = getPin (argv[optind]);
+  if (pin->mode() != Pin::ModePwm) {
+
+    throw Exception (Exception::NotPwmPin, pin->logicalNumber());
+  }
+  int value = stoi (string (argv[optind + 1]));
+  value = log2 (value);
+
+  SocPwm socpwm (pin);
+  if (!socpwm.open()) {
+
+    throw Exception (Exception::PwmOpenError, pin->logicalNumber());
+  }
+
+  if (socpwm.setResolution (value) < 0) {
+
+    throw Exception (Exception::BadArguments);
+  }
+  debug_pwm (socpwm);
+  socpwm.close();
+}
+
+/* -----------------------------------------------------------------------------
+  pwmf <pin> <freq>
+ */
+void
+pwmf (int argc, char * argv[]) {
+  int paramc = (argc - optind);
+
+  if (paramc < 2) {
+
+    throw Exception (Exception::ArgumentExpected);
+  }
+
+  pin = getPin (argv[optind]);
+  if (pin->mode() != Pin::ModePwm) {
+
+    throw Exception (Exception::NotPwmPin, pin->logicalNumber());
+  }
+  long value = stol (string (argv[optind + 1]));
+
+  SocPwm socpwm (pin);
+  if (!socpwm.open()) {
+
+    throw Exception (Exception::PwmOpenError, pin->logicalNumber());
+  }
+
+  if (socpwm.setFrequency (value) < 0) {
+
+    throw Exception (Exception::BadArguments);
+  }
+  debug_pwm (socpwm);
+  socpwm.close();
 }
 
 // -----------------------------------------------------------------------------
@@ -629,6 +725,29 @@ usage () {
   cout << "  wfi <pin> <rising/falling/both> [timeout_ms]" << endl;
   cout << "    Waits  for  the  interrupt  to happen. It's a non-busy wait." << endl;
   cout << "  pwm <pin> <value>" << endl;
-  cout << "    Write a PWM value (0-1023) to the given pin (pwm pin only)." << endl;
+  cout << "    Write a PWM value (0 to pwmr) to the given pin (pwm pin only)." << endl;
+  cout << "  pwmr <pin> <range>" << endl;
+  cout << "    Change the PWM range. The default is 1024 (pwm pin only)." << endl;
+  cout << "  pwmf <pin> <freq>" << endl;
+  cout << "    Change the PWM frequency. The default is about 1000Hz (pwm pin only)." << endl;
+}
+
+// -----------------------------------------------------------------------------
+void debug_pwm (SocPwm & p) {
+#ifndef NDEBUG
+  cout << "Pwm " << p.deviceName() << endl;
+  cout << "hasEngine : " << p.hasEngine() << endl;
+  cout << "isOpen    : " << p.isOpen() << endl;
+  cout << "Frequency : " << p.frequency() << endl;
+  cout << "Resolution: " << p.resolution() << endl;
+  cout << "Min value : " << p.min() << endl;
+  cout << "Max value : " << p.max() << endl;
+  cout << "hasPin    : " << p.hasPin() << endl;
+  if (p.hasPin()) {
+    cout << "Pin#      : " << p.pin()->logicalNumber() << endl;
+    cout << "isEnabled : " << p.isEnabled() << endl;
+    cout << "Cur value : " << p.read() << endl;
+  }
+#endif
 }
 /* ========================================================================== */

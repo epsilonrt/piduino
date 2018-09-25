@@ -29,6 +29,9 @@ Exception::Exception (Exception::Code code, int value) :
     case ArgumentExpected:
       _msg.assign ("Arguments expected");
       break;
+    case BadArguments:
+      _msg.assign ("Bad arguments");
+      break;
     case PinNumberExpected:
       _msg.assign ("Pin number expected");
       break;
@@ -45,6 +48,14 @@ Exception::Exception (Exception::Code code, int value) :
       _msg = s.str();
     case NotPwmPin:
       s << "Pin #" << value << " is not an pwm output";
+      _msg = s.str();
+      break;
+    case PwmOpenError:
+      s << "Unable to open pwm Pin #" << value;
+      _msg = s.str();
+      break;
+    case PwmWriteError:
+      s << "Unable to write on pwm Pin #" << value;
       _msg = s.str();
       break;
     default:

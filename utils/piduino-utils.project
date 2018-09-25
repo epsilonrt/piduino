@@ -108,7 +108,6 @@
   <VirtualDirectory Name="pido">
     <File Name="pido/exception.h"/>
     <File Name="pido/exception.cpp"/>
-    <File Name="pido/CMakeLists.txt"/>
     <File Name="pido/main.cpp"/>
     <File Name="pido/pido.1.in"/>
   </VirtualDirectory>

@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#include "socpwm_p.h"
+#include <cmath>
 #include <piduino/database.h>
+#include "socpwm_p.h"
+#include "arch/arm/broadcom/pwm_bcm2835.h"
 
 namespace Piduino {
 
@@ -30,25 +32,156 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   SocPwm::SocPwm (Pin * p) :
-    Pwm (*new Private (this, p)) {
+    Pwm (*new Private (this, p)) {}
+
+  // ---------------------------------------------------------------------------
+  SocPwm::~SocPwm() = default;
+
+  // ---------------------------------------------------------------------------
+  bool
+  SocPwm::hasEngine() const {
+    PIMP_D (const SocPwm);
+
+    return d->hasEngine();
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  SocPwm::hasPin() const {
+    PIMP_D (const SocPwm);
+
+    return d->hasPin();
+  }
+
+  // ---------------------------------------------------------------------------
+  const Pin *
+  SocPwm::pin() const {
+
+    if (hasEngine()) {
+      PIMP_D (const SocPwm);
+
+      return d->engine->pin;
+    }
+    return nullptr;
+  }
+
+  // ---------------------------------------------------------------------------
+  // hasPin() must be checked !
+  void
+  SocPwm::setEnable (bool enable) {
+
+    if (isOpen() && hasPin()) {
+      PIMP_D (SocPwm);
+
+      return d->engine->setEnable (enable);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // hasPin() must be checked !
+  bool
+  SocPwm::isEnabled () const {
+
+    if (isOpen() && hasPin()) {
+      PIMP_D (const SocPwm);
+
+      return d->engine->isEnabled();
+    }
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  SocPwm::frequency() const {
+    PIMP_D (const SocPwm);
+
+    if (isOpen()) {
+
+      return d->engine->frequency();
+    }
+    return -1;
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  SocPwm::setFrequency (long freq) {
+    PIMP_D (SocPwm);
+
+    if (isOpen()) {
+
+      if (d->engine->setFrequency (freq)) {
+
+        if (hasPin()) {
+          // TODO, modify value ?
+        }
+        return frequency();
+      }
+    }
+    return -1;
+  }
+
+  // ---------------------------------------------------------------------------
+  int
+  SocPwm::resolution() const {
+    PIMP_D (const SocPwm);
+
+    if (isOpen()) {
+
+      return d->engine->resolution();
+    }
+    return -1;
+  }
+
+  // ---------------------------------------------------------------------------
+  int
+  SocPwm::setResolution (int r)  {
+    PIMP_D (SocPwm);
+
+    if (isOpen()) {
+
+      if (d->engine->setResolution (r)) {
+
+        if (hasPin()) {
+          // TODO, modify value ?
+        }
+        return resolution();
+      }
+    }
+    return -1;
+  }
+
+  // ---------------------------------------------------------------------------
+  const std::string &
+  SocPwm::deviceName() const {
+    static std::string dn;
+
+    if (hasEngine()) {
+      PIMP_D (const SocPwm);
+
+      dn = d->engine->deviceName ();
+    }
+    return dn;
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //                     SocPwm::Private Class
+  //
+  // ---------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  SocPwm::Private::Private (SocPwm * q, Pin * p) :
+    Pwm::Private (q) {
 
     switch (db.board().soc().family().id()) {
 
       case SoC::Family::Id::BroadcomBcm2835:
-        // TODO
-        /*
-        if (Bcm2835Pwm::isPwmPin (p)) {
-          d_ptr.swap (new Bcm2835Pwm (this, p));
-        }
-         */
+        engine = std::make_unique<Bcm2835::PwmEngine> (this, p);
         break;
+
       case SoC::Family::Id::AllwinnerH:
         // TODO
-        /*
-        if (AllwinnerHPwm::isPwmPin (p)) {
-          d_ptr.swap (new AllwinnerHPwm (this, p));
-        }
-         */
+        // engine = std::make_unique<AllwinnerH::PwmEngine> (this, p);
         break;
       default:
         break;
@@ -56,87 +189,123 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  SocPwm::~SocPwm() = default;
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  long
-  SocPwm::frequency() const {
-    PIMP_D (const SocPwm);
-
-    return d->frequency();
-  }
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  bool
-  SocPwm::setFrequency (long freq) {
-    PIMP_D (SocPwm);
-
-    return d->setFrequency (freq);
-  }
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  const std::string & SocPwm::deviceName() const {
-    PIMP_D (const SocPwm);
-
-    return d->deviceName();
-  }
-
-  // ---------------------------------------------------------------------------
-  const Pin *
-  SocPwm::pin() const {
-    PIMP_D (const SocPwm);
-
-    return d->pin;
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  SocPwm::isNull() const {
-    PIMP_D (const SocPwm);
-
-    return d->isNull();
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  SocPwm::isPwmPin (const Pin * pin) const {
-    PIMP_D (const SocPwm);
-
-    return d->isPwmPin (pin);
-  }
-
-// -----------------------------------------------------------------------------
-//
-//                     SocPwm::Private Default Class
-//
-// -----------------------------------------------------------------------------
-
-  // ---------------------------------------------------------------------------
-  SocPwm::Private::Private (SocPwm * q, Pin * p) :
-    Pwm::Private (q), pin (p) {}
-
-  // ---------------------------------------------------------------------------
   SocPwm::Private::~Private() = default;
+
+  // ---------------------------------------------------------------------------
+  bool
+  SocPwm::Private::hasEngine() const {
+
+    return engine != nullptr;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  SocPwm::Private::hasPin() const {
+
+    if (hasEngine()) {
+      return engine->pin != nullptr;
+    }
+    return false;
+  }
 
   // ---------------------------------------------------------------------------
   // virtual
   bool
   SocPwm::Private::isOpen() const {
 
-    return !isNull() && Pwm::Private::isOpen();
+    return hasEngine() && Pwm::Private::isOpen();
   }
 
   // ---------------------------------------------------------------------------
-  // static
-  const std::string &
-  SocPwm::Private::deviceName() {
-    static std::string dn;
+  // isOpen() == false
+  bool
+  SocPwm::Private::open (OpenMode m) {
 
-    return dn;
+    if (hasEngine()) {
+
+      if (engine->open (m)) {
+
+        return Pwm::Private::open (m);
+      }
+    }
+    return false;
   }
-}
 
+  // ---------------------------------------------------------------------------
+  // isOpen() == true
+  void
+  SocPwm::Private::close() {
+
+    if (hasEngine()) {
+
+      engine->close();
+      Pwm::Private::close();
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // isOpen() == true
+  // hasPin() must be checked !
+  long
+  SocPwm::Private::read() {
+
+    if (hasPin()) {
+
+      return engine->read();
+    }
+    return -1;
+  }
+
+  // ---------------------------------------------------------------------------
+  // isOpen() == true
+  // hasPin() must be checked !
+  bool
+  SocPwm::Private::write (long value) {
+
+    if (hasPin()) {
+
+      return engine->write (value);
+    }
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  SocPwm::Private::max() const {
+
+    if (isOpen()) {
+
+      return engine->max();
+    }
+    return LONG_MIN;
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  SocPwm::Private::min() const {
+
+    if (isOpen()) {
+
+      return engine->min();
+    }
+    return LONG_MAX;
+  }
+
+  // ---------------------------------------------------------------------------
+  // default implementation
+  long
+  SocPwm::Engine::max() const {
+
+    return (1L << (resolution() - (parent->bipolar ? 1 : 0))) - 1;
+  }
+
+  // ---------------------------------------------------------------------------
+  // default implementation
+  long
+  SocPwm::Engine::min() const {
+
+    return parent->bipolar ? - (1L << (resolution() - 1)) : 0;
+  }
+
+}
 /* ========================================================================== */

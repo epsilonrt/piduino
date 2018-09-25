@@ -20,7 +20,7 @@
 #include <piduino/database.h>
 #ifdef __ARM_ARCH
 #include  "gpio/arch/arm/allwinner/allwinner_h.h"
-#include  "gpio/arch/arm/broadcom/broadcom_bcm2835.h"
+#include  "gpio/arch/arm/broadcom/gpio_bcm2835.h"
 #endif /* __ARM_ARCH */
 
 namespace Piduino {
@@ -41,7 +41,7 @@ namespace Piduino {
     switch (socFamilyId) {
 #ifdef __ARM_ARCH
       case SoC::Family::BroadcomBcm2835 :
-        _device = new DeviceBcm2835();
+        _device = new Bcm2835::GpioDevice();
         break;
       case SoC::Family::AllwinnerH :
         _device = new DeviceAllwinnerH();

@@ -14,12 +14,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
- * */
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -45,7 +39,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   bool
-  IoMap::open (unsigned long b, unsigned int s) {
+  IoMap::open (off_t b, size_t s) {
 
     if ( (b != base()) && (s != size())) {
 
@@ -101,10 +95,10 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  volatile unsigned int *
-  IoMap::io (unsigned int offset) const {
+  volatile uint32_t *
+  IoMap::io (size_t offset) const {
 
-    return static_cast<volatile unsigned int *> (_map) + offset;
+    return static_cast<volatile uint32_t *> (_map) + offset;
   }
 }
 /* ========================================================================== */

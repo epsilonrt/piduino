@@ -52,6 +52,7 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/fileno.h
   ${PIDUINO_INC_DIR}/piduino/converter.h
   ${PIDUINO_INC_DIR}/piduino/pwm.h
+  ${PIDUINO_INC_DIR}/piduino/socpwm.h
 )
 
 set (hdr_gpio 

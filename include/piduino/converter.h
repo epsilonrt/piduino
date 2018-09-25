@@ -41,8 +41,9 @@ namespace Piduino {
       virtual ~Converter();
 
       Type type() const;
-      bool bipolar() const;
-      unsigned int resolution() const;
+      virtual bool bipolar() const;
+      virtual int resolution() const;
+      virtual int setResolution (int resolution) { return -1; }
       virtual long max() const;
       virtual long min() const;
       
@@ -50,6 +51,10 @@ namespace Piduino {
       virtual void close();
       virtual long read();
       virtual bool write (long value);
+      virtual void setEnable (bool enable) { /* do nothing */ }
+      virtual bool isEnabled () const { return true; }
+      inline void run() { setEnable (true); }
+      inline void stop() { setEnable (false); }
 
       virtual const std::string & deviceName() const;
 

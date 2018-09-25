@@ -30,27 +30,25 @@ namespace Piduino {
   class SocPwm::Private  : public Pwm::Private {
 
     public:
+      // SocPwm::Private
       Private (SocPwm * q, Pin * pin);
       virtual ~Private();
-      
+      bool hasEngine() const;
+      bool hasPin() const;
+
       // IoDevice::Private
       virtual bool isOpen() const;
 
       // Converter::Private
-      virtual bool open (OpenMode mode) { return false; }
-      virtual void close() {}
-      // virtual long read();
-      // virtual bool write (long value);
+      virtual bool open (OpenMode mode);
+      virtual void close();
+      virtual long read();
+      virtual bool write (long value);
+      virtual long max() const;
+      virtual long min() const;
 
       // SocPwm::Private
-      virtual bool isNull() const { return true; }
-      virtual long frequency() const { return 0; }
-      virtual bool setFrequency (long freq) const { return false; }
-
-      static bool isPwmPin (const Pin * pin) { return false; }
-      static const std::string & deviceName();
-
-      Pin * pin;
+      std::unique_ptr<Engine> engine;
 
       PIMP_DECLARE_PUBLIC (SocPwm)
   };

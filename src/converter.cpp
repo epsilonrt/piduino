@@ -113,7 +113,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  unsigned int
+  int
   Converter::resolution() const {
     PIMP_D (const Converter);
 
