@@ -153,7 +153,14 @@ main (int argc, char **argv) {
       throw Exception (Exception::CommandExpected);
     }
 
-    do_it = str2func. at (argv[optind]);
+    try {
+
+      do_it = str2func. at (argv[optind]);
+    }
+    catch (out_of_range& e) {
+
+      throw Exception (Exception::UnknownCommand, argv[optind]);
+    }
     optind++;
 
     gpio.setNumbering (numbering);
@@ -472,13 +479,13 @@ wfi (int argc, char * argv[]) {
 }
 
 /* -----------------------------------------------------------------------------
-  pwm <pin> <value>
+  pwm <pin> [value]
  */
 void
 pwm (int argc, char * argv[]) {
   int paramc = (argc - optind);
 
-  if (paramc < 2) {
+  if (paramc < 1) {
 
     throw Exception (Exception::ArgumentExpected);
   }
@@ -488,7 +495,6 @@ pwm (int argc, char * argv[]) {
 
     throw Exception (Exception::NotPwmPin, pin->logicalNumber());
   }
-  long value = stol (string (argv[optind + 1]));
 
   SocPwm socpwm (pin);
   if (!socpwm.open()) {
@@ -506,28 +512,37 @@ pwm (int argc, char * argv[]) {
 #endif
   }
 
-  if ( (value < socpwm.min()) || (value > socpwm.max())) {
+  if (paramc >= 2) {
 
-    throw Exception (Exception::NotPwmValue, value);
+    long value = stol (string (argv[optind + 1]));
+
+    if ( (value < socpwm.min()) || (value > socpwm.max())) {
+
+      throw Exception (Exception::NotPwmValue, value);
+    }
+
+    if (!socpwm.write (value)) {
+
+      throw Exception (Exception::PwmWriteError, pin->logicalNumber());
+    }
+    socpwm.run();
   }
+  else {
 
-  if (!socpwm.write (value)) {
-
-    throw Exception (Exception::PwmWriteError, pin->logicalNumber());
+    cout << socpwm.read() << endl;
   }
-  socpwm.run();
   debug_pwm (socpwm);
   socpwm.close();
 }
 
 /* -----------------------------------------------------------------------------
-  pwmr <pin> <range>
+  pwmr <pin> [range]
  */
 void
 pwmr (int argc, char * argv[]) {
   int paramc = (argc - optind);
 
-  if (paramc < 2) {
+  if (paramc < 1) {
 
     throw Exception (Exception::ArgumentExpected);
   }
@@ -537,8 +552,6 @@ pwmr (int argc, char * argv[]) {
 
     throw Exception (Exception::NotPwmPin, pin->logicalNumber());
   }
-  int value = stoi (string (argv[optind + 1]));
-  value = log2 (value);
 
   SocPwm socpwm (pin);
   if (!socpwm.open()) {
@@ -546,22 +559,30 @@ pwmr (int argc, char * argv[]) {
     throw Exception (Exception::PwmOpenError, pin->logicalNumber());
   }
 
-  if (socpwm.setResolution (value) < 0) {
+  if (paramc >= 2) {
+    int value = stoi (string (argv[optind + 1]));
+    value = log2 (value);
+    if (socpwm.setResolution (value) < 0) {
 
-    throw Exception (Exception::BadArguments);
+      throw Exception (Exception::BadArguments);
+    }
+  }
+  else {
+
+    cout << socpwm.max() << endl;
   }
   debug_pwm (socpwm);
   socpwm.close();
 }
 
 /* -----------------------------------------------------------------------------
-  pwmf <pin> <freq>
+  pwmf <pin> [freq]
  */
 void
 pwmf (int argc, char * argv[]) {
   int paramc = (argc - optind);
 
-  if (paramc < 2) {
+  if (paramc < 1) {
 
     throw Exception (Exception::ArgumentExpected);
   }
@@ -571,7 +592,6 @@ pwmf (int argc, char * argv[]) {
 
     throw Exception (Exception::NotPwmPin, pin->logicalNumber());
   }
-  long value = stol (string (argv[optind + 1]));
 
   SocPwm socpwm (pin);
   if (!socpwm.open()) {
@@ -579,9 +599,16 @@ pwmf (int argc, char * argv[]) {
     throw Exception (Exception::PwmOpenError, pin->logicalNumber());
   }
 
-  if (socpwm.setFrequency (value) < 0) {
+  if (paramc >= 2) {
+    long value = stol (string (argv[optind + 1]));
+    if (socpwm.setFrequency (value) < 0) {
 
-    throw Exception (Exception::BadArguments);
+      throw Exception (Exception::BadArguments);
+    }
+  }
+  else {
+
+    cout << socpwm.frequency() << endl;
   }
   debug_pwm (socpwm);
   socpwm.close();
@@ -616,26 +643,34 @@ getPin (char * c_str) {
     physicalNumbering = true;
   }
 
-  if (!physicalNumbering) {
+  try {
 
-    pinnumber = stoi (s);
-    p = &gpio.pin (pinnumber);
-  }
-  else {
-    vector<string> v = split (s, '.');
+    if (!physicalNumbering) {
 
-    if (v.size() > 1) {
-
-      connector = stoi (v[0]);
-      pinnumber = stoi (v[1]);
+      pinnumber = stoi (s);
+      p = &gpio.pin (pinnumber);
     }
     else {
+      vector<string> v = split (s, '.');
 
-      connector = 1;
-      pinnumber = stoi (v[0]);
+      if (v.size() > 1) {
+
+        connector = stoi (v[0]);
+        pinnumber = stoi (v[1]);
+      }
+      else {
+
+        connector = 1;
+        pinnumber = stoi (v[0]);
+      }
+      p = &gpio.connector (connector)->pin (pinnumber);
     }
-    p = &gpio.connector (connector)->pin (pinnumber);
   }
+  catch (out_of_range& e) {
+
+    throw Exception (Exception::BadPinNumber, s);
+  }
+
   p->forceUseSysFs (forceSysFs);
   return p;
 }
@@ -725,11 +760,11 @@ usage () {
   cout << "  wfi <pin> <rising/falling/both> [timeout_ms]" << endl;
   cout << "    Waits  for  the  interrupt  to happen. It's a non-busy wait." << endl;
   cout << "  pwm <pin> <value>" << endl;
-  cout << "    Write a PWM value (0 to pwmr) to the given pin (pwm pin only)." << endl;
+  cout << "    Write/Read a PWM value (0 to pwmr) to the given pin (pwm pin only)." << endl;
   cout << "  pwmr <pin> <range>" << endl;
-  cout << "    Change the PWM range. The default is 1024 (pwm pin only)." << endl;
+  cout << "    Change/Read the PWM range. The default is 1024 (pwm pin only)." << endl;
   cout << "  pwmf <pin> <freq>" << endl;
-  cout << "    Change the PWM frequency. The default is about 1000Hz (pwm pin only)." << endl;
+  cout << "    Change/Read the PWM frequency. The default is about 1000Hz (pwm pin only)." << endl;
 }
 
 // -----------------------------------------------------------------------------

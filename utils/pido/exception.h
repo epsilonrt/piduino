@@ -28,6 +28,7 @@ class Exception: public std::exception {
       BadArguments,
       IllegalMode,
       PinNumberExpected,
+      BadPinNumber,
       NotBinaryValue,
       NotPwmValue,
       NotOutputPin,

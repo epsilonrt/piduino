@@ -9,9 +9,9 @@ pido \- Allow the user easy access to the GPIO pins.
 \fBwrite\fR \fIpin\fR \fIvalue\fR |
 \fBtoggle\fR \fIpin\fR |
 \fBblink\fR \fIpin\fR [\fIvalue\fR] |
-\fBpwm\fR \fIpin\fR \fIvalue\fR |
-\fBpwmf\fR \fIpin\fR \fIfreq_hz\fR |
-\fBpwmr\fR \fIpin\fR \fIrange\fR |
+\fBpwm\fR \fIpin\fR [\fIvalue\fR] |
+\fBpwmf\fR \fIpin\fR [\fIhz_freq\fR] |
+\fBpwmr\fR \fIpin\fR [\fIrange\fR] |
 \fBread\fR \fIpin\fR |
 \fBwfi\fR \fIpin\fR \fIedge\fR  [\fItimeout_ms\fR] |
 \fBreadall\fR [\fIconnector\fR] |
@@ -64,28 +64,34 @@ milliseconds can be specified otherwise its default value is 1000
 Note: This command explicitly sets the pin to output mode.
 
 .TP
-\fBpwm\fR \fIpin\fR \fIvalue\fR
+\fBpwm\fR \fIpin\fR [\fIvalue\fR]
 Write a PWM value (0 to Range) to the given pin. 
 If the frequency has not been set with the \fBpwmf\fR command, the frequency is 
 set to approximately 1000Hz and the range to 1024 during the first call 
 (default values).
 
+Read the current PWM value if no value supplied.
+
 Note: The pin must have hardware PWM functionality (c.f. datasheet) and needs to
 be put into PWM mode first.
 
 .TP
-\fBpwmf\fR \fIpin\fR \fIfreq_hz\fR
+\fBpwmf\fR \fIpin\fR [\fIhz_freq\fR]
 Change the PWM frequency to the given pin. This change may affect the frequency 
 of the other PWM pins (c.f. datasheet).
 
+Read the current PWM frequency if no value supplied.
+
 Note: The pin must have hardware PWM functionality (c.f. datasheet) and needs to
 be put into PWM mode first.
 
 .TP
-\fBpwmr\fR \fIpin\fR \fIrange\fR
+\fBpwmr\fR \fIpin\fR [\fIrange\fR]
 Change the PWM range to the given pin. This change should affect the frequency 
 and the on/off ratio of the PWM signal, so it will probably be necessary to
 change also these values to have the desired effect. (c.f. datasheet).
+
+Read the current PWM range if no value supplied.
 
 Note: The pin must have hardware PWM functionality (c.f. datasheet) and needs to
 be put into PWM mode first.
@@ -107,13 +113,6 @@ Output a table of all GPIO pins values. The values represent the actual values r
 if the pin is in input mode, or the last value written if the pin is in output
 mode. All connectors are displayed by default, to display only one connector, 
 just specify its number (listed above the table).
-
-  cout << "  pwm <pin> <value>" << endl;
-  cout << "    Write a PWM value (0-1024) to the given pin (pwm pin only)." << endl;
-  cout << "  pwmr <pin> <range>" << endl;
-  cout << "    Change the PWM range. The default is 1024 (pwm pin only)." << endl;
-  cout << "  pwmf <pin> <freq>" << endl;
-  cout << "    Change the PWM frequency. The default is about 1000Hz (pwm pin only)." << endl;
 
 .SH OPTIONS
 

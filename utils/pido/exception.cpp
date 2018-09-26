@@ -68,10 +68,14 @@ Exception::Exception (Exception::Code code, const std::string& param) :
   _code (code), _param (param) {
 
   switch (_code) {
-      _msg.assign ("Unknown command: ");
+    case UnknownCommand:
+      _msg.assign ("Invalid operation: ");
       break;
     case IllegalMode:
       _msg.assign ("Illegal mode: ");
+      break;
+    case BadPinNumber:
+      _msg.assign ("Invalid pin number: ");
       break;
     default:
       break;
