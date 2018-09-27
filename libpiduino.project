@@ -79,8 +79,10 @@
       <VirtualDirectory Name="arch">
         <VirtualDirectory Name="arm">
           <VirtualDirectory Name="allwinner">
-            <File Name="src/gpio/arch/arm/allwinner/allwinner_h.cpp"/>
-            <File Name="src/gpio/arch/arm/allwinner/allwinner_h.h"/>
+            <File Name="src/gpio/arch/arm/allwinner/gpio_hx.cpp"/>
+            <File Name="src/gpio/arch/arm/allwinner/gpio_hx.h"/>
+            <File Name="src/gpio/arch/arm/allwinner/pwm_hx.h"/>
+            <File Name="src/gpio/arch/arm/allwinner/hx.h"/>
           </VirtualDirectory>
           <VirtualDirectory Name="broadcom">
             <File Name="src/gpio/arch/arm/broadcom/bcm2835.h"/>
