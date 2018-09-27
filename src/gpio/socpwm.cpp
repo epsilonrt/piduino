@@ -18,6 +18,7 @@
 #include <piduino/database.h>
 #include "socpwm_p.h"
 #include "arch/arm/broadcom/pwm_bcm2835.h"
+#include "config.h"
 
 namespace Piduino {
 

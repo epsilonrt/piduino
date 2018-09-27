@@ -21,6 +21,7 @@
 #include <piduino/clock.h>
 #include <piduino/database.h>
 #include "gpio_bcm2835.h"
+#include "config.h"
 
 namespace Piduino {
 

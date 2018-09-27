@@ -17,6 +17,7 @@
 #include <climits>
 #include <piduino/converter.h>
 #include "converter_p.h"
+#include "config.h"
 
 namespace Piduino {
 

@@ -22,8 +22,8 @@
 #include <fcntl.h>
 #include <sys/select.h>
 #include <sys/ioctl.h>
-
 #include "terminalnotifier_p.h"
+#include "config.h"
 
 namespace Piduino {
 

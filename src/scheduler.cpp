@@ -18,6 +18,7 @@
 #include <piduino/scheduler.h>
 #include <system_error>
 #include <pthread.h>
+#include "config.h"
 
 namespace Piduino {
 

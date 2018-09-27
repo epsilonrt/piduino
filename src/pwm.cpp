@@ -15,6 +15,7 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "pwm_p.h"
+#include "config.h"
 
 namespace Piduino {
 

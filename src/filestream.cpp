@@ -16,6 +16,7 @@
  */
 #include <cstring>
 #include "filestream_p.h"
+#include "config.h"
 
 using namespace std;
 

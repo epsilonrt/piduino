@@ -17,6 +17,7 @@
 
 #include <piduino/gpiopin.h>
 #include <piduino/database.h>
+#include "config.h"
 
 namespace Piduino {
 

@@ -17,6 +17,7 @@
 #include <string>
 #include <piduino/board.h>
 #include <piduino/database.h>
+#include "config.h"
 
 namespace Piduino {
 }

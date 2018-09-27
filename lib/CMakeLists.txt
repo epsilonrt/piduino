@@ -121,11 +121,14 @@ endif (PIDUINO_WITH_ARDUINO)
 
 if (PIDUINO_WITH_GPIO)
   file(GLOB src_gpio ${PIDUINO_SRC_DIR}/gpio/*.cpp)
-  file(GLOB_RECURSE src_gpio_arch ${PIDUINO_SRC_GPIO_ARCH_DIR}/*.cpp)
+if (PIDUINO_DRIVER_BCM2835)
+  file(GLOB_RECURSE src_gpio_bcm2835 ${PIDUINO_SRC_GPIO_ARCH_DIR}/broadcom/*.cpp)
+endif (PIDUINO_DRIVER_BCM2835)
+if (PIDUINO_DRIVER_ALLWINNERH)
+  file(GLOB_RECURSE src_gpio_allwinnerh ${PIDUINO_SRC_GPIO_ARCH_DIR}/allwinner/*.cpp)
+endif (PIDUINO_DRIVER_ALLWINNERH)
   list(APPEND hdr_public ${hdr_gpio})
 endif (PIDUINO_WITH_GPIO)
-
-#message ("src_gpio_arch=${src_gpio_arch}")
 
 if (PIDUINO_WITH_I2C)
   file(GLOB src_i2c ${PIDUINO_SRC_DIR}/i2c/*.cpp)
@@ -145,7 +148,8 @@ endif (PIDUINO_WITH_SERIAL)
 #message ("hdr_public=${hdr_public}")
 
 set (libsrc ${PIDUINO_SRC_DIR}/piduino.cpp  
-  ${src_piduino} ${src_gpio} ${src_gpio_arch} ${src_i2c} ${src_spi} ${src_serial}
+  ${src_piduino} ${src_gpio} ${src_gpio_bcm2835} ${src_gpio_allwinnerh} 
+  ${src_i2c} ${src_spi} ${src_serial}
   ${src_arduino} ${src_arduino_i2c} ${src_arduino_spi} ${src_arduino_serial}
   )
 

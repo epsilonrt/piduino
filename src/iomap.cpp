@@ -21,6 +21,7 @@
 #include <piduino/iomap.h>
 #include <exception>
 #include <system_error>
+#include "config.h"
 
 namespace Piduino {
 

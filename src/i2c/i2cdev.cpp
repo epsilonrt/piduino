@@ -25,6 +25,7 @@
 #include <piduino/database.h>
 #include <piduino/system.h>
 #include "i2cdev_p.h"
+#include "config.h"
 
 namespace Piduino {
 

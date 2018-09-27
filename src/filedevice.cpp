@@ -19,6 +19,7 @@
 #include <cstring>
 #include <sys/ioctl.h>
 #include "filedevice_p.h"
+#include "config.h"
 
 #define FILEDEVICE_CRNL 0
 

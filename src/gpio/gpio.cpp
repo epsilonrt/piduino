@@ -19,9 +19,10 @@
 #include <piduino/gpiodevice.h>
 #include <piduino/database.h>
 #ifdef __ARM_ARCH
-#include  "gpio/arch/arm/allwinner/allwinner_h.h"
+#include  "gpio/arch/arm/allwinner/gpio_hx.h"
 #include  "gpio/arch/arm/broadcom/gpio_bcm2835.h"
 #endif /* __ARM_ARCH */
+#include "config.h"
 
 namespace Piduino {
 
@@ -39,14 +40,16 @@ namespace Piduino {
     _descriptor = std::make_shared<Descriptor> (gpioDatabaseId);
 
     switch (socFamilyId) {
-#ifdef __ARM_ARCH
+#if PIDUINO_DRIVER_BCM2835 != 0
       case SoC::Family::BroadcomBcm2835 :
         _device = new Bcm2835::GpioDevice();
         break;
+#endif /* PIDUINO_DRIVER_BCM2835 */
+#if PIDUINO_DRIVER_ALLWINNERH != 0
       case SoC::Family::AllwinnerH :
-        _device = new DeviceAllwinnerH();
+        _device = new AllWinnerHx::GpioDevice();
         break;
-#endif /* __ARM_ARCH */
+#endif /* PIDUINO_DRIVER_ALLWINNERH */
       default:
         throw std::system_error (ENOTSUP, std::system_category(),
                                  "It seems that this system is not supported !");
@@ -239,7 +242,7 @@ namespace Piduino {
         return p.get();
       }
     }
-    
+
     return 0;
   }
 

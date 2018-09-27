@@ -40,6 +40,7 @@
 #include <piduino/spidev.h>
 #endif
 #endif
+#include "config.h"
 
 using namespace std;
 

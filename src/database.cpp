@@ -19,6 +19,7 @@
 #include <piduino/database.h>
 #include <piduino/system.h>
 #include <piduino/configfile.h>
+#include "config.h"
 
 namespace Piduino {
 

@@ -15,6 +15,7 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include <piduino/string.h>
+#include "config.h"
 
 namespace Piduino {
 

@@ -16,6 +16,7 @@
  */
 #include <piduino/soc.h>
 #include <piduino/database.h>
+#include "config.h"
 
 namespace Piduino {
 // -----------------------------------------------------------------------------

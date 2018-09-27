@@ -15,6 +15,7 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include "terminal_p.h"
+#include "config.h"
 
 using namespace std;
 

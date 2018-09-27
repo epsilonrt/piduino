@@ -19,6 +19,7 @@
 #include "pwm_bcm2835.h"
 #include "../../../socpwm_p.h"
 #include <piduino/clock.h>
+#include "config.h"
 
 namespace Piduino {
 

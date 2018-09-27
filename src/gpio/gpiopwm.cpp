@@ -18,6 +18,7 @@
 #include <chrono>
 #include <piduino/scheduler.h>
 #include "gpiopwm_p.h"
+#include "config.h"
 
 using namespace std::chrono;
 

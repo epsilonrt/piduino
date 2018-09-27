@@ -29,6 +29,7 @@
 #include <piduino/clock.h>
 #include <piduino/string.h>
 #include "serialport_p.h"
+#include "config.h"
 
 struct termios2 {
   tcflag_t c_iflag;       /* input mode flags */

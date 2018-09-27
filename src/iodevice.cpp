@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <cstring>
 #include "iodevice_p.h"
+#include "config.h"
 
 namespace Piduino {
 

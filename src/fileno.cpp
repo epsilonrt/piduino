@@ -24,6 +24,7 @@
 
 #include <cstdio>  // declaration of ::fileno
 #include <cerrno>
+#include "config.h"
 
 // for basic_filebuf template
 #ifdef _LIBCPP_VERSION
@@ -47,6 +48,7 @@
 #if defined(__GLIBCXX__) // GCC >= 3.4.0
 # include <ext/stdio_sync_filebuf.h>
 #endif
+
 
 namespace Piduino {
 

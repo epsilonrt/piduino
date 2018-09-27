@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <piduino/system.h>
 #include <piduino/configfile.h>
+#include "config.h"
 
 #ifndef __ARM_ARCH
 #error PiDuino library currently only supports the ARM architecture !

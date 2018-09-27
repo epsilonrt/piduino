@@ -21,6 +21,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
+#include "config.h"
 
 namespace Piduino {
 

@@ -16,6 +16,7 @@
  */
 
 #include <piduino/gpiodevice.h>
+#include "config.h"
 
 namespace Piduino {
 

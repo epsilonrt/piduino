@@ -31,6 +31,8 @@
 #include "serialportinfo_p.h"
 #include "serialport_p.h"
 
+#include "config.h"
+
 namespace Piduino {
 
 

@@ -17,6 +17,7 @@
 #include <exception>
 #include <piduino/database.h>
 #include "bcm2835.h"
+#include "config.h"
 
 namespace Piduino {
 

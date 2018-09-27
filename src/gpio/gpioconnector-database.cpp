@@ -18,6 +18,7 @@
 #include <piduino/gpioconnector.h>
 #include <piduino/database.h>
 #include <sstream>
+#include "config.h"
 
 namespace Piduino {
 

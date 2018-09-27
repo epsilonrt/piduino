@@ -25,6 +25,7 @@
 #include <piduino/database.h>
 #include <piduino/system.h>
 #include "spidev_p.h"
+#include "config.h"
 
 using namespace std;
 

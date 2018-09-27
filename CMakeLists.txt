@@ -37,11 +37,14 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 set (PIDUINO_WITH_ARDUINO 1 CACHE BOOL "Enable Arduino layer")
+set (PIDUINO_WITH_ARDUINO 1 CACHE BOOL "Enable Arduino layer")
 set (PIDUINO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
 set (PIDUINO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
 set (PIDUINO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
 set (PIDUINO_WITH_SERIAL 1 CACHE BOOL "Enable Serial Port")
 set (PIDUINO_WITH_STATIC 0 CACHE BOOL "Enable building static libraries.")
+set (PIDUINO_DRIVER_BCM2835 1 CACHE BOOL "Build the BCM2835 GPIO/PWM driver")
+set (PIDUINO_DRIVER_ALLWINNERH 1 CACHE BOOL "Build the AllWinner H-series GPIO/PWM driver")
 
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
