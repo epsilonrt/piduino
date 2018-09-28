@@ -159,7 +159,8 @@ namespace Piduino {
     PwmEngine::range() const {
 
       if (hasPin()) {
-        return (period() >> 16) + 1;
+        long r = period() >> 16;
+        return (r == 0) ? 0 : r + 1;
       }
       return -1;
     }
