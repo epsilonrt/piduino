@@ -77,7 +77,7 @@ namespace Piduino {
   IoMap::close () {
 
     if (isOpen()) {
-      
+
       if (munmap (_map, _size) != 0) {
 
         throw std::system_error (errno, std::system_category(), __FUNCTION__);
@@ -100,6 +100,13 @@ namespace Piduino {
   IoMap::io (size_t offset) const {
 
     return static_cast<volatile uint32_t *> (_map) + offset;
+  }
+
+  // ---------------------------------------------------------------------------
+  size_t
+  IoMap::pageSize() {
+    
+    return sysconf (_SC_PAGE_SIZE);
   }
 }
 /* ========================================================================== */

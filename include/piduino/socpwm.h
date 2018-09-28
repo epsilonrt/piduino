@@ -46,6 +46,8 @@ namespace Piduino {
       // Pwm
       virtual long frequency() const;
       virtual long setFrequency (long freq);
+      virtual long range() const;
+      virtual long setRange (long range);
 
       // SocPwm
       bool hasEngine() const; // no engine !
@@ -70,10 +72,12 @@ namespace Piduino {
           // isOpen () checked before calling this functions
           virtual long frequency() const = 0;
           virtual int  resolution() const = 0;
+          virtual long range() const { return (1L << resolution()); }
           virtual long max() const;
           virtual long min() const;
-          virtual bool setFrequency (long freq) { return -1; }
-          virtual bool setResolution (int resolution) { return -1; }
+          virtual bool setFrequency (long freq) { return false; }
+          virtual bool setResolution (int resolution) { return false; }
+          virtual bool setRange (long range) { return false; }
 
           // hasPin () checked before calling this functions
           virtual long read() = 0;

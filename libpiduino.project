@@ -71,29 +71,31 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <VirtualDirectory Name="arch">
+      <VirtualDirectory Name="arm">
+        <VirtualDirectory Name="allwinner">
+          <File Name="src/arch/arm/allwinner/pwm_hx.h"/>
+          <File Name="src/arch/arm/allwinner/hx.h"/>
+          <File Name="src/arch/arm/allwinner/gpio_hx.cpp"/>
+          <File Name="src/arch/arm/allwinner/gpio_hx.h"/>
+          <File Name="src/arch/arm/allwinner/pwm_hx.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="broadcom">
+          <File Name="src/arch/arm/broadcom/pwm_bcm2835.cpp"/>
+          <File Name="src/arch/arm/broadcom/gpio_bcm2835.cpp"/>
+          <File Name="src/arch/arm/broadcom/bcm2835.cpp"/>
+          <File Name="src/arch/arm/broadcom/gpio_bcm2835.h"/>
+          <File Name="src/arch/arm/broadcom/bcm2835.h"/>
+          <File Name="src/arch/arm/broadcom/pwm_bcm2835.h"/>
+          <File Name="src/arch/arm/broadcom/socpwm_p.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
     <VirtualDirectory Name="i2c">
       <File Name="src/i2c/i2cdev.cpp"/>
       <File Name="src/i2c/i2cdev_p.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="gpio">
-      <VirtualDirectory Name="arch">
-        <VirtualDirectory Name="arm">
-          <VirtualDirectory Name="allwinner">
-            <File Name="src/gpio/arch/arm/allwinner/gpio_hx.cpp"/>
-            <File Name="src/gpio/arch/arm/allwinner/gpio_hx.h"/>
-            <File Name="src/gpio/arch/arm/allwinner/pwm_hx.h"/>
-            <File Name="src/gpio/arch/arm/allwinner/hx.h"/>
-          </VirtualDirectory>
-          <VirtualDirectory Name="broadcom">
-            <File Name="src/gpio/arch/arm/broadcom/bcm2835.h"/>
-            <File Name="src/gpio/arch/arm/broadcom/gpio_bcm2835.cpp"/>
-            <File Name="src/gpio/arch/arm/broadcom/gpio_bcm2835.h"/>
-            <File Name="src/gpio/arch/arm/broadcom/pwm_bcm2835.cpp"/>
-            <File Name="src/gpio/arch/arm/broadcom/pwm_bcm2835.h"/>
-            <File Name="src/gpio/arch/arm/broadcom/bcm2835.cpp"/>
-          </VirtualDirectory>
-        </VirtualDirectory>
-      </VirtualDirectory>
       <File Name="src/gpio/gpiodevice.cpp"/>
       <File Name="src/gpio/gpio.cpp"/>
       <File Name="src/gpio/gpioconnector.cpp"/>

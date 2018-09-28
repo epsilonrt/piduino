@@ -20,7 +20,7 @@
 #include <termios.h>
 #include <string>
 #include <piduino/serialport.h>
-#include "../terminal_p.h"
+#include "terminal_p.h"
 
 namespace Piduino {
 

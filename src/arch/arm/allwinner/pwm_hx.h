@@ -16,7 +16,6 @@
  */
 #ifndef PIDUINO_ARCH_ARM_ALLWINNER_PWM_HX_H
 #define PIDUINO_ARCH_ARM_ALLWINNER_PWM_HX_H
-
 #include <piduino/socpwm.h>
 #include <piduino/iomap.h>
 #include "hx.h"
@@ -42,10 +41,12 @@ namespace Piduino {
         // isOpen() checked before calling this functions
         long frequency() const;
         int  resolution() const;
+        long range() const;
         long max() const;
         long min() const;
         bool setFrequency (long freq);
         bool setResolution (int resolution);
+        bool setRange (long range);
 
         // hasPin() checked before calling this functions
         long read();
@@ -55,22 +56,22 @@ namespace Piduino {
 
       private:
         IoMap pwm;
-        size_t dataReg;
-        uint32_t ctlMasqInit;
-        uint32_t ctlMasqStartStop;
+        size_t periodReg;
+        int timeout_us;
 
-        uint32_t clockDivisor() const;
-        void setClockDivisor (uint32_t div);
-        uint32_t frequencyDivisor (long freq);
-        uint16_t range() const;
-        void setRange(uint16_t r);
+        uint32_t period() const;
+        bool setPeriod (uint32_t period);
+        uint16_t value() const;
+        bool setValue (uint16_t v);
 
-        inline uint32_t readPwm (size_t offset) const {
-          return *pwm.io (offset);
-        }
-        inline void writePwm (size_t offset, uint32_t value) {
-          *pwm.io (offset) = value;
-        }
+        unsigned long clockDivisor() const;
+        void setClockDivisor (unsigned long div);
+        unsigned long frequencyDivisor (long freq);
+        long divisorFrequency (unsigned long divisor);
+        unsigned long findValidDivisor (unsigned long div);
+
+        void writeReg (size_t offset, uint32_t value);
+        uint32_t readReg (size_t offset) const;
     };
   }
 }

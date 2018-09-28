@@ -18,6 +18,7 @@
 #include <piduino/database.h>
 #include "socpwm_p.h"
 #include "arch/arm/broadcom/pwm_bcm2835.h"
+#include "arch/arm/allwinner/pwm_hx.h"
 #include "config.h"
 
 namespace Piduino {
@@ -121,6 +122,37 @@ namespace Piduino {
     return -1;
   }
 
+
+  // ---------------------------------------------------------------------------
+  long
+  SocPwm::range() const {
+    PIMP_D (const SocPwm);
+
+    if (isOpen()) {
+
+      return d->engine->range();
+    }
+    return -1;
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  SocPwm::setRange (long rg) {
+    PIMP_D (SocPwm);
+
+    if (isOpen()) {
+
+      if (d->engine->setRange (rg)) {
+
+        if (hasPin()) {
+          // TODO, modify value ?
+        }
+        return range();
+      }
+    }
+    return -1;
+  }
+
   // ---------------------------------------------------------------------------
   int
   SocPwm::resolution() const {
@@ -176,14 +208,16 @@ namespace Piduino {
 
     switch (db.board().soc().family().id()) {
 
+#if PIDUINO_DRIVER_BCM2835 != 0
       case SoC::Family::Id::BroadcomBcm2835:
         engine = std::make_unique<Bcm2835::PwmEngine> (this, p);
         break;
-
+#endif /* PIDUINO_DRIVER_BCM2835 */
+#if PIDUINO_DRIVER_ALLWINNERH != 0
       case SoC::Family::Id::AllwinnerH:
-        // TODO
-        // engine = std::make_unique<AllwinnerH::PwmEngine> (this, p);
+        engine = std::make_unique<AllWinnerHx::PwmEngine> (this, p);
         break;
+#endif /* PIDUINO_DRIVER_ALLWINNERH */
       default:
         break;
     }

@@ -98,7 +98,6 @@ namespace Piduino {
     const uint32_t ENAB   = 1 << 4;
     const uint32_t SRC_OSC = 1;
     // PLL
-    const uint32_t PLL_CLOCK_DIVISOR      = 32;
     const uint32_t PLL_CLOCK_DIVISOR_MIN  = 2;
     const uint32_t PLL_CLOCK_DIVISOR_MAX  = 4095;
     const uint32_t PLL_CLOCK_FREQ         = 19200000UL;

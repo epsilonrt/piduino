@@ -110,7 +110,7 @@ set (PIDUINO_INSTALL_ETC_DIR "${INSTALL_ETC_DIR}")
 
 message (STATUS "Building for ${CMAKE_SYSTEM_PROCESSOR} architecture.")
 if ((${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm.*") OR (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64"))
-  set (PIDUINO_SRC_GPIO_ARCH_DIR ${PIDUINO_SRC_DIR}/gpio/arch/arm)
+  set (PIDUINO_SRC_GPIO_ARCH_DIR ${PIDUINO_SRC_DIR}/arch/arm)
 else()
   message (WARNING "${CMAKE_SYSTEM_PROCESSOR} is not a supported architecture !")
 endif()

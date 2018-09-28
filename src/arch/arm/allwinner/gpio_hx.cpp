@@ -123,9 +123,8 @@ namespace Piduino {
       m = b->CFG[r] >> i & 7;
       ret = _int2mode.at (m);
 
-      // PA5: PWM0 FUNC3-> UART0 !,  PA6: PWM1 FUNC3, PL10: S_PWM FUNC2
-      if ( ( (ret == Pin::ModeAlt3) && ( (g == 5) || (g == 6))) ||
-           ( (ret == Pin::ModeAlt2) && (g == 104))) {
+      // PA5: PWM0 FUNC3-> UART0 !
+      if ( (ret == Pin::ModeAlt3) && (g == 5)) {
         ret = Pin::ModePwm;
       }
       return ret;
@@ -144,16 +143,12 @@ namespace Piduino {
       i = (f - (r * 8)) * 4;
 
       if (m == Pin::ModePwm) {
-        // PA5: PWM0 FUNC3-> UART0 !,  PA6: PWM1 FUNC3, PL10: S_PWM FUNC2
-        if ( (g == 5) || (g == 6)) {
+        // PA5: PWM0 FUNC3-> UART0 
+        if (g == 5) {
           m = Pin::ModeAlt3;
         }
-        else if (g == 104) {
-
-          m = Pin::ModeAlt2;
-        }
         else {
-          throw std::invalid_argument ("ModePwm can only be set for PA5, PA6 or PL10");
+          throw std::invalid_argument ("ModePwm can only be set for PA5 !");
         }
       }
 

@@ -51,7 +51,7 @@ C (`pinMode ()`, `digitalWrite ()`, ...).
 board "variant" **WITHOUT** programming.
 
 * An object design in C++ with a clear separation of the part specific to the platform. 
-Support for new SoCs is summarizes to add a part "driver" in the directory `src/gpio/arch`
+Support for new SoCs is summarizes to add a part "driver" in the directory `src/arch`
 
 * Utilities for manipulating GPIO signals: `pido`, retrieve information from the 
 board: `pinfo` or manage the Pi boards database: `pidbman`
@@ -484,10 +484,10 @@ See also `pinfo(1)` manpage.
 * Update README  
 * Man Pages for pido and pinfo  
 * Hardware PWM Pin support for BCM2835
+* Hardware PWM Pin support for AllWinnerH
 
 The rest of the things to do:
 
-* Hardware PWM Pin support for AllWinner SoC
 * Creating a web page
 * `pidbman` for managing the database of boards with Qt (in development [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman)) 
 * Enabling daemon mode for loop()

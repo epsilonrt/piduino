@@ -34,6 +34,8 @@ namespace Piduino {
       virtual ~Pwm();
       virtual long frequency() const = 0;
       virtual bool setFrequency (long freq) const { return false; }
+      virtual long range() const { return (1L << resolution()); }
+      virtual long setRange (long range) { return -1; }
 
     protected:
       class Private;

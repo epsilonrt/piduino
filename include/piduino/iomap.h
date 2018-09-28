@@ -49,7 +49,8 @@ namespace Piduino {
       /**
        * @brief Ouverture d'une projection mémoire
        *
-       * @param base adresse de base de la zone à projeter
+       * @param base adresse de base de la zone à projeter, doit être un multiple
+       * de pageSize().
        * @param size taille de la zone à projeter en octets
        * @return true si ouverte, false si erreur
        */
@@ -98,7 +99,12 @@ namespace Piduino {
       inline size_t size() const {
         return _size;
       }
-
+      
+      /**
+       * @brief Taille d'une page de projection
+       */
+      static size_t pageSize();
+      
     private:
       off_t _base;  /*< adresse de base de la zone */
       size_t _size; /*< Taille de la zone */

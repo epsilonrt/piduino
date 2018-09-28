@@ -19,7 +19,7 @@
 #define PIDUINO_SOCPWM_PRIVATE_H
 
 #include <piduino/socpwm.h>
-#include "../pwm_p.h"
+#include "pwm_p.h"
 
 namespace Piduino {
 

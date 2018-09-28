@@ -17,7 +17,7 @@
 #include <climits>
 #include <cmath>
 #include "pwm_bcm2835.h"
-#include "../../../socpwm_p.h"
+#include "gpio/socpwm_p.h"
 #include <piduino/clock.h>
 #include "config.h"
 
@@ -174,12 +174,38 @@ namespace Piduino {
 
           resolution = PWM_RESOLUTION_MAX;
         }
-        writePwm (rngReg,  1L << resolution);
-        return true;
+        return setRange(1L << resolution);
       }
       return false;
     }
 
+    // -------------------------------------------------------------------------
+    // isOpen() checked before calling this function
+    // hasPin() NOT checked before calling this function
+    long
+    PwmEngine::range() const {
+
+      if (hasPin()) {
+
+        return readPwm (rngReg);
+      }
+      return -1;
+    }
+
+    // -------------------------------------------------------------------------
+    // isOpen() checked before calling this function
+    // hasPin() NOT checked before calling this function
+    bool
+    PwmEngine::setRange (long r) {
+      
+      if (hasPin()) {
+
+        writePwm (static_cast<uint32_t>(rngReg),  r);
+        return true;
+      }
+      return false;
+    }
+    
     // -------------------------------------------------------------------------
     // isOpen() checked before calling this function
     // hasPin() NOT checked before calling this function
@@ -262,14 +288,6 @@ namespace Piduino {
                            range());
 
       return value;
-    }
-
-    // -------------------------------------------------------------------------
-    // private
-    uint32_t
-    PwmEngine::range() const {
-
-      return readPwm (rngReg);
     }
 
     // -------------------------------------------------------------------------

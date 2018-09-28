@@ -21,7 +21,6 @@
 #include <vector>
 #include <cstdlib>
 #include <csignal>
-#include <cmath>
 #include <unistd.h>
 #include <piduino/clock.h>
 #include <piduino/gpio.h>
@@ -39,7 +38,7 @@ using namespace Piduino;
 const string authors = "Pascal JEAN";
 const string website = "https://github.com/epsilonrt/piduino";
 const int pwmDefaultFreq = 1000;
-const long pwmDefautResolution = 10;
+const long pwmDefautRange = 1024;
 
 /* types ==================================================================== */
 typedef void (*func) (int argc, char * argv[]);
@@ -504,11 +503,11 @@ pwm (int argc, char * argv[]) {
 
   if (socpwm.frequency() == 0) {
 
-    socpwm.setResolution (pwmDefautResolution);
+    socpwm.setRange (pwmDefautRange);
     socpwm.setFrequency (pwmDefaultFreq);
 #ifndef NDEBUG
-    cout << "Set frequency  to " << socpwm.frequency() << endl;
-    cout << "Set resolution to " << socpwm.resolution() << endl;
+    cout << "Sets frequency  to " << socpwm.frequency() << endl;
+    cout << "Sets range to " << socpwm.range() << endl;
 #endif
   }
 
@@ -560,16 +559,15 @@ pwmr (int argc, char * argv[]) {
   }
 
   if (paramc >= 2) {
-    int value = stoi (string (argv[optind + 1]));
-    value = log2 (value);
-    if (socpwm.setResolution (value) < 0) {
+    long value = stol (string (argv[optind + 1]));
+    if (socpwm.setRange (value) < 0) {
 
       throw Exception (Exception::BadArguments);
     }
   }
   else {
 
-    cout << socpwm.max() << endl;
+    cout << socpwm.range() << endl;
   }
   debug_pwm (socpwm);
   socpwm.close();
@@ -775,6 +773,7 @@ void debug_pwm (SocPwm & p) {
   cout << "isOpen    : " << p.isOpen() << endl;
   cout << "Frequency : " << p.frequency() << endl;
   cout << "Resolution: " << p.resolution() << endl;
+  cout << "Range     : " << p.range() << endl;
   cout << "Min value : " << p.min() << endl;
   cout << "Max value : " << p.max() << endl;
   cout << "hasPin    : " << p.hasPin() << endl;

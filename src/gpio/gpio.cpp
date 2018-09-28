@@ -19,8 +19,8 @@
 #include <piduino/gpiodevice.h>
 #include <piduino/database.h>
 #ifdef __ARM_ARCH
-#include  "gpio/arch/arm/allwinner/gpio_hx.h"
-#include  "gpio/arch/arm/broadcom/gpio_bcm2835.h"
+#include  "arch/arm/allwinner/gpio_hx.h"
+#include  "arch/arm/broadcom/gpio_bcm2835.h"
 #endif /* __ARM_ARCH */
 #include "config.h"
 

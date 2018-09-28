@@ -42,10 +42,12 @@ namespace Piduino {
         // isOpen() checked before calling this functions
         long frequency() const;
         int  resolution() const;
+        long range() const;
         long max() const;
         long min() const;
         bool setFrequency (long freq);
         bool setResolution (int resolution);
+        bool setRange (long range);
 
         // hasPin() checked before calling this functions
         long read();
@@ -64,7 +66,6 @@ namespace Piduino {
         uint32_t clockDivisor() const;
         void setClockDivisor (uint32_t div);
         uint32_t frequencyDivisor (long freq);
-        uint32_t range() const;
 
         inline uint32_t readPwm (size_t offset) const {
           return *pwm.io (offset);

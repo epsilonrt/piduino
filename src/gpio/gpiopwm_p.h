@@ -22,7 +22,7 @@
 #include <thread>
 #include <mutex>
 #include <piduino/gpiopwm.h>
-#include "../pwm_p.h"
+#include "pwm_p.h"
 
 namespace Piduino {
 
