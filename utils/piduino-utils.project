@@ -110,6 +110,7 @@
     <File Name="pido/exception.cpp"/>
     <File Name="pido/main.cpp"/>
     <File Name="pido/pido.1.in"/>
+    <File Name="pido/CMakeLists.txt"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
