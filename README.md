@@ -17,25 +17,6 @@ This API must allow to use GPIO, Serial port, I2C bus and SPI... on
 [Banana Pi](http://www.banana-pi.org/), [Beagle Board](https://beagleboard.org/)... 
 boards as on an Arduino board.
 
-There are some projects that have sought to meet this need but only to propose 
-a solution for a Pi card model.
-
-The best known is probably [wiringPi](https://github.com/WiringPi).
-wiringPi is a solution planned for Raspberry Pi and even though it there are 
-derivative versions on other Pi boards, these versions are "lame" versions from 
-a computing point of view of the original version.
-
-These are the reasons that led me not to choose wiringPi:
-
-* Even if there is a similarity with Arduino programming, there is has 
-differences that increase with time.  
-* wiringPi was designed in pure C, which is a definite brake on scalability 
-and is not very consistent with Arduino (The Arduino language is C++ !)  
-* wiringPi was designed for the Raspberry Pi and its adaptation for other Pi 
-boards is increasingly unthinkable, as and when of the arrival of new Pi boards.
-Just go to the [ArmBian](https://www.armbian.com/download/) 
-website to see the multitude of Pi models !
-
 What PiDuino offers:
 
 * A programming interface [API](https://en.wikipedia.org/wiki/Application_programming_interface)
@@ -61,40 +42,45 @@ functional on Broadcom SoC BCM283X and AllWinner Hx.
 
 The list of models present in the database is as follows:
 
-* NanoPi Core  
-* NanoPi Core with Mini Shield  
-* NanoPi Core2  
-* NanoPi Core2 with Mini Shield  
-* NanoPi M1  
-* NanoPi M1+  
-* NanoPi Neo  
-* NanoPi Neo 2  
-* NanoPi Neo Air  
-* NanoPi Neo+ 2  
-* RaspberryPi 2  
-* RaspberryPi 3  
-* RaspberryPi A  
-* RaspberryPi A+  
-* RaspberryPi B  
-* RaspberryPi B+  
-* RaspberryPi Compute Module  
-* RaspberryPi Compute Module 3  
-* RaspberryPi Zero  
-* RaspberryPi Zero Wifi  
+| Nano Pi                           | Raspberry Pi                   | 
+|-----------------------------------|--------------------------------| 
+| NanoPi Neo Core                   | RaspberryPi 2                  | 
+| NanoPi Neo Core with Mini Shield  | RaspberryPi 3                  | 
+| NanoPi Neo Core2                  | RaspberryPi A                  | 
+| NanoPi Neo Core2 with Mini Shield | RaspberryPi A+                 | 
+| NanoPi M1                         | RaspberryPi B                  | 
+| NanoPi M1+                        | RaspberryPi B+                 | 
+| NanoPi Neo                        | RaspberryPi Compute Module     | 
+| NanoPi Neo 2                      | RaspberryPi Compute Module 3   | 
+| NanoPi Neo Air                    | RaspberryPi Zero               | 
+| NanoPi Neo+ 2                     | RaspberryPi Zero Wifi          | 
 
+To learn more about PiDuino, you can check the [wiki](https://github.com/epsilonrt/piduino/wiki), 
+but if you're in a hurry, let's go to the quick start version...
 
-## First Example, Blink !
+## Quickstart guide
 
-The [examples](https://github.com/epsilonrt/piduino/tree/master/examples) folder 
-contains examples from the Arduino world that are can be used directly with 
-PiDuino. The only thing to add is the line:
+### Installation
 
-```c++
-#include <Piduino.h>
-```
+    sudo apt update
+    sudo apt install libcppdb-dev pkg-config cmake libudev-dev
+    git clone https://github.com/epsilonrt/piduino.git
+    cd piduino
+    mkdir cmake-build-Release
+    cd cmake-build-Release
+    cmake ..
+    make 
+    sudo make install
+    sudo ldconfig
+    
+### Utilities
 
-Here is the source code of the example [Blink](https://github.com/epsilonrt/piduino/blob/master/examples/blink/blink.cpp) 
-that flashes a led:
+    pinfo
+    man pinfo
+    pido readall
+    man pido
+
+### Blink Example
 
 ```c++
 #include <Piduino.h> // all the magic is here ;-)
@@ -116,255 +102,6 @@ void loop () {
 ```
 
 Obviously, you need to know the pin number where you connected the LED ! 
-This number depends on your model of Pi board, to know it quickly, we can type 
-the command `pido readall 1`, which gives us, for example, the following display 
-on a Raspberry Pi B:
-
-                                        P1 (#1)
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-    | sOc | iNo |   Name   | Mode | V | Ph || Ph | V | Mode |   Name   | iNo | sOc |
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-    |     |     |     3.3V |      |   |  1 || 2  |   |      | 5V       |     |     |
-    |   2 |   8 |    GPIO2 |   IN | 1 |  3 || 4  |   |      | 5V       |     |     |
-    |   3 |   9 |    GPIO3 |   IN | 1 |  5 || 6  |   |      | GND      |     |     |
-    |   4 |   7 |    GPIO4 |   IN | 1 |  7 || 8  | 1 | ALT0 | TXD0     | 15  | 14  |
-    |     |     |      GND |      |   |  9 || 10 | 1 | ALT0 | RXD0     | 16  | 15  |
-    |  17 |   0 |   GPIO17 |   IN | 0 | 11 || 12 | 0 | IN   | GPIO18   | 1   | 18  |
-    |  27 |   2 |   GPIO27 |   IN | 0 | 13 || 14 |   |      | GND      |     |     |
-    |  22 |   3 |   GPIO22 |   IN | 0 | 15 || 16 | 0 | IN   | GPIO23   | 4   | 23  |
-    |     |     |     3.3V |      |   | 17 || 18 | 0 | IN   | GPIO24   | 5   | 24  |
-    |  10 |  12 |   GPIO10 |   IN | 0 | 19 || 20 |   |      | GND      |     |     |
-    |   9 |  13 |    GPIO9 |   IN | 0 | 21 || 22 | 0 | IN   | GPIO25   | 6   | 25  |
-    |  11 |  14 |   GPIO11 |   IN | 0 | 23 || 24 | 1 | IN   | GPIO8    | 10  | 8   |
-    |     |     |      GND |      |   | 25 || 26 | 1 | IN   | GPIO7    | 11  | 7   |
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-    | sOc | iNo |   Name   | Mode | V | Ph || Ph | V | Mode |   Name   | iNo | sOc |
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-
-
-The iNo column corresponds to the 'Arduino' number, the number 0 pin corresponds
-therefore at pin 11 of the GPIO connector (GPIO17).
-
-To compile the blink program on the command line, you must type the
-command:
-
-    $ g++ -o blink blink.cpp $(pkg-config --cflags --libs piduino)
-
-The last part of the command uses `pkg-config` to add the build options to `g++`
-in order to compile the program correctly.
-
-To have a more user-friendly development environment, it is advisable to use 
-[Codelite](http://epsilonrt.fr/index.php/2018/05/21/utilisation-de-codelite-sous-nanopi/), 
-the installation of PiDuino adds a program template for PiDuino:
-
-![PiDuino template for Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-1.png)
-
-In Codelite, one can not only compile, but also edit and especially to debug 
-the program:
-
-![Debugging with Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-2.png)
-
-## Second Example
-
-the second example  [rtc_bq32k](https://github.com/epsilonrt/piduino/blob/master/examples/wire/rtc_bq32k/rtc_bq32k.cpp),
-uses the Wire library to read the time in a BQ32000 RTC circuit. 
-
-It allows to discover 2 important differences between an Arduino board and a Pi board:  
-1. First, on a Pi board, the human-machine interface (screen and keyboard) is 
-done on the command line (the console !). On Arduino, the serial port is used.
-2. On a Pi board, a program can finish to give the user a hand. On Arduino, 
-the program never stops (_in fact on a Linux system, the kernel program never stops either..._)
-
-To solve the first problem, PiDuino defines a `Console` object whose
-the usage is identical to the `Serial` object (it is a class derived from `Stream`).
-
-In order to allow compilation on both platforms without modifying the source code,
-we can add at the beginning of the sketch a block that tests if the target platform is
-a Unix/Linux system (PiDuino), if so, the inclusion of the file
-`Piduino.h` is done, otherwise we define a Console alias which corresponds to
-Serial, ie the human-machine interface is on the serial port.
-
-```c++
-#ifdef __unix__
-#include <Piduino.h>  // All the magic is here ;-)
-#else
-// Defines the serial port as the console on the Arduino platform
-#define Console Serial
-#endif
-
-#include <Wire.h>
-
-void printBcdDigit (byte val, bool end = false) {
-  val = (val / 16 * 10) + (val % 16); // BCD to DEC
-
-  if (val < 10) {
-    Console.write ('0'); // leading zero
-  }
-  if (end) {
-
-    Console.println (val);
-  }
-  else {
-
-    Console.print (val);
-    Console.write (':');
-  }
-}
-
-void setup() {
-
-  Console.begin (115200);
-  Wire.begin(); // Starting the i2c master
-}
-
-void loop() {
-
-  Wire.beginTransmission (0x68); // start of the frame for the RTC at slave address 0x68
-  Wire.write (0); // write the address of the register in the RTC, 0 first register
-  Wire.endTransmission (false); // restart condition
-  Wire.requestFrom (0x68, 3); // 3-byte read request
-
-  if (Wire.available() == 3) { // if the 3 bytes have been read
-    byte sec = Wire.read();
-    byte min = Wire.read();
-    byte hour = Wire.read() & 0x3F; // remove CENT_EN and CENT LSB bits
-
-    // time display
-    printBcdDigit (hour);
-    printBcdDigit (min);
-    printBcdDigit (sec, true);
-  }
-  exit (0); // exit the loop() function without ever coming back.
-  // On Arduino, exit() performs an infinite loop as explained on
-  // https://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html
-  // on a Pi board, exit () stops the program by returning the supplied value.
-}
-```
-
-To solve the second problem, it is possible to use on the 2
-platforms the `exit ()` function (which is defined in the 
-[standard library](https://www.nongnu.org/avr-libc/user-manual/group__avr__stdlib.html)).
-This function, compatible with both platforms, allows to stop the execution
-the loop () function. 
-
-On a Unix / Linux system, it stops the program and returns to the command line, 
-on Arduino, it performs an infinite loop (after calling the 
-[destructor](https://en.wikipedia.org/wiki/Destructor_(computer_programming)) of C ++ objects).
-
-## Utilities
-
-### pido, to do something on the Pi board
-
-The `pido`command allows you to modify the mode, the pull resistance, to read 
-or write logical or analogical states (PWM) ... 
-
-On a raspberry pi model B, this allows to do for example:
-
-    $ pido readall
-                                        P1 (#1)
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-    | sOc | iNo |   Name   | Mode | V | Ph || Ph | V | Mode |   Name   | iNo | sOc |
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-    |     |     |     3.3V |      |   |  1 || 2  |   |      | 5V       |     |     |
-    |   2 |   8 |    GPIO2 |   IN | 1 |  3 || 4  |   |      | 5V       |     |     |
-    |   3 |   9 |    GPIO3 |   IN | 1 |  5 || 6  |   |      | GND      |     |     |
-    |   4 |   7 |    GPIO4 |   IN | 1 |  7 || 8  | 1 | ALT0 | TXD0     | 15  | 14  |
-    |     |     |      GND |      |   |  9 || 10 | 1 | ALT0 | RXD0     | 16  | 15  |
-    |  17 |   0 |   GPIO17 |   IN | 0 | 11 || 12 | 0 | IN   | GPIO18   | 1   | 18  |
-    |  27 |   2 |   GPIO27 |   IN | 0 | 13 || 14 |   |      | GND      |     |     |
-    |  22 |   3 |   GPIO22 |   IN | 0 | 15 || 16 | 0 | IN   | GPIO23   | 4   | 23  |
-    |     |     |     3.3V |      |   | 17 || 18 | 0 | IN   | GPIO24   | 5   | 24  |
-    |  10 |  12 |   GPIO10 |   IN | 0 | 19 || 20 |   |      | GND      |     |     |
-    |   9 |  13 |    GPIO9 |   IN | 0 | 21 || 22 | 0 | IN   | GPIO25   | 6   | 25  |
-    |  11 |  14 |   GPIO11 |   IN | 0 | 23 || 24 | 1 | IN   | GPIO8    | 10  | 8   |
-    |     |     |      GND |      |   | 25 || 26 | 1 | IN   | GPIO7    | 11  | 7   |
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-    | sOc | iNo |   Name   | Mode | V | Ph || Ph | V | Mode |   Name   | iNo | sOc |
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-
-                                        P5 (#2)
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-    | sOc | iNo |   Name   | Mode | V | Ph || Ph | V | Mode |   Name   | iNo | sOc |
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-    |     |     |       5V |      |   |  1 || 2  |   |      | 3.3V     |     |     |
-    |  28 |  17 |   GPIO28 |   IN | 0 |  3 || 4  | 0 | IN   | GPIO29   | 18  | 29  |
-    |  30 |  19 |   GPIO30 |   IN | 0 |  5 || 6  | 0 | IN   | GPIO31   | 20  | 31  |
-    |     |     |      GND |      |   |  7 || 8  |   |      | GND      |     |     |
-    +-----+-----+----------+------+---+----++----+---+------+----------+-----+-----+
-
-On a NanoPi Neo Plus 2, this allows to display for example:
-
-    $ pido readall
-                                              CON1 (#1)
-    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
-    | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
-    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
-    |     |     |     3.3V |      |      |   |  1 || 2  |   |      |      | 5V       |     |     |
-    |  12 |   8 |  I2C0SDA | ALT2 |  OFF |   |  3 || 4  |   |      |      | 5V       |     |     |
-    |  11 |   9 |  I2C0SCK | ALT2 |  OFF |   |  5 || 6  |   |      |      | GND      |     |     |
-    |  91 |   7 |  GPIOG11 |  OFF |  OFF |   |  7 || 8  |   | OFF  | ALT2 | UART1TX  | 15  | 86  |
-    |     |     |      GND |      |      |   |  9 || 10 |   | OFF  | ALT2 | UART1RX  | 16  | 87  |
-    |   0 |   0 |   GPIOA0 |  OFF |  OFF |   | 11 || 12 |   | OFF  | OFF  | GPIOA6   | 1   | 6   |
-    |   2 |   2 |   GPIOA2 |  OFF |  OFF |   | 13 || 14 |   |      |      | GND      |     |     |
-    |   3 |   3 |   GPIOA3 |  OFF |  OFF |   | 15 || 16 |   | OFF  | OFF  | GPIOG8   | 4   | 88  |
-    |     |     |     3.3V |      |      |   | 17 || 18 |   | OFF  | OFF  | GPIOG9   | 5   | 89  |
-    |  22 |  12 |   GPIOC0 |  OFF |  OFF |   | 19 || 20 |   |      |      | GND      |     |     |
-    |  23 |  13 |   GPIOC1 |  OFF |  OFF |   | 21 || 22 |   | OFF  | OFF  | GPIOA1   | 6   | 1   |
-    |  24 |  14 |   GPIOC2 |  OFF |  OFF |   | 23 || 24 |   | UP   | OFF  | GPIOC3   | 10  | 25  |
-    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
-    | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
-    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
-
-                     DBG_UART (#2)
-    +-----+-----+----------+------+------+---+----+
-    | sOc | iNo |   Name   | Mode | Pull | V | Ph |
-    +-----+-----+----------+------+------+---+----+
-    |     |     |      GND |      |      |   |  1 |
-    |     |     |       5V |      |      |   |  2 |
-    |   4 |  17 |  UART0TX | ALT2 |  OFF |   |  3 |
-    |   5 |  18 |  UART0RX | ALT2 |   UP |   |  4 |
-    +-----+-----+----------+------+------+---+----+
-
-                       INNER (#3)
-    +-----+-----+----------+------+------+---+----+
-    | sOc | iNo |   Name   | Mode | Pull | V | Ph |
-    +-----+-----+----------+------+------+---+----+
-    |  10 |  19 |  GPIOA10 |  OFF |  OFF |   |  1 |
-    | 104 |  32 |  PWR_LED |  OUT |  OFF | 1 |  2 |
-    +-----+-----+----------+------+------+---+----+
-
-                       CON2 (#4)
-    +-----+-----+----------+------+------+---+----+
-    | sOc | iNo |   Name   | Mode | Pull | V | Ph |
-    +-----+-----+----------+------+------+---+----+
-    |     |     |       5V |      |      |   |  1 |
-    |     |     |  USB-DP1 |      |      |   |  2 |
-    |     |     |  USB-DM1 |      |      |   |  3 |
-    |     |     |  USB-DP2 |      |      |   |  4 |
-    |     |     |  USB-DM2 |      |      |   |  5 |
-    | 105 |  20 |  GPIOL11 |  OFF |  OFF |   |  6 |
-    |  17 |  11 |  GPIOA17 |  OFF |  OFF |   |  7 |
-    |  18 |  31 |  GPIOA18 |  OFF |  OFF |   |  8 |
-    |  19 |  30 |  GPIOA19 |  OFF |  OFF |   |  9 |
-    |  20 |  21 |  GPIOA20 |  OUT |  OFF | 0 | 10 |
-    |  21 |  22 |  GPIOA21 |  OFF |  OFF |   | 11 |
-    |     |     |      GND |      |      |   | 12 |
-    +-----+-----+----------+------+------+---+----+
-    | sOc | iNo |   Name   | Mode | Pull | V | Ph |
-    +-----+-----+----------+------+------+---+----+
-
-As can be seen above, on a NanoPi Neo Plus 2, there are 4 "connectors", 
-the connector `INNER` corresponds to internal signals to the card which can be 
-useful to handle (here one has the signal of the Led ON and the Led STATUS (GPIOA10)).
-
-Note also that in the case of the NanoPi, the `readall` command displays a 
-column `Pull` which allows to display the state of the pull resistor 
-(this feature is not available on a raspberry pi because the BCM2835 does 
-not can not do that).
-
-We can specify the `readall` command, the number of the connector to display 
-(the number of the connector is displayed above its table after the `#`), 
-for example:
 
     $ pido readall 1
                                               CON1 (#1)
@@ -387,197 +124,16 @@ for example:
     | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
     +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
 
-To put pin number 0 in output:
 
-    $ pido mode 0 out
+The iNo column corresponds to the 'Arduino' number, the number 0 pin corresponds
+therefore at pin 11 of the GPIO connector (GPIOA0).
 
-By default, it is the numbering of the `iNo` column that is used, but we 
-could also designate the signal` 0` by `1.11`:
+To compile, you must type the command:
 
-    $ pido mode 1.11 out
+    $ g++ -o blink blink.cpp $(pkg-config --cflags --libs piduino)
 
-This notation `C.N`, makes it possible to quickly designate the pin` N` 
-(here 11) of the `C` connector (here 1).
+With [Codelite](https://codelite.org/) it's easier and funny, right ? 
 
-To put this output in high state:
+![Debugging with Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-2.png)
 
-    $ pido write 0 1
-
-To put it in the low state:
-
-    $ pido write 0 0
-
-You can also toggle the state:
-
-    $ pido toggle 0
-    
-Or generate a square signal on the pin :
-
-    $ pido blink 0 100
-
-To put it in input with pull-up resistor:
-
-    $ pido mode 0 in
-    $ pido pull 0 up
-
-And to read it:
-
-    $ pido read 0
-
-Or we can wait for a falling front on this entry:
-
-    $ pido wfi 0 falling
-
-See also `pido(1)` manpage.
-
-### pinfo, to retrieve information on the Pi board
-
-The `pinfo`command allows to know the information on the Pi board.
-
-On a Raspberry Pi model B :
-
-    $ pinfo
-    Name            : RaspberryPi B
-    Family          : RaspberryPi
-    Database Id     : 9
-    Manufacturer    : Sony
-    Board Revision  : 0xe
-    SoC             : Bcm2708 (Broadcom)
-    Memory          : 512MB
-    GPIO Id         : 2
-    PCB Revision    : 2
-    Serial Ports    : /dev/ttyAMA0
-
-On a NanoPi Neo Plus 2:
-
-    $ pinfo
-    Name            : NanoPi Neo+ 2
-    Family          : NanoPi
-    Database Id     : 36
-    Manufacturer    : Friendly ARM
-    Board Tag       : nanopineoplus2
-    SoC             : H5 (Allwinner)
-    Memory          : 1024MB
-    GPIO Id         : 4
-    I2C Buses       : /dev/i2c-0
-    Serial Ports    : /dev/ttyS0,/dev/ttyS1
-
-See also `pinfo(1)` manpage.
-
-## Road Map
-
-**What was done ?**
-
-* GPIO modeling, GPIO connectors and pins  
-* Creation of database model and addition of all variants of Raspberry Pi, Nano Pi Neo, Neo2, Neo Plus 2, M1, M1 Plus.  
-* Creation of SoC access layers for Broadcom BCM283X and AllWinner Hx.  
-* Creating `pido` and `pinfo` utilities  
-* Switching iomap in C++  
-* Creating virtual classes IoDevice and FileDevice
-* analogWrite() with GPIO software PWM feature (Polling with thread) 
-* Emulate setup() and loop() for Arduino compatibility (in Arduino.h)
-* Cleaning the architecture detection  
-* I2C Bus API  
-* SPI Bus API  
-* Serial Port API  
-* Arduino Classes (String, Print, Stream....)  
-* Update README  
-* Man Pages for pido and pinfo  
-* Hardware PWM Pin support for BCM2835
-* Hardware PWM Pin support for AllWinnerH
-
-The rest of the things to do:
-
-* Creating a web page
-* `pidbman` for managing the database of boards with Qt (in development [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman)) 
-* Enabling daemon mode for loop()
-* analogWrite() with Software PWM feature (Kernel driver module)
-* analogWrite() with external DAC ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
-* analogRead() with external ADC or Sensor ([IIO](https://01.org/linuxgraphics/gfx-docs/drm/driver-api/iio/intro.html))  
-* Database Doxygen Documentation (English)  
-
-## Dependencies
-
-The compilation requires a compiler [g ++](https://gcc.gnu.org) managing [C++11](https://en.wikipedia.org/wiki/C%2B%2B11), the compilation has been made with gcc version 6.3.0 20170516. This compiler is usually installed with a complete tool chain on Linux systems used on Pi boards.
-
-The dependencies are as follows:
-
-* libcppdb-dev which provides [CppDB](http://cppcms.com/sql/cppdb/) for access to the database  
-* libudev-dev which provides [libudev](https://www.freedesktop.org/software/systemd/man/libudev.html) for enumerate devices  
-* Qt if you want to compile the database management tool [pidbman](https://github.com/epsilonrt/piduino/tree/dev-pidbman/database/pidbman).
-
-## Installation
-
-    sudo apt-get update
-    sudo apt-get install libcppdb-dev pkg-config cmake libsqlite3-dev sqlite3 libudev-dev
-    git clone https://github.com/epsilonrt/piduino.git
-    cd piduino
-    mkdir cmake-build-Release
-    cd cmake-build-Release
-    cmake ..
-    make 
-    sudo make install
-    sudo ldconfig
-
-To uninstall:
-
-     cd cmake-build-Release
-     sudo make uninstall
-
-You can also generate Debian packages with:
-
-     make package
-     sudo dpkg -i * .deb
-
-To generate documentation in HTML format, you must install the pre-requisites:
-
-    sudo apt-get install doxygen doxygen-latex doxygen-doc doxygen-gui graphviz
-    make doc
-    
-## Configuration
-
-The PI board model is dynamically detected when starting the Piduino program by 
-comparing the signature of the board with the database.
-
-It is possible to force the Pi model choice by using the `/etc/piduino.conf` 
-configuration file.
-
-This may be necessary when it is not possible for the program to detect 
-the configuration of the board.
-
-For example, in the case of the NanoPi Neo Core/Core2, we can indicate that the 
-board is on its shield, in this case, the display of the connector by the 
-command `pido readall` will be adapted.
-
-Pi board model detection uses two methods:  
-* The first method, which applies to Raspberry Pi boards, reads the 
-`/proc/cpuinfo` file to get the microprocessor model in the `Hardware` field and 
-especially the `Revision` field. This revision number is compared with the 
-database to deduce the RaspberryPi model.  
-* The second method, which applies to boards using ArmBian, comes from reading 
-`/etc/armbian-release` or `/etc/friendlyelec-release` to get board model in 
-`BOARD`. We compare this signature with the database to deduce the RaspberryPi model.
-
-In the `/etc/piduino.conf` configuration file, we will find these two 
-possibilities, which must be filled in (one or the other, but never the two!).
-
-For example if we want to indicate that our NanoPi Neo Core2 is installed on 
-its shield, we will put the `tag` field value `nanopineocore2shield`:
-
-    # PiDuino configuration file
-    connection_info="sqlite3:db=/usr/local/share/piduino/piduino.db"
-
-    # Allows you to force the board tag (Armbian)
-    # !! Be careful, this is at your own risk !!
-    # !! Forcing an incorrect value may destroy GPIO pins !!
-    tag="nanopineocore2shield"
-
-    # Allows forcing the revision of the board (Raspbian)
-    # !! Be careful, this is at your own risk !!
-    # !! Forcing an incorrect value may destroy GPIO pins !!
-    #revision=0xa02082
-
-It can be seen that the configuration file also contains the address of the 
-database to use. The database is by default a local SQLite3 file, but the 
-database can be installed on a MySQL server for example (for the format of the 
-`connection_info` line see the documentation of [CPPDB](http://cppcms.com/sql/cppdb/connstr.html))
+You should read the [wiki on the examples](https://github.com/epsilonrt/piduino/wiki/Examples) to learn more...
