@@ -1,86 +1,87 @@
 # PiDuino
 
-Arduino on Pi boards, the best of both worlds.
+_Arduino on Pi boards, the best of both worlds !_
 
 ## Abstract
 
-PiDuino was born from a question from one of my students who asked me why 
-programming input-output on NanoPi was not as simple as on [Arduino](https://www.arduino.cc/).
+PiDuino is a C ++ library for Pi boards that allows the use of I/O like GPIO,
+I2C, SPI, UART ... with an API as close as possible to the Arduino language.  
+The description of Pi cards uses a stored "Object" model in a database that 
+allows to add new models of boards easily.  
 
-PiDuino therefore aims to respond to this need: 
+At this time, the SoC models supported are AllWinner H-Series and Broadcom 
+BCM2708 through 2710 which allows it to be used on Raspberry Pi and most Nano Pi, 
+Orange Pi and Banana Pi.
 
-<p align="center"><b>An Application Programming Interface (API) on Pi boards as close as possible to that of Arduino.</b></p>
-
-This API must allow to use GPIO, Serial port, I2C bus and SPI... on 
-[Raspberry Pi](https://www.raspberrypi.org/), 
-[Nano Pi](http://www.nanopi.org/),[Orange Pi](http://www.orangepi.org/), 
-[Banana Pi](http://www.banana-pi.org/), [Beagle Board](https://beagleboard.org/)... 
-boards as on an Arduino board.
-
-What PiDuino offers:
-
-* A programming interface [API](https://en.wikipedia.org/wiki/Application_programming_interface)
-same as Arduino except adding `#include <Piduino.h>`at the beginning of the program. 
-It does not prohibit offering extensions of the API but provided that stay as independent
-as possible from the platform and not to make the code incompatible with Arduino. 
-It makes sense to think that users who want to stay in the Arduino world use C ++, 
-PiDuino is intended for this use case. Nevertheless some functions can be used in 
-C (`pinMode ()`, `digitalWrite ()`, ...).
-
-* The **description of Pi boards** that is based on an "Object" model stored 
-**in a database** (SQLite by default), allowing a simple user to add a new Pi 
-board "variant" **WITHOUT** programming.
-
-* An object design in C++ with a clear separation of the part specific to the platform. 
-Support for new SoCs is summarizes to add a part "driver" in the directory `src/arch`
-
-* Utilities for manipulating GPIO signals: `pido`, retrieve information from the 
-board: `pinfo` or manage the Pi boards database: `pidbman`
-
-**PiDuino is in development**, version 0.3 currently but the completed parts are 
-functional on Broadcom SoC BCM283X and AllWinner Hx.
-
-The list of models present in the database is as follows:
-
-| Nano Pi                           | Raspberry Pi                   | 
-|-----------------------------------|--------------------------------| 
-| NanoPi Neo Core                   | RaspberryPi 2                  | 
-| NanoPi Neo Core with Mini Shield  | RaspberryPi 3                  | 
-| NanoPi Neo Core2                  | RaspberryPi A                  | 
-| NanoPi Neo Core2 with Mini Shield | RaspberryPi A+                 | 
-| NanoPi M1                         | RaspberryPi B                  | 
-| NanoPi M1+                        | RaspberryPi B+                 | 
-| NanoPi Neo                        | RaspberryPi Compute Module     | 
-| NanoPi Neo 2                      | RaspberryPi Compute Module 3   | 
-| NanoPi Neo Air                    | RaspberryPi Zero               | 
-| NanoPi Neo+ 2                     | RaspberryPi Zero Wifi          | 
-
-To learn more about PiDuino, you can check the [wiki](https://github.com/epsilonrt/piduino/wiki), 
-but if you're in a hurry, let's go to the quick start version...
+To learn more about PiDuino, you can follow the 
+[Wiki](https://github.com/epsilonrt/piduino/wiki), but if you're in a hurry, 
+let's go to the quick start version...
 
 ## Quickstart guide
 
-### Installation
+The fastest and safest way to install piduino is to use the APT repository from 
+[piduino.org](http://apt.piduino.org), so you should do the following :
 
+    wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
+    sudo add-apt-repository 'deb http://apt.piduino.org stretch piduino'
     sudo apt update
-    sudo apt install libcppdb-dev pkg-config cmake libudev-dev
-    git clone https://github.com/epsilonrt/piduino.git
-    cd piduino
-    mkdir cmake-build-Release
-    cd cmake-build-Release
-    cmake ..
-    make 
-    sudo make install
-    sudo ldconfig
+    sudo apt install libpiduino-dev piduino-utils
+
+This repository provides Piduino packages for `armhf` and `arm64` architectures.
+
+If you want to build from sources, you can follow the 
+[Wiki](https://github.com/epsilonrt/piduino/wiki/Build-from-source).
     
 ### Utilities
 
-    pinfo
-    man pinfo
-    pido readall
-    man pido
+Once installed, you should run the following on the command line :
+
+    $ pinfo
+    Name            : NanoPi Core2 Mini Shield
+    Family          : NanoPi
+    Database Id     : 40
+    Manufacturer    : Friendly ARM
+    Board Tag       : nanopineocore2shield
+    SoC             : H5 (Allwinner)
+    Memory          : 1024MB
+    GPIO Id         : 9
+    I2C Buses       : /dev/i2c-0
+    SPI Buses       : /dev/spidev1.0
+    Serial Ports    : /dev/ttyS1
+
+As we can imagine, in the example, we are on a 
+[NanoPi Neo Core2](http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Core2) 
+connected to a [Mini Shield](http://wiki.friendlyarm.com/wiki/index.php/Mini_Shield_for_NanoPi_NEO_Core/Core2).
+
+To read the pin status of connector 1, run the following on the command line :
+
+    $ pido readall 1
+                                              CON1 (#1)
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    |     |     |     3.3V |      |      |   |  1 || 2  |   |      |      | 5V       |     |     |
+    |  12 |   8 |  I2C0SDA | ALT2 |  OFF |   |  3 || 4  |   |      |      | 5V       |     |     |
+    |  11 |   9 |  I2C0SCK | ALT2 |  OFF |   |  5 || 6  |   |      |      | GND      |     |     |
+    |  91 |   7 |  GPIOG11 |  OFF |  OFF |   |  7 || 8  |   | OFF  | ALT2 | UART1TX  | 15  | 86  |
+    |     |     |      GND |      |      |   |  9 || 10 |   | OFF  | ALT2 | UART1RX  | 16  | 87  |
+    |   0 |   0 |   GPIOA0 |  OFF |  OFF |   | 11 || 12 |   | OFF  | OFF  | GPIOA6   | 1   | 6   |
+    |   2 |   2 |   GPIOA2 |  OFF |  OFF |   | 13 || 14 |   |      |      | GND      |     |     |
+    |   3 |   3 |   GPIOA3 |  OFF |  OFF |   | 15 || 16 |   | OFF  | ALT2 | UART1RTS | 4   | 88  |
+    |     |     |     3.3V |      |      |   | 17 || 18 |   | OFF  | ALT2 | UART1CTS | 5   | 89  |
+    |  15 |  28 | SPI1MOSI | ALT2 |  OFF |   | 19 || 20 |   |      |      | GND      |     |     |
+    |  16 |  24 | SPI1MISO | ALT2 |  OFF |   | 21 || 22 |   | OFF  | OFF  | GPIOA1   | 6   | 1   |
+    |  14 |  29 |  SPI1CLK | ALT2 |  OFF |   | 23 || 24 |   | OFF  | ALT2 | SPI1CS   | 27  | 13  |
+    |     |     |      GND |      |      |   | 25 || 26 |   | OFF  | OFF  | GPIOA17  | 11  | 17  |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+    | sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
+    +-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+
+`pido` and `pinfo` come with manpages...
 
 ### Blink Example
+
+Arduino programming on Pi board ? We are going there !
 
 ```c++
 #include <Piduino.h> // all the magic is here ;-)
@@ -128,7 +129,7 @@ Obviously, you need to know the pin number where you connected the LED !
 The iNo column corresponds to the 'Arduino' number, the number 0 pin corresponds
 therefore at pin 11 of the GPIO connector (GPIOA0).
 
-To compile, you must type the command:
+To build, you must type the command:
 
     $ g++ -o blink blink.cpp $(pkg-config --cflags --libs piduino)
 
