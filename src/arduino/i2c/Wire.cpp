@@ -17,7 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
   Modified 2012 by Todd Krein (todd@krein.org) to implement repeated starts
-  Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) for piduino library
+  Modified 2018 by Pascal JEAN (pascal.jean@piduino.org) for piduino library
 */
 #include <Wire.h>
 

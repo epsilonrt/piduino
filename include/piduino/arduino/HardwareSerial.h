@@ -19,7 +19,7 @@
   Modified 28 September 2010 by Mark Sproul
   Modified 14 August 2012 by Alarus
   Modified 3 December 2013 by Matthijs Kooijman
-  Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) for piduino library
+  Modified 2018 by Pascal JEAN (pascal.jean@piduino.org) for piduino library
 */
 
 #ifndef HardwareSerial_h
