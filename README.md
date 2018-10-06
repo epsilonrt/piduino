@@ -28,6 +28,10 @@ The fastest and safest way to install piduino is to use the APT repository from
     sudo apt install libpiduino-dev piduino-utils
 
 This repository provides Piduino packages for `armhf` and `arm64` architectures.
+In the above commands, the repository is a Debian Stretch distribution, but you 
+can also choose Ubuntu Xenial or Bionic by replacing `stretch` with `xenial` or 
+`bionic`. It may be necessary to install the `software-properties-common` 
+package on Xenial for use `add-apt-repository`.
 
 If you want to build from sources, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki/Build-from-source).
