@@ -20,6 +20,7 @@
 
 #include <deque>
 #include <string>
+#include <piduino/system.h>
 #include <piduino/iodevice.h>
 
 /**
@@ -51,6 +52,9 @@ namespace Piduino {
             return _path;
           }
           bool setPath (const std::string & path);
+          inline bool exists() const {
+            return System::charFileExists(_path);
+          }
           bool operator== (const Info & other) {
             return (_path == other._path) ;
           }
