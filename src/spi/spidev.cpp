@@ -279,41 +279,11 @@ namespace Piduino {
     return string (path);
   }
 
-
-  // ---------------------------------------------------------------------------
-  bool
-  SpiDev::Info::findBus (SpiDev::Info & bus, int idBus, int idCs)  {
-    const vector<Pin::SpiCs> & socCsList = db.board().soc().spiCs();
-    bool found = false;
-
-    for (int i = 0; i < socCsList.size(); i++) {
-      const Pin::SpiCs & cs = socCsList[i];
-
-      if ( (cs.bus == idBus) && (cs.cs == idCs)) {
-
-        string path = busPath (idBus, idCs);
-        if (System::fileExist (path)) {
-
-          bus.setId (idBus, idCs);
-          found = true;
-        }
-      }
-    }
-
-    return found;
-  }
-
   // ---------------------------------------------------------------------------
   SpiDev::Info
   SpiDev::Info::defaultBus () {
-    Info bus;
 
-    if (! findBus (bus, db.board().defaultSpiBus())) {
-
-      throw system_error (ENOENT, system_category(),
-                          "Default SPI Bus not found !");
-    }
-    return bus;
+    return Info (db.board().defaultSpiBus());
   }
 
   // ---------------------------------------------------------------------------
@@ -341,12 +311,12 @@ namespace Piduino {
         if (!dev) {
           break;
         }
-        
+
         const char * path = udev_device_get_devnode (dev);
         if (path) {
           Info bus;
           if (bus.setPath (path)) {
-            buses.push_back(bus);
+            buses.push_back (bus);
           }
         }
       }
@@ -355,7 +325,7 @@ namespace Piduino {
 
     return buses;
   }
-  
+
 // -----------------------------------------------------------------------------
 //
 //                             SpiDev Class

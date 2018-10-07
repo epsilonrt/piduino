@@ -23,6 +23,7 @@
 #include <string>
 #include <piduino/iodevice.h>
 #include <piduino/gpiopin.h>
+#include <piduino/system.h>
 #include <linux/spi/spidev.h>
 
 /**
@@ -160,6 +161,10 @@ namespace Piduino {
           inline const Cs & cs() const   {
             return _csList.at (_cs);
           }
+          
+          inline bool exists() const {
+            return System::charFileExists(_path);
+          }
 
           bool operator== (const Info & other) {
             return (_path == other._path) ;
@@ -187,16 +192,6 @@ namespace Piduino {
            * @return Chemin du fichier dans /dev
            */
           static std::string busPath (int bus, int cs = 0);
-
-          /**
-           * @brief Recherche les informations sur le bus SPI spécifié dans la base
-           * de données de Piduino
-           * @param info informations en sortie sur le bus, inchangé si non trouvé
-           * @param idBus identifiant du bus à chercher
-           * @param idCs identifiant du chip select à chercher
-           * @return true si trouvé
-           */
-          static bool findBus (Info & info, int idBus, int idCs = 0);
 
         private:
           int _bus; ///< numéro du bus

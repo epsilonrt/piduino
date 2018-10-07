@@ -32,25 +32,21 @@ namespace Piduino {
 
 #if PIDUINO_WITH_SPI
     if (db.board().soc().family().id() != SoC::Family::BroadcomBcm2835) {
-      SpiDev * s = reinterpret_cast<SpiDev *> (&::SPI);
-      const SpiDev::Cs * cs;
 
-      if (s->isOpen()) {
-
-        cs = & s->bus().cs();
-      }
-      else {
-
-        cs = & SpiDev::Info::defaultBus().cs();
-      }
       if (gpio.open()) {
+        static SpiDev::Info defaultSpi = SpiDev::Info::defaultBus();
+        static const SpiDev * spi = reinterpret_cast<const SpiDev *> (&::SPI);
 
-        if ( (cs->pin()->logicalNumber() == n) && (cs->pin()->mode() == cs->mode())) {
+        if (spi->isOpen() || defaultSpi.exists()) {
+          const SpiDev::Cs * cs = spi->isOpen() ?
+                                  & spi->bus().cs() :
+                                  & defaultSpi.cs();
 
-          return true;
+          return ( (cs->mode() != Pin::ModeUnknown) &&
+                   (cs->pin()->logicalNumber() == n) &&
+                   (cs->pin()->mode() == cs->mode()));
         }
       }
-
     }
 #endif
 
@@ -135,10 +131,10 @@ int digitalRead (int n) {
 
 // -----------------------------------------------------------------------------
 void analogWrite (int n, int v) {
-  
+
   if (gpio.pin (n).dac() == nullptr) {
-    
-    if (! gpio.pin (n).setDac (new GpioPwm(&gpio.pin (n), 8))) {
+
+    if (! gpio.pin (n).setDac (new GpioPwm (&gpio.pin (n), 8))) {
       return;
     }
   }
