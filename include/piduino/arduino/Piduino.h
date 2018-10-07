@@ -21,8 +21,6 @@
 #include <piduino/config.h>
 
 #ifdef __cplusplus
-using namespace std;
-using namespace Piduino;
 #include <Console.h>
 #if PIDUINO_WITH_SERIAL
 #include <HardwareSerial.h>
@@ -54,7 +52,7 @@ int main () {
 #endif
 
 #if PIDUINO_WITH_SERIAL && defined(__cplusplus)
-    HardwareSerial::setupAvailablePorts();
+    ::HardwareSerial::setupAvailablePorts();
 #endif
 
 #ifndef ARDUINO_NOSETUP
