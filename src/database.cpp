@@ -96,7 +96,7 @@ namespace Piduino {
         std::string fn (PIDUINO_INSTALL_ETC_DIR);
         fn += "/piduino.conf";
 
-        if (System::fileExist (fn)) {
+        if (System::fileExists (fn)) {
           ConfigFile cfg (fn);
 
           ret = cfg.value ("connection_info");
@@ -146,7 +146,7 @@ namespace Piduino {
     std::string fn (PIDUINO_INSTALL_ETC_DIR);
     fn += "/piduino.conf";
 
-    if (System::fileExist (fn)) {
+    if (System::fileExists (fn)) {
       ConfigFile cfg (fn);
 
       if (cfg.keyExists ("tag")) {

@@ -18,6 +18,7 @@
 #include <piduino/gpio.h>
 #include <piduino/gpiodevice.h>
 #include <piduino/scheduler.h>
+#include <piduino/system.h>
 #include <exception>
 #include <fstream>
 #include <sstream>
@@ -1124,19 +1125,11 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   bool
-  Pin::directoryExist (const std::string & dname) {
-    struct stat sb;
-
-    return (stat (dname.c_str(), &sb) == 0 && S_ISDIR (sb.st_mode));
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
   Pin::sysFsIsExport () const {
     std::ostringstream fn;
 
     fn << _syspath << "/gpio" << systemNumber();
-    return directoryExist (fn.str());
+    return System::directoryExists (fn.str());
   }
 
   // ---------------------------------------------------------------------------

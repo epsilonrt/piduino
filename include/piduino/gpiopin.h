@@ -644,7 +644,6 @@ namespace Piduino {
       static const std::map<std::string, Mode> _str2mode;
       static std::string _syspath;
 
-      static bool directoryExist (const std::string & dname);
       static void * irqThread (std::atomic<int> & run, int fd, Isr isr);
 
       void holdMode();

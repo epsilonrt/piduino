@@ -117,10 +117,17 @@ namespace Piduino {
       System();
 
       // -----------------------------------------------------------------------
-      static bool
-      fileExist (const std::string &filename) {
-
-        return std::ifstream (filename).good();
+      static bool fileExists (const char * path);
+      static inline bool fileExists (const std::string &p) {
+        return fileExists (p.c_str());
+      }
+      static bool charFileExists (const char * path);
+      static inline bool charFileExists (const std::string &p) {
+        return charFileExists (p.c_str());
+      }
+      static bool directoryExists (const char * path);
+      static inline bool directoryExists (const std::string &p) {
+        return fileExists (p.c_str());
       }
 
       inline const std::string & hardware() const {

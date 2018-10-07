@@ -15,6 +15,7 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include <sys/sysinfo.h>
+#include <sys/stat.h>
 #include <algorithm>
 #include <piduino/system.h>
 #include <piduino/configfile.h>
@@ -26,13 +27,42 @@
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                        System Class
-//
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  //
+  //                        System Class
+  //
+  // ---------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  bool System::fileExists (const char * path) {
+    struct stat fs;
+    
+    return (stat (path, &fs) == 0);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool System::charFileExists (const char * path) {
+    struct stat fs;
+
+    if (stat (path, &fs) == 0) {
+      
+      return S_ISCHR (fs.st_mode) != 0;
+    }
+    return false;
+  }
+  
+  // ---------------------------------------------------------------------------
+  bool System::directoryExists (const char * path) {
+    struct stat fs;
+
+    if (stat (path, &fs) == 0) {
+      
+      return S_ISDIR (fs.st_mode) != 0;
+    }
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
   System::System () : _revision (0), _sn (0), _ram (-1), _ncore (1) {
 
     readTotalRam();
@@ -40,7 +70,7 @@ namespace Piduino {
   }
 
 
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   void
   System::readTotalRam() {
     struct sysinfo info;
@@ -175,7 +205,7 @@ namespace Piduino {
   void
   System::readCpuInfo() {
 
-    if (fileExist ("/proc/cpuinfo")) {
+    if (fileExists ("/proc/cpuinfo")) {
       std::string str;
       ConfigFile cfg ("/proc/cpuinfo", ':');
 
@@ -212,11 +242,11 @@ namespace Piduino {
     }
   }
 
-// -----------------------------------------------------------------------------
-//
-//                         System::ArmbianInfo Class
-//
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  //
+  //                         System::ArmbianInfo Class
+  //
+  // ---------------------------------------------------------------------------
   /*
     BOARD=nanopineo
     BOARD_NAME="NanoPi Neo"
@@ -256,7 +286,7 @@ namespace Piduino {
 
     for (int i = 0; i < filename.size(); i++) {
 
-      if (fileExist (filename[i])) {
+      if (fileExists (filename[i])) {
         findex = i;
         break;
       }
@@ -288,7 +318,6 @@ namespace Piduino {
       _arch = cfg.value ("ARCH");
     }
   }
-
 }
 
 /* ========================================================================== */
