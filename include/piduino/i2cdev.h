@@ -18,7 +18,7 @@
 #ifndef PIDUINO_I2CDEV_H
 #define PIDUINO_I2CDEV_H
 
-#include <map>
+#include <deque>
 #include <string>
 #include <piduino/iodevice.h>
 
@@ -37,7 +37,7 @@ namespace Piduino {
       class Info {
         public:
           static const int MaxBuses = 32;
-          Info(int id = 0) {
+          Info (int id = 0) {
             setId (id);
           }
           inline int id() const {
@@ -57,8 +57,15 @@ namespace Piduino {
           bool operator!= (const Info & other) {
             return (_path != other._path) ;
           }
+
           static std::string busPath (int id);
-        
+          static Info defaultBus ();
+          /**
+            Returns a list of available serial ports on the system.
+           */
+          static std::deque<Info> availableBuses ();
+
+
         private:
           int _id;
           std::string _path;
@@ -115,9 +122,6 @@ namespace Piduino {
       virtual int peek() const;
 
       virtual void flush ();
-
-      static std::map<int, Info> availableBuses ();
-      static Info defaultBus ();
 
     protected:
       class Private;

@@ -17,6 +17,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <libudev.h>
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
@@ -302,6 +303,59 @@ namespace Piduino {
     return found;
   }
 
+  // ---------------------------------------------------------------------------
+  SpiDev::Info
+  SpiDev::Info::defaultBus () {
+    Info bus;
+
+    if (! findBus (bus, db.board().defaultSpiBus())) {
+
+      throw system_error (ENOENT, system_category(),
+                          "Default SPI Bus not found !");
+    }
+    return bus;
+  }
+
+  // ---------------------------------------------------------------------------
+  std::deque<SpiDev::Info>
+  SpiDev::Info::availableBuses () {
+    std::deque<SpiDev::Info> buses;
+    struct udev *udev;
+
+    udev = udev_new();
+    if (udev) {
+      struct udev_enumerate * enumerate;
+      struct udev_list_entry * devices, * dev_list_entry;
+      struct udev_device * dev;
+
+      enumerate = udev_enumerate_new (udev);
+      udev_enumerate_add_match_subsystem (enumerate, "spidev");
+      udev_enumerate_scan_devices (enumerate);
+      devices = udev_enumerate_get_list_entry (enumerate);
+
+      udev_list_entry_foreach (dev_list_entry, devices) {
+
+        dev = udev_device_new_from_syspath (
+                udev, udev_list_entry_get_name (dev_list_entry));
+
+        if (!dev) {
+          break;
+        }
+        
+        const char * path = udev_device_get_devnode (dev);
+        if (path) {
+          Info bus;
+          if (bus.setPath (path)) {
+            buses.push_back(bus);
+          }
+        }
+      }
+      udev_unref (udev);
+    }
+
+    return buses;
+  }
+  
 // -----------------------------------------------------------------------------
 //
 //                             SpiDev Class
@@ -616,38 +670,6 @@ namespace Piduino {
   int SpiDev::write (const uint8_t * buffer, uint32_t len) {
 
     return transfer (buffer, 0, len);
-  }
-
-  // ---------------------------------------------------------------------------
-  SpiDev::Info
-  SpiDev::defaultBus () {
-    Info bus;
-
-    if (! Info::findBus (bus, db.board().defaultSpiBus())) {
-
-      throw system_error (ENOENT, system_category(),
-                          "Default SPI Bus not found !");
-    }
-    return bus;
-  }
-
-  // ---------------------------------------------------------------------------
-  vector<SpiDev::Info>
-  SpiDev::availableBuses () {
-    vector<SpiDev::Info> buses;
-    const vector<Pin::SpiCs> & csList = db.board().soc().spiCs();
-
-    for (int i = 0; i < csList.size(); i++) {
-      Info bus;
-      const Pin::SpiCs & cs = csList[i];
-
-      if (Info::findBus (bus, cs.bus, cs.cs)) {
-
-        buses.push_back (bus);
-      }
-    }
-
-    return buses;
   }
 
 #if 0

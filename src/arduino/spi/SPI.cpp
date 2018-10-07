@@ -20,7 +20,7 @@
 // Initialize the SPI library
 void SPIClass::begin() {
 
-  setBus (defaultBus());
+  setBus (Info::defaultBus());
   setSettings (SPISettings());
   open ();
 }

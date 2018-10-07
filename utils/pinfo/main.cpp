@@ -463,15 +463,14 @@ namespace Pinfo {
 // -----------------------------------------------------------------------------
   std::string i2cBuses() {
     std::string ret;
-    std::map<int, I2cDev::Info> buses = I2cDev::availableBuses();
+    const auto buses = I2cDev::Info::availableBuses();
 
-    for (auto pair = buses.cbegin(); pair != buses.cend(); ++pair) {
+    for (const I2cDev::Info & bus : buses) {
 
-      const I2cDev::Info * bus = & pair->second;
       if (ret.size()) {
         ret.push_back (',');
       }
-      ret += bus->path();
+      ret += bus.path();
     }
     return ret;
   }
@@ -479,14 +478,14 @@ namespace Pinfo {
 // -----------------------------------------------------------------------------
   std::string spiBuses() {
     std::string ret;
-    std::vector<SpiDev::Info> buses = SpiDev::availableBuses();
+    const auto buses = SpiDev::Info::availableBuses();
 
-    for (unsigned i = 0; i < buses.size(); i++) {
+    for (const SpiDev::Info & bus : buses) {
 
       if (ret.size()) {
         ret.push_back (',');
       }
-      ret += buses [i].path();
+      ret += bus.path();
     }
     return ret;
   }

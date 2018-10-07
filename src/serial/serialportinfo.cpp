@@ -14,11 +14,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-#if 0
-#include <cstdio>
-#include <stdlib.h>
-#endif
-
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>

@@ -41,7 +41,7 @@ namespace Piduino {
       }
       else {
 
-        cs = & SpiDev::defaultBus().cs();
+        cs = & SpiDev::Info::defaultBus().cs();
       }
       if (gpio.open()) {
 

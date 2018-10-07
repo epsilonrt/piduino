@@ -18,6 +18,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <libudev.h>
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
@@ -83,15 +84,15 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  bool 
+  bool
   I2cDev::Info::setPath (const std::string & p) {
-    
+
     for (int i = 0; i < MaxBuses; i++) {
-      std::string bp = busPath(i);
-      
+      std::string bp = busPath (i);
+
       if (bp == p) {
-        
-        setId(i);
+
+        setId (i);
         return true;
       }
     }
@@ -105,6 +106,53 @@ namespace Piduino {
 
     ::snprintf (path, sizeof (path), db.board().family().i2cSysPath().c_str(), idbus);
     return std::string (path);
+  }
+
+  // ---------------------------------------------------------------------------
+  std::deque<I2cDev::Info>
+  I2cDev::Info::availableBuses () {
+    std::deque<I2cDev::Info> buses;
+    struct udev *udev;
+
+    udev = udev_new();
+    if (udev) {
+      struct udev_enumerate * enumerate;
+      struct udev_list_entry * devices, * dev_list_entry;
+      struct udev_device * dev;
+
+      enumerate = udev_enumerate_new (udev);
+      udev_enumerate_add_match_subsystem (enumerate, "i2c-dev");
+      udev_enumerate_scan_devices (enumerate);
+      devices = udev_enumerate_get_list_entry (enumerate);
+
+      udev_list_entry_foreach (dev_list_entry, devices) {
+
+        dev = udev_device_new_from_syspath (
+                udev, udev_list_entry_get_name (dev_list_entry));
+
+        if (!dev) {
+          break;
+        }
+        
+        const char * path = udev_device_get_devnode (dev);
+        if (path) {
+          Info bus;
+          if (bus.setPath (path)) {
+            buses.push_back(bus);
+          }
+        }
+      }
+      udev_unref (udev);
+    }
+
+    return buses;
+  }
+  
+  // ---------------------------------------------------------------------------
+  I2cDev::Info
+  I2cDev::Info::defaultBus () {
+
+    return Info (db.board().defaultI2cBus());
   }
 
 // -----------------------------------------------------------------------------
@@ -165,7 +213,7 @@ namespace Piduino {
       d->flush();
       d->rxbuf.clear();
 
-      d->fd = ::open (d->bus.path().c_str(), d->modeToPosixFlags(mode));
+      d->fd = ::open (d->bus.path().c_str(), d->modeToPosixFlags (mode));
       if (d->fd < 0) {
 
         d->setError();
@@ -262,8 +310,8 @@ namespace Piduino {
   void
   I2cDev::setBusPath (const char * path) {
     PIMP_D (I2cDev);
-    
-    setBusPath (std::string(path));
+
+    setBusPath (std::string (path));
   }
 
   // ---------------------------------------------------------------------------
@@ -436,33 +484,6 @@ namespace Piduino {
       d->flush();
     }
   }
-
-
-  // ---------------------------------------------------------------------------
-  std::map<int, I2cDev::Info>
-  I2cDev::availableBuses () {
-    std::map<int, I2cDev::Info> buses;
-
-    for (int id = 0; id < db.board().soc().i2cCount() ; id++) {
-      std::string path = Info::busPath (id);
-
-      if (System::fileExist (path)) {
-        Info bus(id);
-
-        buses[id] = bus;
-      }
-
-    }
-    return buses;
-  }
-
-  // ---------------------------------------------------------------------------
-  I2cDev::Info
-  I2cDev::defaultBus () {
-
-    return Info(db.board().defaultI2cBus());
-  }
-
 }
 
 /* ========================================================================== */

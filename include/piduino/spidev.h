@@ -18,7 +18,7 @@
 #ifndef PIDUINO_SPIDEV_H
 #define PIDUINO_SPIDEV_H
 
-#include <vector>
+#include <deque>
 #include <map>
 #include <string>
 #include <piduino/iodevice.h>
@@ -81,27 +81,27 @@ namespace Piduino {
 
           Cs() : _id (-1), _pin (0), _mode (Pin::ModeUnknown),
             _driverControl (true), _activeLevel (false) {}
-          
+
           inline int id() const {
             return _id;
           }
-          
+
           inline Pin * pin() const {
             return _pin;
           }
-          
+
           inline Pin::Mode mode() const {
             return _mode;
           }
-          
+
           inline bool driverControl() const {
             return _driverControl;
           }
-          
+
           inline bool activeLevel() const {
             return _activeLevel;
           }
-          
+
           bool setDriverControl (bool enable = false, bool activeLevel = false);
           bool get() const;
           void set (bool value);
@@ -133,22 +133,22 @@ namespace Piduino {
         public:
           static const int MaxBuses = 32;
           static const int MaxCs = 32;
-          
+
           Info (int bus = 0, int cs = 0) {
             setId (bus, cs);
           }
-          
+
           void setId (int bus, int cs = 0);
           bool setPath (const std::string & path);
 
           inline int busId() const {
             return _bus;
           }
-          
+
           inline int csId() const {
             return _cs;
           }
-          
+
           inline const std::string & path() const {
             return _path;
           }
@@ -168,6 +168,17 @@ namespace Piduino {
           bool operator!= (const Info & other) {
             return (_path != other._path) ;
           }
+
+          /**
+           * @brief Liste des bus disponibles sur le systèmes
+           */
+          static std::deque<SpiDev::Info> availableBuses ();
+
+          /**
+           * @brief Information sur le bus SPI par défaut disponible sur la carte Pi
+           * Dépend du modèle de carte (informations stockées dans la base de données)
+           */
+          static Info defaultBus ();
 
           /**
            * @brief Chemin système correspondant à un bus
@@ -214,7 +225,7 @@ namespace Piduino {
           }
 
           bool operator!= (const Settings & other) {
-            return !(*this == other);
+            return ! (*this == other);
           }
 
           /*
@@ -469,18 +480,6 @@ namespace Piduino {
        * @brief Ordre de transmission des bits \c MsbFirst ou \c LsbFirst
        */
       bool bitOrder() const;
-
-      /**
-       * @brief Liste des bus disponibles sur le systèmes
-       * Dépend du modèle de carte (informations stockées dans la base de données)
-       */
-      static std::vector<SpiDev::Info> availableBuses ();
-
-      /**
-       * @brief Information sur le bus SPI par défaut disponible sur la carte Pi
-       * Dépend du modèle de carte (informations stockées dans la base de données)
-       */
-      static Info defaultBus ();
 
     protected:
       class Private;
