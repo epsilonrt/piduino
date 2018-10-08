@@ -19,8 +19,8 @@ let's go to the quick start version...
 
 ## Quickstart guide
 
-The fastest and safest way to install piduino is to use the APT repository from 
-[piduino.org](http://apt.piduino.org), so you should do the following :
+he fastest and safest way to install piduino on Armbian is to use the APT 
+repository from [piduino.org](http://apt.piduino.org), so you should do the following :
 
     wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
     sudo add-apt-repository 'deb http://apt.piduino.org stretch piduino'
@@ -31,7 +31,16 @@ This repository provides Piduino packages for `armhf` and `arm64` architectures.
 In the above commands, the repository is a Debian Stretch distribution, but you 
 can also choose Ubuntu Xenial or Bionic by replacing `stretch` with `xenial` or 
 `bionic`. It may be necessary to install the `software-properties-common` 
-package on Xenial for use `add-apt-repository`.
+package for `add-apt-repository`.
+
+For Raspbian you have to do a little different :
+
+    wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
+    echo 'deb http://raspbian.piduino.org stretch piduino' | sudo tee /etc/apt/sources.list.d/piduino.list
+    sudo apt update
+    sudo apt install libpiduino-dev piduino-utils
+
+The Raspbian repository provides Piduino packages for `armhf` architecture for Stretch only.
 
 If you want to build from sources, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki/Build-from-source).
