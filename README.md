@@ -19,7 +19,7 @@ let's go to the quick start version...
 
 ## Quickstart guide
 
-he fastest and safest way to install piduino on Armbian is to use the APT 
+The fastest and safest way to install piduino on Armbian is to use the APT 
 repository from [piduino.org](http://apt.piduino.org), so you should do the following :
 
     wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
