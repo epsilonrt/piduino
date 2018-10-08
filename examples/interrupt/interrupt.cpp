@@ -31,6 +31,7 @@
 #ifdef __unix__
 #include <Piduino.h>  // All the magic is here ;-)
 #endif
+using namespace std;
 
 // <DANGER> Be careful !!! Before launching this program :
 //    -> Check that the pin below is well connected to an LED ! <-
