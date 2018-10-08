@@ -145,6 +145,16 @@ therefore at pin 11 of the GPIO connector (GPIOA0).
 To build, you must type the command:
 
     $ g++ -o blink blink.cpp $(pkg-config --cflags --libs piduino)
+    
+You can then execute the program :
+
+    $ sudo ./blink
+
+`sudo` is necessary for an access to the memory mapping of the GPIO). 
+You can enable the **setuid** bit to avoid `sudo` in the future :
+
+    $ sudo chmod u+s blink
+    $ ./blink
 
 With [Codelite](https://codelite.org/) it's easier and funny, right ? 
 
