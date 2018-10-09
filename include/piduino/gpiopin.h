@@ -22,7 +22,7 @@
 #include <vector>
 #include <map>
 #include <memory>
-#include <atomic>
+#include <future>
 #include <thread>
 #include <mutex>
 #include <piduino/converter.h>
@@ -630,7 +630,7 @@ namespace Piduino {
       Mode _mode;
       Pull _pull;
 
-      std::atomic<int> _run;  // indique au thread de continuer
+      std::promise<void> _stopRead;
       std::thread _thread;
       
       std::shared_ptr<Converter> _dac;
@@ -644,7 +644,7 @@ namespace Piduino {
       static const std::map<std::string, Mode> _str2mode;
       static std::string _syspath;
 
-      static void * irqThread (std::atomic<int> & run, int fd, Isr isr);
+      static void * irqThread (std::future<void> run, int fd, Isr isr);
 
       void holdMode();
       void holdPull();

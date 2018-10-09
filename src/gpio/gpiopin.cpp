@@ -22,6 +22,7 @@
 #include <exception>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 //
 #include <csignal>
 #include <sys/types.h>
@@ -103,7 +104,7 @@ namespace Piduino {
     _isopen (false), _parent (parent), _descriptor (desc), _holdMode (ModeUnknown),
     _holdPull (PullUnknown), _holdState (false), _useSysFs (false),
     _valueFd (-1), _firstPolling (true), _edge (EdgeUnknown), _mode (ModeUnknown),
-    _pull (PullUnknown), _run (false), _dac (0) {
+    _pull (PullUnknown), _dac (0) {
 
     if ( (parent->gpio()->accessLayer() & AccessLayerIoMap) != AccessLayerIoMap) {
 
@@ -154,7 +155,6 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   Pin::~Pin() {
 
-    detachInterrupt();
     close();
   }
 
@@ -629,8 +629,10 @@ namespace Piduino {
 
         sysFsRead (_valueFd);
       }
-      _run = true;
-      _thread = std::thread (irqThread, std::ref (_run), _valueFd, isr);
+
+      // Fetch std::future object associated with promise
+      std::future<void> running = _stopRead.get_future();
+      _thread = std::thread (irqThread, std::move (running), _valueFd, isr);
     }
   }
 
@@ -640,7 +642,8 @@ namespace Piduino {
 
     if (_thread.joinable()) {
 
-      _run = false;
+      // Set the value in promise
+      _stopRead.set_value();
       _thread.join();
     }
   }
@@ -715,6 +718,7 @@ namespace Piduino {
 
       if (type() == TypeGpio) {
 
+        detachInterrupt();
         forceUseSysFs (false); // close & unexport
         if (gpio()->releaseOnClose()) {
 
@@ -810,15 +814,15 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
 // Thread de surveillance des entrées du port
   void *
-  Pin::irqThread (std::atomic<int> & run, int fd, Isr isr) {
+  Pin::irqThread (std::future<void> run, int fd, Isr isr) {
     int ret;
 
     Scheduler::setRtPriority (50);
 
     try {
-      while (run) {
+      while (run.wait_for (std::chrono::milliseconds (1)) == std::future_status::timeout) {
 
-        ret = sysFsPoll (fd, 100);
+        ret = sysFsPoll (fd, 10);
         if (ret > 0) {
 
           isr();

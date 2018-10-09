@@ -204,7 +204,6 @@
       <File Name="include/piduino/string.h"/>
       <File Name="include/piduino/filedevice.h"/>
       <File Name="include/piduino/fileno.h"/>
-      <File Name="include/piduino/readnotifier.h"/>
       <File Name="include/piduino/threadsafebuffer.h"/>
       <File Name="include/piduino/filestream.h"/>
       <File Name="include/piduino/terminalnotifier.h"/>

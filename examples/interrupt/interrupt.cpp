@@ -31,7 +31,6 @@
 #ifdef __unix__
 #include <Piduino.h>  // All the magic is here ;-)
 #endif
-using namespace std;
 
 // <DANGER> Be careful !!! Before launching this program :
 //    -> Check that the pin below is well connected to an LED ! <-
@@ -55,11 +54,15 @@ void isr() {
   digitalWrite (ledPin, value);
 
   // prints the time difference between edges and the state of the irq pin.
-  cout << t2 - t1 << ":\t" << value << endl;
+  Console.print (t2 - t1);
+  Console.print (":\t");
+  Console.println (value);
   t1 = t2; // the new time becomes the first for the next irq
 }
 
 void setup() {
+
+  Console.begin (115200);
   // initialize digital pin ledPin as an output.
   pinMode (ledPin, OUTPUT);
   // initialize digital pin irqPin as an input with pull-up (for button ?)
@@ -69,7 +72,7 @@ void setup() {
 }
 
 void loop () {
-  
+
   // Press Ctrl+C to abort ...
   delay (-1); // nothing to do, we sleep ...
 }
