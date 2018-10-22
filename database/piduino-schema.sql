@@ -1,8 +1,8 @@
 -- Creator:       MySQL Workbench 6.3.6/ExportSQLite Plugin 0.1.0
 -- Author:        epsilonrt
--- Caption:       New Model
--- Project:       Name of the project
--- Changed:       2018-09-09 19:15
+-- Caption:       Schema Version 0.3.1
+-- Project:       Piduino Database
+-- Changed:       2018-10-22 10:46
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -27,6 +27,14 @@ CREATE TABLE "piduino"."gpio_connector_family"(
   "columns" INTEGER NOT NULL,
   CONSTRAINT "name_UNIQUE"
     UNIQUE("name")
+);
+CREATE TABLE "piduino"."schema_version"(
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  "valid_from" DATETIME NOT NULL,
+  "valid_to" DATETIME,
+  "major" INTEGER NOT NULL,
+  "minor" INTEGER NOT NULL,
+  "revision" INTEGER NOT NULL
 );
 CREATE TABLE "piduino"."board_family"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -185,6 +193,7 @@ CREATE TABLE "piduino"."soc_has_pin"(
 );
 CREATE TABLE "piduino"."board"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  "name" VARCHAR(256),
   "ram" INTEGER DEFAULT 0,
   "pcb_revision" VARCHAR(45),
   "board_model_id" INTEGER NOT NULL,

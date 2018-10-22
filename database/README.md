@@ -19,7 +19,7 @@
 
 ## export data vers sql
 
-    echo "BEGIN TRANSACTION;" >  piduino-data.sql; sqlite3 piduino.db .dump | grep '^INSERT INTO' >> piduino-data.sql; echo "COMMIT;" >>  piduino-data.sql
+    echo "BEGIN TRANSACTION;" >  piduino-data.sql; sqlite3 piduino.db .dump | grep '^INSERT INTO' | grep -v 'sqlite_sequence' >> piduino-data.sql; echo "COMMIT;" >>  piduino-data.sql
 
 ## export table vers sql de données
 
