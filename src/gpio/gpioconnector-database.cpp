@@ -40,12 +40,12 @@ namespace Piduino {
 
       if (id < 0) {
 
-        stat = Piduino::db << "INSERT INTO gpio_connector(name,rows,gpio_connector_family_id) "
+        stat = Piduino::db << "INSERT INTO connector(name,rows,connector_family_id) "
                "VALUES(?,?,?)" << name << rows << family.id();
       }
       else {
 
-        stat = Piduino::db << "INSERT INTO gpio_connector(id,name,rows,gpio_connector_family_id) "
+        stat = Piduino::db << "INSERT INTO connector(id,name,rows,connector_family_id) "
                "VALUES(?,?,?,?)" << id << name << rows << family.id();
       }
       stat.exec();
@@ -57,7 +57,7 @@ namespace Piduino {
         if (!hasPin (pin[i])) {
 
           stat.reset();
-          stat = Piduino::db << "INSERT INTO gpio_connector_has_pin(gpio_connector_id,pin_id,row,column) "
+          stat = Piduino::db << "INSERT INTO connector_has_pin(connector_id,pin_id,row,column) "
                  "VALUES(?,?,?,?)" << id << pin[i].id << pin[i].num.row << pin[i].num.column;
           stat.exec();
         }
@@ -77,8 +77,8 @@ namespace Piduino {
   Connector::Descriptor:: hasPin (const Pin::Descriptor & p) const {
     cppdb::result res =
       Piduino::db << "SELECT pin_id "
-      "FROM gpio_connector_has_pin "
-      "WHERE gpio_connector_id=? AND "
+      "FROM connector_has_pin "
+      "WHERE connector_id=? AND "
       "pin_id=? AND "
       "row=? AND "
       "column=?"
@@ -93,10 +93,10 @@ namespace Piduino {
     cppdb::result res =
       Piduino::db <<
       "SELECT id "
-      " FROM gpio_connector "
+      " FROM connector "
       " WHERE name=? AND "
       "   rows=? AND "
-      "   gpio_connector_family_id=?"
+      "   connector_family_id=?"
       << name << rows << family.id();
 
     while (res.next()) {
@@ -107,9 +107,9 @@ namespace Piduino {
       res >> connector_id;
       res2 = Piduino::db <<
              "SELECT pin_id,row,column "
-             " FROM gpio_connector_has_pin "
+             " FROM connector_has_pin "
              " WHERE "
-             "   gpio_connector_id=?"
+             "   connector_id=?"
              << connector_id;
 
       while (res2.next()) {
@@ -155,8 +155,8 @@ namespace Piduino {
       cppdb::result res;
 
       res = Piduino::db <<
-            "SELECT name,rows,gpio_connector_family_id "
-            " FROM gpio_connector "
+            "SELECT name,rows,connector_family_id "
+            " FROM connector "
             " WHERE "
             "   id=?"
             << id << cppdb::row;
@@ -167,9 +167,9 @@ namespace Piduino {
         family.setId (static_cast<Connector::Family::Id> (fid));
         res = Piduino::db <<
               "SELECT pin_id,row,column"
-              " FROM gpio_connector_has_pin "
+              " FROM connector_has_pin "
               " WHERE "
-              "   gpio_connector_id=?"
+              "   connector_id=?"
               << id;
 
         while (res.next()) {
@@ -214,7 +214,7 @@ namespace Piduino {
 
     if ((Piduino::db.is_open()) && (familyId != Id::Unknown)) {
       cppdb::result res =
-        Piduino::db << "SELECT name,columns FROM gpio_connector_family WHERE id=?"
+        Piduino::db << "SELECT name,columns FROM connector_family WHERE id=?"
         << familyId << cppdb::row;
 
       if (!res.empty()) {

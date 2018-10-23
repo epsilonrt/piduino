@@ -56,7 +56,7 @@ namespace Piduino {
         if (!hasConnector (connector[i])) {
 
           stat.reset();
-          stat = Piduino::db << "INSERT INTO gpio_has_connector(num,gpio_id,gpio_connector_id) "
+          stat = Piduino::db << "INSERT INTO gpio_has_connector(num,gpio_id,connector_id) "
                  "VALUES(?,?,?)" << connector[i].number << id << connector[i].id;
           stat.exec();
         }
@@ -75,9 +75,9 @@ namespace Piduino {
   bool
   Gpio::Descriptor:: hasConnector (const Connector::Descriptor & c) const {
     cppdb::result res =
-      Piduino::db << "SELECT gpio_connector_id FROM gpio_has_connector "
+      Piduino::db << "SELECT connector_id FROM gpio_has_connector "
       "WHERE gpio_id=? AND "
-      "gpio_connector_id=?"
+      "connector_id=?"
       << id << c.id << cppdb::row;
     return !res.empty();
   }
@@ -113,7 +113,7 @@ namespace Piduino {
       if (!res.empty()) {
         res >> name;
         res = Piduino::db <<
-              "SELECT num,gpio_connector_id "
+              "SELECT num,connector_id "
               " FROM gpio_has_connector "
               " WHERE "
               "   gpio_id=?"
