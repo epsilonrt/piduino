@@ -22,9 +22,6 @@
 
 #ifdef __cplusplus
 #include <Console.h>
-#if PIDUINO_WITH_SERIAL
-#include <HardwareSerial.h>
-#endif
 PiConsole Console;
 #endif
 

@@ -81,6 +81,9 @@ extern "C"{
 #include <iostream>
 #include <algorithm>
 #include <piduino/gpio.h>
+#if PIDUINO_WITH_SERIAL
+#include <HardwareSerial.h>
+#endif
 
 #define EXTERN_C extern "C"
 
