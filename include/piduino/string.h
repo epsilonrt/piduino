@@ -37,12 +37,12 @@ namespace Piduino {
     public:
       // Constructors
       String() : std::string() {}
-      String (const String & s, size_t pos, size_t len = std::string::npos) : std::string (s,pos,len) {}
+      String (const String & s, size_t pos, size_t len = std::string::npos) : std::string (s, pos, len) {}
       String (const char * s) : std::string (s) {}
-      String (const char * s, size_t n) : std::string (s,n) {}
-      String (size_t n, char c) : std::string (n,c) {}
+      String (const char * s, size_t n) : std::string (s, n) {}
+      String (size_t n, char c) : std::string (n, c) {}
       String (const std::string &s) : std::string (s) {}
-      String (const std::string & s, size_t pos, size_t len = std::string::npos) : std::string (s,pos,len) {}
+      String (const std::string & s, size_t pos, size_t len = std::string::npos) : std::string (s, pos, len) {}
 
       explicit String (unsigned char n, unsigned char base = 10) : String (toString (n, base)) {}
       explicit String (int n, unsigned char base = 10) : String (toString (n, base)) {}
@@ -109,12 +109,14 @@ namespace Piduino {
       inline void setCharAt (unsigned int index, char c);
       inline void toCharArray (char *buf, unsigned int bufsize, unsigned int index = 0) const;
       inline int indexOf (char ch, unsigned int fromIndex = 0) const;
+      inline int indexOf (const char * str, unsigned int fromIndex = 0) const;
       inline int indexOf (const String &str, unsigned int fromIndex = 0) const;
-      inline int lastIndexOf (char ch, unsigned int fromIndex = 0) const;
-      inline int lastIndexOf (const String &str, unsigned int fromIndex = 0) const;
+      inline int lastIndexOf (char ch, unsigned int fromIndex = -1) const;
+      inline int lastIndexOf (const char * str, unsigned int fromIndex = -1) const;
+      inline int lastIndexOf (const String &str, unsigned int fromIndex = -1) const;
       inline String substring (unsigned int beginIndex) const;
       inline String substring (unsigned int beginIndex, unsigned int endIndex) const;
-      inline long toInt () const;
+      long toInt () const;
 
       static String toString (long num, unsigned char base = 10);
       static String toString (unsigned long num, unsigned char base = 10);
@@ -327,6 +329,12 @@ namespace Piduino {
   }
 
   //------------------------------------------------------------------------
+  inline int String::indexOf (const char * str, unsigned int fromIndex) const {
+
+    return std::string::find (str, fromIndex);
+  }
+
+  //------------------------------------------------------------------------
   inline int String::indexOf (const String &str, unsigned int fromIndex) const {
 
     return std::string::find (str, fromIndex);
@@ -335,13 +343,19 @@ namespace Piduino {
   //------------------------------------------------------------------------
   inline int String::lastIndexOf (char ch, unsigned int fromIndex) const {
 
-    return std::string::rfind (ch, fromIndex);
+    return std::string::rfind (ch, (fromIndex == -1 ? std::string::npos : fromIndex));
   }
 
   //------------------------------------------------------------------------
   inline int String::lastIndexOf (const String &str, unsigned int fromIndex) const {
 
-    return std::string::rfind (str, fromIndex);
+    return std::string::rfind (str, (fromIndex == -1 ? std::string::npos : fromIndex));
+  }
+
+  //------------------------------------------------------------------------
+  inline int String::lastIndexOf (const char * str, unsigned int fromIndex) const {
+
+    return std::string::rfind (str, (fromIndex == -1 ? std::string::npos : fromIndex));
   }
 
   //------------------------------------------------------------------------
@@ -353,13 +367,7 @@ namespace Piduino {
   //------------------------------------------------------------------------
   inline String String::substring (unsigned int beginIndex, unsigned int endIndex) const {
 
-    return substr (beginIndex, endIndex);
-  }
-
-  //------------------------------------------------------------------------
-  inline long String::toInt () const {
-
-    return stoi (*this);
+    return substr (beginIndex,  endIndex - beginIndex);
   }
 
   //------------------------------------------------------------------------
