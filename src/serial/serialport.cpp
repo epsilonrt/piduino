@@ -1005,7 +1005,7 @@ namespace Piduino {
     // tio->c_oflag = CR3 | NL1 | VT1;
     
     if (!(m & IoDevice::Binary)) {
-      tio->c_iflag |= ICRNL;
+      tio->c_iflag |= IGNCR;
       tio->c_oflag |= ONLCR;
     }
     
