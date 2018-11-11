@@ -175,7 +175,7 @@ void HardwareSerial::begin (unsigned long baud, uint8_t config) {
   }
   port->setSettings (s);
   port->setBaudRate (baud);
-  if (port->open()) {
+  if (port->open(IoDevice::ReadWrite | IoDevice::Binary)) {
     Terminal::begin();
     if (portName().startsWith ("ttyS")  &&
         (db.board().soc().family().id() == SoC::Family::AllwinnerH)) {
