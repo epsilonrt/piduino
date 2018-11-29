@@ -214,7 +214,7 @@ namespace Piduino {
       if (cfg.keyExists ("Revision")) {
 
         str = cfg.value ("Revision");
-        _revision = std::stol (str, nullptr, 16);
+        _revision = std::stol (str, nullptr, 16) & 0xFFFFFF;
       }
 
       if (cfg.keyExists ("Serial")) {
