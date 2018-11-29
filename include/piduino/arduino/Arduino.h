@@ -23,6 +23,11 @@
 
 #ifndef __DOXYGEN__
 
+/* types ==================================================================== */
+typedef unsigned int word;
+typedef uint8_t boolean;
+typedef uint8_t byte;
+
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -81,6 +86,8 @@ extern "C"{
 #include <iostream>
 #include <algorithm>
 #include <piduino/gpio.h>
+#include "WCharacter.h"
+#include "WString.h"
 
 #define EXTERN_C extern "C"
 
@@ -104,6 +111,17 @@ enum ArduinoBool {
 };
 
 typedef Piduino::Pin::Isr Isr;
+
+uint16_t makeWord(uint16_t w);
+uint16_t makeWord(byte h, byte l);
+
+#define word(...) makeWord(__VA_ARGS__)
+
+// WMath prototypes
+long random(long);
+long random(long, long);
+void randomSeed(unsigned long);
+long map(long, long, long, long, long);
 
 #else /* __cplusplus not defined */
 // -----------------------------------------------------------------------------
@@ -140,12 +158,8 @@ typedef void (* Isr) (void);
 // -----------------------------------------------------------------------------
 #endif /* __cplusplus not defined */
 
-#define digitalPinToInterrupt(p) (p)
 
-/* types ==================================================================== */
-typedef unsigned int word;
-typedef uint8_t boolean;
-typedef uint8_t byte;
+#define digitalPinToInterrupt(p) (p)
 
 #else /* __DOXYGEN__ defined */
 
