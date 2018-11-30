@@ -23,14 +23,19 @@
 
 #ifndef __DOXYGEN__
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
 /* types ==================================================================== */
 typedef unsigned int word;
 typedef uint8_t boolean;
 typedef uint8_t byte;
-
-#ifdef __cplusplus
-extern "C"{
-#endif
 
 /* constants ================================================================ */
 #define PI 3.1415926535897932384626433832795
@@ -79,10 +84,6 @@ extern "C"{
 
 #ifdef __cplusplus
 // -----------------------------------------------------------------------------
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <cmath>
 #include <iostream>
 #include <algorithm>
 #include <piduino/gpio.h>
@@ -126,10 +127,6 @@ long map(long, long, long, long, long);
 #else /* __cplusplus not defined */
 // -----------------------------------------------------------------------------
 #include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include <stdio.h>
 
 #define EXTERN_C
