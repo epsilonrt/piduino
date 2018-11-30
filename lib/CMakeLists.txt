@@ -71,6 +71,11 @@ set (hdr_arduino
   ${PIDUINO_INC_DIR}/piduino/arduino/Stream.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Terminal.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Console.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/WCharacter.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/binary.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Client.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/IPAddress.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/Server.h
 )
 
 set (hdr_arduino_i2c 
