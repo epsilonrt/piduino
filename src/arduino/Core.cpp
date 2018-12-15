@@ -153,9 +153,9 @@ void analogWrite (int n, int v) {
 }
 
 // -----------------------------------------------------------------------------
-void attachInterrupt (int n, Pin::Isr isr, ArduinoIntEdge mode) {
+void attachInterrupt (int n, Isr isr, ArduinoIntEdge mode) {
 
-  gpio.pin (n).attachInterrupt (isr, static_cast<Pin::Edge> (mode));
+  gpio.pin (n).attachInterrupt (reinterpret_cast<Pin::Isr>(isr), static_cast<Pin::Edge> (mode));
 }
 
 // -----------------------------------------------------------------------------

@@ -330,9 +330,11 @@ namespace Piduino {
       /**
        * @brief Routine d'interruption
        *
-       * Une routine d'interruption ne prend et ne renvoie aucun paramètre.
+       * Une routine d'interruption ne renvoie aucun paramètre.
+       * 
+       * @param userData pointeur sur les données de l'utilisateur
        */
-      typedef void (* Isr) (void);
+      typedef void (* Isr) (void * userData);
 
       /**
        * @brief Installe une routine d'interruption (Isr)
@@ -342,8 +344,9 @@ namespace Piduino {
        *
        * @param isr fonction exécuté à chaque interruption
        * @param edge front déclenchant l'interruption
+       * @param userData pointeur sur les données de l'utilisateur
        */
-      void attachInterrupt (Isr isr, Edge edge);
+      void attachInterrupt (Isr isr, Edge edge, void * userData = 0);
 
       /**
        * @brief Désinstalle la routine d'interruption
@@ -644,7 +647,7 @@ namespace Piduino {
       static const std::map<std::string, Mode> _str2mode;
       static std::string _syspath;
 
-      static void * irqThread (std::future<void> run, int fd, Isr isr);
+      static void * irqThread (std::future<void> run, int fd, Isr isr, void * userData);
 
       void holdMode();
       void holdPull();

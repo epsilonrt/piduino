@@ -111,8 +111,6 @@ enum ArduinoBool {
   LOW = false
 };
 
-typedef Piduino::Pin::Isr Isr;
-
 uint16_t makeWord(uint16_t w);
 uint16_t makeWord(byte h, byte l);
 
@@ -150,11 +148,10 @@ typedef enum  {
   LOW = false
 } ArduinoBool;
 
-typedef void (* Isr) (void);
-
 // -----------------------------------------------------------------------------
 #endif /* __cplusplus not defined */
 
+typedef void (* Isr) (void);
 
 #define digitalPinToInterrupt(p) (p)
 

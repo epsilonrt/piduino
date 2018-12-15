@@ -617,7 +617,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  Pin::attachInterrupt (Isr isr, Edge e) {
+  Pin::attachInterrupt (Isr isr, Edge e, void * userData) {
 
     if (!_thread.joinable()) {
 
@@ -632,7 +632,7 @@ namespace Piduino {
 
       // Fetch std::future object associated with promise
       std::future<void> running = _stopRead.get_future();
-      _thread = std::thread (irqThread, std::move (running), _valueFd, isr);
+      _thread = std::thread (irqThread, std::move (running), _valueFd, isr, userData);
     }
   }
 
@@ -814,7 +814,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
 // Thread de surveillance des entrées du port
   void *
-  Pin::irqThread (std::future<void> run, int fd, Isr isr) {
+  Pin::irqThread (std::future<void> run, int fd, Isr isr, void * userData) {
     int ret;
 
     Scheduler::setRtPriority (50);
@@ -825,7 +825,7 @@ namespace Piduino {
         ret = sysFsPoll (fd, 10);
         if (ret > 0) {
 
-          isr();
+          isr(userData);
         }
         else if (ret < 0) {
 
