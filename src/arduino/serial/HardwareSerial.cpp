@@ -15,6 +15,7 @@
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
 #include <HardwareSerial.h>
+#include <Arduino.h>
 #include <piduino/database.h>
 
 using namespace Piduino;

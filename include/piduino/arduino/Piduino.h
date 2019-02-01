@@ -18,18 +18,12 @@
 #define __PIDUINO_H__
 
 #include <Arduino.h>
-#include <piduino/config.h>
-
 #ifdef __cplusplus
 #include <Console.h>
-#if PIDUINO_WITH_SERIAL
-#include <HardwareSerial.h>
-#endif
 PiConsole Console;
 #endif
 
 #ifndef EXTERN_C
-#define EXTERN_C extern "C"
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
 #else /* __cplusplus not defined */
@@ -51,8 +45,8 @@ int main (int __arduino_argc, char **__arduino_argv) {
 int main () {
 #endif
 
-#if PIDUINO_WITH_SERIAL && defined(__cplusplus)
-    ::HardwareSerial::setupAvailablePorts();
+#ifdef __cplusplus
+  ::HardwareSerial::setupAvailablePorts();
 #endif
 
 #ifndef ARDUINO_NOSETUP

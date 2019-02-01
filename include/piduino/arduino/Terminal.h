@@ -20,7 +20,7 @@
 #include <ostream>
 #include <piduino/terminalnotifier.h>
 #include "Stream.h"
-#include "Arduino.h"
+//#include "Arduino.h"
 
 class Terminal : public Stream {
 

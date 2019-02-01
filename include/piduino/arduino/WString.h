@@ -18,8 +18,6 @@
 #ifndef __WSTRING_H__
 #define __WSTRING_H__
 
-#include <Arduino.h>
-
 #ifdef __cplusplus
 #include <piduino/string.h>
 

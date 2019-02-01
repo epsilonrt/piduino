@@ -31,6 +31,7 @@ extern "C"{
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "binary.h"
 
 /* types ==================================================================== */
 typedef unsigned int word;
@@ -87,6 +88,7 @@ typedef uint8_t byte;
 #include <iostream>
 #include <algorithm>
 #include <piduino/gpio.h>
+#include "HardwareSerial.h"
 #include "WCharacter.h"
 #include "WString.h"
 

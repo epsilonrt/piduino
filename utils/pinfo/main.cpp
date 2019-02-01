@@ -18,15 +18,13 @@
 #include <vector>
 #include <getopt.h>
 #include <piduino/database.h>
+#include <piduino/serialport.h>
 #include <config.h>
 #if PIDUINO_WITH_I2C
 #include <piduino/i2cdev.h>
 #endif
 #if PIDUINO_WITH_SPI
 #include <piduino/spidev.h>
-#endif
-#if PIDUINO_WITH_SERIAL
-#include <piduino/serialport.h>
 #endif
 
 #include "version.h"
@@ -80,9 +78,7 @@ main (int argc, char **argv) {
 #if PIDUINO_WITH_SPI
                               "P"
 #endif
-#if PIDUINO_WITH_SERIAL
                               "S"
-#endif
                               ;
   static const struct option long_options[] = {
     {"soc",  no_argument, NULL, 's'},       // OPT_SOC
@@ -101,9 +97,7 @@ main (int argc, char **argv) {
 #if PIDUINO_WITH_SPI
     {"spi",  no_argument, NULL, 'P'},       // OPT_SPI
 #endif
-#if PIDUINO_WITH_SERIAL
     {"serial",  no_argument, NULL, 'S'},    // OPT_SER
-#endif
     {"all",  no_argument, NULL, 'a'},       // OPT_ALL
     {"warranty",  no_argument, NULL, 'w'},
     {"help",  no_argument, NULL, 'h'},
@@ -184,12 +178,10 @@ main (int argc, char **argv) {
         break;
 #endif
 
-#if PIDUINO_WITH_SERIAL
       case 'S':
         count++;
         flags |= OPT_SER;
         break;
-#endif
 
       case 'a':
         count = -1;
@@ -294,14 +286,12 @@ main (int argc, char **argv) {
           }
           break;
 #endif
-#if PIDUINO_WITH_SERIAL
         case OPT_SER:
           str = serialPorts();
           if (!str.empty()) {
             cout  << str << endl;
           }
           break;
-#endif
         default:
           exit (EXIT_FAILURE);
           break;
@@ -381,7 +371,6 @@ namespace Pinfo {
       }
     }
 #endif
-#if PIDUINO_WITH_SERIAL
     if (flags & OPT_SER) {
       std::string ports = serialPorts();
 
@@ -390,7 +379,6 @@ namespace Pinfo {
         cout << "Serial Ports    : " << ports << endl;
       }
     }
-#endif
   }
 
 // -----------------------------------------------------------------------------
@@ -452,9 +440,7 @@ namespace Pinfo {
 #if PIDUINO_WITH_SPI
     cout << "  -P  --spi       \tPrints SPI buses available on the SoC." << endl;
 #endif
-#if PIDUINO_WITH_SERIAL
     cout << "  -S  --serial    \tPrints serial ports available on the SoC." << endl;
-#endif
     cout << "  -h  --help      \tPrints this message" << endl;
     cout << "  -v  --version   \tPrints version and exit" << endl;
     cout << "  -w  --warranty  \tOutput the warranty and exit." << endl;
