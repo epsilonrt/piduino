@@ -48,6 +48,9 @@ class TwoWire : public Piduino::I2cDev {
       close();
     }
     void setClock (uint32_t dummy) {}
+    inline byte endTransmission (bool stop = true) {
+      return I2cDev::endTransmission (stop) ? 0 : 4;
+    }
     int requestFrom (uint16_t address, uint16_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop);
     inline int requestFrom (uint16_t slave, uint16_t max, bool stop = true) {
       return Piduino::I2cDev::requestFrom (slave, max, stop);
