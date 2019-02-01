@@ -133,12 +133,12 @@ namespace Piduino {
         if (!dev) {
           break;
         }
-        
+
         const char * path = udev_device_get_devnode (dev);
         if (path) {
           Info bus;
           if (bus.setPath (path)) {
-            buses.push_back(bus);
+            buses.push_back (bus);
           }
         }
       }
@@ -147,7 +147,7 @@ namespace Piduino {
 
     return buses;
   }
-  
+
   // ---------------------------------------------------------------------------
   I2cDev::Info
   I2cDev::Info::defaultBus () {
@@ -415,7 +415,6 @@ namespace Piduino {
         d->i2c_msgs.push_back (msg);
 
         if (stop) {
-          struct i2c_msg & rxmsg = d->i2c_msgs.back();
 
           d->rxbuf.clear();
           if (!d->transfer()) {
@@ -424,6 +423,7 @@ namespace Piduino {
           }
 
           d->rxbuf.seek (max);
+          d->flush();
           return available();
         }
         return 0;
