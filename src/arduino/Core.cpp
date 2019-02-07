@@ -89,23 +89,36 @@ void setPriority (int priority) {
 // -----------------------------------------------------------------------------
 void pinMode (int n, ArduinoPinMode mode) {
 
-  if (!pinLocked (n)) {
-    Pin::Pull p = Pin::PullOff;
-    Pin::Mode m = Pin::ModeOutput;
+  if (!pinLocked (n) &&     gpio.open()) {
+    Pin::Pull p = Pin::PullUnknown;
+    Pin::Mode m = Pin::ModeUnknown;
 
-    if (mode != OUTPUT) {
-
+    if (mode == OUTPUT)  {
+      
+      p = Pin::PullOff;
+      m = Pin::ModeOutput;
+    }
+    else if ( (mode == INPUT) || (mode == INPUT_PULLDOWN) || (mode == INPUT_PULLUP)) {
+      
       m = Pin::ModeInput;
-      if (mode == INPUT_PULLUP) {
-        p = Pin::PullUp;
-      }
-      else if (mode == INPUT_PULLDOWN) {
-        p = Pin::PullDown;
-      }
     }
 
-    if (gpio.open()) {
+    if ( (mode == INPUT_PULLDOWN) || (mode == PULLDOWN)) {
+      
+      p = Pin::PullDown;
+    }
+    else if ( (mode == INPUT_PULLUP) || (mode == PULLUP)) {
+      
+      p = Pin::PullUp;
+    }
+
+    if (m != Pin::ModeUnknown) {
+      
       gpio.pin (n).setMode (m);
+    }
+    
+    if (p != Pin::PullUnknown) {
+      
       gpio.pin (n).setPull (p);
     }
   }
@@ -155,7 +168,7 @@ void analogWrite (int n, int v) {
 // -----------------------------------------------------------------------------
 void attachInterrupt (int n, Isr isr, ArduinoIntEdge mode) {
 
-  gpio.pin (n).attachInterrupt (reinterpret_cast<Pin::Isr>(isr), static_cast<Pin::Edge> (mode));
+  gpio.pin (n).attachInterrupt (reinterpret_cast<Pin::Isr> (isr), static_cast<Pin::Edge> (mode));
 }
 
 // -----------------------------------------------------------------------------

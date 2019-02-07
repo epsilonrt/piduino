@@ -15,7 +15,7 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-  
+
   Modified 2018 by Pascal JEAN (pascal.jean@piduino.org) for piduino library
 */
 #ifndef Arduino_h
@@ -24,7 +24,7 @@
 #ifndef __DOXYGEN__
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
 #include <stdint.h>
@@ -95,10 +95,13 @@ typedef uint8_t byte;
 #define EXTERN_C extern "C"
 
 enum ArduinoPinMode {
-  INPUT = Piduino::Pin::ModeInput,
-  OUTPUT = Piduino::Pin::ModeOutput,
-  INPUT_PULLUP,
-  INPUT_PULLDOWN // Not supported by Arduino !
+  INPUT = Piduino::Pin::ModeInput, ///< digital input
+  OUTPUT = Piduino::Pin::ModeOutput, ///< digital input
+  INPUT_PULLUP, ///< digital input with pull-up resistor
+  // Not supported by Arduino !
+  INPUT_PULLDOWN, ///< digital input with pull-down resistor
+  PULLUP, ///<  pull-up resistor enabled
+  PULLDOWN  ///<  pull-down resistor enabled
 };
 
 enum ArduinoIntEdge {
@@ -113,16 +116,16 @@ enum ArduinoBool {
   LOW = false
 };
 
-uint16_t makeWord(uint16_t w);
-uint16_t makeWord(byte h, byte l);
+uint16_t makeWord (uint16_t w);
+uint16_t makeWord (byte h, byte l);
 
 #define word(...) makeWord(__VA_ARGS__)
 
 // WMath prototypes
-long random(long);
-long random(long, long);
-void randomSeed(unsigned long);
-long map(long, long, long, long, long);
+long random (long);
+long random (long, long);
+void randomSeed (unsigned long);
+long map (long, long, long, long, long);
 
 #else /* __cplusplus not defined */
 // -----------------------------------------------------------------------------
@@ -135,7 +138,10 @@ typedef enum {
   INPUT = 0,
   OUTPUT,
   INPUT_PULLUP,
-  INPUT_PULLDOWN // Not supported by Arduino !
+  // Not supported by Arduino !
+  INPUT_PULLDOWN, ///< digital input with pull-down resistor
+  PULLUP, ///<  pull-up resistor enabled
+  PULLDOWN  ///<  pull-down resistor enabled
 } ArduinoPinMode;
 
 typedef enum {
@@ -178,7 +184,9 @@ enum ArduinoPinMode {
   INPUT,  ///< entrée sans résistance de tirage
   OUTPUT, ///< sortie
   INPUT_PULLUP,  ///< entrée avec résistance de tirage à l'état haut
-  INPUT_PULLDOWN ///< entrée avec résistance de tirage à l'état bas, mode supplémentaire non disponible dans Arduino
+  INPUT_PULLDOWN, ///< entrée avec résistance de tirage à l'état bas, mode supplémentaire non disponible dans Arduino
+  PULLUP, ///<  pull-up resistor enabled
+  PULLDOWN  ///<  pull-down resistor enabled
 };
 
 /**
@@ -253,11 +261,11 @@ EXTERN_C void digitalToggle (int pin); // Not supported by Arduino !
 
 // Analog pins -----------------------------------------------------------------
 /**
- * @brief Writes an analog value (PWM wave) to a pin. 
+ * @brief Writes an analog value (PWM wave) to a pin.
  * @param pin  the pin to write to.
- * @param value the duty cycle: between 0 (always off) and 255 (always on). 
+ * @param value the duty cycle: between 0 (always off) and 255 (always on).
  */
-EXTERN_C void analogWrite(int pin, int value);
+EXTERN_C void analogWrite (int pin, int value);
 
 //int analogRead(uint8_t);
 //void analogReference(uint8_t mode);
