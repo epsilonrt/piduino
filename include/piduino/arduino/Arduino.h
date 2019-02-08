@@ -21,7 +21,179 @@
 #ifndef Arduino_h
 #define Arduino_h
 
-#ifndef __DOXYGEN__
+#ifdef __DOXYGEN__
+
+/**
+ *  @defgroup piduino_arduino Arduino
+ *
+ *  Ce module permet de programmer avec Piduino en utilisant une syntaxe Arduino.
+ *  @{
+ */
+
+/**
+ * @enum ArduinoBool
+ * @brief Valeur binaire
+ */
+enum ArduinoBool {
+  HIGH = true,  ///< état haut
+  LOW = false   ///< état bas
+};
+
+/**
+ * @enum ArduinoPinMode
+ * @brief Mode d'utilisation d'une broche digitale
+ */
+enum ArduinoPinMode {
+  INPUT, ///< digital input without pull-up resistor
+  OUTPUT, ///< digital input
+  INPUT_PULLUP, ///< digital input with pull-up resistor
+  INPUT_PULLDOWN, ///< digital input with pull-down resistor, @warning Not supported by Arduino !
+  PULLUP, ///<  pull-up resistor enabled, @warning Not supported by Arduino !
+  PULLDOWN  ///<  pull-down resistor enabled, @warning Not supported by Arduino !
+};
+
+/**
+ * @enum ArduinoIntEdge
+ * @brief Type de front déclenchant une interrption
+ *
+ * @warning le déclenchement sur niveau logique bas et haut (LOW/HIGH)
+ * ne sont pas pris en charge par Piduino
+ */
+enum ArduinoIntEdge {
+  /// LOW & HIGH unsupported by Piduino !
+  RISING, ///< front montant
+  FALLING ///< front descendant
+  CHANGE, ///< front montant et descendant
+};
+
+/**
+ * @brief Transforme un numéro de broche en numéro d'interruption
+ *
+ * Cette macro est présente uniquement pour la compatibilté Arduino car elle
+ * ne fait que recopier le numéro de broche.
+ */
+#define digitalPinToInterrupt(p)
+
+/**
+ * @brief Routine d'interruption
+ *
+ * Une routine d'interruption Arduino ne prend et ne renvoie aucun paramètre.
+ */
+typedef void (* Isr) (void);
+
+/**
+ * @brief Routine d'interruption qui reçoit un pointeur sur des données
+ *
+ * @warning Extension propre à Piduino uniquement en C++
+ */
+typedef void (* IsrWithData) (void * user_data);
+
+// Digital pins ----------------------------------------------------------------
+/**
+ * @brief Modification du mode d'une broche digitale
+ *
+ *  https://www.arduino.cc/en/Tutorial/DigitalPins
+ */
+void pinMode (int pin, ArduinoPinMode mode);
+
+/**
+ * @brief Modification d'une broche digitale
+ *
+ *  https://www.arduino.cc/en/Tutorial/DigitalPins
+ */
+void digitalWrite (int pin, int value);
+
+/**
+ * @brief Lecture d'une broche digitale
+ *
+ *  https://www.arduino.cc/en/Tutorial/DigitalPins
+ */
+int digitalRead (int pin);
+
+/**
+ * @brief Basculement de l'état  d'une broche digitale
+ *
+ *  @warning Non disponible dans Arduino !
+ */
+void digitalToggle (int pin);
+
+// Analog pins -----------------------------------------------------------------
+/**
+ * @brief Writes an analog value (PWM wave) to a pin.
+ * @param pin  the pin to write to.
+ * @param value the duty cycle: between 0 (always off) and 255 (always on).
+ */
+void analogWrite (int pin, int value);
+
+//int analogRead(uint8_t);
+//void analogReference(uint8_t mode);
+
+// Interrupts ------------------------------------------------------------------
+/**
+ * @brief Installe une routine d'interruption (isr)
+ *
+ * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
+ */
+void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
+
+/**
+ * @brief Installe une routine d'interruption isr avec passage de données
+ * 
+ * Surcharge de la fonction Arduino
+ * @warning Extension propre à Piduino uniquement en C++
+ */
+void attachInterrupt (int pin, IsrWithData isr, ArduinoIntEdge mode, void * data);
+
+/**
+ * @brief Désinstalle une routine d'interruption (Isr)
+ *
+ * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
+ */
+void detachInterrupt (int pin);
+
+// Time ------------------------------------------------------------------------
+/**
+ * @brief Pause pour une durée en millisecondes
+ * @param ms durée de la pause en ms, -1 pour endormir le thread
+ */
+void delay (unsigned long ms);
+
+/**
+ * @brief Pause pour une durée en microsecondes
+ * @param ms durée de la pause en us, -1 pour endormir le thread
+ */
+void delayMicroseconds (unsigned long us);
+
+/**
+ * @brief Nombre de millisecondes depuis le lancement du programme
+ */
+unsigned long millis();
+
+/**
+ * @brief Nombre de microsecondes depuis le lancement du programme
+ */
+unsigned long micros();
+
+/**
+ * @brief Définie la priorité en temps réel du thread appelant
+ *
+ * L'algorithme choisie est le round-robin. Sur un système Linux, la
+ * valeur normale de priorité est de 20, la valeur minimale est de 1 et
+ * la valeur maximale est de 99. Donner une valeur de 99 est une très
+ * mauvaise idée qui peut bloquer le système...
+ *
+ * @param priority valeur de la priorité
+ * @warning Extension propre à Piduino
+ */
+void setPriority (int priority);
+/**
+* @}
+*/
+
+#else /* End of the documentation, __DOXYGEN__ not defined ------------------ */
+
+// -----------------------------------------------------------------------------
+// part C/C++
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,6 +209,7 @@ extern "C" {
 typedef unsigned int word;
 typedef uint8_t boolean;
 typedef uint8_t byte;
+typedef void (* Isr) (void);
 
 /* constants ================================================================ */
 #define PI 3.1415926535897932384626433832795
@@ -79,12 +252,16 @@ typedef uint8_t byte;
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 #define bit(b) (1UL << (b))
 
+#define digitalPinToInterrupt(p) (p)
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
 #ifdef __cplusplus
 // -----------------------------------------------------------------------------
+// part only C++
+// 
 #include <iostream>
 #include <algorithm>
 #include <piduino/gpio.h>
@@ -94,14 +271,16 @@ typedef uint8_t byte;
 
 #define EXTERN_C extern "C"
 
+typedef Piduino::Pin::Isr IsrWithData;
+
 enum ArduinoPinMode {
-  INPUT = Piduino::Pin::ModeInput, ///< digital input
-  OUTPUT = Piduino::Pin::ModeOutput, ///< digital input
-  INPUT_PULLUP, ///< digital input with pull-up resistor
+  INPUT = Piduino::Pin::ModeInput,
+  OUTPUT = Piduino::Pin::ModeOutput,
+  INPUT_PULLUP,
   // Not supported by Arduino !
-  INPUT_PULLDOWN, ///< digital input with pull-down resistor
-  PULLUP, ///<  pull-up resistor enabled
-  PULLDOWN  ///<  pull-down resistor enabled
+  INPUT_PULLDOWN,
+  PULLUP,
+  PULLDOWN
 };
 
 enum ArduinoIntEdge {
@@ -116,6 +295,8 @@ enum ArduinoBool {
   LOW = false
 };
 
+void attachInterrupt (int pin, IsrWithData isr, ArduinoIntEdge mode, void * data = 0);
+
 uint16_t makeWord (uint16_t w);
 uint16_t makeWord (byte h, byte l);
 
@@ -129,6 +310,8 @@ long map (long, long, long, long, long);
 
 #else /* __cplusplus not defined */
 // -----------------------------------------------------------------------------
+// part only C
+// 
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -139,9 +322,9 @@ typedef enum {
   OUTPUT,
   INPUT_PULLUP,
   // Not supported by Arduino !
-  INPUT_PULLDOWN, ///< digital input with pull-down resistor
-  PULLUP, ///<  pull-up resistor enabled
-  PULLDOWN  ///<  pull-down resistor enabled
+  INPUT_PULLDOWN,
+  PULLUP,
+  PULLDOWN 
 } ArduinoPinMode;
 
 typedef enum {
@@ -159,170 +342,21 @@ typedef enum  {
 // -----------------------------------------------------------------------------
 #endif /* __cplusplus not defined */
 
-typedef void (* Isr) (void);
-
-#define digitalPinToInterrupt(p) (p)
-
-#else /* __DOXYGEN__ defined */
-
-/**
- *  @defgroup piduino_arduino Arduino
- *
- *  Ce module permet de programmer avec Piduino en utilisant une syntaxe proche d'Arduino.
- */
-
-/**
- *  @addtogroup piduino_arduino
- *  @{
- */
-
-/**
- * @enum ArduinoPinMode
- * @brief Mode d'utilisation d'une broche digitale
- */
-enum ArduinoPinMode {
-  INPUT,  ///< entrée sans résistance de tirage
-  OUTPUT, ///< sortie
-  INPUT_PULLUP,  ///< entrée avec résistance de tirage à l'état haut
-  INPUT_PULLDOWN, ///< entrée avec résistance de tirage à l'état bas, mode supplémentaire non disponible dans Arduino
-  PULLUP, ///<  pull-up resistor enabled
-  PULLDOWN  ///<  pull-down resistor enabled
-};
-
-/**
- * @enum ArduinoIntEdge
- * @brief Type de front déclenchant une interrption
- *
- * @warning le déclenchement sur niveau logique bas et haut (LOW/HIGH)
- * ne sont pas pris en charge
- */
-enum ArduinoIntEdge {
-  // LOW & HIGH unsupported !
-  RISING, ///< front montant
-  FALLING ///< front descendant
-  CHANGE, ///< front montant et descendant
-};
-
-/**
- * @brief Transforme un numéro de broche en numéro d'interruption
- *
- * Cette macro est présente uniquement pour la compatibilté Arduino car elle
- * ne fait que recopier le numéro de broche.
- */
-#define digitalPinToInterrupt(p)
-
-/**
- * @brief Routine d'interruption
- *
- * Une routine d'interruption ne prend et ne renvoie aucun paramètre.
- */
-typedef void (* Isr) (void);
-
-/**
- * @enum ArduinoBool
- * @brief Valeur binaire
- */
-enum ArduinoBool {
-  HIGH = true,  ///< état haut
-  LOW = false   ///< état bas
-};
-
-
-#endif /* __DOXYGEN__ defined */
-
-// Digital pins ----------------------------------------------------------------
-/**
- * @brief Modification du mode d'une broche digitale
- *
- *  https://www.arduino.cc/en/Tutorial/DigitalPins
- */
+// -----------------------------------------------------------------------------
+// part C/C++
 EXTERN_C void pinMode (int pin, ArduinoPinMode mode);
-
-/**
- * @brief Modification d'une broche digitale
- *
- *  https://www.arduino.cc/en/Tutorial/DigitalPins
- */
 EXTERN_C void digitalWrite (int pin, int value);
-
-/**
- * @brief Lecture d'une broche digitale
- *
- *  https://www.arduino.cc/en/Tutorial/DigitalPins
- */
 EXTERN_C int digitalRead (int pin);
-
-/**
- * @brief Basculement de l'état  d'une broche digitale
- *
- *  @warning Non disponible dans Arduino !
- */
 EXTERN_C void digitalToggle (int pin); // Not supported by Arduino !
-
-// Analog pins -----------------------------------------------------------------
-/**
- * @brief Writes an analog value (PWM wave) to a pin.
- * @param pin  the pin to write to.
- * @param value the duty cycle: between 0 (always off) and 255 (always on).
- */
 EXTERN_C void analogWrite (int pin, int value);
-
-//int analogRead(uint8_t);
-//void analogReference(uint8_t mode);
-
-// Interrupts ------------------------------------------------------------------
-/**
- * @brief Installe une routine d'interruption (Isr)
- *
- * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
- */
-EXTERN_C void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
-
-/**
- * @brief Désinstalle une routine d'interruption (Isr)
- *
- * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
- */
+void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
 EXTERN_C void detachInterrupt (int pin);
-
-// Time ------------------------------------------------------------------------
-/**
- * @brief Pause pour une durée en millisecondes
- * @param ms durée de la pause en ms, -1 pour endormir le thread
- */
 EXTERN_C void delay (unsigned long ms);
-
-/**
- * @brief Pause pour une durée en microsecondes
- * @param ms durée de la pause en us, -1 pour endormir le thread
- */
 EXTERN_C void delayMicroseconds (unsigned long us);
-
-/**
- * @brief Nombre de millisecondes depuis le lancement du programme
- */
 EXTERN_C unsigned long millis();
-
-/**
- * @brief Nombre de microsecondes depuis le lancement du programme
- */
 EXTERN_C unsigned long micros();
-
-/**
- * @brief Définie la priorité en temps réel du thread appelant
- *
- * L'algorithme choisie est le round-robin. Sur un système Linux, la
- * valeur normale de priorité est de 20, la valeur minimale est de 1 et
- * la valeur maximale est de 99. Donner une valeur de 99 est une très
- * mauvaise idée qui peut bloquer le système...
- *
- * @param priority valeur de la priorité
- */
 EXTERN_C void setPriority (int priority);
 
-/**
-* @}
-*/
-
+#endif /* __DOXYGEN__ not defined */
 /* ========================================================================== */
 #endif /*Arduino_h defined */

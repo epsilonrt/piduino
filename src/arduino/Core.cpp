@@ -172,6 +172,12 @@ void attachInterrupt (int n, Isr isr, ArduinoIntEdge mode) {
 }
 
 // -----------------------------------------------------------------------------
+void attachInterrupt (int n, IsrWithData isr, ArduinoIntEdge mode, void * data) {
+
+  gpio.pin (n).attachInterrupt (isr, static_cast<Pin::Edge> (mode), data);
+}
+
+// -----------------------------------------------------------------------------
 void detachInterrupt (int n) {
 
   gpio.pin (n).detachInterrupt();
