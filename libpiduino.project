@@ -1,75 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiduino" Version="10.0.0" InternalType="Console">
+  <VirtualDirectory Name="examples">
+    <VirtualDirectory Name="Spi">
+      <VirtualDirectory Name="SpiPressureSensorHsc">
+        <File Name="examples/Spi/SpiPressureSensorHsc/SpiPressureSensorHsc.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="SpiMemoryMb85rs">
+        <File Name="examples/Spi/SpiMemoryMb85rs/SpiMemoryMb85rs.cpp"/>
+        <File Name="examples/Spi/SpiMemoryMb85rs/mb85rs.cpp"/>
+        <File Name="examples/Spi/SpiMemoryMb85rs/mb85rs.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Wire">
+      <VirtualDirectory Name="WireDigitalPotentiometer">
+        <File Name="examples/Wire/WireDigitalPotentiometer/WireDigitalPotentiometer.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="WireMasterWriter">
+        <File Name="examples/Wire/WireMasterWriter/WireMasterWriter.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="WireRtcBq32k">
+        <File Name="examples/Wire/WireRtcBq32k/WireRtcBq32k.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="WireMasterReader">
+        <File Name="examples/Wire/WireMasterReader/WireMasterReader.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Communication">
+      <VirtualDirectory Name="Console">
+        <File Name="examples/Communication/Console/Console.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ASCIITable">
+        <File Name="examples/Communication/ASCIITable/ASCIITable.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ASCIIPing">
+        <File Name="examples/Communication/ASCIIPing/ASCIIPing.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ReadASCIIString">
+        <File Name="examples/Communication/ReadASCIIString/ReadASCIIString.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="NoArduino">
+      <VirtualDirectory Name="Gpio">
+        <VirtualDirectory Name="WaitForInt">
+          <File Name="examples/NoArduino/Gpio/WaitForInt/WaitForInt.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Fade">
+          <File Name="examples/NoArduino/Gpio/Fade/Fade.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Interrupt">
+          <File Name="examples/NoArduino/Gpio/Interrupt/Interrupt.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Blink">
+          <File Name="examples/NoArduino/Gpio/Blink/Blink.cpp"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Button">
+      <File Name="examples/Button/Button.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Fade">
+      <File Name="examples/Fade/Fade.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Interrupt">
+      <File Name="examples/Interrupt/Interrupt.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Blink">
+      <File Name="examples/Blink/Blink.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
   </Plugins>
-  <VirtualDirectory Name="examples">
-    <VirtualDirectory Name="communication">
-      <VirtualDirectory Name="ASCIITable">
-        <File Name="examples/communication/ASCIITable/ASCIITable.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="ReadASCIIString">
-        <File Name="examples/communication/ReadASCIIString/READASCIIString.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="ASCIIPing">
-        <File Name="examples/communication/ASCIIPing/ASCIIPing.cpp"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="wire">
-      <VirtualDirectory Name="master_writer">
-        <File Name="examples/wire/master_writer/master_writer.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="digital_potentiometer">
-        <File Name="examples/wire/digital_potentiometer/digital_potentiometer.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="master_reader">
-        <File Name="examples/wire/master_reader/master_reader.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="rtc_bq32k">
-        <File Name="examples/wire/rtc_bq32k/rtc_bq32k.cpp"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="spi">
-      <VirtualDirectory Name="memory_fram_mb85rs">
-        <File Name="examples/spi/memory_fram_mb85rs/memory_fram_mb85rs.cpp"/>
-        <File Name="examples/spi/memory_fram_mb85rs/mb85rs.cpp"/>
-        <File Name="examples/spi/memory_fram_mb85rs/mb85rs.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="pressure_sensor_hsc">
-        <File Name="examples/spi/pressure_sensor_hsc/pressure_sensor_hsc.cpp"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="noarduino">
-      <VirtualDirectory Name="gpio">
-        <VirtualDirectory Name="waitforint">
-          <File Name="examples/noarduino/gpio/waitforint/waitforint.cpp"/>
-        </VirtualDirectory>
-        <VirtualDirectory Name="blink">
-          <File Name="examples/noarduino/gpio/blink/blink.cpp"/>
-        </VirtualDirectory>
-        <VirtualDirectory Name="interrupt">
-          <File Name="examples/noarduino/gpio/interrupt/interrupt.cpp"/>
-        </VirtualDirectory>
-        <VirtualDirectory Name="fade">
-          <File Name="examples/noarduino/gpio/fade/fade.cpp"/>
-        </VirtualDirectory>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="button">
-      <File Name="examples/button/button.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="blink">
-      <File Name="examples/blink/blink.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="interrupt">
-      <File Name="examples/interrupt/interrupt.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="fade">
-      <File Name="examples/fade/fade.cpp"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="arch">
       <VirtualDirectory Name="arm">

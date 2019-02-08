@@ -46,14 +46,30 @@ install (DIRECTORY codelite/executable-piduino
   DESTINATION "${INSTALL_CODELITE_DIR}/templates/projects" 
   DIRECTORY_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ
   COMPONENT dev
-  )
+  FILES_MATCHING 
+  PATTERN "*" 
+  PATTERN "Debug" EXCLUDE
+  PATTERN "Release" EXCLUDE
+  PATTERN "*.mk" EXCLUDE
+  PATTERN "*.txt" EXCLUDE
+  PATTERN ".clang" EXCLUDE
+  PATTERN ".codelite" EXCLUDE)
 
 # Examples
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/
-        DESTINATION ${PIDUINO_INSTALL_EXAMPLES_DIR}
-        COMPONENT dev
-        FILES_MATCHING PATTERN "*.c" PATTERN "*.cpp" PATTERN "*.project"  PATTERN "*.workspace" PATTERN "CMakeLists.txt"
-        PATTERN ".clang/" EXCLUDE
-        PATTERN ".codelite/" EXCLUDE
-        PATTERN "cmake-build*/" EXCLUDE)
+  DESTINATION ${PIDUINO_INSTALL_EXAMPLES_DIR}
+  COMPONENT dev
+  FILES_MATCHING 
+  PATTERN "*.c" 
+  PATTERN "*.cpp" 
+  PATTERN "*.h" 
+  PATTERN "*.project"  
+  PATTERN "*.workspace"
+  PATTERN "Debug" EXCLUDE
+  PATTERN "Release" EXCLUDE
+  PATTERN "*.mk" EXCLUDE
+  PATTERN "*.txt" EXCLUDE
+  PATTERN ".clang" EXCLUDE
+  PATTERN ".codelite" EXCLUDE
+  PATTERN "cmake-build*" EXCLUDE)
 

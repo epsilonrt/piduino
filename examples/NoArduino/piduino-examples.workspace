@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="piduino-examples" Database="" Version="10.0.0">
+  <Project Name="Blink" Path="Gpio/Blink/Blink.project" Active="Yes"/>
+  <Project Name="Fade" Path="Gpio/Fade/Fade.project" Active="No"/>
+  <Project Name="Interrupt" Path="Gpio/Interrupt/Interrupt.project" Active="No"/>
+  <Project Name="WaitForInt" Path="Gpio/WaitForInt/WaitForInt.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="Blink" ConfigName="Debug"/>
+      <Project Name="Fade" ConfigName="Debug"/>
+      <Project Name="Interrupt" ConfigName="Debug"/>
+      <Project Name="WaitForInt" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="Blink" ConfigName="Release"/>
+      <Project Name="Fade" ConfigName="Release"/>
+      <Project Name="Interrupt" ConfigName="Release"/>
+      <Project Name="WaitForInt" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

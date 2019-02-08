@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="piduino-examples" Database="" Version="10.0.0">
+  <Project Name="Blink" Path="Blink/Blink.project" Active="Yes"/>
+  <Project Name="Button" Path="Button/Button.project" Active="No"/>
+  <Project Name="ASCIIPing" Path="Communication/ASCIIPing/ASCIIPing.project" Active="No"/>
+  <Project Name="ASCIITable" Path="Communication/ASCIITable/ASCIITable.project" Active="No"/>
+  <Project Name="Console" Path="Communication/Console/Console.project" Active="No"/>
+  <Project Name="ReadASCIIString" Path="Communication/ReadASCIIString/ReadASCIIString.project" Active="No"/>
+  <Project Name="Fade" Path="Fade/Fade.project" Active="No"/>
+  <Project Name="Interrupt" Path="Interrupt/Interrupt.project" Active="No"/>
+  <Project Name="SpiMemoryMb85rs" Path="Spi/SpiMemoryMb85rs/SpiMemoryMb85rs.project" Active="No"/>
+  <Project Name="SpiPressureSensorHsc" Path="Spi/SpiPressureSensorHsc/SpiPressureSensorHsc.project" Active="No"/>
+  <Project Name="WireDigitalPotentiometer" Path="Wire/WireDigitalPotentiometer/WireDigitalPotentiometer.project" Active="No"/>
+  <Project Name="WireMasterReader" Path="Wire/WireMasterReader/WireMasterReader.project" Active="No"/>
+  <Project Name="WireMasterWriter" Path="Wire/WireMasterWriter/WireMasterWriter.project" Active="No"/>
+  <Project Name="WireRtcBq32k" Path="Wire/WireRtcBq32k/WireRtcBq32k.project" Active="No"/>
+  <Project Name="Fade" Path="Fade/Fade.project" Active="No"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="Blink" ConfigName="Debug"/>
+      <Project Name="Button" ConfigName="Debug"/>
+      <Project Name="ASCIIPing" ConfigName="Debug"/>
+      <Project Name="ASCIITable" ConfigName="Debug"/>
+      <Project Name="Console" ConfigName="Debug"/>
+      <Project Name="ReadASCIIString" ConfigName="Debug"/>
+      <Project Name="Interrupt" ConfigName="Debug"/>
+      <Project Name="SpiMemoryMb85rs" ConfigName="Debug"/>
+      <Project Name="SpiPressureSensorHsc" ConfigName="Debug"/>
+      <Project Name="WireDigitalPotentiometer" ConfigName="Debug"/>
+      <Project Name="WireMasterReader" ConfigName="Debug"/>
+      <Project Name="WireMasterWriter" ConfigName="Debug"/>
+      <Project Name="WireRtcBq32k" ConfigName="Debug"/>
+      <Project Name="Fade" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="Blink" ConfigName="Release"/>
+      <Project Name="Button" ConfigName="Release"/>
+      <Project Name="ASCIIPing" ConfigName="Release"/>
+      <Project Name="ASCIITable" ConfigName="Release"/>
+      <Project Name="Console" ConfigName="Release"/>
+      <Project Name="ReadASCIIString" ConfigName="Release"/>
+      <Project Name="Interrupt" ConfigName="Release"/>
+      <Project Name="SpiMemoryMb85rs" ConfigName="Release"/>
+      <Project Name="SpiPressureSensorHsc" ConfigName="Release"/>
+      <Project Name="WireDigitalPotentiometer" ConfigName="Release"/>
+      <Project Name="WireMasterReader" ConfigName="Release"/>
+      <Project Name="WireMasterWriter" ConfigName="Release"/>
+      <Project Name="WireRtcBq32k" ConfigName="Release"/>
+      <Project Name="Fade" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
