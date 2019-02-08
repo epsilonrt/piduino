@@ -220,7 +220,6 @@
       <File Name="include/piduino/terminal.h"/>
       <File Name="include/piduino/socpwm.h"/>
     </VirtualDirectory>
-    <File Name="utils/pido/CMakeLists.txt"/>
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
@@ -245,7 +244,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="etc">
     <File Name="etc/piduino.conf.in"/>
-    <File Name="src/spi/spidev.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="database">
     <File Name="database/piduino-data.sql"/>

@@ -102,15 +102,19 @@
   </Settings>
   <VirtualDirectory Name="pinfo">
     <File Name="pinfo/main.cpp"/>
-    <File Name="pinfo/CMakeLists.txt"/>
     <File Name="pinfo/pinfo.1.in"/>
+    <VirtualDirectory Name="resources">
+      <File Name="pinfo/CMakeLists.txt"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="pido">
     <File Name="pido/exception.h"/>
     <File Name="pido/exception.cpp"/>
     <File Name="pido/main.cpp"/>
     <File Name="pido/pido.1.in"/>
-    <File Name="pido/CMakeLists.txt"/>
+    <VirtualDirectory Name="resources">
+      <File Name="pido/CMakeLists.txt"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
