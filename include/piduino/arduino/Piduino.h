@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2019 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * The Piduino Library is free software; you can redistribute it and/or
@@ -14,51 +14,126 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __PIDUINO_H__
-#define __PIDUINO_H__
+#pragma once
+
+#ifdef __DOXYGEN__
+
+/**
+ * @addtogroup piduino_arduino
+ * @{
+ * 
+ *  @defgroup piduino_sketch Sketch
+ *
+ *  This module provides the context for an Arduino sketch.
+ *  @{
+ */
+
+/**
+ * @brief Sketch setup function
+ * 
+ * This function is called when a sketch starts. Use it to initialize variables, 
+ * pin modes, start using libraries, etc. This function will only run once, 
+ * after program launch.
+ */
+void setup();
+
+/**
+ * @brief Sketch loop function.
+ * 
+ * After creating a setup() function, which initializes and sets the initial 
+ * values, the loop() function does precisely what its name suggests, and loops 
+ * consecutively, allowing your program to change and respond. 
+ * Use it to actively control the main program.
+ */
+void loop();
+
+/**
+ * @brief Array of arguments passed by the command line
+ * 
+ * argv is an array of strings (character pointers) representing the individual 
+ * arguments provided on the command line.
+ */
+extern char * argv[];
+
+/**
+ * @brief Number of parameters passed by the command line
+ * 
+ * argc will be the number of strings pointed to by argv. 
+ * This will (in practice) be 1 plus the number of arguments.
+ */
+extern int argc;
+
+/**
+ * @brief TTY Console 
+ * 
+ * Object derived from the Stream class to access the TTY terminal.
+ */
+extern PiConsole Console;
+
+/**
+ * @brief Command Line Options Parser
+ * 
+ * The default options are :
+ * - -h / --help : Switch (bool)
+ * - -v / --verbose: Switch (bool)
+ * .
+ * 
+ * available only if ARDUINO_NOOPTIONS is undefined.
+ */
+extern Piduino::OptionParser CmdLine;
+
+/**
+ * @def ARDUINO_NOOPTIONS
+ * @brief Disable command-line options parsing
+ * 
+ * Must be defined before the inclusion of the `Piduino.h` header file to 
+ * disable command line options parsing.
+ */
+ 
+/**
+*   @}
+* @}
+*/
+
+#else /* End of the documentation, __DOXYGEN__ not defined ------------------ */
 
 #include <Arduino.h>
-#ifdef __cplusplus
-#include <Console.h>
-PiConsole Console;
-#endif
 
-#ifndef EXTERN_C
-#ifdef __cplusplus
-#define EXTERN_C extern "C"
-#else /* __cplusplus not defined */
-#define EXTERN_C
-#endif /* __cplusplus not defined */
-#endif /* EXTERN_C not defined */
-
+// Arduino sketch emulation
 EXTERN_C void setup();
 EXTERN_C void loop();
 
-#if !(defined(ARDUINO_NOSETUP) && defined(ARDUINO_NOLOOP))
-#ifndef ARDUINO_NOARGS
-static int argc;
-static char **argv;
-int main (int __arduino_argc, char **__arduino_argv) {
+// Piduino global variables
+int argc;
+char **argv;
+#ifdef __cplusplus
+PiConsole Console;
+#ifndef ARDUINO_NOOPTIONS
+Piduino::OptionParser CmdLine ("Allowed options");
+#endif
+#endif
+
+// ---
+int main (int __arduino_argc, char ** __arduino_argv) {
   argc = __arduino_argc;
   argv = __arduino_argv;
-#else
-int main () {
-#endif
-
+  
 #ifdef __cplusplus
+// C++ only
+#ifndef ARDUINO_NOOPTIONS
+  CmdLine.add<Piduino::Switch> ("h", "help", "produce help message");
+  CmdLine.add<Piduino::Switch> ("v", "verbose", "be verbose");
+  CmdLine.parse (argc, argv);
+#endif /* ARDUINO_NOOPTIONS not defined */
   ::HardwareSerial::setupAvailablePorts();
-#endif
+#endif /*  __cplusplus defined */
 
-#ifndef ARDUINO_NOSETUP
   setup();
-#endif /* ARDUINO_NOSETUP not defined */
-#ifndef ARDUINO_NOLOOP
   for (;;) {
     loop();
   }
-#endif  /* ARDUINO_NOLOOP not defined */
   return 0;
 }
-#endif /* !(defined(ARDUINO_NOSETUP) && defined(ARDUINO_NOLOOP)) */
 
-#endif /*__PIDUINO_H__ defined */
+/* ========================================================================== */
+#endif /* __DOXYGEN__ not defined */

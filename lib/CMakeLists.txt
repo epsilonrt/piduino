@@ -53,6 +53,7 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/converter.h
   ${PIDUINO_INC_DIR}/piduino/pwm.h
   ${PIDUINO_INC_DIR}/piduino/socpwm.h
+  ${PIDUINO_INC_DIR}/piduino/popl.h
 )
 
 set (hdr_gpio 
@@ -246,6 +247,11 @@ install(FILES
 # Install the piduino licence files
 install(FILES
   "${PROJECT_SOURCE_DIR}/COPYING" "${PROJECT_SOURCE_DIR}/COPYING.LESSER"
+  DESTINATION "${PIDUINO_INSTALL_DATA_DIR}" COMPONENT lib)
+
+# Install the 3rdparty's project licence files
+install(DIRECTORY
+  "${PROJECT_SOURCE_DIR}/3rdparty"
   DESTINATION "${PIDUINO_INSTALL_DATA_DIR}" COMPONENT lib)
 
 install(FILES

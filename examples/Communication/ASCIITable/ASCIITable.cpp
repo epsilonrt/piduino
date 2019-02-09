@@ -20,16 +20,18 @@
 */
 #ifdef __unix__
 #include <Piduino.h>  // All the magic is here ;-)
+using namespace Piduino;
 #endif
 
 unsigned long baud = 115200;
 
 void setup() {
 #ifdef __unix__
-  if (argc > 1) {
-
-    String b (argv[1]);
-    baud = b.toInt();
+  auto baud_opt = CmdLine.add<Value<unsigned long>> ("b", "baud", "set baudrate");
+  CmdLine.parse (argc, argv);
+  if (baud_opt->is_set()) {
+    baud = baud_opt->value();
+    Console.print ("Baudrate set to ");
     Console.println (baud);
   }
 #endif

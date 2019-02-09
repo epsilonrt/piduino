@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiduino" Version="10.0.0" InternalType="Console">
+  <VirtualDirectory Name="3rdparty">
+    <VirtualDirectory Name="popl">
+      <File Name="3rdparty/popl/README.md"/>
+      <File Name="3rdparty/popl/LICENSE"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <VirtualDirectory Name="examples">
     <VirtualDirectory Name="Spi">
       <VirtualDirectory Name="SpiPressureSensorHsc">
@@ -219,6 +225,7 @@
       <File Name="include/piduino/terminalnotifier.h"/>
       <File Name="include/piduino/terminal.h"/>
       <File Name="include/piduino/socpwm.h"/>
+      <File Name="include/piduino/popl.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>

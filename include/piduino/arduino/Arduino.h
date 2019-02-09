@@ -26,7 +26,7 @@
 /**
  *  @defgroup piduino_arduino Arduino
  *
- *  Ce module permet de programmer avec Piduino en utilisant une syntaxe Arduino.
+ *  Ce module fournit une API Arduino sur cartes Pi.
  *  @{
  */
 
@@ -186,6 +186,7 @@ unsigned long micros();
  * @warning Extension propre à Piduino
  */
 void setPriority (int priority);
+
 /**
 * @}
 */
@@ -268,6 +269,11 @@ typedef void (* Isr) (void);
 #include "HardwareSerial.h"
 #include "WCharacter.h"
 #include "WString.h"
+#include <Console.h>
+#include <piduino/popl.h>
+
+extern PiConsole Console;
+extern Piduino::OptionParser CmdLine;
 
 #define EXTERN_C extern "C"
 
@@ -347,15 +353,20 @@ typedef enum  {
 EXTERN_C void pinMode (int pin, ArduinoPinMode mode);
 EXTERN_C void digitalWrite (int pin, int value);
 EXTERN_C int digitalRead (int pin);
-EXTERN_C void digitalToggle (int pin); // Not supported by Arduino !
 EXTERN_C void analogWrite (int pin, int value);
-void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
+EXTERN_C void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
 EXTERN_C void detachInterrupt (int pin);
 EXTERN_C void delay (unsigned long ms);
 EXTERN_C void delayMicroseconds (unsigned long us);
 EXTERN_C unsigned long millis();
 EXTERN_C unsigned long micros();
+// Not supported by Arduino !
+EXTERN_C void digitalToggle (int pin); // Not supported by Arduino !
 EXTERN_C void setPriority (int priority);
+
+extern int argc;
+extern char ** argv;
+extern bool isDaemon;
 
 #endif /* __DOXYGEN__ not defined */
 /* ========================================================================== */
