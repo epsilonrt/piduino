@@ -16,7 +16,11 @@
  */
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <algorithm>
+#include <sstream>
 #include <piduino/system.h>
 #include <piduino/configfile.h>
 #include "config.h"
@@ -25,6 +29,10 @@
 #error PiDuino library currently only supports the ARM architecture !
 #endif
 
+// Nom du programme en cours défini par la glibc
+extern char * program_invocation_name; // glibc
+extern char * __progname;
+ 
 namespace Piduino {
 
   // ---------------------------------------------------------------------------
@@ -34,32 +42,45 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
+  // static
   bool System::fileExists (const char * path) {
     struct stat fs;
-    
+
     return (stat (path, &fs) == 0);
   }
 
   // ---------------------------------------------------------------------------
+  // static
   bool System::charFileExists (const char * path) {
     struct stat fs;
 
     if (stat (path, &fs) == 0) {
-      
+
       return S_ISCHR (fs.st_mode) != 0;
     }
     return false;
   }
-  
+
   // ---------------------------------------------------------------------------
+  // static
   bool System::directoryExists (const char * path) {
     struct stat fs;
 
     if (stat (path, &fs) == 0) {
-      
+
       return S_ISDIR (fs.st_mode) != 0;
     }
     return false;
+  }
+
+  // ---------------------------------------------------------------------------
+  // static
+  std::string System::progName() {
+#ifdef HAVE_GETPROGNAME_FUNCTION
+    return std::string (getprogname ());
+#else
+    return std::string (__progname);
+#endif
   }
 
   // ---------------------------------------------------------------------------
@@ -69,6 +90,55 @@ namespace Piduino {
     readCpuInfo();
   }
 
+
+  // ---------------------------------------------------------------------------
+  System::~System () {
+    close();
+  }
+
+  // ---------------------------------------------------------------------------
+  void System::close() {
+    deletePidFile();
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  System::createPidFile (const char * path) {
+    std::ostringstream fn;
+    std::ofstream f;
+    pid_t pid;
+
+    pid = getpid();
+    if (path) {
+
+      fn << path;
+    }
+    else {
+
+      fn << "/var/run/" << progName() << ".pid";
+    }
+
+    f.open (fn.str());
+    f.exceptions (f.failbit | f.badbit);
+
+    f << pid << std::endl;
+    f.exceptions (f.failbit | f.badbit);
+    f.close();
+    _pidfn = fn.str();
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  System::deletePidFile () {
+    
+    if (!_pidfn.empty()) {
+
+      if (fileExists (_pidfn)) {
+        unlink (_pidfn.c_str());
+      }
+      _pidfn.clear();
+    }
+  }
 
   // ---------------------------------------------------------------------------
   void

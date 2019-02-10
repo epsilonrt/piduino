@@ -1,0 +1,68 @@
+#!/bin/sh
+#
+### BEGIN INIT INFO
+# Provides:          blinkd
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Should-Start:
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: blinkd sysv init script
+# Description:       Blinking Led server
+### END INIT INFO
+#
+SERVER_NAME=blinkd
+DESC="Blinking Led server"
+PGM_NAME=Blinkd
+PGM_OPT="-D -p 0"
+
+PIDFILE=/var/run/$PGM_NAME.pid
+PGM=/usr/local/bin/$PGM_NAME
+
+test -x $PGM || exit 0
+
+. /lib/lsb/init-functions
+
+niceness=0
+pgm_args="--quiet --oknodo --nicelevel $niceness --pidfile $PIDFILE --exec $PGM"
+
+daemon_start () {
+    log_daemon_msg "Starting $DESC" "$SERVER_NAME"
+
+    rm -f $PIDFILE
+    start-stop-daemon --start $pgm_args -- $PGM_OPT
+    log_end_msg $?
+    return $?
+}
+
+daemon_stop () {
+    log_daemon_msg "Stopping $DESC" "$SERVER_NAME"
+
+    start-stop-daemon --stop $pgm_args --retry TERM/5/KILL/10
+    log_end_msg $?
+    return $?
+}
+
+
+case "$1" in
+  start)
+    daemon_start || exit 1
+    ;;
+  stop)
+    daemon_stop || exit 1
+    ;;
+  force-reload|restart)
+    daemon_stop
+    sleep 1
+    daemon_start || exit 1
+    ;;
+  status)
+    status_of_proc $PGM "$DESC"
+    ;;
+  *)
+     echo "Usage: /etc/init.d/$SERVER_NAME {start|stop|restart|force-reload|status}"
+     exit 1
+esac
+
+exit 0

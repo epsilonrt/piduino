@@ -138,7 +138,7 @@ void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
 
 /**
  * @brief Installe une routine d'interruption isr avec passage de données
- * 
+ *
  * Surcharge de la fonction Arduino
  * @warning Extension propre à Piduino uniquement en C++
  */
@@ -188,6 +188,23 @@ unsigned long micros();
 void setPriority (int priority);
 
 /**
+ * @brief Création d'un fichier contenant le pid du programme en cours
+ * 
+ * Le fichier est détruit automatiquement à la fermeture du programme.
+ * 
+ * @param path chemin complet du fichier à créer, si NULL, le chemin du fichier
+ * est `/var/run/xxx.pid` avec xxx nom du prgramme.
+ * @warning Extension propre à Piduino
+ */
+void createPidFile (const char * path);
+
+/**
+ * @brief Supprime le fichier pid
+ * @warning Extension propre à Piduino
+ */
+void deletePidFile ();
+
+/**
 * @}
 */
 
@@ -206,13 +223,13 @@ extern "C" {
 #include <math.h>
 #include "binary.h"
 
-/* types ==================================================================== */
-typedef unsigned int word;
-typedef uint8_t boolean;
-typedef uint8_t byte;
-typedef void (* Isr) (void);
+  /* types ==================================================================== */
+  typedef unsigned int word;
+  typedef uint8_t boolean;
+  typedef uint8_t byte;
+  typedef void (* Isr) (void);
 
-/* constants ================================================================ */
+  /* constants ================================================================ */
 #define PI 3.1415926535897932384626433832795
 #define HALF_PI 1.5707963267948966192313216916398
 #define TWO_PI 6.283185307179586476925286766559
@@ -220,7 +237,7 @@ typedef void (* Isr) (void);
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define EULER 2.718281828459045235360287471352
 
-/* macros =================================================================== */
+  /* macros =================================================================== */
 
 #ifndef __cplusplus
 #ifndef min
@@ -262,7 +279,7 @@ typedef void (* Isr) (void);
 #ifdef __cplusplus
 // -----------------------------------------------------------------------------
 // part only C++
-// 
+//
 #include <iostream>
 #include <algorithm>
 #include <piduino/gpio.h>
@@ -317,7 +334,7 @@ long map (long, long, long, long, long);
 #else /* __cplusplus not defined */
 // -----------------------------------------------------------------------------
 // part only C
-// 
+//
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -330,7 +347,7 @@ typedef enum {
   // Not supported by Arduino !
   INPUT_PULLDOWN,
   PULLUP,
-  PULLDOWN 
+  PULLDOWN
 } ArduinoPinMode;
 
 typedef enum {
@@ -363,6 +380,8 @@ EXTERN_C unsigned long micros();
 // Not supported by Arduino !
 EXTERN_C void digitalToggle (int pin); // Not supported by Arduino !
 EXTERN_C void setPriority (int priority);
+EXTERN_C void createPidFile (const char * path);
+EXTERN_C void deletePidFile();
 
 extern int argc;
 extern char ** argv;

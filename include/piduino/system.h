@@ -115,6 +115,7 @@ namespace Piduino {
       //
       // -----------------------------------------------------------------------
       System();
+      ~System();
 
       // -----------------------------------------------------------------------
       static bool fileExists (const char * path);
@@ -129,7 +130,17 @@ namespace Piduino {
       static inline bool directoryExists (const std::string &p) {
         return fileExists (p.c_str());
       }
-
+      
+      static std::string progName();
+      
+      void createPidFile (const char * path = nullptr);
+      inline void createPidFile (const std::string & path) {
+        createPidFile (path.c_str());
+      }
+      void deletePidFile ();
+      
+      void close();
+      
       inline const std::string & hardware() const {
         return _hardware;
       }
@@ -166,6 +177,7 @@ namespace Piduino {
       int _ncore;
       ArmCore _core;
       ArmbianInfo _armbian;
+      std::string _pidfn;
   };
 
   // ---------------------------------------------------------------------------

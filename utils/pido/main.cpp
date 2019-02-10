@@ -74,10 +74,6 @@ void sig_handler (int sig);
 vector<string> split (const string& s, char seperator);
 void debug_pwm (SocPwm & p);
 
-/* public variables ========================================================= */
-// Nom du programme en cours
-extern const char* __progname;
-
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
@@ -171,33 +167,33 @@ main (int argc, char **argv) {
   }
   catch (Exception& e) {
 
-    cerr << __progname << ": " << e.what() << " !" << endl;
-    cerr << __progname << " -h or man " << __progname << " for help." << endl;
+    cerr << System::progName() << ": " << e.what() << " !" << endl;
+    cerr << System::progName() << " -h or man " << System::progName() << " for help." << endl;
     ret = -1;
   }
   catch (out_of_range& e) {
 
-    cerr << __progname << ": out of range value (" << e.what() << ")" << endl;
+    cerr << System::progName() << ": out of range value (" << e.what() << ")" << endl;
     ret = -1;
   }
   catch (invalid_argument& e) {
 
-    cerr << __progname << ": invalid argument (" << e.what() << ") !" << endl;
+    cerr << System::progName() << ": invalid argument (" << e.what() << ") !" << endl;
     ret = -1;
   }
   catch (domain_error& e) {
 
-    cerr << __progname << ": bad pin type (" << e.what() << ") !" << endl;
+    cerr << System::progName() << ": bad pin type (" << e.what() << ") !" << endl;
     ret = -1;
   }
   catch (exception& e) {
 
-    cerr << __progname << ": " << e.what() << " !" << endl;
+    cerr << System::progName() << ": " << e.what() << " !" << endl;
     ret = -1;
   }
   catch (...) {
 
-    cerr << __progname << "Unknown Exception !!!" << endl;
+    cerr << System::progName() << "Unknown Exception !!!" << endl;
     ret = -1;
   }
 
@@ -724,7 +720,7 @@ warranty () {
 // -----------------------------------------------------------------------------
 void
 usage () {
-  cout << "usage : " << __progname << " [ options ] [ command ]  [ parameters ] [ options ]" << endl;;
+  cout << "usage : " << System::progName() << " [ options ] [ command ]  [ parameters ] [ options ]" << endl;;
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
   cout << "Allow the user easy access to the GPIO pins." << endl << endl;
 

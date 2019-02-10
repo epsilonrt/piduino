@@ -29,6 +29,8 @@ set (PROJECT_DESCRIPTION_TEXT "\
 
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME)
 
+set (CMAKE_CXX_STANDARD 11)
+
 # Appends the cmake/modules path to MAKE_MODULE_PATH variable.
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/dev/cmake" "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_MODULE_PATH})
 
@@ -72,8 +74,6 @@ set(INSTALL_DOC_DIR ${DEF_INSTALL_DOC_DIR} CACHE PATH
 set(INSTALL_DATA_DIR ${DEF_INSTALL_DATA_DIR} CACHE PATH
   "Installation directory for data")
 
-set (CMAKE_CXX_STANDARD 11)
-
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
@@ -95,6 +95,9 @@ include (GitVersion)
 GetGitVersion(PIDUINO_VERSION)
 set(PIDUINO_VERSION
   ${PIDUINO_VERSION_MAJOR}.${PIDUINO_VERSION_MINOR}.${PIDUINO_VERSION_PATCH})
+
+include (CheckFunctionExists)
+CHECK_FUNCTION_EXISTS(getprogname HAVE_GETPROGNAME_FUNCTION)
 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE DATA DOC CODELITE)
@@ -147,6 +150,10 @@ if (${PIDUINO_WITH_SPI})
   add_definitions (-DPIDUINO_WITH_SPI=1)
   message (STATUS "Build with SPI bus support...")
 endif()
+if (${HAVE_GETPROGNAME_FUNCTION})
+  add_definitions (-DHAVE_GETPROGNAME_FUNCTION=1)
+endif()
+
 
 add_definitions ( -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}" 
                   -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}")

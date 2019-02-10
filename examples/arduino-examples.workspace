@@ -15,6 +15,7 @@
   <Project Name="WireMasterWriter" Path="Wire/WireMasterWriter/WireMasterWriter.project" Active="No"/>
   <Project Name="WireRtcBq32k" Path="Wire/WireRtcBq32k/WireRtcBq32k.project" Active="No"/>
   <Project Name="Fade" Path="Fade/Fade.project" Active="No"/>
+  <Project Name="Blinkd" Path="Blink-Daemon/Blinkd.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -32,6 +33,7 @@
       <Project Name="WireMasterWriter" ConfigName="Debug"/>
       <Project Name="WireRtcBq32k" ConfigName="Debug"/>
       <Project Name="Fade" ConfigName="Debug"/>
+      <Project Name="Blinkd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -49,6 +51,7 @@
       <Project Name="WireMasterWriter" ConfigName="Release"/>
       <Project Name="WireRtcBq32k" ConfigName="Release"/>
       <Project Name="Fade" ConfigName="Release"/>
+      <Project Name="Blinkd" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

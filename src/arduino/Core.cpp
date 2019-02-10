@@ -17,6 +17,7 @@
 #include <Arduino.h>
 #include <piduino/clock.h>
 #include <piduino/scheduler.h>
+#include <piduino/system.h>
 #include <piduino/database.h>
 #include <piduino/gpiopwm.h>
 #include "config.h"
@@ -78,12 +79,6 @@ unsigned long millis() {
 unsigned long micros() {
 
   return clk.micros();
-}
-
-// -----------------------------------------------------------------------------
-void setPriority (int priority) {
-
-  Scheduler::setRtPriority (priority);
 }
 
 // -----------------------------------------------------------------------------
@@ -172,14 +167,37 @@ void attachInterrupt (int n, Isr isr, ArduinoIntEdge mode) {
 }
 
 // -----------------------------------------------------------------------------
+void detachInterrupt (int n) {
+
+  gpio.pin (n).detachInterrupt();
+}
+
+// -----------------------------------------------------------------------------
+//                   Piduino extensions,
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
 void attachInterrupt (int n, IsrWithData isr, ArduinoIntEdge mode, void * data) {
 
   gpio.pin (n).attachInterrupt (isr, static_cast<Pin::Edge> (mode), data);
 }
 
 // -----------------------------------------------------------------------------
-void detachInterrupt (int n) {
+void setPriority (int priority) {
 
-  gpio.pin (n).detachInterrupt();
+  Scheduler::setRtPriority (priority);
 }
+
+// -----------------------------------------------------------------------------
+void createPidFile (const char * path) {
+  
+  Piduino::system.createPidFile(path);
+}
+
+// -----------------------------------------------------------------------------
+void deletePidFile () {
+  
+  Piduino::system.deletePidFile();
+}
+
 /* ========================================================================== */

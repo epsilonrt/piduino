@@ -29,10 +29,6 @@
 
 #include "version.h"
 
-/* public variables ========================================================= */
-// Nom du programme en cours
-extern const char* __progname;
-
 /* constants ================================================================ */
 #define OPT_SOC     0x0001
 #define OPT_REV     0x0002
@@ -415,7 +411,7 @@ namespace Pinfo {
 // -----------------------------------------------------------------------------
   void
   usage () {
-    cout << "usage : " << __progname << " [ options ]" << endl;
+    cout << "usage : " << System::progName() << " [ options ]" << endl;
     //01234567890123456789012345678901234567890123456789012345678901234567890123456789
     cout << "Retrieves information from the pi board." << endl;
     cout << "If only one information is requested, it is displayed without formatting," << endl;

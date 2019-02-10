@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiduino" Version="10.0.0" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+  </Plugins>
   <VirtualDirectory Name="3rdparty">
     <VirtualDirectory Name="popl">
       <File Name="3rdparty/popl/README.md"/>
@@ -73,12 +78,10 @@
     <VirtualDirectory Name="Blink">
       <File Name="examples/Blink/Blink.cpp"/>
     </VirtualDirectory>
+    <VirtualDirectory Name="Blink-Daemon">
+      <File Name="examples/Blink-Daemon/Blinkd.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
-  <Plugins>
-    <Plugin Name="qmake">
-      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
-    </Plugin>
-  </Plugins>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="arch">
       <VirtualDirectory Name="arm">
@@ -226,6 +229,7 @@
       <File Name="include/piduino/terminal.h"/>
       <File Name="include/piduino/socpwm.h"/>
       <File Name="include/piduino/popl.h"/>
+      <File Name="include/piduino/log.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
