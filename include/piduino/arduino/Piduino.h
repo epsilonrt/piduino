@@ -117,14 +117,6 @@ extern bool isDaemon;
 #include <unistd.h>
 #include <stdio.h>
 
-#ifndef ARDUINO_NOROOT_DAEMON
-#define ARDUINO_NOROOT_DAEMON 0
-#endif
-
-// Arduino sketch emulation
-EXTERN_C void setup();
-EXTERN_C void loop();
-
 // Piduino global variables
 int argc;
 char **argv;
@@ -137,6 +129,10 @@ Piduino::OptionParser CmdLine ("Allowed options");
 #ifndef ARDUINO_NODAEMON
 bool isDaemon = false;
 #endif
+
+// Arduino sketch emulation
+EXTERN_C void setup();
+EXTERN_C void loop();
 
 // ---
 int main (int __arduino_argc, char ** __arduino_argv) {
@@ -159,14 +155,18 @@ int main (int __arduino_argc, char ** __arduino_argv) {
   setup();
 #ifndef ARDUINO_NODAEMON
   if (isDaemon) {
-    if (daemon (ARDUINO_NOROOT_DAEMON, 0) != 0) {
+    bool isRoot = geteuid() == 0;
+
+    if (daemon (isRoot ? 0 : 1, 0) != 0) {
 
       perror ("Unable to daemonize !");
       exit (EXIT_FAILURE);
     }
     else {
-#if ! ARDUINO_NOROOT_DAEMON
       createPidFile (NULL);
+#ifndef ARDUINO_NOSYSLOG
+      Piduino::Syslog.cerrToSyslog();
+      Piduino::Syslog.coutToSyslog();
 #endif
     }
   }

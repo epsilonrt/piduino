@@ -32,7 +32,7 @@
 // Nom du programme en cours défini par la glibc
 extern char * program_invocation_name; // glibc
 extern char * __progname;
- 
+
 namespace Piduino {
 
   // ---------------------------------------------------------------------------
@@ -114,8 +114,14 @@ namespace Piduino {
       fn << path;
     }
     else {
-
-      fn << "/var/run/" << progName() << ".pid";
+      if (geteuid() == 0)  {
+        fn << "/var/run/";
+      }
+      else {
+        
+        fn << "/tmp/";
+      }
+      fn << progName() << ".pid";
     }
 
     f.open (fn.str());
@@ -130,7 +136,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void
   System::deletePidFile () {
-    
+
     if (!_pidfn.empty()) {
 
       if (fileExists (_pidfn)) {

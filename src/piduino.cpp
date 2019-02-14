@@ -19,6 +19,7 @@
 #include <piduino/clock.h>
 #include <piduino/board.h>
 #include <piduino/gpio.h>
+#include <piduino/syslog.h>
 
 #include <iostream>
 #include <csignal>
@@ -54,6 +55,7 @@ namespace Piduino {
   System system;
   Database db;
   Clock clk;
+  SysLog Syslog;
 #if PIDUINO_WITH_GPIO
   Gpio gpio;
 #if PIDUINO_WITH_I2C && ! PIDUINO_WITH_ARDUINO
@@ -79,7 +81,7 @@ namespace Piduino {
 
     closeall();
 #ifndef NDEBUG
-    cout << endl << "everything was closed." << endl << "Have a nice day !" << endl;
+    cout << "everything was closed." << endl << "Have a nice day !" << endl;
 #endif
     exit (EXIT_SUCCESS);
   }

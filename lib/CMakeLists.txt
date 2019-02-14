@@ -54,6 +54,7 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/pwm.h
   ${PIDUINO_INC_DIR}/piduino/socpwm.h
   ${PIDUINO_INC_DIR}/piduino/popl.h
+  ${PIDUINO_INC_DIR}/piduino/syslog.h
 )
 
 set (hdr_gpio 

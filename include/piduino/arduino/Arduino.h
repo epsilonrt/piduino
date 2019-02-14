@@ -288,6 +288,7 @@ extern "C" {
 #include "WString.h"
 #include <Console.h>
 #include <piduino/popl.h>
+#include <piduino/syslog.h>
 
 extern PiConsole Console;
 extern Piduino::OptionParser CmdLine;

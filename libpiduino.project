@@ -229,7 +229,7 @@
       <File Name="include/piduino/terminal.h"/>
       <File Name="include/piduino/socpwm.h"/>
       <File Name="include/piduino/popl.h"/>
-      <File Name="include/piduino/log.h"/>
+      <File Name="include/piduino/syslog.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
