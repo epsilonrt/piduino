@@ -18,7 +18,29 @@
 #ifndef PIDUINO_STRING_H
 #define PIDUINO_STRING_H
 
-#include <cstring>
+#include <string.h>
+
+/**
+ * @brief Copy a string
+ *
+ * Copy \p src to string \p dst of size \p siz.  At most \p siz-1
+ * characters will be copied.  Always NULL terminates (unless \p siz == 0).
+ * @return The strlcpy() function returns strlen(src). If retval >= siz,
+ * truncation occurred.
+ */
+extern size_t strlcpy (char * dest, const char * src, size_t siz);
+
+/**
+ * @brief Concatenate two strings.
+ *
+ * Appends \p src to string \p dst of size \p siz (unlike strncat(),
+ * \p siz is the full size of \p dst, not space left).  At most \p siz-1
+ * characters will be copied.  Always NULL terminates (unless \p siz <=
+ * \p strlen(dst)).
+ * @return The strlcat() function returns strlen(src) + MIN(siz,
+ * strlen(initial dst)).  If retval >= siz, truncation occurred.
+ */
+extern size_t strlcat (char *dest, const char *src, size_t siz);
 
 #ifdef __cplusplus
 #include <string>
