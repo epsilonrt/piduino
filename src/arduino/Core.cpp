@@ -27,6 +27,7 @@
 #endif
 
 namespace Piduino {
+  Scheduler scheduler;
 
   // ---------------------------------------------------------------------------
   bool pinLocked (int n) {
@@ -170,6 +171,18 @@ void attachInterrupt (int n, Isr isr, ArduinoIntEdge mode) {
 void detachInterrupt (int n) {
 
   gpio.pin (n).detachInterrupt();
+}
+
+// -----------------------------------------------------------------------------
+void interrupts() {
+  
+  scheduler.interrupts();
+}
+
+// -----------------------------------------------------------------------------
+void noInterrupts() {
+  
+  scheduler.noInterrupts();
 }
 
 // -----------------------------------------------------------------------------

@@ -374,6 +374,8 @@ EXTERN_C int digitalRead (int pin);
 EXTERN_C void analogWrite (int pin, int value);
 EXTERN_C void attachInterrupt (int pin, Isr isr, ArduinoIntEdge mode);
 EXTERN_C void detachInterrupt (int pin);
+EXTERN_C void interrupts();
+EXTERN_C void noInterrupts();
 EXTERN_C void delay (unsigned long ms);
 EXTERN_C void delayMicroseconds (unsigned long us);
 EXTERN_C unsigned long millis();
