@@ -153,6 +153,9 @@
       <File Name="src/arduino/Terminal.cpp"/>
       <File Name="src/arduino/IPAddress.cpp"/>
       <File Name="src/arduino/WMath.cpp"/>
+      <VirtualDirectory Name="compat">
+        <File Name="src/arduino/compat/strlcat_strlcpy.c"/>
+      </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="serial">
       <File Name="src/serial/serialport.cpp"/>
@@ -210,6 +213,7 @@
         <File Name="include/piduino/arduino/IPAddress.h"/>
         <File Name="include/piduino/arduino/Server.h"/>
         <File Name="include/piduino/arduino/WCharacter.h"/>
+        <File Name="include/piduino/arduino/pgmspace.h"/>
       </VirtualDirectory>
       <File Name="include/piduino/ringbuffer.h"/>
       <File Name="include/piduino/memory.h"/>

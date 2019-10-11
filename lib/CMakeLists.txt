@@ -78,6 +78,7 @@ set (hdr_arduino
   ${PIDUINO_INC_DIR}/piduino/arduino/Client.h
   ${PIDUINO_INC_DIR}/piduino/arduino/IPAddress.h
   ${PIDUINO_INC_DIR}/piduino/arduino/Server.h
+  ${PIDUINO_INC_DIR}/piduino/arduino/pgmspace.h
 )
 
 set (hdr_arduino_i2c 
@@ -110,7 +111,7 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 set(hdr_public ${hdr_piduino} ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 if (PIDUINO_WITH_ARDUINO)
-  file(GLOB src_arduino ${PIDUINO_SRC_DIR}/arduino/*.cpp)
+  file(GLOB src_arduino ${PIDUINO_SRC_DIR}/arduino/*.cpp ${PIDUINO_SRC_DIR}/arduino/compat/*.c)
   list(APPEND hdr_public ${hdr_arduino})
   file(GLOB src_arduino_serial ${PIDUINO_SRC_DIR}/arduino/serial/*.cpp)
   list(APPEND hdr_public ${hdr_arduino_serial})
@@ -154,6 +155,7 @@ set (libsrc ${PIDUINO_SRC_DIR}/piduino.cpp
   ${src_piduino} ${src_gpio} ${src_gpio_bcm2835} ${src_gpio_allwinnerh} 
   ${src_i2c} ${src_spi} ${src_serial}
   ${src_arduino} ${src_arduino_i2c} ${src_arduino_spi} ${src_arduino_serial}
+  ${src_libc_compat}
   )
 
 include_directories(BEFORE
