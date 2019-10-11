@@ -56,5 +56,27 @@ namespace Piduino {
       throw std::system_error (errno, std::system_category(), __FUNCTION__);
     }
   }
+
+// -----------------------------------------------------------------------------
+  int Scheduler::rtPriority() {
+    struct sched_param sparam;
+    int policy;
+
+    pthread_getschedparam (pthread_self(), &policy, &sparam);
+    return sparam.sched_priority;
+  }
+
+// -----------------------------------------------------------------------------
+  int Scheduler::rtPriorityMin() {
+
+    return sched_get_priority_min (SCHED_FIFO);
+  }
+
+// -----------------------------------------------------------------------------
+  int Scheduler::rtPriorityMax() {
+
+    return sched_get_priority_max (SCHED_FIFO);
+  }
+
 }
 /* ========================================================================== */
