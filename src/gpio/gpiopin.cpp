@@ -250,7 +250,7 @@ namespace Piduino {
   AccessLayer
   Pin::accessLayer() const {
 
-    gpio()->accessLayer();
+    return gpio()->accessLayer();
   }
 
   // ---------------------------------------------------------------------------
@@ -537,6 +537,7 @@ namespace Piduino {
 
       return device()->read (this);
     }
+    return false;
   }
 
   // ---------------------------------------------------------------------------

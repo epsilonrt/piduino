@@ -116,6 +116,7 @@ namespace Piduino {
 
     value = v;
     flag |= FlagValueUpdated;
+    return true;
   }
 
   // ---------------------------------------------------------------------------
