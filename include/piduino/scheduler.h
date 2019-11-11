@@ -124,6 +124,14 @@ namespace Piduino {
        * @brief Priorité maximale du thread appelant
        */
       static int rtPriorityMax();
+      
+      /**
+       * @brief force le thread appelant à libérer le CPU. 
+       * 
+       * Le thread est déplacé à la fin de la liste des processus prêts de sa 
+       * priorité, et un autre thread sera exécuté.
+       */
+      static void yield();
 
     protected:
       int _interruptPriority;

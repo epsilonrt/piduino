@@ -382,6 +382,8 @@ void delay (unsigned long ms);
 void delayMicroseconds (unsigned long us);
 unsigned long millis();
 unsigned long micros();
+void yield(void);
+
 // Not supported by Arduino !
 void digitalToggle (int pin); // Not supported by Arduino !
 void setPriority (int priority);
