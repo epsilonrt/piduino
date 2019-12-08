@@ -387,6 +387,7 @@ namespace Piduino {
         return false;
       }
       d->setSettings();
+      d->tstack.clear();
 
       IoDevice::open (mode);
     }
