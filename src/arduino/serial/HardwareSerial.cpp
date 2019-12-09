@@ -176,7 +176,7 @@ void HardwareSerial::begin (unsigned long baud, uint8_t config) {
   }
   port->setSettings (s);
   port->setBaudRate (baud);
-  if (port->open(IoDevice::ReadWrite | IoDevice::Binary)) {
+  if (port->open (IoDevice::ReadWrite | IoDevice::Binary)) {
     Terminal::begin();
     if (portName().startsWith ("ttyS")  &&
         (db.board().soc().family().id() == SoC::Family::AllwinnerH)) {
@@ -187,9 +187,15 @@ void HardwareSerial::begin (unsigned long baud, uint8_t config) {
     else if (portName().startsWith ("ttyAMA")  &&
              (db.board().soc().family().id() == SoC::Family::BroadcomBcm2835)) {
 
-      _writelnDelay = 4000; // to avoid buffer overflow on Bcm2835 
+      _writelnDelay = 4000; // to avoid buffer overflow on Bcm2835
       // TODO: Analyze the Bcm2835 driver code to understand why this is needed !
     }
+  }
+  else {
+    
+    throw std::system_error (errno, std::system_category(),
+                             "Error when opening the serial port " +
+                             path());
   }
 }
 

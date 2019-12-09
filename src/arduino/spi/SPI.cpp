@@ -22,7 +22,12 @@ void SPIClass::begin() {
 
   setBus (Info::defaultBus());
   setSettings (SPISettings());
-  open ();
+  
+  if (!open ()) {
+    throw std::system_error (errno, std::system_category(),
+                             "Error when opening the SPI bus " +
+                             bus().path());
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -30,7 +35,11 @@ void SPIClass::begin (int idBus, int idCs) {
 
   setBus (idBus, idCs);
   setSettings (SPISettings());
-  open ();
+  if (!open ()) {
+    throw std::system_error (errno, std::system_category(),
+                             "Error when opening the SPI bus " +
+                             bus().path());
+  }
 }
 
 // -----------------------------------------------------------------------------
