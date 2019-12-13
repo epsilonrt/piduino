@@ -813,7 +813,7 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-// Thread de surveillance des entrées du port
+  // Thread de surveillance des entrées du port
   void *
   Pin::irqThread (std::future<void> run, int fd, Isr isr, void * userData) {
     int ret;
@@ -825,8 +825,9 @@ namespace Piduino {
 
         ret = sysFsPoll (fd, 10);
         if (ret > 0) {
-
-          isr(userData);
+          
+          isr (userData);
+          sysFsRead (fd);
         }
         else if (ret < 0) {
 
