@@ -64,6 +64,16 @@ size_t Print::print (const char str[]) {
   return write (str);
 }
 
+size_t Print::print (const __FlashStringHelper *ifsh) {
+
+  return print (reinterpret_cast<PGM_P> (ifsh));
+}
+
+size_t Print::println (const __FlashStringHelper *ifsh) {
+  
+  return println (reinterpret_cast<PGM_P> (ifsh));
+}
+
 size_t Print::print (char c) {
 
   return write (c);
@@ -181,6 +191,7 @@ size_t Print::println (const Printable& x) {
   n += println();
   return n;
 }
+
 
 // Private Methods /////////////////////////////////////////////////////////////
 

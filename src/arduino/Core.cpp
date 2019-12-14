@@ -27,6 +27,7 @@
 #endif
 
 namespace Piduino {
+  Scheduler scheduler;
 
   // ---------------------------------------------------------------------------
   bool pinLocked (int n) {
@@ -89,31 +90,31 @@ void pinMode (int n, ArduinoPinMode mode) {
     Pin::Mode m = Pin::ModeUnknown;
 
     if (mode == OUTPUT)  {
-      
+
       p = Pin::PullOff;
       m = Pin::ModeOutput;
     }
     else if ( (mode == INPUT) || (mode == INPUT_PULLDOWN) || (mode == INPUT_PULLUP)) {
-      
+
       m = Pin::ModeInput;
     }
 
     if ( (mode == INPUT_PULLDOWN) || (mode == PULLDOWN)) {
-      
+
       p = Pin::PullDown;
     }
     else if ( (mode == INPUT_PULLUP) || (mode == PULLUP)) {
-      
+
       p = Pin::PullUp;
     }
 
     if (m != Pin::ModeUnknown) {
-      
+
       gpio.pin (n).setMode (m);
     }
-    
+
     if (p != Pin::PullUnknown) {
-      
+
       gpio.pin (n).setPull (p);
     }
   }
@@ -173,6 +174,12 @@ void detachInterrupt (int n) {
 }
 
 // -----------------------------------------------------------------------------
+void yield(void) {
+  
+  Scheduler::yield();
+}
+
+// -----------------------------------------------------------------------------
 //                   Piduino extensions,
 // -----------------------------------------------------------------------------
 
@@ -190,14 +197,26 @@ void setPriority (int priority) {
 
 // -----------------------------------------------------------------------------
 void createPidFile (const char * path) {
-  
-  Piduino::system.createPidFile(path);
+
+  Piduino::system.createPidFile (path);
 }
 
 // -----------------------------------------------------------------------------
 void deletePidFile () {
-  
+
   Piduino::system.deletePidFile();
+}
+
+// -----------------------------------------------------------------------------
+void _interrupts() {
+
+  scheduler.interrupts();
+}
+
+// -----------------------------------------------------------------------------
+void _noInterrupts() {
+
+  scheduler.noInterrupts();
 }
 
 /* ========================================================================== */

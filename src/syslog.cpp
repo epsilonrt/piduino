@@ -160,7 +160,7 @@ namespace Piduino {
       seekoff (0, std::ios_base::beg, std::ios_base::in | std::ios_base::out);
       setg (pbase(), pbase(), pbase());
     }
-
+    return 0;
   }
 
   // ---------------------------------------------------------------------------

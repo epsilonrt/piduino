@@ -270,6 +270,7 @@ namespace Piduino {
 
       os << "PCB Revision    : " << b.pcbRevision() << std::endl;
     }
+    return os;
   }
 
 // -----------------------------------------------------------------------------

@@ -380,6 +380,7 @@ namespace Piduino {
     if (!isOpen()) {
       PIMP_D (SpiDev);
 
+      d->tstack.clear();
       d->fd = ::open (d->bus.path().c_str(), d->modeToPosixFlags (mode));
       if (d->fd < 0) {
 

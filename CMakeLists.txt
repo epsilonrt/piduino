@@ -97,7 +97,9 @@ set(PIDUINO_VERSION
   ${PIDUINO_VERSION_MAJOR}.${PIDUINO_VERSION_MINOR}.${PIDUINO_VERSION_PATCH})
 
 include (CheckFunctionExists)
-CHECK_FUNCTION_EXISTS(getprogname HAVE_GETPROGNAME_FUNCTION)
+check_function_exists(getprogname HAVE_GETPROGNAME_FUNCTION)
+check_function_exists(strlcpy HAVE_STRLCPY)
+check_function_exists(strlcat HAVE_STRLCAT)
 
 # Make relative paths absolute (needed later on)
 foreach(p LIB BIN INCLUDE CMAKE DATA DOC CODELITE)
@@ -153,7 +155,6 @@ endif()
 if (${HAVE_GETPROGNAME_FUNCTION})
   add_definitions (-DHAVE_GETPROGNAME_FUNCTION=1)
 endif()
-
 
 add_definitions ( -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}" 
                   -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}")
