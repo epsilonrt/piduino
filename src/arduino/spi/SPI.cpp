@@ -53,15 +53,17 @@ void SPIClass::end() {
 // this function is used to gain exclusive access to the SPI bus
 // and configure the correct settings.
 void SPIClass::beginTransaction (const SPISettings & s) {
+  
   setSettings (s);
-  _pendingTransaction = true;
+  _pendingTransaction.lock();
 }
 
 // -----------------------------------------------------------------------------
 // After performing a group of transfers and releasing the chip select
 // signal, this function allows others to access the SPI bus
 void SPIClass::endTransaction (void) {
-  _pendingTransaction = false;
+  
+  _pendingTransaction.unlock();
 }
 
 // -----------------------------------------------------------------------------

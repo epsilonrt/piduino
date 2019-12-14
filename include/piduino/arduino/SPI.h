@@ -18,6 +18,7 @@
 
 #include <piduino/spidev.h>
 #include <Arduino.h>
+#include <mutex>
 
 // SPI_HAS_TRANSACTION means SPI has beginTransaction(), endTransaction(),
 // usingInterrupt(), and SPISetting(clock, bitOrder, dataMode)
@@ -63,7 +64,7 @@ class SPISettings : public Piduino::SpiDev::Settings {
 class SPIClass : protected Piduino::SpiDev {
 public:
   
-    SPIClass() : _pendingTransaction (false) {}
+    SPIClass() {}
     
     // Initialize the SPI library
     void begin();
@@ -124,7 +125,7 @@ public:
     inline void notUsingInterrupt (uint8_t interruptNumber) {}
 
   private:
-    bool _pendingTransaction;
+    std::mutex _pendingTransaction;
 };
 
 extern SPIClass SPI;
