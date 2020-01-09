@@ -266,6 +266,7 @@
     <File Name="database/README.md"/>
     <File Name="database/build"/>
     <File Name="database/piduino-data-core.sql"/>
+    <File Name="database/piduino-db-notes.md"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>

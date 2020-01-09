@@ -29,9 +29,9 @@ repository from [piduino.org](http://apt.piduino.org), so you should do the foll
 
 This repository provides Piduino packages for `armhf` and `arm64` architectures.
 In the above commands, the repository is a Debian Stretch distribution, but you 
-can also choose Ubuntu Xenial or Bionic by replacing `stretch` with `xenial` or 
-`bionic`. It may be necessary to install the `software-properties-common` 
-package for `add-apt-repository`.
+can also choose Buster, Ubuntu Xenial or Bionic by replacing `stretch` with 
+`buster`, `xenial` or `bionic`. It may be necessary to install the 
+`software-properties-common` package for `add-apt-repository`.
 
 For Raspbian you have to do a little different :
 
@@ -40,7 +40,8 @@ For Raspbian you have to do a little different :
     sudo apt update
     sudo apt install libpiduino-dev piduino-utils
 
-The Raspbian repository provides Piduino packages for `armhf` architecture for Stretch only.
+The Raspbian repository provides Piduino packages for `armhf` architecture for 
+Stretch and Buster only.
 
 If you want to build from sources, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki/Build-from-source).
