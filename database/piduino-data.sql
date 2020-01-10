@@ -876,6 +876,7 @@ INSERT INTO "soc" VALUES(1,'Bcm2709',0,0,2,1,1);
 INSERT INTO "soc" VALUES(2,'Bcm2710',0,0,2,1,1);
 INSERT INTO "soc" VALUES(3,'H3',1,5,3,2,4);
 INSERT INTO "soc" VALUES(4,'H5',1,5,3,2,4);
+INSERT INTO "soc" VALUES(5,'Bcm2711',0,0,6,5,6);
 INSERT INTO "tag" VALUES(33,'nanopim1');
 INSERT INTO "tag" VALUES(34,'nanopim1plus');
 INSERT INTO "tag" VALUES(31,'nanopineo');

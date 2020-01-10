@@ -29,6 +29,7 @@ namespace Piduino {
         {SoC::Bcm2708, Bcm2708Base},
         {SoC::Bcm2709, Bcm2709Base},
         {SoC::Bcm2710, Bcm2710Base},
+        {SoC::Bcm2711, Bcm2711Base},
       };
       
       if (db.board().soc().family().id() != SoC::Family::BroadcomBcm2835) {

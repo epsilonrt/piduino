@@ -28,6 +28,7 @@ namespace Piduino {
     const off_t Bcm2708Base  = 0x20000000;
     const off_t Bcm2709Base  = 0x3F000000;
     const off_t Bcm2710Base  = 0x3F000000;
+    const off_t Bcm2711Base  = 0xFE000000;
     const size_t  MapBlockSize = 4 * 1024;
 
     // GPIO

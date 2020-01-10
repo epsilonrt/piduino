@@ -178,9 +178,10 @@ namespace Piduino {
     else {
 
       if ( (system.revision() > 0) &&
-           ( (system.hardware() == "BCM2710") || (system.hardware() == "BCM2709") ||
-             (system.hardware() == "BCM2708") || (system.hardware() == "BCM2835") ||
-             (system.hardware() == "BCM2836") || (system.hardware() == "BCM2837"))) {
+           ( (system.hardware() == "BCM2708") || (system.hardware() == "BCM2709") ||
+             (system.hardware() == "BCM2710") || (system.hardware() == "BCM2711") || 
+             (system.hardware() == "BCM2835") || (system.hardware() == "BCM2836") ||
+             (system.hardware() == "BCM2837") || (system.hardware() == "BCM2838"))) {
 
         // Revision from /proc/cpuinfo found...
         return setRevision (system.revision());
