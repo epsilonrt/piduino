@@ -121,7 +121,7 @@ namespace Piduino {
         }
         else {
 
-          throw std::invalid_argument ("ModePwm can only be set for PA5, PA6 or PL10");
+          throw std::invalid_argument ("ModePwm can only be set for GPIO12, GPIO13, GPIO18 or GPIO19");
         }
       }
 

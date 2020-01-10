@@ -44,13 +44,10 @@ namespace Piduino {
 
         if (p->mode() == Pin::ModePwm) {
 
-          if ( (p->mcuNumber() == 13) || (p->mcuNumber() == 19)) {
-
-            rngReg = RNG2;
-            dataReg = DAT2;
-            ctlMasqStartStop = MSEN2 | PWEN2;
-            ctlMasqInit = RPTL2 | SBIT2 | POLA2;
-          }
+          rngReg = RNG2;
+          dataReg = DAT2;
+          ctlMasqStartStop = MSEN2 | PWEN2;
+          ctlMasqInit = RPTL2 | SBIT2 | POLA2;
         }
         else {
 
@@ -174,7 +171,7 @@ namespace Piduino {
 
           resolution = PWM_RESOLUTION_MAX;
         }
-        return setRange(1L << resolution);
+        return setRange (1L << resolution);
       }
       return false;
     }
@@ -197,15 +194,15 @@ namespace Piduino {
     // hasPin() NOT checked before calling this function
     bool
     PwmEngine::setRange (long r) {
-      
+
       if (hasPin()) {
 
-        writePwm (static_cast<uint32_t>(rngReg),  r);
+        writePwm (static_cast<uint32_t> (rngReg),  r);
         return true;
       }
       return false;
     }
-    
+
     // -------------------------------------------------------------------------
     // isOpen() checked before calling this function
     // hasPin() NOT checked before calling this function
