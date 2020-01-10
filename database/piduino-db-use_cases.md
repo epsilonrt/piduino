@@ -1,4 +1,4 @@
-# Database management use cases
+# PiDuino Database management use cases
 
 ## Addition of a new Raspberry Pi model with its variants (CM3+)
 
@@ -13,8 +13,20 @@ B03111	11546897  4B	1.1	2GB	Sony UK(1)
 C03111	12595473  4B	1.1	4GB	Sony UK(1)  
 C03112	12595474  4B	1.2	4GB	Sony UK(1)
 
--- (id,name,board_family_id,soc_id) 
-INSERT INTO "board_model" VALUES(23,''RaspberryPi 4B',0,5);
+    -- (id,name,board_family_id,soc_id) 
+    INSERT INTO "board_model" VALUES(23,'RaspberryPi 4B',0,5);
+
+    -- (id,name,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id) 
+    INSERT INTO "board" VALUES(50,'RaspberryPi 4B (0xA03111)',1024,'1.1',23,3,1,1,0,0);
+    INSERT INTO "board" VALUES(51,'RaspberryPi 4B (0xB03111)',2048,'1.1',23,3,1,1,0,0);
+    INSERT INTO "board" VALUES(52,'RaspberryPi 4B (0xC03111)',4096,'1.1',23,3,1,1,0,0);
+    INSERT INTO "board" VALUES(53,'RaspberryPi 4B (0xC03112)',4096,'1.2',23,3,1,1,0,0);
+
+    -- (board_id,revision)
+    INSERT INTO "revision" VALUES(50,10498321);
+    INSERT INTO "revision" VALUES(51,11546897);
+    INSERT INTO "revision" VALUES(52,12595473);
+    INSERT INTO "revision" VALUES(53,12595474);
 
 ## Addition of Raspberry Pi variants of existing models
 
