@@ -1,5 +1,12 @@
 # PiDuino Database management use cases
 
+Piduino uses a relational database which ensures very good
+data integrity and avoids redundancies.
+
+| ![db model](piduino-db-model.png) |
+|:--:|
+| *Piduino Relational Database Model* |
+
 ## Addition of a new Raspberry Pi model with its variants (CM3+)
 
 **TODO**

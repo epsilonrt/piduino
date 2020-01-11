@@ -1,11 +1,12 @@
 # piduino-database
   Arduino on Pi boards, the best of both worlds !
   
-## Abstract
-  Database...
+Piduino uses a relational database which ensures very good
+data integrity and avoids redundancies.
 
-## Installation
-....
+| ![db model](piduino-db-model.png) |
+|:--:|
+| *Piduino Relational Database Model* |
 
 ## import depuis sql
 
