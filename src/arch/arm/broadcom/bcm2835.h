@@ -53,6 +53,10 @@ namespace Piduino {
     const size_t GPLEV1  = 14;
     const size_t GPPUD   =  37;
     const size_t GPPUDCLK0 =   38;
+    const size_t GPPUPPDN0 =   57;
+    const size_t GPPUPPDN1 =   58;
+    const size_t GPPUPPDN2 =   59;
+    const size_t GPPUPPDN3 =   60;
 
     // PWM ---------------------------------------------------------------------
     const size_t  PwmOffset    = 0x20C000;

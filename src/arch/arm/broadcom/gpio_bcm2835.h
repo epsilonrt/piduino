@@ -46,6 +46,7 @@ namespace Piduino {
 
         bool read (const Pin * pin) const;
         Pin::Mode mode (const Pin * pin) const;
+        Pin::Pull pull (const Pin * pin) const;
 
         const std::map<Pin::Mode, std::string> & modes() const;
 
@@ -64,6 +65,7 @@ namespace Piduino {
         static const std::map<unsigned int, Pin::Mode> _int2mode;
         static const std::map<Pin::Mode, unsigned int> _mode2int;
         static const std::map<Pin::Mode, std::string> _modes;
+        static bool _is2711;
     };
   }
 }

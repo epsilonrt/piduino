@@ -99,7 +99,6 @@
           <File Name="src/arch/arm/broadcom/gpio_bcm2835.h"/>
           <File Name="src/arch/arm/broadcom/bcm2835.h"/>
           <File Name="src/arch/arm/broadcom/pwm_bcm2835.h"/>
-          <File Name="src/arch/arm/broadcom/socpwm_p.h"/>
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>

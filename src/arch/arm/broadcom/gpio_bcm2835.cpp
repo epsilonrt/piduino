@@ -37,6 +37,7 @@ namespace Piduino {
     GpioDevice::GpioDevice() : Piduino::GpioDevice () {
 
       _piobase = iobase () + PioOffset;
+      _is2711 = (db.board().soc().id() == SoC::Bcm2711);
     }
 
     // -------------------------------------------------------------------------
@@ -45,7 +46,7 @@ namespace Piduino {
     // -------------------------------------------------------------------------
     unsigned int
     GpioDevice::flags() const {
-      return  hasAltRead;
+      return  hasAltRead | (_is2711  ? hasPullRead : 0);
     }
 
     // -------------------------------------------------------------------------
@@ -136,55 +137,111 @@ namespace Piduino {
     }
 
     // -------------------------------------------------------------------------
+    Pin::Pull
+    GpioDevice::pull (const Pin * pin) const {
+
+      if (_is2711) {
+        int g = pin->mcuNumber();
+        uint32_t v = (readReg (GPPUPPDN0 + (g >> 4)) >> ( (g & 0xf) << 1)) & 0x3;
+
+        /*
+          00: Pull-up/down disable
+          10: Pull-down
+          01: Pull-up
+          11: Reserved
+        */
+        switch (v) {
+          case 0:
+            return Pin::PullOff;
+          case 2:
+            return Pin::PullDown;
+          case 1:
+            return Pin::PullUp;
+          default:
+            break; // illegal
+        }
+      }
+      return Pin::PullUnknown;
+    }
+
+    // -------------------------------------------------------------------------
     void
     GpioDevice::setPull (const Pin * pin, Pin::Pull p) {
-      unsigned int pval, pclk = GPPUDCLK0;
+      uint32_t pval;
       int g = pin->mcuNumber();
 
-      if (g > 31) {
+      if (_is2711) {
+        size_t r = GPPUPPDN0 + (g >> 4);
+        int pullshift = (g & 0xf) << 1;
+        uint32_t pullbits;
 
-        pclk++;
-        g -= 32;
-      }
+        switch (p) {
+          case Pin::PullOff:
+            pval = 0;
+            break;
+          case Pin::PullUp:
+            pval = 1;
+            break;
+          case Pin::PullDown:
+            pval = 2;
+            break;
+          default:
+            return; // illegal
+        }
 
-      /*
-        PUD - GPIO Pin Pull-up/down
-        00 = Off – disable pull-up/down
-        01 = Enable Pull Down control
-        10 = Enable Pull Up control
-        11 = Reserved
-      */
-      switch (p) {
-        case Pin::PullOff:
-          pval = 0;
-          break;
-        case Pin::PullDown:
-          pval = 1;
-          break;
-        case Pin::PullUp:
-          pval = 2;
-          break;
-        default:
-          return;
+        pullbits = readReg (r);
+        pullbits &= ~ (3 << pullshift);
+        pullbits |= (pval << pullshift);
+        writeReg (r, pullbits);
       }
-      /*
-        required:
-        1. Write to GPPUD to set the required control signal (i.e. Pull-up or Pull-Down or neither
-        to remove the current Pull-up/down)
-        2. Wait 150 cycles – this provides the required set-up time for the control signal
-        3. Write to GPPUDCLK0/1 to clock the control signal into the GPIO pads you wish to
-        modify – NOTE only the pads which receive a clock will be modified, all others will
-        retain their previous state.
-        4. Wait 150 cycles – this provides the required hold time for the control signal
-        5. Write to GPPUD to remove the control signal
-        6. Write to GPPUDCLK0/1 to remove the clock
-       */
-      writeReg (GPPUD, pval);
-      Clock::delayMicroseconds (10);
-      writeReg (pclk, 1 << g);
-      Clock::delayMicroseconds (10);
-      writeReg (GPPUD, 0);
-      writeReg (pclk, 0);
+      else {
+        size_t pclk = GPPUDCLK0;
+        if (g > 31) {
+
+          pclk++;
+          g -= 32;
+        }
+
+        /*
+          PUD - GPIO Pin Pull-up/down
+          00 = Off – disable pull-up/down
+          01 = Enable Pull Down control
+          10 = Enable Pull Up control
+          11 = Reserved
+        */
+        switch (p) {
+          case Pin::PullOff:
+            pval = 0;
+            break;
+          case Pin::PullDown:
+            pval = 1;
+            break;
+          case Pin::PullUp:
+            pval = 2;
+            break;
+          default:
+            return; // illegal
+        }
+
+        /*
+          required:
+          1. Write to GPPUD to set the required control signal (i.e. Pull-up or Pull-Down or neither
+          to remove the current Pull-up/down)
+          2. Wait 150 cycles – this provides the required set-up time for the control signal
+          3. Write to GPPUDCLK0/1 to clock the control signal into the GPIO pads you wish to
+          modify – NOTE only the pads which receive a clock will be modified, all others will
+          retain their previous state.
+          4. Wait 150 cycles – this provides the required hold time for the control signal
+          5. Write to GPPUD to remove the control signal
+          6. Write to GPPUDCLK0/1 to remove the clock
+         */
+        writeReg (GPPUD, pval);
+        Clock::delayMicroseconds (10);
+        writeReg (pclk, 1 << g);
+        Clock::delayMicroseconds (10);
+        writeReg (GPPUD, 0);
+        writeReg (pclk, 0);
+      }
     }
 
     // -------------------------------------------------------------------------
@@ -258,6 +315,8 @@ namespace Piduino {
       {Pin::ModeAlt4, 3},
       {Pin::ModeAlt5, 2},
     };
+
+    bool GpioDevice::_is2711;
   }
 }
 /* ========================================================================== */
