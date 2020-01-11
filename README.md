@@ -10,8 +10,11 @@ The description of Pi cards uses a stored "Object" model in a database that
 allows to add new models of boards easily.  
 
 At this time, the SoC models supported are AllWinner H-Series and Broadcom 
-BCM2708 through 2710 which allows it to be used on Raspberry Pi and most Nano Pi, 
+BCM2708 through 2711 which allows it to be used on Raspberry Pi and most Nano Pi, 
 Orange Pi and Banana Pi.
+
+The updated list of all the boards in the database is available in the 
+[Wiki](https://github.com/epsilonrt/piduino/wiki/List-of-all-the-boards-currently-in-the-Piduino-database).
 
 To learn more about PiDuino, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki), but if you're in a hurry, 
