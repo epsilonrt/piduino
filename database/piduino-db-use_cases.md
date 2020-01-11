@@ -4,14 +4,18 @@
 
 **TODO**
 
-- A02100	10494208  CM3+	1.0	1GB	Sony UK
+| Rev 0x | Rev      | Model | PCB Rev | RAM | Manufacturer |
+|--------|----------|-------|---------|-----|--------------|
+| A02100 | 10494208 | CM3+  | 1.0     | 1GB | Sony UK      |
 
 ## Addition of a new Raspberry Pi model with its variants (4B)
 
-- A03111	10498321  4B	1.1	1GB	Sony UK(1)  
-- B03111	11546897  4B	1.1	2GB	Sony UK(1)  
-- C03111	12595473  4B	1.1	4GB	Sony UK(1)  
-- C03112	12595474  4B	1.2	4GB	Sony UK(1)
+| Rev 0x | Rev      | Model | PCB Rev | RAM | Manufacturer |
+|--------|----------|-------|---------|-----|--------------|
+| A03111 | 10498321 | 4B    | 1.1     | 1GB | Sony UK(1)   |
+| B03111 | 11546897 | 4B    | 1.1     | 2GB | Sony UK(1)   |
+| C03111 | 12595473 | 4B    | 1.1     | 4GB | Sony UK(1)   |
+| C03112 | 12595474 | 4B    | 1.2     | 4GB | Sony UK(1)   |
 
     -- (id,name,board_family_id,soc_id) 
     INSERT INTO "board_model" VALUES(23,'RaspberryPi 4B',0,5);
@@ -29,13 +33,15 @@
     INSERT INTO "revision" VALUES(53,12595474);
 
 
-## Addition of Raspberry Pi variants of existing models
+## Addition of Raspberry Pi variants of existing models
 
 
-- A220A0	10625184  CM3	1.0	1GB	Embest(4)  
-- A22083	10625155  3B	1.3	1GB	Embest(4)  
-- 900061	9437281 CM	1.1	512MB	Sony UK  
-- A02042	10494018  2B (with BCM2837)	1.2	1GB	Sony UK
+| Rev 0x | Rev        | Model             | PCB Rev | RAM     | Manufacturer |
+|--------|------------|-------------------|---------|---------|--------------|
+| A220A0 | 10625184   | CM3               | 1.0     | 1GB     | Embest(4)    |
+| A22083 | 10625155   | 3B                | 1.3     | 1GB     | Embest(4)    |
+| 900061 | 9437281    | CM                | 1.1     | 512MB   | Sony UK      |
+| A02042 | 10494018   | 2B (with BCM2837) | 1.2     | 1GB     | Sony UK      |
 
 
     -- (id,name,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id) 
@@ -50,10 +56,14 @@
     INSERT INTO "revision" VALUES(48,9437281);
     INSERT INTO "revision" VALUES(49,10494018);
 
-## Addition of manufacturer
+## Addition of manufacturer
 
+Add manufacturer, existing card (30)
 
-- A32082	10690690  3B	1.2	1GB	Sony Japan(8) < Add manufacturer, existing card (30)
+| Rev 0x | Rev      | Model | PCB Rev | RAM | Manufacturer  |
+|--------|----------|-------|---------|-----|---------------|
+| A32082 | 10690690 | 3B    | 1.2     | 1GB | Sony Japan(8) |
+
 
     -- (id,name)
     INSERT INTO "manufacturer" VALUES(8,'Sony Japan');
