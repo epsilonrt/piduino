@@ -19,6 +19,7 @@
 #include "pwm_bcm2835.h"
 #include "gpio/socpwm_p.h"
 #include <piduino/clock.h>
+#include <piduino/database.h>
 #include "config.h"
 
 namespace Piduino {
@@ -38,16 +39,30 @@ namespace Piduino {
       rngReg (RNG1),
       dataReg (DAT1),
       ctlMasqInit (RPTL1 | SBIT1 | POLA1),
-      ctlMasqStartStop (MSEN1 | PWEN1) {
+      ctlMasqStartStop (MSEN1 | PWEN1) { // PWM0 by default
+
+      if (db.board().soc().id() == SoC::Bcm2711) {
+
+        is2711 = true;
+        clkFreq = PLL_CLOCK_FREQ_2711;
+      }
+      else {
+
+        clkFreq = PLL_CLOCK_FREQ;
+      }
+
 
       if (p) {
 
         if (p->mode() == Pin::ModePwm) {
-
-          rngReg = RNG2;
-          dataReg = DAT2;
-          ctlMasqStartStop = MSEN2 | PWEN2;
-          ctlMasqInit = RPTL2 | SBIT2 | POLA2;
+          
+          if ( (p->mcuNumber() == 13) || (p->mcuNumber() == 19)) { // PWM1
+          
+            rngReg = RNG2;
+            dataReg = DAT2;
+            ctlMasqStartStop = MSEN2 | PWEN2;
+            ctlMasqInit = RPTL2 | SBIT2 | POLA2;
+          }
         }
         else {
 
@@ -213,7 +228,7 @@ namespace Piduino {
         uint32_t div = clockDivisor();
 
         if (div != 0) {
-          return PLL_CLOCK_FREQ / div / range();
+          return clkFreq / div / range();
         }
       }
       return 0;
@@ -262,10 +277,12 @@ namespace Piduino {
       clk.delayMicroseconds (10);
 
       writeClock (CM_PWMCTL, PASSWD | KILL); // Turn off clock generator
+      clk.delayMicroseconds (110);
 
       //  clk.delayMicroseconds(10);
-      while (readClock (CM_PWMCTL) & BUSY)
-        ; // Wait for generator to stop
+      while (readClock (CM_PWMCTL) & BUSY) {
+        clk.delayMicroseconds (1);  // Wait for generator to stop
+      }
 
       // set frequency
       writeClock (CM_PWMDIV, PASSWD | (div << 12));
@@ -274,14 +291,15 @@ namespace Piduino {
       writeClock (CM_PWMCTL, PASSWD | ENAB | SRC_OSC);
 
       writePwm (CTL, backupctl);
-      while (! (readClock (CM_PWMCTL) & BUSY))
-        ;  // Wait for generator to start
+      while (! (readClock (CM_PWMCTL) & BUSY)) {
+        clk.delayMicroseconds (1);  // Wait for generator to start
+      }
     }
 
     // -------------------------------------------------------------------------
     // private
     uint32_t PwmEngine::frequencyDivisor (long freq) {
-      double value = ceil (static_cast<double> (PLL_CLOCK_FREQ) / freq /
+      double value = ceil (static_cast<double> (clkFreq) / freq /
                            range());
 
       return value;
@@ -294,7 +312,6 @@ namespace Piduino {
 
       return dn;
     }
-
   }
 }
 /* ========================================================================== */

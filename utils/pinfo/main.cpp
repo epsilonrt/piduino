@@ -19,7 +19,11 @@
 #include <getopt.h>
 #include <piduino/database.h>
 #include <piduino/serialport.h>
+#ifndef PIDUINO_PROJECT_BUILD
+#include <piduino/config.h>
+#else
 #include <config.h>
+#endif
 #if PIDUINO_WITH_I2C
 #include <piduino/i2cdev.h>
 #endif

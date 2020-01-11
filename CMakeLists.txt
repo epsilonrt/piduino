@@ -157,7 +157,8 @@ if (${HAVE_GETPROGNAME_FUNCTION})
 endif()
 
 add_definitions ( -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}" 
-                  -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}")
+                  -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}"
+                  -DPIDUINO_PROJECT_BUILD)
                   
 # Suppress GCC warnings
 # See https://gcc.gnu.org/gcc-7/changes.html

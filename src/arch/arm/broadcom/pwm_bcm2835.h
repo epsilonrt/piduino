@@ -62,6 +62,8 @@ namespace Piduino {
         size_t dataReg;
         uint32_t ctlMasqInit;
         uint32_t ctlMasqStartStop;
+        bool is2711;
+        uint32_t clkFreq;
 
         uint32_t clockDivisor() const;
         void setClockDivisor (uint32_t div);

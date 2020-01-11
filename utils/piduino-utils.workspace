@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="piduino-utils" Database="" Version="10.0.0">
-  <Project Name="piduino-utils" Path="piduino-utils.project" Active="Yes"/>
-  <Project Name="pido" Path="pido/dev/pido.project" Active="No"/>
-  <Project Name="pinfo" Path="pinfo/dev/pinfo.project" Active="No"/>
+  <Project Name="piduino-utils" Path="piduino-utils.project" Active="No"/>
+  <Project Name="pido" Path="../../../../home/pascal/src/piduino/utils/pido/pido.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="no">
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="gpio" ConfigName="Debug"/>
       <Project Name="piduino-utils" ConfigName="Debug"/>
       <Project Name="pido" ConfigName="Debug"/>
       <Project Name="pinfo" ConfigName="Debug"/>
+      <Project Name="pido" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Environment/>
       <Project Name="gpio" ConfigName="Release"/>
       <Project Name="piduino-utils" ConfigName="Release"/>
       <Project Name="pido" ConfigName="Release"/>
       <Project Name="pinfo" ConfigName="Release"/>
+      <Project Name="pido" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
