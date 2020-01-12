@@ -1,5 +1,5 @@
 # piduino-database
-  Arduino on Pi boards, the best of both worlds !
+  _Arduino on Pi boards, the best of both worlds !_
   
 Piduino uses a relational database which ensures very good
 data integrity and avoids redundancies.
@@ -8,57 +8,22 @@ data integrity and avoids redundancies.
 |:--:|
 | *Piduino Relational Database Model* |
 
-## import depuis sql
 
-    sqlite3  < piduino-schema.sql
-    sqlite3 piduino.db < piduino-data.sql
+**Work is in progress to add client software to manage the database...**
 
-## export schema vers sql
+For now, it is possible to manage the database using a [sqlite3 client](https://sqlite.org/cli.html).
 
-    .output schema.sql
-    .schema
+Examples of use cases are provided in the [piduino-db-use_cases.md](piduino-db-use_cases.md) file.
 
-## export data vers sql
+The condition to be able to add a board to the database is that **it uses one of the SoCs supported by Piduino**.
 
-    echo "BEGIN TRANSACTION;" >  piduino-data.sql; sqlite3 piduino.db .dump | grep '^INSERT INTO' | grep -v 'sqlite_sequence' >> piduino-data.sql; echo "COMMIT;" >>  piduino-data.sql
+## List of SoCs supported on January 12, 2020.
 
-## export table vers sql de données
-
-    .mode insert
-    .output data.sql
-    select * from board;
-
-## export vers csv de données
-
-    .mode csv
-    .header on
-    .output data.csv
-    select * from board;
-
-## export depuis MySQL Workbench
-
-https://github.com/tatsushid/mysql-wb-exportsqlite
-
-puis
-
-    sed -i -e '/^CREATE\ INDEX/d' piduino-schema.sql
-    sed -i -e 's/piduino\.sdb/piduino\.db/g' piduino-schema.sql
-
-ExportSQLite is a plugin for
-[MySQL Workbench](http://www.mysql.com/products/workbench/) to export a schema
-catalog as SQLite's CREATE SQL queries. This is a Python port of
-[original Lua script](https://gist.github.com/mrprompt/7252060) for using with
-MySQL Workbench 6.2 or above.
-
-### Installation
-
-1. Open MySQL Workbench
-2. Choose "Install Plugin/Module..." in "Scripting" menu
-3. Open `export_sqlite_grt.py` file
-4. Restart MySQL Workbench
-
-### Usage
-
-Once you open a database model in MySQL Workbench, you can see "Export SQLite
-CREATE script" in "Tools > Catalog" menu. Just choose it.
-
+| id | name    |
+|----|---------|
+| 0  | Bcm2708 |
+| 1  | Bcm2709 |
+| 2  | Bcm2710 |
+| 5  | Bcm2711 |
+| 3  | H3      |
+| 4  | H5      |
