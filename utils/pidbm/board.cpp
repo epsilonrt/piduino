@@ -13,39 +13,29 @@
  * You should have received a copy of the GNU General Public License
  * along with Piduino pidbm.  If not, see <http://www.gnu.org/licenses/>.
  */
-#pragma once
+#include <exception>
+#include "board.h"
 
-#include <string>
-#include <pimp.h>
-#include <popl.h>
+using namespace std;
 
-std::string progName();
+// ---------------------------------------------------------------------------
+//
+//                         BoardFamily Class
+//
+// ---------------------------------------------------------------------------
+void BoardFamily::setId (long long id) {
+  cppdb::result res =
+    _db << "SELECT name "
+    "FROM board_family "
+    "WHERE id=?"
+    << id << cppdb::row;
 
-class Pidbm {
+  if (res.empty()) {
 
-  public:
-
-    Pidbm ();
-    virtual ~Pidbm();
-
-    int parse (int argc, char **argv);
-    bool open ();
-    void close();
-    bool isOpen() const;
-    void exec ();
-    
-    void help (std::ostream & os = std::cout) const;
-
-    static void version();
-    static void warranty();
-
-  protected:
-    class Private;
-    Pidbm (Private &dd);
-    std::unique_ptr<Private> d_ptr;
-
-  private:
-    PIMP_DECLARE_PRIVATE (Pidbm)
-};
+    throw std::invalid_argument ("board_family not found");
+  }
+  res >> _name;
+  _id = id;
+}
 
 /* ========================================================================== */

@@ -15,16 +15,41 @@
  */
 #include "pidbm.h"
 
+using namespace std;
+
 int
 main (int argc, char **argv) {
   Pidbm m;
+  int ret = EXIT_SUCCESS;
 
-  if (m.open (argc, argv)) {
+  try {
 
-    m.exec();
-    m.close();
+    if (m.parse (argc, argv) > 0) {
+
+      m.open();
+      m.exec();
+    }
   }
-  return 0;
+  catch (const Popl::invalid_option & e) {
+
+    cerr << "Syntax error: " << e.what() << endl << endl;
+    m.help (cerr);
+    ret = EXIT_FAILURE;
+  }
+  catch (const std::invalid_argument & e) {
+
+    cerr << "Syntax error: " << e.what() << endl << endl;
+    m.help (cerr);
+    ret = EXIT_FAILURE;
+  }
+  catch (const std::exception& e) {
+
+    cerr << "Error: " << e.what() << endl;
+    ret =  EXIT_FAILURE;
+  }
+
+  m.close();
+  return ret;
 }
 
 /* ========================================================================== */

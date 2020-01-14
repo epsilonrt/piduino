@@ -16,36 +16,40 @@
 #pragma once
 
 #include <string>
-#include <pimp.h>
-#include <popl.h>
+#include <vector>
+#include <iostream>
+#include <cppdb/frontend.h>
+#include "board.h"
 
-std::string progName();
-
-class Pidbm {
-
+class Connector;
+class Gpio {
   public:
+    Gpio (cppdb::session & db, long long id);
+    void print (std::ostream& os) const;
 
-    Pidbm ();
-    virtual ~Pidbm();
+    inline long long id() const {
+      return _id;
+    }
+    inline int size() const {
+      return _connector.size();
+    }
+    inline const std::string & name() const {
+      return _name;
+    }
+    Connector & connector (int index) {
+      return *_connector.at (index).get();
+    }
+    const Connector & connector (int index) const {
+      return *_connector.at (index).get();
+    }
 
-    int parse (int argc, char **argv);
-    bool open ();
-    void close();
-    bool isOpen() const;
-    void exec ();
-    
-    void help (std::ostream & os = std::cout) const;
-
-    static void version();
-    static void warranty();
-
-  protected:
-    class Private;
-    Pidbm (Private &dd);
-    std::unique_ptr<Private> d_ptr;
+    friend std::ostream& operator<< (std::ostream& os, const Gpio & c);
 
   private:
-    PIMP_DECLARE_PRIVATE (Pidbm)
+    cppdb::session & _db;
+    long long _id;
+    BoardFamily _board_family;
+    std::string _name;
+    std::vector<std::shared_ptr<Connector>> _connector;
 };
-
 /* ========================================================================== */

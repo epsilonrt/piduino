@@ -16,36 +16,23 @@
 #pragma once
 
 #include <string>
-#include <pimp.h>
-#include <popl.h>
+#include <cppdb/frontend.h>
 
-std::string progName();
-
-class Pidbm {
-
+class BoardFamily {
   public:
-
-    Pidbm ();
-    virtual ~Pidbm();
-
-    int parse (int argc, char **argv);
-    bool open ();
-    void close();
-    bool isOpen() const;
-    void exec ();
-    
-    void help (std::ostream & os = std::cout) const;
-
-    static void version();
-    static void warranty();
-
-  protected:
-    class Private;
-    Pidbm (Private &dd);
-    std::unique_ptr<Private> d_ptr;
+    BoardFamily (cppdb::session & db, long long id = -1)  : _db (db), _id (id) {}
+    inline long long id() const {
+      return _id;
+    }
+    inline const std::string & name() const {
+      return _name;
+    }
+    void setId(long long id);
 
   private:
-    PIMP_DECLARE_PRIVATE (Pidbm)
+    cppdb::session & _db;
+    long long _id;
+    std::string _name;
 };
 
 /* ========================================================================== */

@@ -11,6 +11,10 @@
     <File Name="main.cpp"/>
     <File Name="pidbm.cpp"/>
     <File Name="pidbm_p.h"/>
+    <File Name="connector.cpp"/>
+    <File Name="gpio.cpp"/>
+    <File Name="board.cpp"/>
+    <File Name="pin.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Release"/>
@@ -21,6 +25,11 @@
     <File Name="pidbm.h"/>
     <File Name="include/pimp.h"/>
     <File Name="include/popl.h"/>
+    <File Name="include/configfile.h"/>
+    <File Name="connector.h"/>
+    <File Name="board.h"/>
+    <File Name="gpio.h"/>
+    <File Name="pin.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -40,10 +49,10 @@
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="add pin2con 19 1 1 2" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[PIDUINO_CONN_INFO=sqlite3:db=$(ProjectPath)/piduino.db]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>

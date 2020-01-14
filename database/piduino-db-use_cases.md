@@ -96,7 +96,7 @@ INSERT INTO "revision" VALUES(53,12595474);
 list board_model
 list gpio
 list manufacturer
-list revision # checks for revisions exist
+list board revision # checks for revisions exist
 # add board name model_id gpio_id manufacturer_id default_i2c default_spi default_uart [-rREVISION] [-tTAG] [-mRAM] [-pPCB_REV]
 add board "RaspberryPi Compute Module 3 (0xA220A0)" 9 3 4 1 0 0 -r0xa220a0 -m1024 -p"1"
 add board "RaspberryPi 3B (0xA22083)" 7 3 4 1 0 0 -r0xa22083 -m1024 -p"1.3"
