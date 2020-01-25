@@ -1,8 +1,8 @@
--- Creator:       MySQL Workbench 6.3.6/ExportSQLite Plugin 0.1.0
+-- Creator:       MySQL Workbench 6.3.8/ExportSQLite Plugin 0.1.0
 -- Author:        epsilonrt
--- Caption:       Schema Version 0.3.2
+-- Caption:       Schema Version 0.4.0
 -- Project:       Piduino Database
--- Changed:       2018-10-23 09:37
+-- Changed:       2020-01-25 18:06
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -112,10 +112,9 @@ CREATE TABLE "piduino"."gpio_has_connector"(
 );
 CREATE TABLE "piduino"."pin_number"(
   "pin_id" INTEGER PRIMARY KEY NOT NULL,
-  "logical_num" INTEGER NOT NULL,
-  "mcu_num" INTEGER NOT NULL,
-  "system_num" INTEGER NOT NULL,
-  CONSTRAINT "fk_soc_pin_number_pin"
+  "soc_num" INTEGER NOT NULL,
+  "sys_num" INTEGER NOT NULL,
+  CONSTRAINT "fk_pin_number_pin1"
     FOREIGN KEY("pin_id")
     REFERENCES "pin"("id")
 );
@@ -162,6 +161,17 @@ CREATE TABLE "piduino"."soc"(
     FOREIGN KEY("manufacturer_id")
     REFERENCES "manufacturer"("id")
 );
+CREATE TABLE "piduino"."gpio_has_pin"(
+  "gpio_id" INTEGER NOT NULL,
+  "pin_id" INTEGER NOT NULL,
+  "gpio_num" INTEGER NOT NULL,
+  CONSTRAINT "fk_gpio_has_pin_gpio1"
+    FOREIGN KEY("gpio_id")
+    REFERENCES "gpio"("id"),
+  CONSTRAINT "fk_gpio_has_pin_pin1"
+    FOREIGN KEY("pin_id")
+    REFERENCES "pin"("id")
+);
 CREATE TABLE "piduino"."tag"(
   "board_id" INTEGER NOT NULL,
   "tag" VARCHAR(45) PRIMARY KEY NOT NULL,
@@ -194,7 +204,7 @@ CREATE TABLE "piduino"."connector_has_pin"(
 CREATE TABLE "piduino"."board"(
   "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "name" VARCHAR(256),
-  "ram" INTEGER DEFAULT 0,
+  "ram" INTEGER,
   "pcb_revision" VARCHAR(45),
   "board_model_id" INTEGER NOT NULL,
   "gpio_id" INTEGER NOT NULL,
