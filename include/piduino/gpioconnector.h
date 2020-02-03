@@ -24,12 +24,85 @@
 namespace Piduino {
 
   class Gpio;
+  class GpioDescriptor;
   class GpioDevice;
 
   /**
    *  @addtogroup piduino_gpio_connector
    *  @{
    */
+  
+  class ConnectorFamily {
+    public:
+      /**
+       * @enum Id
+       * @brief Identifiant
+       */
+      enum  Id {
+        Header1X = 0, ///< Connecteur Header à 1 rangée (SIL)
+        Header2X,     ///< Connecteur Header à 2 rangées: 1 impaire, 1 paire (ie HE10)
+        Unknown = -1
+      };
+
+      ConnectorFamily (Id i = Unknown) : _id (i), _columns (-1), _fnum (nullptr) {
+        setId (i);
+      }
+      virtual ~ConnectorFamily() {}
+
+      inline Id id() const {
+        return _id;
+      }
+
+      inline int columns() const {
+        return _columns;
+      }
+
+      inline const std::string &name() const {
+        return _name;
+      }
+
+      /**
+       * @brief Calcul du numéro de broche
+       *
+       * Permet à une broche de récupérer son numéro dans le connecteur
+       *
+       * @param row ligne de la broche
+       * @param column colonne de la broche
+       * @return Numéro de la broche dans le connecteur
+       */
+      int pinNumber (int row, int column) const;
+
+      void setId (Id i);
+
+    private:
+      typedef int (* PinNumberFunc) (int row, int column, int columns);
+      Id _id;
+      int _columns;
+      PinNumberFunc _fnum;
+      std::string _name;
+  };
+
+  /**
+   * @class ConnectorDescriptor
+   * @author Pascal JEAN
+   * @date 02/23/18
+   * @brief Descripteur d'un connecteur
+   */
+  class ConnectorDescriptor {
+    public:
+      std::string name;
+      int number;
+      int rows;
+      ConnectorFamily family;
+      long long id; ///< Database Id
+      const GpioDescriptor * parent;
+      std::vector<Pin::Descriptor> pin;
+      // -- functions
+      ConnectorDescriptor (const GpioDescriptor * parent, long long connectorId = -1, int connectorNumber = -1);
+      bool insert (); ///< Insertion dans la base de données
+      bool hasPin (const Pin::Descriptor & p) const;
+      long long findId() const;
+  };
 
   /**
    * @class Connector
@@ -42,77 +115,6 @@ namespace Piduino {
     public:
       friend class Pin;
       friend class Gpio;
-
-      class Family {
-        public:
-          /**
-           * @enum Id
-           * @brief Identifiant
-           */
-          enum  Id {
-            Header1X = 0, ///< Connecteur Header à 1 rangée (SIL)
-            Header2X,     ///< Connecteur Header à 2 rangées: 1 impaire, 1 paire (ie HE10)
-            Unknown = -1
-          };
-
-          Family (Id i = Unknown) : _id (i), _columns (-1), _fnum (nullptr) {
-            setId (i);
-          }
-          virtual ~Family() {}
-
-          inline Id id() const {
-            return _id;
-          }
-
-          inline int columns() const {
-            return _columns;
-          }
-
-          inline const std::string &name() const {
-            return _name;
-          }
-
-          /**
-           * @brief Calcul du numéro de broche
-           *
-           * Permet à une broche de récupérer son numéro dans le connecteur
-           *
-           * @param row ligne de la broche
-           * @param column colonne de la broche
-           * @return Numéro de la broche dans le connecteur
-           */
-          int pinNumber (int row, int column) const;
-
-          void setId (Id i);
-
-        private:
-          typedef int (* PinNumberFunc) (int row, int column, int columns);
-          Id _id;
-          int _columns;
-          PinNumberFunc _fnum;
-          std::string _name;
-      };
-
-      /**
-       * @class Descriptor
-       * @author Pascal JEAN
-       * @date 02/23/18
-       * @brief Descripteur d'un connecteur
-       */
-      class Descriptor {
-        public:
-          std::string name;
-          int number;
-          int rows;
-          Family family;
-          long long id; ///< Database Id
-          std::vector<Pin::Descriptor> pin;
-          // -- functions
-          Descriptor (long long connectorId = -1, int connectorNumber = -1);
-          bool insert (); ///< Insertion dans la base de données
-          bool hasPin (const Pin::Descriptor & p) const;
-          long long findId() const;
-      };
 
       /**
        * @brief Indique si ouvert
@@ -147,7 +149,7 @@ namespace Piduino {
       /**
        * @brief Modèle du connecteur
        */
-      const Family & family() const;
+      const ConnectorFamily & family() const;
 
       /**
        * @brief Identifiant en base de données
@@ -256,7 +258,7 @@ namespace Piduino {
        * @param parent pointeur sur le Gpio parent
        * @param desc pointeur sur la description du connecteur
        */
-      Connector (Gpio * parent, Descriptor * desc);
+      Connector (Gpio * parent, ConnectorDescriptor * desc);
 
       /**
        * @brief Destructeur
@@ -321,7 +323,7 @@ namespace Piduino {
     private:
       bool _isopen;
       Gpio * _parent;
-      Descriptor * _descriptor; // descripteur
+      ConnectorDescriptor * _descriptor; // descripteur
       std::map<int, std::shared_ptr<Pin>> _pin; // toutes les broches
   };
 }

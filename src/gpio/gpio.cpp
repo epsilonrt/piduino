@@ -37,7 +37,7 @@ namespace Piduino {
     _roc (true), _isopen (false), _accesslayer (layer), _device (nullptr),
     _numbering (Pin::NumberingUnknown) {
 
-    _descriptor = std::make_shared<Descriptor> (gpioDatabaseId);
+    _descriptor = std::make_shared<GpioDescriptor> (gpioDatabaseId);
 
     switch (socFamilyId) {
 #if PIDUINO_DRIVER_BCM2835 != 0
@@ -56,7 +56,7 @@ namespace Piduino {
         break;
     }
 
-    std::vector<Connector::Descriptor> & v = _descriptor->connector;
+    std::vector<ConnectorDescriptor> & v = _descriptor->connector;
 
     if (layer == AccessLayerAuto) {
 

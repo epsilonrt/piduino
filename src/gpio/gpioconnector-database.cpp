@@ -24,13 +24,13 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
 //
-//                       Connector::Descriptor Class
+//                       ConnectorDescriptor Class
 //
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
   bool
-  Connector::Descriptor::insert () {
+  ConnectorDescriptor::insert () {
     cppdb::statement stat;
     long long connector_id;
 
@@ -74,7 +74,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   bool
-  Connector::Descriptor:: hasPin (const Pin::Descriptor & p) const {
+  ConnectorDescriptor:: hasPin (const Pin::Descriptor & p) const {
     cppdb::result res =
       Piduino::db << "SELECT pin_id "
       "FROM connector_has_pin "
@@ -89,7 +89,7 @@ namespace Piduino {
 
 // ---------------------------------------------------------------------------
   long long
-  Connector::Descriptor::findId() const {
+  ConnectorDescriptor::findId() const {
     cppdb::result res =
       Piduino::db <<
       "SELECT id "
@@ -147,8 +147,10 @@ namespace Piduino {
   }
 
 // -----------------------------------------------------------------------------
-  Connector::Descriptor::Descriptor (long long connectorId, int connectorNumber) :
-    number (connectorNumber), rows (-1), id (connectorId) {
+  ConnectorDescriptor::ConnectorDescriptor (const GpioDescriptor * p,
+                                     long long i, 
+                                     int n) :
+    number (n), rows (-1), id (i), parent(p) {
 
     if (id > 0) {
       // Chargement depuis database
@@ -164,7 +166,7 @@ namespace Piduino {
       if (!res.empty()) {
         int fid;
         res >> name >> rows >> fid;
-        family.setId (static_cast<Connector::Family::Id> (fid));
+        family.setId (static_cast<ConnectorFamily::Id> (fid));
         res = Piduino::db <<
               "SELECT pin_id,row,column"
               " FROM connector_has_pin "
@@ -177,7 +179,7 @@ namespace Piduino {
           int row, column;
 
           res >> pin_id >> row >> column;
-          pin.push_back (Pin::Descriptor (pin_id, row, column));
+          pin.push_back (Pin::Descriptor (this, pin_id, row, column));
         }
       }
     }
@@ -185,7 +187,7 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
 //
-//                        Connector::Family Class
+//                        ConnectorFamily Class
 //
 // -----------------------------------------------------------------------------
 
@@ -203,16 +205,16 @@ namespace Piduino {
 
 // ---------------------------------------------------------------------------
   int
-  Connector::Family::pinNumber (int row, int column) const {
+  ConnectorFamily::pinNumber (int row, int column) const {
 
     return _fnum (row, column, _columns);
   }
 
 // ---------------------------------------------------------------------------
   void
-  Connector::Family::setId (Connector::Family::Id familyId)  {
+  ConnectorFamily::setId (ConnectorFamily::Id familyId)  {
 
-    if ((Piduino::db.is_open()) && (familyId != Id::Unknown)) {
+    if ( (Piduino::db.is_open()) && (familyId != Id::Unknown)) {
       cppdb::result res =
         Piduino::db << "SELECT name,columns FROM connector_family WHERE id=?"
         << familyId << cppdb::row;
@@ -222,17 +224,17 @@ namespace Piduino {
         _id = familyId;
 
         switch (familyId) {
-          case Connector::Family::Header1X:
+          case ConnectorFamily::Header1X:
             _fnum = header1XNumFunc;
             break;
-          case Connector::Family::Header2X:
+          case ConnectorFamily::Header2X:
             _fnum = header2XNumFunc;
             break;
           default: {
             std::ostringstream msg;
 
             _fnum = nullptr;
-            msg << __FILE__ << "(" << __LINE__ << "): Invalid Connector::Family::Id";
+            msg << __FILE__ << "(" << __LINE__ << "): Invalid ConnectorFamily::Id";
             throw std::invalid_argument (msg.str());
           }
           break;

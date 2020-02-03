@@ -32,7 +32,7 @@ namespace Piduino {
 // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  Connector::Connector (Gpio * parent, Descriptor * desc) :
+  Connector::Connector (Gpio * parent, ConnectorDescriptor * desc) :
     _isopen (false), _parent (parent), _descriptor (desc) {
     int num;
     std::vector<Pin::Descriptor> & v = _descriptor->pin;
@@ -114,7 +114,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  const Connector::Family & Connector::family() const {
+  const ConnectorFamily & Connector::family() const {
 
     return _descriptor->family;
   }

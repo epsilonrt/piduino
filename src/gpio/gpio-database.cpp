@@ -23,13 +23,13 @@ namespace Piduino {
 
 // -----------------------------------------------------------------------------
 //
-//                       Gpio::Descriptor Class
+//                       GpioDescriptor Class
 //
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
   bool
-  Gpio::Descriptor::insert () {
+  GpioDescriptor::insert () {
     cppdb::statement stat;
     long long gpio_id ;
 
@@ -73,7 +73,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   bool
-  Gpio::Descriptor:: hasConnector (const Connector::Descriptor & c) const {
+  GpioDescriptor:: hasConnector (const ConnectorDescriptor & c) const {
     cppdb::result res =
       Piduino::db << "SELECT connector_id FROM gpio_has_connector "
       "WHERE gpio_id=? AND "
@@ -84,7 +84,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   long long
-  Gpio::Descriptor::findId() const {
+  GpioDescriptor::findId() const {
     cppdb::result res =
       Piduino::db << "SELECT id FROM gpio WHERE name=?"
       << name << cppdb::row;
@@ -97,7 +97,7 @@ namespace Piduino {
   }
 
 // -----------------------------------------------------------------------------
-  Gpio::Descriptor::Descriptor (long long gpioId) :
+  GpioDescriptor::GpioDescriptor (long long gpioId) :
     id (gpioId) {
 
     if (id > 0) {
@@ -124,7 +124,7 @@ namespace Piduino {
           int connector_num;
 
           res >> connector_num >> connector_id;
-          connector.push_back (Connector::Descriptor (connector_id, connector_num));
+          connector.push_back (ConnectorDescriptor (this, connector_id, connector_num));
         }
       }
     }

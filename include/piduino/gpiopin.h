@@ -32,6 +32,7 @@ namespace Piduino {
   class Gpio;
   class GpioDevice;
   class Connector;
+  class ConnectorDescriptor;
 
   /**
    *  @addtogroup piduino_gpio
@@ -159,8 +160,16 @@ namespace Piduino {
           Number() : logical (-1), mcu (-1), system (-1), row (-1), column (-1) {}
       };
 
+      class SpiCs {
+        public:
+          long long pin; ///< Pin database Id
+          int bus;  ///< SPI Bus number
+          int cs; ///< Chip select number
+          Pin::Mode mode; ///< Pin mode for this CS
+      };
+      
       /**
-       * @class Descriptor
+       * @class Pin::Descriptor
        * @author Pascal JEAN
        * @date 02/22/18
        * @brief Descripteur d'une broche
@@ -170,23 +179,18 @@ namespace Piduino {
           Type type; ///< Type de broche
           Number num; ///< Numéros
           long long id; ///< Database Id
+          const ConnectorDescriptor * parent;
           std::map<Mode, std::string> name; ///< Mode/Name pairs
           // -- functions
-          Descriptor (long long pinId = -1, int pinRow = -1, int pinColumn = -1);
+          Descriptor (const ConnectorDescriptor * parent,
+                      long long pinId = -1, int pinRow = -1,
+                      int pinColumn = -1);
           bool insert (); ///< Insertion dans la base de données
           bool hasModeName (Mode m, long long nameId) const;
           long long findId() const;
           long long findName (const std::string & name) const;
         private:
           void insertModeName (Mode m, const std::string & n);
-      };
-
-      class SpiCs {
-        public:
-          long long pin; ///< Pin database Id
-          int bus;  ///< SPI Bus number
-          int cs; ///< Chip select number
-          Pin::Mode mode; ///< Pin mode for this CS
       };
 
       //------------------------------------------------------------------------
@@ -265,7 +269,7 @@ namespace Piduino {
        * @brief Génération signal analogique
        * Le type de signal dépend de la plate-forme, la plupart du temps, il
        * s'agit d'un signal PWM. \n
-       * Le mode de la broche est éventuellement modifié afin de générer le 
+       * Le mode de la broche est éventuellement modifié afin de générer le
        * signal demandé.
        * @param value valeur entre dac().min() et dac().max()
        */
@@ -331,7 +335,7 @@ namespace Piduino {
        * @brief Routine d'interruption
        *
        * Une routine d'interruption ne renvoie aucun paramètre.
-       * 
+       *
        * @param userData pointeur sur les données de l'utilisateur
        */
       typedef void (* Isr) (void * userData);
@@ -368,13 +372,13 @@ namespace Piduino {
        * @brief DAC utilisé par la broche
        */
       Converter * dac();
-      
+
       /**
        * @brief Affecte un convertisseur analogique-numérique
        * @param dac
        */
       bool setDac (Converter * dac);
-      
+
       /**
        * @brief Retire le convertisseur analogique-numérique
        */
@@ -595,7 +599,7 @@ namespace Piduino {
        * @param dacName nom du convertisseur numérique-analogique à utiliser pour analogWrite()
        */
       Pin (Connector * parent, const Descriptor * desc);
-      
+
       /**
        * @brief Desctructeur
        */
@@ -635,7 +639,7 @@ namespace Piduino {
 
       std::promise<void> _stopRead;
       std::thread _thread;
-      
+
       std::shared_ptr<Converter> _dac;
 
       static const std::map<Pull, std::string> _pulls;

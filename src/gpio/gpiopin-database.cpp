@@ -16,6 +16,8 @@
  */
 
 #include <piduino/gpiopin.h>
+#include <piduino/gpioconnector.h>
+#include <piduino/gpio.h>
 #include <piduino/database.h>
 #include "config.h"
 
@@ -50,8 +52,14 @@ namespace Piduino {
       stat.exec();
       id = stat.last_insert_id();
       if (type == TypeGpio) {
-        stat = Piduino::db << "INSERT INTO pin_number(pin_id,logical_num,mcu_num,system_num) "
-               "VALUES(?,?,?,?)" << id << num.logical << num.mcu << num.system;
+        
+        stat = Piduino::db << "INSERT INTO pin_number(pin_id,soc_pin_num,sys_pin_num) "
+               "VALUES(?,?,?)" << id << num.mcu << num.system;
+        stat.exec();
+        
+        stat = Piduino::db << "INSERT INTO gpio_has_pin(gpio_id,pin_id,ino_pin_num) "
+               "VALUES(?,?,?)" << parent->parent->id << id << num.logical;
+        stat.exec();
       }
       for (auto n = name.begin(); n != name.end(); ++n) {
 
@@ -172,11 +180,12 @@ namespace Piduino {
   }
 
 // -----------------------------------------------------------------------------
-  Pin::Descriptor::Descriptor (long long pinId, int pinRow, int pinColumn) :
-    type (Pin::TypeUnknown), id (pinId) {
+  Pin::Descriptor::Descriptor (const ConnectorDescriptor * p,
+                               long long i, int r, int c) :
+    type (Pin::TypeUnknown), id (i), parent (p) {
 
-    num.row = pinRow;
-    num.column = pinColumn;
+    num.row = r;
+    num.column = c;
 
     if (id > 0) {
       // Chargement depuis database
@@ -211,11 +220,12 @@ namespace Piduino {
           name[static_cast<Pin::Mode> (pin_mode)] = pin_name;
         }
         res = Piduino::db <<
-              "SELECT logical_num,mcu_num,system_num "
+              "SELECT ino_pin_num,soc_pin_num,sys_pin_num "
               " FROM pin_number "
+              " INNER JOIN gpio_has_pin ON gpio_has_pin.pin_id=pin_number.pin_id "
               " WHERE "
-              "   pin_id=?"
-              << id << cppdb::row;
+              "   pin_number.pin_id=? AND gpio_has_pin.gpio_id=?"
+              << id << parent->parent->id << cppdb::row;
         if (!res.empty()) {
           res >> num.logical >> num.mcu >> num.system;
         }

@@ -48,6 +48,24 @@ namespace Piduino {
    */
 
   /**
+   * @class GpioDescriptor
+   * @author Pascal JEAN
+   * @date 02/23/18
+   * @brief Descripteur d'un GPIO
+   */
+  class GpioDescriptor {
+    public:
+      std::string name; ///< Nom de la carte
+      long long id; ///< Database Id
+      std::vector<ConnectorDescriptor> connector; ///< Descripteurs des connecteurs
+      // -- functions
+      GpioDescriptor (long long gpioId = -1);
+      bool insert (); ///< Insertion dans la base de données
+      bool hasConnector (const ConnectorDescriptor & c) const;
+      long long findId() const;
+  };
+
+  /**
    * @class Gpio
    * @author Pascal JEAN
    * @date 02/22/18
@@ -57,33 +75,15 @@ namespace Piduino {
     public:
       friend class Connector;
 
-      /**
-       * @class Descriptor
-       * @author Pascal JEAN
-       * @date 02/23/18
-       * @brief Descripteur d'un GPIO
-       */
-      class Descriptor {
-        public:
-          std::string name; ///< Nom de la carte
-          long long id; ///< Database Id
-          std::vector<Connector::Descriptor> connector; ///< Descripteurs des connecteurs
-          // -- functions
-          Descriptor (long long gpioId = -1);
-          bool insert (); ///< Insertion dans la base de données
-          bool hasConnector (const Connector::Descriptor & c) const;
-          long long findId() const;
-      };
-
 
       /**
        * @brief Constructeur par défaut
-       * 
+       *
        * @param layer choix de la couche d'accès, AccessLayerAuto par défaut, dans
        * ce cas, le choix est laissé à la couche GpioDevice (conseillé).
        */
       Gpio (AccessLayer layer = AccessLayerAuto);
-      
+
       /**
        * @brief Constructeur
        * @param gpioDatabaseId identifiant du GPIO en base de données
@@ -229,8 +229,8 @@ namespace Piduino {
 
       /**
        * @brief Broche GPIO
-       * 
-       * Seules les broches de type Pin::TypeGpio sont accessibles à l'aide de 
+       *
+       * Seules les broches de type Pin::TypeGpio sont accessibles à l'aide de
        * cette fonction. Les autres types de broches ne sont accessibles qu'à
        * partir de Gpio::connector().
        *
@@ -243,10 +243,10 @@ namespace Piduino {
       /**
        * @brief Broche GPIO par identifiant de base de données
        *
-       * Seules les broches de type Pin::TypeGpio sont accessibles à l'aide de 
+       * Seules les broches de type Pin::TypeGpio sont accessibles à l'aide de
        * cette fonction. Les autres types de broches ne sont accessibles qu'à
        * partir de Gpio::connector().
-       * 
+       *
        * @param id identifiant de la broche dans la base de données.
        * @return pointeur sur la broche, null si la broche n'existe pas.
        */
@@ -293,7 +293,7 @@ namespace Piduino {
       AccessLayer _accesslayer;
       GpioDevice * _device; // Accès à la couche matérielle
       Pin::Numbering _numbering; // Numérotation en cours
-      std::shared_ptr<Descriptor> _descriptor;
+      std::shared_ptr<GpioDescriptor> _descriptor;
       std::map<int, std::shared_ptr<Pin>> _pin; // Broches uniquement GPIO
       std::map<int, std::shared_ptr<Connector>> _connector; // Connecteurs avec toutes les broches physiques
   };
