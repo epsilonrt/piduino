@@ -2,7 +2,7 @@
 -- Author:        epsilonrt
 -- Caption:       Schema Version 0.4.0
 -- Project:       Piduino Database
--- Changed:       2020-01-25 18:06
+-- Changed:       2020-02-03 09:54
 -- Created:       2018-04-23 13:23
 PRAGMA foreign_keys = OFF;
 
@@ -112,8 +112,8 @@ CREATE TABLE "piduino"."gpio_has_connector"(
 );
 CREATE TABLE "piduino"."pin_number"(
   "pin_id" INTEGER PRIMARY KEY NOT NULL,
-  "soc_num" INTEGER NOT NULL,
-  "sys_num" INTEGER NOT NULL,
+  "soc_pin_num" INTEGER NOT NULL,
+  "sys_pin_num" INTEGER NOT NULL,
   CONSTRAINT "fk_pin_number_pin1"
     FOREIGN KEY("pin_id")
     REFERENCES "pin"("id")
@@ -164,7 +164,7 @@ CREATE TABLE "piduino"."soc"(
 CREATE TABLE "piduino"."gpio_has_pin"(
   "gpio_id" INTEGER NOT NULL,
   "pin_id" INTEGER NOT NULL,
-  "gpio_num" INTEGER NOT NULL,
+  "ino_pin_num" INTEGER NOT NULL,
   CONSTRAINT "fk_gpio_has_pin_gpio1"
     FOREIGN KEY("gpio_id")
     REFERENCES "gpio"("id"),

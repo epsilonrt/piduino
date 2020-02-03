@@ -266,6 +266,7 @@
     <File Name="database/build"/>
     <File Name="database/piduino-data-core.sql"/>
     <File Name="database/piduino-db-use_cases.md"/>
+    <File Name="database/pidb-dev-notes.md"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
