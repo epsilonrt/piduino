@@ -34,10 +34,9 @@
 class TwoWire : public Piduino::I2cDev {
 
   public:
-    TwoWire(int id = 0) : Piduino::I2cDev(id) {}
+    TwoWire(int id = Info::defaultBus().id()) : Piduino::I2cDev(id) {}
     virtual ~TwoWire() {}
     void begin() {
-      setBus (Info::defaultBus());
       if (!open ()) {
         throw std::system_error (errno, std::system_category(),
                                  "Error when opening the I2C bus " +
