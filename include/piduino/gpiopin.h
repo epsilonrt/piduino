@@ -252,6 +252,28 @@ namespace Piduino {
       void setEdge (Edge edge);
 
       /**
+       * @brief Niveau du courant de sortie d'une broche de type GPIO
+       *
+       * Déclenche une exception std::domain_error si la broche n'est pas de
+       * type \c TypeGpio ou si cette fonction n'est pas prise en charge par
+       * la plateforme.
+       * 
+       * @return le niveau du courant de sortie.
+       */
+      int drive();
+
+      /**
+       * @brief Modification du niveau du courant de sortie d'une broche de type GPIO
+       *
+       * Déclenche une exception std::domain_error si la broche n'est pas de
+       * type \c TypeGpio.
+       *
+       * @param drive nouveau niveau, une exception  std::invalid_argument est 
+       * déclenchée si la valeur demandée n'est pas supportée.
+       */
+      void setDrive (int drive);
+
+      /**
        * @brief Modification de l'état binaire d'une sortie
        *
        * Déclenche une exception std::domain_error si la broche n'est pas de
@@ -637,6 +659,7 @@ namespace Piduino {
       std::thread _thread;
       
       std::shared_ptr<Converter> _dac;
+      int _drive;
 
       static const std::map<Pull, std::string> _pulls;
       static const std::map<Type, std::string> _types;
@@ -657,6 +680,8 @@ namespace Piduino {
       void writeMode ();
       void readEdge();
       void writeEdge ();
+      void readDrive ();
+      void writeDrive();
 
       bool sysFsEnable (bool enable);
       void sysFsExport (bool enable);

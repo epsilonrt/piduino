@@ -65,6 +65,7 @@ void wfi (int argc, char * argv[]);
 void pwm (int argc, char * argv[]);
 void pwmr (int argc, char * argv[]);
 void pwmf (int argc, char * argv[]);
+void drive (int argc, char * argv[]);
 
 Pin * getPin (char * c_str);
 void usage ();
@@ -90,6 +91,7 @@ main (int argc, char **argv) {
     {"blink", blink},
     {"wfi", wfi},
     {"readall", readall},
+    {"drive", drive},
     {"pwm", pwm}, // TODO
     {"pwmr", pwmr}, // TODO
     {"pwmf", pwmf} // TODO
@@ -306,6 +308,38 @@ pull (int argc, char * argv[]) {
     else {
       // Lecture de la résistance
       cout << pin->pullName() << endl;
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------------
+  drive <pin> <level>
+    Get/Set the multi-driving output level
+ */
+void
+drive (int argc, char * argv[]) {
+  int paramc = (argc - optind);
+
+  if (paramc < 1)    {
+
+    throw Exception (Exception::ArgumentExpected);
+  }
+  else {
+    forceSysFs = false;
+    pin = getPin (argv[optind]);
+
+    if (paramc > 1) {
+      int level;
+
+      level = stoi (string (argv[optind + 1]));
+
+      // Modification à garder après fermeture !
+      gpio.setReleaseOnClose (false);
+      pin->setDrive (level);
+    }
+    else {
+      // Lecture
+      cout << pin->drive() << endl;
     }
   }
 }

@@ -104,7 +104,7 @@ namespace Piduino {
     _isopen (false), _parent (parent), _descriptor (desc), _holdMode (ModeUnknown),
     _holdPull (PullUnknown), _holdState (false), _useSysFs (false),
     _valueFd (-1), _firstPolling (true), _edge (EdgeUnknown), _mode (ModeUnknown),
-    _pull (PullUnknown), _dac (0) {
+    _pull (PullUnknown), _dac (0), _drive (-1) {
 
     if ( (parent->gpio()->accessLayer() & AccessLayerIoMap) != AccessLayerIoMap) {
 
@@ -142,6 +142,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void Pin::resetDac () {
+    
     _dac.reset ();
   }
 
@@ -168,9 +169,16 @@ namespace Piduino {
   Pin::Pull
   Pin::pull () {
 
-    if (isOpen() && (type() == TypeGpio)) {
+    if (type() == TypeGpio) {
 
-      readPull();;
+      if (isOpen()) {
+
+        readPull();;
+      }
+    }
+    else {
+
+      throw std::domain_error ("This pin is not a GPIO pin");
     }
     return _pull;
   }
@@ -180,12 +188,16 @@ namespace Piduino {
   Pin::setPull (Pin::Pull p) {
 
     if (type() == TypeGpio) {
-      _pull = p;
 
+      _pull = p;
       if (isOpen()) {
 
         writePull();
       }
+    }
+    else {
+
+      throw std::domain_error ("This pin is not a GPIO pin");
     }
   }
 
@@ -193,9 +205,12 @@ namespace Piduino {
   Pin::Mode
   Pin::mode () {
 
-    if (isOpen() && (type() == TypeGpio)) {
+    if (type() == TypeGpio) {
 
-      readMode();
+      if (isOpen()) {
+
+        readMode();
+      }
     }
     return _mode;
   }
@@ -212,6 +227,10 @@ namespace Piduino {
         writeMode();
       }
     }
+    else {
+
+      throw std::domain_error ("This pin is not a GPIO pin");
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -219,11 +238,16 @@ namespace Piduino {
   Pin::setEdge (Pin::Edge e) {
 
     if (type() == TypeGpio) {
+
       _edge = e;
       if (isOpen() && _useSysFs) {
 
         sysFsSetEdge();
       }
+    }
+    else {
+
+      throw std::domain_error ("This pin is not a GPIO pin");
     }
   }
 
@@ -232,11 +256,54 @@ namespace Piduino {
   Pin::Edge
   Pin::edge() {
 
-    if (isOpen() && (type() == TypeGpio) && _useSysFs) {
+    if (type() == TypeGpio) {
 
-      sysFsGetEdge();
+      if (isOpen() && _useSysFs) {
+
+        sysFsGetEdge();
+      }
+    }
+    else {
+
+      throw std::domain_error ("This pin is not a GPIO pin");
     }
     return _edge;
+  }
+
+  // ---------------------------------------------------------------------------
+  int
+  Pin::drive () {
+
+    if (type() == TypeGpio) {
+
+      if (isOpen()) {
+
+        readDrive();;
+      }
+    }
+    else {
+
+      throw std::domain_error ("This pin is not a GPIO pin");
+    }
+    return _drive;
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  Pin::setDrive (int d) {
+
+    if (type() == TypeGpio) {
+
+      _drive = d;
+      if (isOpen()) {
+
+        writeDrive();
+      }
+    }
+    else {
+
+      throw std::domain_error ("This pin is not a GPIO pin");
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -691,6 +758,15 @@ namespace Piduino {
 
               readPull();
             }
+            if (_drive != -1) {
+
+              writeDrive();
+            }
+            else {
+
+              readDrive();
+            }
+
           }
 
           if (_edge != EdgeUnknown) {
@@ -746,11 +822,17 @@ namespace Piduino {
   Pin::readPull ()  {
 
     if (device()) {
+
       if (device()->flags() & GpioDevice::hasPullRead) {
 
         _pull = device()->pull (this);
         return;
       }
+      else {
+
+        throw std::invalid_argument ("Unable to read pull resistor");
+      }
+
     }
     _pull = PullUnknown;
   }
@@ -808,6 +890,40 @@ namespace Piduino {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  void
+  Pin::writeDrive () {
+
+    if (device()) {
+
+      if (device()->flags() & GpioDevice::hasDrive) {
+
+        device()->setDrive (this, _drive);
+      }
+      else {
+
+        throw std::domain_error ("Unable to set the drive strength for this pin, not supported on this board!");
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  Pin::readDrive ()  {
+
+    if (device()) {
+
+      if (device()->flags() & GpioDevice::hasDrive) {
+
+        _drive = device()->drive (this);
+      }
+      else {
+
+        throw std::domain_error ("Unable to get the drive strength for this pin, not supported on this board!");
+      }
+    }
+  }
+
 // -----------------------------------------------------------------------------
 //                                   Private
 // -----------------------------------------------------------------------------
@@ -825,7 +941,7 @@ namespace Piduino {
 
         ret = sysFsPoll (fd, 10);
         if (ret > 0) {
-          
+
           isr (userData);
           sysFsRead (fd);
         }

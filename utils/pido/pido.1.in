@@ -9,6 +9,7 @@ pido \- Allow the user easy access to the GPIO pins.
 \fBwrite\fR \fIpin\fR \fIvalue\fR |
 \fBtoggle\fR \fIpin\fR |
 \fBblink\fR \fIpin\fR [\fIvalue\fR] |
+\fBdrive\fR \fIpin\fR [\fIvalue\fR] |
 \fBpwm\fR \fIpin\fR [\fIvalue\fR] |
 \fBpwmf\fR \fIpin\fR [\fIhz_freq\fR] |
 \fBpwmr\fR \fIpin\fR [\fIrange\fR] |
@@ -62,6 +63,14 @@ milliseconds can be specified otherwise its default value is 1000
 (can not be less than 1 ms).
 
 Note: This command explicitly sets the pin to output mode.
+
+.TP
+\fBdrive\fR \fIpin\fR [\fBlevel\fR]
+Gets the current state of the pin drive strength if no value is supplied. 
+
+Use \fIlevel\fR to set the pin drive strength.
+
+This feature is only available on some SoC models (c.f. datasheet).
 
 .TP
 \fBpwm\fR \fIpin\fR [\fIvalue\fR]

@@ -51,6 +51,8 @@ namespace Piduino {
         bool read (const Pin * pin) const;
         Pin::Mode mode (const Pin * pin) const;
         Pin::Pull pull (const Pin * pin) const;
+        void setDrive (const Pin * pin, int d);
+        int drive (const Pin * pin) const;
 
         const std::map<Pin::Mode, std::string> & modes() const;
 

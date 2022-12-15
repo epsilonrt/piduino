@@ -39,7 +39,8 @@ namespace Piduino {
       enum {
         hasToggle   = 0x0001,
         hasPullRead = 0x0002,
-        hasAltRead  = 0x0004
+        hasAltRead  = 0x0004,
+        hasDrive    = 0x0008
       };
       
       GpioDevice();
@@ -61,6 +62,9 @@ namespace Piduino {
       virtual bool read (const Pin * pin) const = 0;
       virtual Pin::Mode mode (const Pin * pin) const = 0;
       virtual Pin::Pull pull (const Pin * pin) const;
+
+      virtual void setDrive (const Pin * pin, int d);
+      virtual int drive (const Pin * pin) const;
 
       virtual const std::map<Pin::Mode, std::string> & modes() const = 0;
 

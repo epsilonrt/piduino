@@ -74,7 +74,7 @@ namespace Piduino {
     // -------------------------------------------------------------------------
     unsigned int
     GpioDevice::flags() const {
-      return  hasPullRead | hasToggle;
+      return  hasPullRead | hasToggle | hasDrive;
     }
 
     // -------------------------------------------------------------------------
@@ -267,6 +267,47 @@ namespace Piduino {
 
       b = pinBank (&g);
       return b->DAT & (1 << g) ? true : false;
+    }
+
+    // -------------------------------------------------------------------------
+    int
+    GpioDevice::drive (const Pin * pin) const {
+      PioBank * b;
+      int i, r, v;
+      int g = pin->mcuNumber();
+
+      b = pinBank (&g);
+      r = g >> 4;
+      i = (g - (r * 16)) * 2;
+      v = b->DRV[r] >> i & 3;
+
+      return v;
+    }
+
+    // -------------------------------------------------------------------------
+    void
+    GpioDevice::setDrive (const Pin * pin, int v) {
+      PioBank * b;
+      int g = pin->mcuNumber();
+      int f = g;
+
+      b = pinBank (&f);
+
+      if ((v >= 0) && (v <= 3)) {
+        int i, r;
+
+        r = f >> 4;
+        i = (f - (r * 16)) * 2;
+        b->DRV[r] &= ~ (0b11 << i); 
+        Clock::delayMicroseconds (10);
+        b->DRV[r] |= (v << i);
+        Clock::delayMicroseconds (10);
+        debugPrintBank (b);
+      }
+      else {
+        
+        throw std::invalid_argument ("drive must be between 0 and 3 !");
+      }
     }
 
     // -------------------------------------------------------------------------
