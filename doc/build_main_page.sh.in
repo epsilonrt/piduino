@@ -6,9 +6,9 @@ TARGET=@DOXYGEN_MAINPAGE@
 README=@DOXYGEN_README@
 
 PARSER=cat
-command -v markdown >/dev/null 2>&1 && PARSER=markdown
+command -v marked >/dev/null 2>&1 && PARSER=marked
 # echo "PARSER=$PARSER"
-if [ "$PARSER" = "markdown" ]; then
+if [ "$PARSER" = "marked" ]; then
   HEAD_TAG="@htmlonly"
   FOOT_TAG="@endhtmlonly"
 fi
