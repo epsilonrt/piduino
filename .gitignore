@@ -10,5 +10,5 @@ compile_commands.json
 obj/
 .*
 version.*
-*build-*/
+*build*/
 work/

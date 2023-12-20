@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PIDUINO_CONFIGFILE_H
 #define PIDUINO_CONFIGFILE_H
@@ -28,11 +28,11 @@
 #include <type_traits>
 
 /**
- *  @defgroup piduino_configfile Fichier configuration
- *
- *  Ce module permet d'accéder à des fichiers de configuration
- *  @{
- */
+    @defgroup piduino_configfile Fichier configuration
+
+    Ce module permet d'accéder à des fichiers de configuration
+    @{
+*/
 
 namespace Piduino {
 
@@ -82,7 +82,7 @@ namespace Piduino {
 
       // -----------------------------------------------------------------------
       template<typename ValueType> ValueType value (const std::string &key,
-          ValueType const &defaultValue = ValueType()) const {
+                                                    ValueType const &defaultValue = ValueType()) const {
 
         if (!keyExists (key)) {
 
@@ -99,7 +99,7 @@ namespace Piduino {
 
           return defaultValue;
         }
-        
+
         return _contents.find (key)->second;
       }
 
@@ -136,14 +136,15 @@ namespace Piduino {
           return false;
         }
 
-        for (size_t i = temp.find (_keysep) + 1; i < temp.length(); i++)
+        // for (size_t i = temp.find (_keysep) + 1; i < temp.length(); i++)
 
-          if (temp[i] != ' ') {
+        //   if (temp[i] != ' ') {
 
-            return true;
-          }
+        //     return true;
+        //   }
 
-        return false;
+        // return false;
+        return true;
       }
 
       // -----------------------------------------------------------------------
@@ -167,8 +168,15 @@ namespace Piduino {
       extractValue (std::string &value, size_t const &sepPos,
                     const std::string &line) const {
 
-        value = line.substr (sepPos + 1);
-        trim (value);
+        if (sepPos < line.npos) {
+
+          value = line.substr (sepPos + 1);
+          trim (value);
+        }
+        else {
+
+          value.clear();
+        }
       }
 
       // -----------------------------------------------------------------------
@@ -196,13 +204,10 @@ namespace Piduino {
 
         if (line.find (_keysep) != line.npos) {
 
-          if (!validLine (line)) {
+          if (validLine (line)) {
 
-            throw std::invalid_argument ("Bad format for line: " +
-                                         Convert::T_to_string (lineNo));
+            extractContents (line);
           }
-
-          extractContents (line);
         }
       }
 
@@ -238,7 +243,7 @@ namespace Piduino {
       }
 
   };
-#if 0
+  #if 0
   // -----------------------------------------------------------------------
   std::string ConfigFile::value (const std::string &key, std::string const &defaultValue) const {
 
@@ -248,11 +253,11 @@ namespace Piduino {
     }
     return _contents.find (key)->second;
   }
-#endif
+  #endif
 }
 /**
- *  @}
- */
+    @}
+*/
 
 /* ========================================================================== */
 #endif /*PIDUINO_CONFIGFILE_H defined */
