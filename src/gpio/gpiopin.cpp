@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <piduino/gpio.h>
 #include <piduino/gpiodevice.h>
@@ -34,11 +34,11 @@
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                              Pin Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                              Pin Class
+  //
+  // -----------------------------------------------------------------------------
   // ---------------------------------------------------------------------------
   std::string Pin::_syspath = "/sys/class/gpio";
 
@@ -100,7 +100,7 @@ namespace Piduino {
   };
 
   // ---------------------------------------------------------------------------
-  Pin::Pin (Connector * parent, const Descriptor * desc) :
+  Pin::Pin (Connector *parent, const Descriptor *desc) :
     _isopen (false), _parent (parent), _descriptor (desc), _holdMode (ModeUnknown),
     _holdPull (PullUnknown), _holdState (false), _useSysFs (false),
     _valueFd (-1), _firstPolling (true), _edge (EdgeUnknown), _mode (ModeUnknown),
@@ -127,7 +127,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  bool Pin::setDac (Converter * dac) {
+  bool Pin::setDac (Converter *dac) {
 
     if (dac) {
 
@@ -142,7 +142,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void Pin::resetDac () {
-    
+
     _dac.reset ();
   }
 
@@ -685,7 +685,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  Pin::attachInterrupt (Isr isr, Edge e, void * userData) {
+  Pin::attachInterrupt (Isr isr, Edge e, void *userData) {
 
     if (!_thread.joinable()) {
 
@@ -716,9 +716,9 @@ namespace Piduino {
     }
   }
 
-// -----------------------------------------------------------------------------
-//                                   Protected
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //                                   Protected
+  // -----------------------------------------------------------------------------
 
 
   // ---------------------------------------------------------------------------
@@ -764,7 +764,9 @@ namespace Piduino {
             }
             else {
 
-              readDrive();
+              if (device()->flags() & GpioDevice::hasDrive) {
+                readDrive();
+              }
             }
 
           }
@@ -924,14 +926,14 @@ namespace Piduino {
     }
   }
 
-// -----------------------------------------------------------------------------
-//                                   Private
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //                                   Private
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
   // Thread de surveillance des entrées du port
   void *
-  Pin::irqThread (std::future<void> run, int fd, Isr isr, void * userData) {
+  Pin::irqThread (std::future<void> run, int fd, Isr isr, void *userData) {
     int ret;
 
     Scheduler::setRtPriority (50);
@@ -951,7 +953,7 @@ namespace Piduino {
         }
       }
     }
-    catch (std::system_error & e) {
+    catch (std::system_error &e) {
 
       std::cerr << e.what() << "(code " << e.code() << ")" << std::endl;
       std::terminate();
@@ -959,9 +961,9 @@ namespace Piduino {
     catch (...) {
 
     }
-#ifndef NDEBUG
+    #ifndef NDEBUG
     std::cout << std::endl << __FUNCTION__ << " terminated" << std::endl;
-#endif
+    #endif
     return 0;
   }
 
@@ -1208,7 +1210,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   std::string
-  Pin::sysFsReadFile (const char * n) const {
+  Pin::sysFsReadFile (const char *n) const {
     std::ostringstream fn;
     std::ifstream f;
     std::string value;
@@ -1232,7 +1234,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  Pin::sysFsWriteFile (const char * n, const std::string & v) {
+  Pin::sysFsWriteFile (const char *n, const std::string &v) {
     std::ostringstream fn;
     std::ofstream f;
 
@@ -1256,7 +1258,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   bool
-  Pin::sysFsFileExist (const char * n) const {
+  Pin::sysFsFileExist (const char *n) const {
     struct stat sb;
     std::ostringstream fn;
 
