@@ -25,21 +25,19 @@ let's go to the quick start version...
 The fastest and safest way to install piduino on Armbian is to use the APT 
 repository from [piduino.org](http://apt.piduino.org), so you should do the following :
 
-    wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
-    sudo add-apt-repository 'deb http://apt.piduino.org stretch piduino'
+    wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/piduino-archive-keyring.gpg] http://apt.piduino.org buster piduino" | sudo tee /etc/apt/sources.list.d/piduino.list
     sudo apt update
     sudo apt install libpiduino-dev piduino-utils
 
 This repository provides Piduino packages for `armhf` and `arm64` architectures.
-In the above commands, the repository is a Debian Stretch distribution, but you 
-can also choose Buster, Ubuntu Xenial or Bionic by replacing `stretch` with 
-`buster`, `xenial` or `bionic`. It may be necessary to install the 
-`software-properties-common` package for `add-apt-repository`.
-
+In the above commands, the repository is a Debian Buster distribution, but you 
+can also choose Buster, Ubuntu Xenial or Bionic by replacing `buster` with 
+`bullseye`, `xenial`,  `trusty`,  `bionic`,  `focal`,  `jammy`.    
 For Raspbian you have to do a little different :
 
-    wget -O- http://www.piduino.org/piduino-key.asc | sudo apt-key add -
-    echo 'deb http://raspbian.piduino.org stretch piduino' | sudo tee /etc/apt/sources.list.d/piduino.list
+    wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/piduino-archive-keyring.gpg] http://raspbian.piduino.org buster piduino" | sudo tee /etc/apt/sources.list.d/piduino.list
     sudo apt update
     sudo apt install libpiduino-dev piduino-utils
 
