@@ -8,7 +8,6 @@ compile_commands.json
 *.a
 *.so
 obj/
-.*
 version.*
 *build*/
 work/
