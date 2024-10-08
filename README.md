@@ -32,8 +32,8 @@ repository from [piduino.org](http://apt.piduino.org), so you should do the foll
 
 This repository provides Piduino packages for `armhf` and `arm64` architectures.
 In the above commands, the repository is a Debian Buster distribution, but you 
-can also choose Buster, Ubuntu Xenial or Bionic by replacing `buster` with 
-`bullseye`, `xenial`,  `trusty`,  `bionic`,  `focal`,  `jammy`.    
+can also choose another distribution by replacing `buster` with 
+`bullseye`, `bookworm`, `xenial`,  `trusty`,  `bionic`,  `focal`,  `jammy`.    
 For Raspbian you have to do a little different :
 
     wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
