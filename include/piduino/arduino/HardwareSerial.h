@@ -62,6 +62,23 @@ extern HardwareSerial & Serial3;
 #define SERIAL_7O2 0x3C
 #define SERIAL_8O2 0x3E
 
+
+// PiDuino Extension, Not for Arduino !
+#define SERIAL_DATA_5 Piduino::SerialPort::DataBits::Data5
+#define SERIAL_DATA_6 Piduino::SerialPort::DataBits::Data6
+#define SERIAL_DATA_7 Piduino::SerialPort::DataBits::Data7
+#define SERIAL_DATA_8 Piduino::SerialPort::DataBits::Data8
+#define SERIAL_PARITY_NONE Piduino::SerialPort::Parity::NoParity
+#define SERIAL_PARITY_EVEN Piduino::SerialPort::Parity::EvenParity
+#define SERIAL_PARITY_ODD Piduino::SerialPort::Parity::OddParity
+#define SERIAL_PARITY_SPACE Piduino::SerialPort::Parity::SpaceParity
+#define SERIAL_PARITY_MARK Piduino::SerialPort::Parity::MarkParity
+#define SERIAL_FLOW_NONE Piduino::SerialPort::FlowControl::NoFlowControl
+#define SERIAL_FLOW_HARDWARE Piduino::SerialPort::FlowControl::HardwareControl
+#define SERIAL_FLOW_SOFTWARE Piduino::SerialPort::FlowControl::SoftwareControl
+#define SERIAL_FLOW_RTS_UP Piduino::SerialPort::FlowControl::Rs485RtsUpControl
+#define SERIAL_FLOW_RTS_DOWN Piduino::SerialPort::FlowControl::Rs485RtsDownControl
+
 class HardwareSerial : public ::Terminal {
 
   public:
@@ -77,9 +94,18 @@ class HardwareSerial : public ::Terminal {
       return true;
     }
 
+    virtual size_t write (uint8_t);
+    virtual size_t write (const uint8_t *buffer, size_t size);
+    virtual size_t write (const String & str);
+
     // PiDuino Extension, Not for Arduino !
     void begin (unsigned long baud, const char * portName, uint8_t config = SERIAL_8N1);
     void begin (unsigned long baud, const String & portName, uint8_t config = SERIAL_8N1);
+
+    virtual size_t writeln (uint8_t);
+    virtual size_t writeln (const uint8_t *buffer, size_t size);
+    virtual size_t writeln (const String & str);
+
     inline void setWritelnDelay (unsigned long delay);
     inline unsigned long writelnDelay() const;
 
@@ -107,6 +133,9 @@ class HardwareSerial : public ::Terminal {
     inline bool sendBreak (int duration = 0);
     inline bool setBreakEnabled (bool set = true);
     inline bool isBreakEnabled() const;
+    inline bool setSettings (const Piduino::SerialPort::Settings & settings);
+    inline Piduino::SerialPort::Settings settings() const;
+
 
     static void setupAvailablePorts();
     static const int numberOfPorts = 4;
@@ -197,6 +226,11 @@ inline bool HardwareSerial::setBreakEnabled (bool set) {
 inline bool HardwareSerial::isBreakEnabled() const {
   return port->isBreakEnabled();
 }
-
+inline bool HardwareSerial::setSettings (const Piduino::SerialPort::Settings & s) {
+  return port->setSettings(s);
+}
+inline Piduino::SerialPort::Settings HardwareSerial::settings() const {
+  return port->settings();
+}
 
 #endif

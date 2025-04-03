@@ -74,8 +74,8 @@ HardwareSerial::~HardwareSerial() = default;
 
 // -----------------------------------------------------------------------------
 void HardwareSerial::begin (unsigned long baud, uint8_t config) {
-  SerialPort::Settings s (baud);
-
+  SerialPort::Settings s (port->settings());
+  
   Terminal::begin();
   switch (config) {
     case SERIAL_5N1:
@@ -236,10 +236,47 @@ Piduino::TerminalNotifier & HardwareSerial::notifier() {
 
 // -----------------------------------------------------------------------------
 size_t HardwareSerial::writeln() {
-
-  size_t ret = ::Terminal::writeln();
+  
+  size_t ret = write ("\r\n");
+  flush();
   delayMicroseconds (_writelnDelay);
   return ret;
+}
+
+// -----------------------------------------------------------------------------
+size_t HardwareSerial::write (uint8_t c) {
+
+  return port->write(reinterpret_cast <const char *>(&c), 1);
+}
+
+// -----------------------------------------------------------------------------
+size_t HardwareSerial::write (const String & str) {
+
+  return port->write(str.c_str(), str.length());
+}
+
+// -----------------------------------------------------------------------------
+size_t HardwareSerial::write (const uint8_t *buffer, size_t size) {
+
+  return port->write(reinterpret_cast <const char *>(buffer), size);
+}
+
+// -----------------------------------------------------------------------------
+size_t HardwareSerial::writeln (uint8_t c) {
+
+  return port->write(reinterpret_cast <const char *>(&c), 1, true);
+}
+
+// -----------------------------------------------------------------------------
+size_t HardwareSerial::writeln (const String & str) {
+
+  return port->write(str.c_str(), str.length(), true);
+}
+
+// -----------------------------------------------------------------------------
+size_t HardwareSerial::writeln (const uint8_t *buffer, size_t size) {
+
+  return port->write(reinterpret_cast <const char *>(buffer), size, true);
 }
 
 /* ========================================================================== */
