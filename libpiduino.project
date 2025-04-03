@@ -1,5 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="libpiduino" Version="11000" InternalType="Console">
+  <VirtualDirectory Name="examples">
+    <File Name="examples/CMakeLists.txt"/>
+    <VirtualDirectory Name="Spi">
+      <File Name="examples/Spi/CMakeLists.txt"/>
+      <VirtualDirectory Name="SpiMemoryMb85rs">
+        <File Name="examples/Spi/SpiMemoryMb85rs/CMakeLists.txt"/>
+        <File Name="examples/Spi/SpiMemoryMb85rs/mb85rs.h"/>
+        <File Name="examples/Spi/SpiMemoryMb85rs/main.cpp"/>
+        <File Name="examples/Spi/SpiMemoryMb85rs/mb85rs.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="SpiPressureSensorHsc">
+        <File Name="examples/Spi/SpiPressureSensorHsc/CMakeLists.txt"/>
+        <File Name="examples/Spi/SpiPressureSensorHsc/main.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Wire">
+      <File Name="examples/Wire/CMakeLists.txt"/>
+      <VirtualDirectory Name="WireMasterReader">
+        <File Name="examples/Wire/WireMasterReader/CMakeLists.txt"/>
+        <File Name="examples/Wire/WireMasterReader/main.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="WireRtcBq32k">
+        <File Name="examples/Wire/WireRtcBq32k/CMakeLists.txt"/>
+        <File Name="examples/Wire/WireRtcBq32k/main.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="WireMasterWriter">
+        <File Name="examples/Wire/WireMasterWriter/CMakeLists.txt"/>
+        <File Name="examples/Wire/WireMasterWriter/main.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="WireDigitalPotentiometer">
+        <File Name="examples/Wire/WireDigitalPotentiometer/CMakeLists.txt"/>
+        <File Name="examples/Wire/WireDigitalPotentiometer/main.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Blink">
+      <File Name="examples/Blink/CMakeLists.txt"/>
+      <File Name="examples/Blink/main.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Interrupt">
+      <File Name="examples/Interrupt/CMakeLists.txt"/>
+      <File Name="examples/Interrupt/main.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Fade">
+      <File Name="examples/Fade/CMakeLists.txt"/>
+      <File Name="examples/Fade/main.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Button">
+      <File Name="examples/Button/CMakeLists.txt"/>
+      <File Name="examples/Button/main.cpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Communication">
+      <VirtualDirectory Name="SerialWrite">
+        <File Name="examples/Communication/SerialWrite/CMakeLists.txt"/>
+        <File Name="examples/Communication/SerialWrite/main.cpp"/>
+      </VirtualDirectory>
+      <File Name="examples/Communication/CMakeLists.txt"/>
+      <VirtualDirectory Name="ReadASCIIString">
+        <File Name="examples/Communication/ReadASCIIString/CMakeLists.txt"/>
+        <File Name="examples/Communication/ReadASCIIString/main.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ASCIIPing">
+        <File Name="examples/Communication/ASCIIPing/CMakeLists.txt"/>
+        <File Name="examples/Communication/ASCIIPing/ASCIIPing.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ASCIITable">
+        <File Name="examples/Communication/ASCIITable/CMakeLists.txt"/>
+        <File Name="examples/Communication/ASCIITable/ASCIITable.txt"/>
+        <File Name="examples/Communication/ASCIITable/main.cpp"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="Console">
+        <File Name="examples/Communication/Console/CMakeLists.txt"/>
+        <File Name="examples/Communication/Console/main.cpp"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="NoArduino">
+      <File Name="examples/NoArduino/CMakeLists.txt"/>
+      <VirtualDirectory Name="Gpio">
+        <File Name="examples/NoArduino/Gpio/CMakeLists.txt"/>
+        <VirtualDirectory Name="Blink">
+          <File Name="examples/NoArduino/Gpio/Blink/CMakeLists.txt"/>
+          <File Name="examples/NoArduino/Gpio/Blink/main.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Interrupt">
+          <File Name="examples/NoArduino/Gpio/Interrupt/CMakeLists.txt"/>
+          <File Name="examples/NoArduino/Gpio/Interrupt/main.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="Fade">
+          <File Name="examples/NoArduino/Gpio/Fade/CMakeLists.txt"/>
+          <File Name="examples/NoArduino/Gpio/Fade/main.cpp"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="WaitForInt">
+          <File Name="examples/NoArduino/Gpio/WaitForInt/CMakeLists.txt"/>
+          <File Name="examples/NoArduino/Gpio/WaitForInt/main.cpp"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="Blink-Daemon">
+      <File Name="examples/Blink-Daemon/CMakeLists.txt"/>
+      <File Name="examples/Blink-Daemon/main.cpp"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
@@ -9,77 +110,6 @@
     <VirtualDirectory Name="popl">
       <File Name="3rdparty/popl/README.md"/>
       <File Name="3rdparty/popl/LICENSE"/>
-    </VirtualDirectory>
-  </VirtualDirectory>
-  <VirtualDirectory Name="examples">
-    <VirtualDirectory Name="Spi">
-      <VirtualDirectory Name="SpiPressureSensorHsc">
-        <File Name="examples/Spi/SpiPressureSensorHsc/SpiPressureSensorHsc.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="SpiMemoryMb85rs">
-        <File Name="examples/Spi/SpiMemoryMb85rs/SpiMemoryMb85rs.cpp"/>
-        <File Name="examples/Spi/SpiMemoryMb85rs/mb85rs.cpp"/>
-        <File Name="examples/Spi/SpiMemoryMb85rs/mb85rs.h"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="Wire">
-      <VirtualDirectory Name="WireDigitalPotentiometer">
-        <File Name="examples/Wire/WireDigitalPotentiometer/WireDigitalPotentiometer.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="WireMasterWriter">
-        <File Name="examples/Wire/WireMasterWriter/WireMasterWriter.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="WireRtcBq32k">
-        <File Name="examples/Wire/WireRtcBq32k/WireRtcBq32k.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="WireMasterReader">
-        <File Name="examples/Wire/WireMasterReader/WireMasterReader.cpp"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="Communication">
-      <VirtualDirectory Name="Console">
-        <File Name="examples/Communication/Console/Console.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="ASCIITable">
-        <File Name="examples/Communication/ASCIITable/ASCIITable.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="ASCIIPing">
-        <File Name="examples/Communication/ASCIIPing/ASCIIPing.cpp"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="ReadASCIIString">
-        <File Name="examples/Communication/ReadASCIIString/ReadASCIIString.cpp"/>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="NoArduino">
-      <VirtualDirectory Name="Gpio">
-        <VirtualDirectory Name="WaitForInt">
-          <File Name="examples/NoArduino/Gpio/WaitForInt/WaitForInt.cpp"/>
-        </VirtualDirectory>
-        <VirtualDirectory Name="Fade">
-          <File Name="examples/NoArduino/Gpio/Fade/Fade.cpp"/>
-        </VirtualDirectory>
-        <VirtualDirectory Name="Interrupt">
-          <File Name="examples/NoArduino/Gpio/Interrupt/Interrupt.cpp"/>
-        </VirtualDirectory>
-        <VirtualDirectory Name="Blink">
-          <File Name="examples/NoArduino/Gpio/Blink/Blink.cpp"/>
-        </VirtualDirectory>
-      </VirtualDirectory>
-    </VirtualDirectory>
-    <VirtualDirectory Name="Button">
-      <File Name="examples/Button/Button.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="Fade">
-      <File Name="examples/Fade/Fade.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="Interrupt">
-      <File Name="examples/Interrupt/Interrupt.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="Blink">
-      <File Name="examples/Blink/Blink.cpp"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="Blink-Daemon">
-      <File Name="examples/Blink-Daemon/Blinkd.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
@@ -267,8 +297,6 @@
     <File Name="database/piduino-data-core.sql"/>
     <File Name="database/piduino-db-use_cases.md"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Release"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -359,4 +387,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>
