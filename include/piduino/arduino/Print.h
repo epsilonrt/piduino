@@ -37,8 +37,8 @@
 class Print {
   private:
     int write_error;
-    size_t printNumber (unsigned long, uint8_t);
-    size_t printFloat (double, uint8_t);
+    String toString (unsigned long n, uint8_t base);
+    String toString (double number, uint8_t digits);
 
   protected:
     void setWriteError (int err = 1) {
@@ -46,6 +46,17 @@ class Print {
     }
     // Piduino
     virtual size_t writeln();
+    virtual size_t writeln (const uint8_t *buffer, size_t size);
+    size_t writeln (const char *str) {
+      if (str == NULL) {
+        return 0;
+      }
+      return writeln ( (const uint8_t *) str, strlen (str));
+    }
+    size_t writeln (const char *buffer, size_t size) {
+
+      return writeln ( (const uint8_t *) buffer, size);
+    }
 
   public:
     Print() : write_error (0) {}
