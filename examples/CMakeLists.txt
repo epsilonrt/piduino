@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.0)
+
+add_subdirectory(Blink)
+add_subdirectory(Blink-Daemon)
+add_subdirectory(Button)
+add_subdirectory(Communication)
+add_subdirectory(Fade)
+add_subdirectory(Interrupt)
+add_subdirectory(NoArduino)
+add_subdirectory(Spi)
+add_subdirectory(Wire)

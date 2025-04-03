@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.0)
+
+add_subdirectory(WireDigitalPotentiometer)
+add_subdirectory(WireMasterReader)
+add_subdirectory(WireMasterWriter)
+add_subdirectory(WireRtcBq32k)
