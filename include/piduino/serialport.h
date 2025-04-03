@@ -217,6 +217,8 @@ namespace Piduino {
         SoftwareControl = 'S',
         Rs485AfterSendControl = 'R',
         Rs485OnSendControl = 'r',
+        Rs485RtsUpControl = Rs485AfterSendControl,
+        Rs485RtsDownControl = Rs485OnSendControl,
         UnknownFlowControl = -1
       };
 
@@ -308,6 +310,8 @@ namespace Piduino {
           Parity parity; ///< the parity checking mode
           StopBits stopBits; ///< the number of stop bits in a frame
           FlowControl flowControl; ///< the desired flow control mode
+          unsigned long onebyteTime; ///< time for send on byte
+          unsigned long rs485Delay; ///< the rs485 delay in microseconds before and after send
 
           /**
            * @brief equality operator
@@ -343,6 +347,13 @@ namespace Piduino {
            * @brief Convert current flow control to string
            */
           std::string flowControlString() const;
+          
+          /**
+           * @brief Update the time of an byte in accordance with the baudrate and the number of bits of data, parity and stop.
+           * 
+           * @note If @c rs485Delay is lower than the new value, @c rs485Delay is also assigned to this value.
+           */
+          void updateOneByteTime();
 
           /**
            * @brief Convert data bits to string
@@ -710,7 +721,7 @@ namespace Piduino {
         @brief the state (high or low) of the line signal DTR
 
         Returns @c true on success, @c false otherwise.
-        If the flag is @c true then the DTR signal is set to high; otherwise low.
+        If the flag is @c true then the DTR signal is set to (low level on line); otherwise low (high level on line).
 
         @note The serial port has to be open before trying to set or get this
         property; otherwise @c false is returned and the error code is set to
@@ -726,7 +737,7 @@ namespace Piduino {
         @brief the state (high or low) of the line signal RTS
 
         Returns @c true on success, @c false otherwise.
-        If the flag is @c true then the RTS signal is set to high; otherwise low.
+        If the flag is @c true then the RTS signal is set to high (low level on line); otherwise low (high level on line).
 
         @note The serial port has to be open before trying to set or get this
         property; otherwise @c false is returned and the error code is set to
@@ -794,6 +805,18 @@ namespace Piduino {
        */
       bool setBreakEnabled (bool set = true);
       bool isBreakEnabled() const;
+
+
+      /**
+        @overload
+        Writes at most \a maxSize bytes of data from \a data to the
+        stream. Returns the number of bytes that were actually written, or
+        -1 if an error occurred.
+
+        \sa read()
+      */
+      virtual ssize_t write (const char * data, size_t maxSize);
+      virtual ssize_t write (const char * data, size_t maxSize, bool endl);
 
     protected:
       class Private;

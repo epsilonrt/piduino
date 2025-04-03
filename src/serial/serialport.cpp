@@ -73,8 +73,11 @@ namespace Piduino {
     dataBits (dataBits),
     parity (parity),
     stopBits (stopBits),
-    flowControl (flowControl)
-  {}
+    flowControl (flowControl) {
+
+    updateOneByteTime();
+    rs485Delay = onebyteTime;
+  }
 
   // ---------------------------------------------------------------------------
   bool SerialPort::Settings::operator== (const Settings & other) {
@@ -83,7 +86,8 @@ namespace Piduino {
            outputBaudRate == other.outputBaudRate &&
            dataBits == other.dataBits &&
            parity == other.parity &&
-           stopBits == other.stopBits;
+           stopBits == other.stopBits &&
+           rs485Delay == other.rs485Delay;
   }
 
   // ---------------------------------------------------------------------------
@@ -210,6 +214,13 @@ namespace Piduino {
     return os;
   }
 
+  // ---------------------------------------------------------------------------
+  void Piduino::SerialPort::Settings::updateOneByteTime() {
+
+    onebyteTime = 1000000UL * (1 + dataBits + (parity == NoParity ? 0 : 1) + stopBits) / outputBaudRate;
+    rs485Delay = onebyteTime;
+  }
+
 // -----------------------------------------------------------------------------
 //
 //                             SerialPort Class
@@ -318,6 +329,7 @@ namespace Piduino {
     }
     if ( (directions & Output) && (d->settings.outputBaudRate != baudRate)) {
       d->settings.outputBaudRate = baudRate;
+      d->settings.updateOneByteTime();
       hasChanged = true;
     }
     if (isOpen() && hasChanged) {
@@ -346,6 +358,7 @@ namespace Piduino {
 
     if (hasChanged) {
       d->settings.dataBits = dataBits;
+      d->settings.updateOneByteTime();
       if (isOpen()) {
         return d->setDataBits ();
       }
@@ -367,6 +380,7 @@ namespace Piduino {
 
     if (hasChanged) {
       d->settings.parity = parity;
+      d->settings.updateOneByteTime();
       if (isOpen()) {
         return d->setParity ();
       }
@@ -388,6 +402,7 @@ namespace Piduino {
 
     if (hasChanged) {
       d->settings.stopBits = stopBits;
+      d->settings.updateOneByteTime();
       if (isOpen()) {
         return d->setStopBits ();
       }
@@ -501,6 +516,46 @@ namespace Piduino {
 
     return d->isBreakEnabled;
   }
+  
+  // ---------------------------------------------------------------------------
+  ssize_t SerialPort::write (const char * data, size_t maxSize) {
+    
+    return write (data, maxSize, false);
+  }
+  
+  // ---------------------------------------------------------------------------
+  ssize_t SerialPort::write (const char * data, size_t maxSize, bool endl) {
+
+    if (openMode() & WriteOnly) {
+      PIMP_D (SerialPort);
+
+      if (d->settings.flowControl == Rs485RtsUpControl || d->settings.flowControl == Rs485RtsDownControl) {
+        ssize_t ret = -1;
+
+        if (d->setRequestToSend (d->settings.flowControl == Rs485RtsDownControl)) {
+
+          Clock::delayMicroseconds (d->settings.rs485Delay);
+          ret = FileStream::write (data, maxSize);
+          if (ret >= 0) {
+            
+            if (endl) {
+              
+              ret +=  FileStream::write ("\r\n", 2);
+            }
+            FileStream::flush();
+            Clock::delayMicroseconds (d->settings.onebyteTime * ret + d->settings.rs485Delay);
+            d->setRequestToSend (d->settings.flowControl != Rs485RtsDownControl) ;
+          }
+        }
+        return ret;
+      }
+      else {
+
+        return FileStream::write (data, maxSize);
+      }
+    }
+    return -1;
+  }
 
 // -----------------------------------------------------------------------------
 //
@@ -515,7 +570,10 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  SerialPort::Private::~Private() = default;
+  SerialPort::Private::~Private() {
+    
+    close();
+  }
 
   // ---------------------------------------------------------------------------
   bool SerialPort::Private::open (OpenMode mode, int additionalPosixFlags) {
@@ -581,6 +639,10 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void SerialPort::Private::close () {
+    int status;
+
+    ioctl (TIOCMGET, &status);
+    ioctl (TIOCMSET, &status);
 
     if (settingsRestoredOnClose) {
       ::tcsetattr (fd, TCSANOW, &restoredTermios);
@@ -674,52 +736,12 @@ namespace Piduino {
     success = setTermios (&tio);
 
     if (success) {
-      struct serial_rs485 rs485conf;
+      int status;
 
-      memset (&rs485conf, 0, sizeof (rs485conf));
-      if ( (settings.flowControl == Rs485AfterSendControl) ||
-           (settings.flowControl == Rs485OnSendControl))  {
-
-        /* Enable RS485 mode: */
-        rs485conf.flags = SER_RS485_ENABLED;
-
-        if (settings.flowControl == Rs485AfterSendControl) {
-
-          /* Set logical level for RTS pin equal to 0 (asserted) after sending: */
-          rs485conf.flags |= SER_RS485_RTS_AFTER_SEND;
-        }
-        else {
-
-          /* Set logical level for RTS pin equal to 0 (asserted) when sending: */
-          rs485conf.flags |= SER_RS485_RTS_ON_SEND;
-        }
-
-        /* Set rts delay before send, if needed: */
-        // TODO: rs485conf.delay_rts_before_send = ...;
-
-        /* Set rts delay after send, if needed: */
-        // TODO: rs485conf.delay_rts_after_send = ...;
-
-        /* Set this flag if you want to receive data even whilst sending data */
-        // TODO: rs485conf.flags |= SER_RS485_RX_DURING_TX;
-
-        success = (ioctl (TIOCSRS485, &rs485conf) == 0);
-        if (success) {
-          int status;
-
-          // Setting-up RTS and DTR Pins
-          success = success && (ioctl (TIOCMGET, &status) == 0);
-          status |= TIOCM_DTR | TIOCM_RTS; // TODO: RTS On or Off ?
-          success = success && (ioctl (TIOCMSET, &status) == 0);
-        }
-      }
-      else {
-        /*
-         * Désactive le mode RS485 en ignorant les erreurs (renvoyées par les
-         * drivers ne gérant pas le RS485)
-         */
-        (void) ioctl (TIOCSRS485, &rs485conf);
-      }
+      // Setting-up RTS and DTR Pins
+      success = success && (ioctl (TIOCMGET, &status) == 0);
+      status |= TIOCM_DTR | TIOCM_RTS; // TODO: RTS On or Off ?
+      success = success && (ioctl (TIOCMSET, &status) == 0);
     }
     return success;
   }
@@ -736,7 +758,7 @@ namespace Piduino {
             && setBaudRate (settings.outputBaudRate, Output));
   }
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
   bool SerialPort::Private::setBaudRate (int32_t baudRate, Directions directions) {
 
     if (baudRate <= 0) {
@@ -752,7 +774,7 @@ namespace Piduino {
 
   }
 
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
   bool SerialPort::Private::setStandardBaudRate (int32_t baudRate, Directions directions) {
 
     // try to clear custom baud rate, using termios v2
@@ -1003,12 +1025,12 @@ namespace Piduino {
      */
 
     // tio->c_oflag = CR3 | NL1 | VT1;
-    
-    if (!(m & IoDevice::Binary)) {
+
+    if (! (m & IoDevice::Binary)) {
       tio->c_iflag |= IGNCR;
       tio->c_oflag |= ONLCR;
     }
-    
+
     tio->c_cc[VTIME] = 0;
     tio->c_cc[VMIN] = 0;
 
@@ -1049,7 +1071,7 @@ namespace Piduino {
     switch (parity) {
 
 #ifdef CMSPAR
-        // Here Installation parity only for GNU/Linux where the macro CMSPAR.
+      // Here Installation parity only for GNU/Linux where the macro CMSPAR.
       case Parity::SpaceParity:
         tio->c_cflag &= ~PARODD;
         tio->c_cflag |= PARENB | CMSPAR;
@@ -1114,6 +1136,7 @@ namespace Piduino {
         break;
     }
   }
+
 
   // ---------------------------------------------------------------------------
   typedef std::map<int32_t, int32_t> BaudRateMap;
