@@ -15,7 +15,7 @@
 # along with the Piduino Project.  If not, see <http://www.gnu.org/licenses/>.
 # piduino/doc CMakeLists.txt
 
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0)
 
 set (PIDUINO_WITH_DOXYGEN_DOC 0 CACHE BOOL "Enable build of the documentation")
 

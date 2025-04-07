@@ -14,7 +14,7 @@
 # along with the Piduino Project.  If not, see <http://www.gnu.org/licenses/>.
 
 # libpiduino CMakeLists.txt
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0)
 
 # set packaging dir
 if(NOT CPACK_PACKAGE_DIRECTORY)
