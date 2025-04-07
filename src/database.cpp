@@ -175,8 +175,13 @@ namespace Piduino {
       // BOARD Tag from /etc/armbian-release found...
       return setTag (system.armbianInfo().board());
     }
+    else if (system.raspianInfo().found()) {
+
+      return setRevision(system.raspianInfo().value());
+    }
     else {
 
+      // Raspberry Pi ?
       if ( (system.revision() > 0) &&
            ( (system.hardware() == "BCM2708") || (system.hardware() == "BCM2709") ||
              (system.hardware() == "BCM2710") || (system.hardware() == "BCM2711") || 

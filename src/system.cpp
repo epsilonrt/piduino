@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -30,10 +30,15 @@
 #endif
 
 // Nom du programme en cours défini par la glibc
-extern char * program_invocation_name; // glibc
-extern char * __progname;
+extern char *program_invocation_name;  // glibc
+extern char *__progname;
 
 namespace Piduino {
+  const char *LinuxRevisionFile = "/proc/device-tree/system/linux,revision";
+  const char *CpuInfoFile = "/proc/cpuinfo";
+  const char *ArmbianReleaseFile = "/etc/armbian-release";
+  const char *DeviceTreeModelFile = "/proc/device-tree/model";
+  const char *FriendlyElecReleaseFile = "/etc/friendlyelec-release";
 
   // ---------------------------------------------------------------------------
   //
@@ -43,7 +48,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   // static
-  bool System::fileExists (const char * path) {
+  bool System::fileExists (const char *path) {
     struct stat fs;
 
     return (stat (path, &fs) == 0);
@@ -51,7 +56,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   // static
-  bool System::charFileExists (const char * path) {
+  bool System::charFileExists (const char *path) {
     struct stat fs;
 
     if (stat (path, &fs) == 0) {
@@ -63,7 +68,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   // static
-  bool System::directoryExists (const char * path) {
+  bool System::directoryExists (const char *path) {
     struct stat fs;
 
     if (stat (path, &fs) == 0) {
@@ -76,11 +81,11 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // static
   std::string System::progName() {
-#ifdef HAVE_GETPROGNAME_FUNCTION
+    #ifdef HAVE_GETPROGNAME_FUNCTION
     return std::string (getprogname ());
-#else
+    #else
     return std::string (__progname);
-#endif
+    #endif
   }
 
   // ---------------------------------------------------------------------------
@@ -103,7 +108,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  System::createPidFile (const char * path) {
+  System::createPidFile (const char *path) {
     std::ostringstream fn;
     std::ofstream f;
     pid_t pid;
@@ -118,7 +123,7 @@ namespace Piduino {
         fn << "/var/run/";
       }
       else {
-        
+
         fn << "/tmp/";
       }
       fn << progName() << ".pid";
@@ -277,17 +282,45 @@ namespace Piduino {
     Hardware  : Allwinner sun8i Family
     Revision  : 0000
     Serial    : 02c00081aa289408
-   */
+  */
   void
   System::readCpuInfo() {
 
-    if (fileExists ("/proc/cpuinfo")) {
+    if (fileExists (DeviceTreeModelFile)) {
+      std::ifstream f (DeviceTreeModelFile);
+
+      if (f.is_open()) {
+        std::string str;
+        
+        std::getline (f, str);
+        transform (str.begin(), str.end(), str.begin(), ::tolower);
+        _hardware = str;
+      }
+    }
+
+    if (fileExists (LinuxRevisionFile)) {
+
+      _revision = readLinuxRevision();
+    }
+
+    if (fileExists (CpuInfoFile)) {
       std::string str;
-      ConfigFile cfg ("/proc/cpuinfo", ':');
+      ConfigFile cfg (CpuInfoFile, ':');
 
-      _hardware = cfg.value ("Hardware");
+      if (_hardware.empty()) {
+        if (cfg.keyExists ("Hardware")) {
 
-      if (cfg.keyExists ("Revision")) {
+          str = cfg.value ("Hardware");
+          transform (str.begin(), str.end(), str.begin(), ::tolower);
+          _hardware = str;
+        }
+        else {
+
+          _hardware = "unknown";
+        }
+      }
+
+      if (cfg.keyExists ("Revision")  && _revision == 0) {
 
         str = cfg.value ("Revision");
         _revision = std::stol (str, nullptr, 16) & 0xFFFFFF;
@@ -316,6 +349,20 @@ namespace Piduino {
       _core.partno = cfg.value<int> ("CPU part", 0);
       _core.revision = cfg.value<int> ("CPU revision", 0);
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  unsigned long System::readLinuxRevision() {
+    std::ifstream f (LinuxRevisionFile, std::ifstream::binary);
+    unsigned long rev = 0;
+
+    if (f.is_open()) {
+      uint8_t bytes[4];
+
+      f.read (reinterpret_cast<char *> (bytes), sizeof (bytes));
+      rev = (unsigned long) ( (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]);
+    }
+    return rev;
   }
 
   // ---------------------------------------------------------------------------
@@ -351,12 +398,12 @@ namespace Piduino {
     BOARD_VENDOR=FriendlyELEC
     ARCH=arm
 
-   */
+  */
 
   // ---------------------------------------------------------------------------
   System::ArmbianInfo::ArmbianInfo() : _valid (false) {
-    std::vector<std::string> filename = { "/etc/friendlyelec-release",
-                                          "/etc/armbian-release"
+    std::vector<std::string> filename = { FriendlyElecReleaseFile,
+                                          ArmbianReleaseFile
                                         };
     int findex = -1;
 
@@ -392,6 +439,31 @@ namespace Piduino {
       }
       _branch = cfg.value ("BRANCH");
       _arch = cfg.value ("ARCH");
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //                         System::RaspianInfo Class
+  //
+  // ---------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  System::RaspianInfo::RaspianInfo() {
+
+    if (fileExists (LinuxRevisionFile)) {
+
+      _info.value = readLinuxRevision();
+    }
+    else if (fileExists (CpuInfoFile)) {
+      ConfigFile cfg (CpuInfoFile, ':');
+
+      if (cfg.keyExists ("Revision")) {
+        std::string str;
+
+        str = cfg.value ("Revision");
+        _info.value = std::stol (str, nullptr, 16) & 0xFFFFFF;
+      }
     }
   }
 }
