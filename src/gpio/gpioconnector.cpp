@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <piduino/gpio.h>
 #include <piduino/gpiodevice.h>
@@ -21,21 +21,22 @@
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
+#include "gpioconnector_p.h"
 #include "config.h"
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                          Connector Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                          Connector Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  Connector::Connector (Gpio * parent, Descriptor * desc) :
+  Connector::Connector (Gpio *parent, Descriptor *desc) :
     _isopen (false), _parent (parent), _descriptor (desc) {
     int num;
-    std::vector<Pin::Descriptor> & v = _descriptor->pin;
+    std::vector<Pin::Descriptor> &v = _descriptor->pin;
 
     for (int i = 0; i < v.size(); i++) {
 
@@ -114,7 +115,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  const Connector::Family & Connector::family() const {
+  const Connector::Family &Connector::family() const {
 
     return _descriptor->family;
   }
@@ -183,25 +184,11 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-//                      Opérateur << vers ostream
+  //                      Opérateur << vers ostream
   // ---------------------------------------------------------------------------
   namespace ConnectorOstream {
 
-  // ---------------------------------------------------------------------------
-    enum Alignment {
-      Left,
-      Right,
-      Center
-    };
-
-  // ---------------------------------------------------------------------------
-    class Field {
-      public:
-        std::string::size_type size;
-        std::string name;
-    };
-
-  // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
     const std::array<Field, 7> _field = {{
         {5, "sOc"},
         {5, "iNo"},
@@ -213,19 +200,19 @@ namespace Piduino {
       }
     };
 
-  // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
     std::string
-    toUpper (const std::string & s) {
+    toUpper (const std::string &s) {
       std::string out (s);
 
       std::transform (out.begin(), out.end(), out.begin(),
-                      std::ptr_fun<int, int> (std::toupper));
+                      [](int c) { return std::toupper(c); });
       return out;
     }
 
-  // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
     std::string
-    format (const std::string & s, std::string::size_type w, Alignment a) {
+    format (const std::string &s, std::string::size_type w, Alignment a) {
       std::string in (s);
       std::string out (w, ' ');
       std::string::size_type pos;
@@ -258,7 +245,7 @@ namespace Piduino {
   using namespace ConnectorOstream;
   // ---------------------------------------------------------------------------
   void
-  Connector::printHline (std::ostream & os) const {
+  Connector::printHline (std::ostream &os) const {
 
     os << '+';
     for (unsigned int i = 0; i < _field.size(); i++) {
@@ -280,7 +267,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  Connector::printTitle (std::ostream & os) const {
+  Connector::printTitle (std::ostream &os) const {
     printHline (os);
 
     os << '|';
@@ -308,11 +295,11 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  Connector::printRow (std::ostream & os, int number) const {
+  Connector::printRow (std::ostream &os, int number) const {
     std::array<std::string, 5> s;
     unsigned int i = 0;
 
-    Pin * p = &pin (number++);
+    Pin *p = &pin (number++);
     os << '|';
     if (p->type() == Pin::TypeGpio) {
       s[0] = std::to_string (p->mcuNumber());
@@ -362,7 +349,7 @@ namespace Piduino {
       }
       else {
 
-        for (auto & n : s) {
+        for (auto &n : s) {
           n.clear();
         }
       }
@@ -381,7 +368,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  std::ostream& operator<< (std::ostream& os, const Connector * c)  {
+  std::ostream &operator<< (std::ostream &os, const Connector *c)  {
     std::string::size_type width = 0;
     std::ostringstream buf;
 
