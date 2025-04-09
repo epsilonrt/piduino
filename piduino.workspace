@@ -3,7 +3,9 @@
   <Project Name="libpiduino" Path="libpiduino.project" Active="No"/>
   <Project Name="libpiduino-doc" Path="doc/libpiduino-doc.project" Active="No"/>
   <Project Name="libpiduino-dev" Path="dev/libpiduino-dev.project" Active="No"/>
-  <Project Name="piduino-utils" Path="utils/piduino-utils.project" Active="Yes"/>
+  <Project Name="piduino-utils" Path="utils/piduino-utils.project" Active="No"/>
+  <Project Name="pido" Path="utils/pido/pido.project" Active="Yes"/>
+  <Project Name="pinfo" Path="../../../home/pi/src/piduino/utils/pinfo/pinfo.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -11,6 +13,8 @@
       <Project Name="libpiduino-doc" ConfigName="Debug"/>
       <Project Name="libpiduino-dev" ConfigName="Debug"/>
       <Project Name="piduino-utils" ConfigName="Debug"/>
+      <Project Name="pido" ConfigName="Debug"/>
+      <Project Name="pinfo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -18,6 +22,8 @@
       <Project Name="libpiduino-doc" ConfigName="Release"/>
       <Project Name="libpiduino-dev" ConfigName="Release"/>
       <Project Name="piduino-utils" ConfigName="Release"/>
+      <Project Name="pido" ConfigName="Release"/>
+      <Project Name="pinfo" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
