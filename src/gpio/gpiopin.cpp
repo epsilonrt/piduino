@@ -173,7 +173,14 @@ namespace Piduino {
 
       if (isOpen()) {
 
-        readPull();;
+        if (device()->flags() & GpioDevice::hasPullRead) {
+
+          readPull();
+        }
+        else {
+
+          throw std::invalid_argument ("Unable to read pull resistor");
+        }
       }
     }
     else {
@@ -830,11 +837,6 @@ namespace Piduino {
         _pull = device()->pull (this);
         return;
       }
-      else {
-
-        throw std::invalid_argument ("Unable to read pull resistor");
-      }
-
     }
     _pull = PullUnknown;
   }
@@ -961,9 +963,9 @@ namespace Piduino {
     catch (...) {
 
     }
-    #ifndef NDEBUG
+#ifndef NDEBUG
     std::cout << std::endl << __FUNCTION__ << " terminated" << std::endl;
-    #endif
+#endif
     return 0;
   }
 
