@@ -127,7 +127,14 @@ namespace Piduino {
                 RaspberryPi3APlus,
                 NanoPiDuo2,
                 RaspberryPi4B,
+                RaspberryPiZero2W,
                 RaspberryPiComputeModule3Plus,
+                RaspberryPiComputeModule4,
+                RaspberryPi5,
+                RaspberryPiComputeModule5,
+                RaspberryPiComputeModule5Lite,
+                RaspberryPi400,
+                RaspberryPi500,
 
                 // Add New item here and update board_model table in database !
 
