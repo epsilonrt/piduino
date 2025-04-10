@@ -41,8 +41,7 @@ For Raspbian you have to do a little different :
     sudo apt update
     sudo apt install libpiduino-dev piduino-utils
 
-The Raspbian repository provides Piduino packages for `armhf` architecture for 
-Stretch and Buster only.
+The Raspbian repository provides Piduino packages for `armhf` and `arm64` architecture for Buster, Bullseye and Bookworm.
 
 If you want to build from sources, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki/Build-from-source).
@@ -98,7 +97,7 @@ To read the pin status of connector 1, run the following on the command line :
 
 Arduino programming on Pi board ? We are going there !
 
-```c++
+```cpp
 #include <Piduino.h> // all the magic is here ;-)
 
 const int ledPin = 0; // Header Pin 11: GPIO17 for RPi, GPIOA0 for NanoPi
@@ -158,7 +157,15 @@ You can enable the **setuid** bit to avoid `sudo` in the future :
     $ sudo chmod u+s blink
     $ ./blink
 
-With [Codelite](https://codelite.org/) it's easier and funny, right ? 
+It is possible to use Visual Studio Code for development with a SSH connection, but you have to install the
+[CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
+plugin and [CMake](https://cmake.org/download/) (version 3.10 or higher).
+
+You can use the [examples/Template](https://github.com/epsilonrt/piduino/tree/master/examples/Template) folder and the [Project Templates](https://marketplace.visualstudio.com/items?itemName=cantonios.project-templates) extension to simplify project creation.
+
+![Debugging with VsCode](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/vscode.png)
+
+It is also possible to use [Codelite](https://codelite.org/) it's easier and funny, right ? 
 
 ![Debugging with Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-2.png)
 
