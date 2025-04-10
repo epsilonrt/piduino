@@ -1,4 +1,4 @@
-// #{NAME}
+// #{PROJECT}
 // by #{AUTHOR}
 // #{DESCRIPTION}
 #ifdef __unix__
