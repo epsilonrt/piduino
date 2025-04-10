@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <sstream>
 #include <cstdlib>
 #include <piduino/database.h>
@@ -23,14 +23,14 @@
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                            Database Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                            Database Class
+  //
+  // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-  Database::Database (const std::string & cinfo) :
+  // -----------------------------------------------------------------------------
+  Database::Database (const std::string &cinfo) :
     cppdb::session (), _cinfo (findConnectionInfo (cinfo)) {
 
     if (!_cinfo.empty()) {
@@ -40,8 +40,8 @@ namespace Piduino {
     _board = std::make_shared<Board>();
   }
 
-// -----------------------------------------------------------------------------
-  Database::Database (int cpuinfoBoardRevision, const std::string & cinfo) :
+  // -----------------------------------------------------------------------------
+  Database::Database (int cpuinfoBoardRevision, const std::string &cinfo) :
     cppdb::session (), _cinfo (findConnectionInfo (cinfo)) {
 
     if (!_cinfo.empty()) {
@@ -51,8 +51,8 @@ namespace Piduino {
     _board = std::make_shared<Board> (cpuinfoBoardRevision);
   }
 
-// -----------------------------------------------------------------------------
-  Database::Database (const std::string & armbianBoardTag, const std::string & cinfo) :
+  // -----------------------------------------------------------------------------
+  Database::Database (const std::string &armbianBoardTag, const std::string &cinfo) :
     cppdb::session (), _cinfo (findConnectionInfo (cinfo)) {
 
     if (!_cinfo.empty()) {
@@ -62,15 +62,15 @@ namespace Piduino {
     _board = std::make_shared<Board> (armbianBoardTag);
   }
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   Database::~Database() {
 
     cppdb::session::close();
   }
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   void
-  Database::setConnectionInfo (const std::string & cinfo) {
+  Database::setConnectionInfo (const std::string &cinfo) {
 
     if (cppdb::session::is_open()) {
       cppdb::session::close();
@@ -79,13 +79,13 @@ namespace Piduino {
     cppdb::session::open (_cinfo);
   }
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   std::string
-  Database::findConnectionInfo (const std::string & cinfo) {
+  Database::findConnectionInfo (const std::string &cinfo) {
     std::string ret (cinfo), str;
 
     if (ret.empty()) {
-      const char * env;
+      const char *env;
 
       env = std::getenv ("PIDUINO_CONN_INFO");
       if (env) {
@@ -106,13 +106,13 @@ namespace Piduino {
     return ret;
   }
 
-// -----------------------------------------------------------------------------
-//
-//                            Database::Board Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                            Database::Board Class
+  //
+  // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   Database::Board::Board (int cpuinfoBoardRevision) :
     _id (-1), _gpio_id (-1), _revision (-1), _found (false), _default_i2c_id (-1),
     _default_spi_id (-1), _default_uart_id (-1) {
@@ -129,18 +129,18 @@ namespace Piduino {
     }
   }
 
-// -----------------------------------------------------------------------------
-  Database::Board::Board (const std::string & t) : Board() {
+  // -----------------------------------------------------------------------------
+  Database::Board::Board (const std::string &t) : Board() {
 
     setTag (t);
   }
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   Database::Board::~Board() {
 
   }
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   bool
   Database::Board::probingSystem() {
     std::string fn (PIDUINO_INSTALL_ETC_DIR);
@@ -160,12 +160,23 @@ namespace Piduino {
       }
 
       if (cfg.keyExists ("revision")) {
-        unsigned long r = cfg.value<unsigned long> ("revision");
+        std::string s = cfg.value ("revision");
 
-        // BOARD Revision from /etc/piduino.conf found...
-        if (setRevision (r)) {
+        if (!s.empty()) {
+          // Revision from /etc/piduino.conf found...
+          try {
+            unsigned long r = std::stoul (s, nullptr, 0);
 
-          return true;
+            // BOARD Revision from /etc/piduino.conf found...
+            if (setRevision (r)) {
+
+              return true;
+            }
+          }
+          catch(std::invalid_argument &e) {
+            
+            throw std::runtime_error ("Invalid revision value in piduino.conf: " + s);
+          }
         }
       }
     }
@@ -177,14 +188,14 @@ namespace Piduino {
     }
     else if (system.raspianInfo().found()) {
 
-      return setRevision(system.raspianInfo().value());
+      return setRevision (system.raspianInfo().value());
     }
     else {
 
       // Raspberry Pi ?
       if ( (system.revision() > 0) &&
            ( (system.hardware() == "BCM2708") || (system.hardware() == "BCM2709") ||
-             (system.hardware() == "BCM2710") || (system.hardware() == "BCM2711") || 
+             (system.hardware() == "BCM2710") || (system.hardware() == "BCM2711") ||
              (system.hardware() == "BCM2835") || (system.hardware() == "BCM2836") ||
              (system.hardware() == "BCM2837") || (system.hardware() == "BCM2838"))) {
 
@@ -195,7 +206,7 @@ namespace Piduino {
     return false;
   }
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   bool
   Database::Board::setRevision (int rev) {
 
@@ -221,9 +232,9 @@ namespace Piduino {
     return false;
   }
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   bool
-  Database::Board::setTag (const std::string & t) {
+  Database::Board::setTag (const std::string &t) {
 
     if (Piduino::db.is_open()) {
       cppdb::result res = Piduino::db <<
@@ -246,8 +257,8 @@ namespace Piduino {
     return false;
   }
 
-// -----------------------------------------------------------------------------
-  std::ostream& operator<< (std::ostream& os, const Database::Board& b)  {
+  // -----------------------------------------------------------------------------
+  std::ostream &operator<< (std::ostream &os, const Database::Board &b)  {
     /*
         Name        : Pi2 Model B
         Mcu         : bcm2709
@@ -256,7 +267,7 @@ namespace Piduino {
         PCB Rev     : 1.1
         Memory      : 1024MB
         Manufacturer: Sony
-     */
+    */
     os << "Name            : " << b.name() << std::endl;
     os << "Family          : " << b.family().name() << std::endl;
     os << "Database Id     : " << b.id() << std::endl;
@@ -279,13 +290,13 @@ namespace Piduino {
     return os;
   }
 
-// -----------------------------------------------------------------------------
-//
-//                            Database::Board::Model Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                            Database::Board::Model Class
+  //
+  // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   void
   Database::Board::Model::setId (Database::Board::Model::Id i)  {
 
@@ -304,13 +315,13 @@ namespace Piduino {
     }
   }
 
-// -----------------------------------------------------------------------------
-//
-//                            Database::Board::Family Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                            Database::Board::Family Class
+  //
+  // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   void
   Database::Board::Family::setId (Database::Board::Family::Id i)  {
 
@@ -321,7 +332,7 @@ namespace Piduino {
     if (!res.empty()) {
 
       _id = i;
-      res >> _name >> _i2c_syspath>>  _spi_syspath >> _uart_syspath;
+      res >> _name >> _i2c_syspath >>  _spi_syspath >> _uart_syspath;
     }
   }
 }
