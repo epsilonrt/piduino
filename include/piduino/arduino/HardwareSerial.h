@@ -35,6 +35,10 @@ extern HardwareSerial & Serial;
 extern HardwareSerial & Serial1;
 extern HardwareSerial & Serial2;
 extern HardwareSerial & Serial3;
+extern HardwareSerial & Serial4;
+extern HardwareSerial & Serial5;
+extern HardwareSerial & Serial6;
+extern HardwareSerial & Serial7;
 
 // Define config for Serial.begin(baud, config);
 #define SERIAL_5N1 0x00
@@ -136,9 +140,8 @@ class HardwareSerial : public ::Terminal {
     inline bool setSettings (const Piduino::SerialPort::Settings & settings);
     inline Piduino::SerialPort::Settings settings() const;
 
-
     static void setupAvailablePorts();
-    static const int numberOfPorts = 4;
+    static const int numberOfPorts = 8;
     static std::deque<HardwareSerial> availablePorts;
 
   protected:

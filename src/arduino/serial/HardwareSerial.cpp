@@ -27,6 +27,10 @@ HardwareSerial & Serial  = HardwareSerial::availablePorts[0];
 HardwareSerial & Serial1 = HardwareSerial::availablePorts[1];
 HardwareSerial & Serial2 = HardwareSerial::availablePorts[2];
 HardwareSerial & Serial3 = HardwareSerial::availablePorts[3];
+HardwareSerial & Serial4 = HardwareSerial::availablePorts[4];
+HardwareSerial & Serial5 = HardwareSerial::availablePorts[5];
+HardwareSerial & Serial6 = HardwareSerial::availablePorts[6];
+HardwareSerial & Serial7 = HardwareSerial::availablePorts[7];
 
 // -----------------------------------------------------------------------------
 void HardwareSerial::setupAvailablePorts() {
@@ -49,6 +53,8 @@ void HardwareSerial::setupAvailablePorts() {
       n++;
     }
   }
+  // fill in the missing ports with the default port
+  // so that Serial1, Serial2, and Serial3 are always valid
   for (; n < numberOfPorts; n++) {
     availablePorts.push_back (HardwareSerial (defaultPort));
   }
