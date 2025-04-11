@@ -33,14 +33,15 @@ namespace Piduino {
     public:
 
       enum Id {
-
         Broadcom = 0,
-        Sony,
+        SonyUK,
         Qisda,
         Egoman,
         Embest,
         Allwinner,
         FriendlyARM,
+        Stadium,
+        SonyJapan,
         // Add New item here and update manufactuer table in database !
 
         //---
