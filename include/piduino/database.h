@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef PIDUINO_DATABASE_H
 #define PIDUINO_DATABASE_H
 
@@ -25,12 +25,12 @@
 #include <piduino/system.h>
 
 /**
- *  @defgroup piduino_database Database
- *
- *  Les informations concernant la carte cible sont stockées dans une base de
- *  données.
- *  @{
- */
+    @defgroup piduino_database Database
+
+    Les informations concernant la carte cible sont stockées dans une base de
+    données.
+    @{
+*/
 
 namespace Piduino {
 
@@ -72,15 +72,15 @@ namespace Piduino {
                 return _name;
               }
 
-              inline const std::string & i2cSysPath() const {
+              inline const std::string &i2cSysPath() const {
                 return _i2c_syspath;
               }
 
-              inline const std::string & spiSysPath() const {
+              inline const std::string &spiSysPath() const {
                 return _spi_syspath;
               }
 
-              inline const std::string & uartSysPath() const {
+              inline const std::string &uartSysPath() const {
                 return _uart_syspath;
               }
 
@@ -102,39 +102,40 @@ namespace Piduino {
           class Model {
             public:
 
-              enum Id {
-                RaspberryPiA = 0,
-                RaspberryPiB,
-                RaspberryPiAPlus,
-                RaspberryPiBPlus,
-                RaspberryPiComputeModule,
-                RaspberryPi2B,
-                RaspberryPiZero,
-                RaspberryPi3B,
-                RaspberryPiZeroW,
-                RaspberryPiComputeModule3,
-                NanoPiNeo,
-                NanoPiNeoAir,
-                NanoPiM1,
-                NanoPiM1Plus,
-                NanoPiNeo2,
-                NanoPiNeoPlus2,
-                NanoPiNeoCore,
-                NanoPiNeoCore2,
-                NanoPiNeoCoreMiniShield,
-                NanoPiNeoCore2MiniShield,
-                RaspberryPi3BPlus,
-                RaspberryPi3APlus,
-                NanoPiDuo2,
-                RaspberryPi4B,
-                RaspberryPiZero2W,
-                RaspberryPiComputeModule3Plus,
-                RaspberryPiComputeModule4,
-                RaspberryPi5,
-                RaspberryPiComputeModule5,
-                RaspberryPiComputeModule5Lite,
-                RaspberryPi400,
-                RaspberryPi500,
+              enum Id {                       // board_family.id : /!\ enum value must be the same as in database
+                RaspberryPiA = 0,             // 0
+                RaspberryPiB,                 // 1
+                RaspberryPiAPlus,             // 2
+                RaspberryPiBPlus,             // 3
+                RaspberryPiComputeModule,     // 4
+                RaspberryPi2B,                // 5
+                RaspberryPiZero,              // 6
+                RaspberryPi3B,                // 7
+                RaspberryPiZeroW,             // 8
+                RaspberryPiComputeModule3,    // 9
+                NanoPiNeo,                    // 10
+                NanoPiNeoAir,                 // 11
+                NanoPiM1,                     // 12
+                NanoPiM1Plus,                 // 13
+                NanoPiNeo2,                   // 14
+                NanoPiNeoPlus2,               // 15
+                NanoPiNeoCore,                // 16
+                NanoPiNeoCore2,               // 17
+                NanoPiNeoCoreMiniShield,      // 18
+                NanoPiNeoCore2MiniShield,     // 19
+                RaspberryPi3BPlus,            // 20
+                RaspberryPi3APlus,            // 21
+                NanoPiDuo2,                   // 22
+                RaspberryPi4B,                // 23
+                RaspberryPiZero2W,            // 24
+                RaspberryPiComputeModule3Plus,// 25
+                RaspberryPiComputeModule4,    // 26
+                RaspberryPi400,               // 30
+                // Not yet supported
+                RaspberryPi5,                 // 27
+                RaspberryPiComputeModule5,    // 28
+                RaspberryPiComputeModule5Lite,// 29
+                RaspberryPi500,               // 31
 
                 // Add New item here and update board_model table in database !
 
@@ -151,15 +152,15 @@ namespace Piduino {
                 return _id;
               }
 
-              inline const std::string & name() const {
+              inline const std::string &name() const {
                 return _name;
               }
 
-              inline const Family & family() const {
+              inline const Family &family() const {
                 return _family;
               }
 
-              inline const SoC & soc() const {
+              inline const SoC &soc() const {
                 return _soc;
               }
 
@@ -179,23 +180,20 @@ namespace Piduino {
           //
           // -------------------------------------------------------------------
 
-          Board (int cpuinfoBoardRevision = -1);
-          Board (const std::string & armbianBoardTag);
+          Board (bool isSelectFromSystem = false);
+          Board (int rpiBoardRevision);
+          Board (const std::string &armbianBoardTag);
           virtual ~Board();
-
-          bool probingSystem();
-          bool setRevision (int rev);
-          bool setTag (const std::string & armbianBoardTag);
 
           inline long long id() const {
             return _id;
           }
 
-          inline const std::string & name() const {
+          inline const std::string &name() const {
             return model().name();
           }
 
-          inline const std::string & tag() const {
+          inline const std::string &tag() const {
             return _tag;
           }
 
@@ -203,11 +201,11 @@ namespace Piduino {
             return _revision;
           }
 
-          inline const Family & family() const {
+          inline const Family &family() const {
             return model().family();
           }
 
-          inline const SoC & soc() const {
+          inline const SoC &soc() const {
             return model().soc();
           }
 
@@ -219,11 +217,11 @@ namespace Piduino {
             return _gpio_id;
           }
 
-          inline const Model & model() const {
+          inline const Model &model() const {
             return _model;
           }
 
-          inline const Manufacturer & manufacturer() const {
+          inline const Manufacturer &manufacturer() const {
             return _manufacturer;
           }
 
@@ -236,27 +234,41 @@ namespace Piduino {
           }
 
           /**
-           * @brief Numéro du bus I2C par défaut
-           */
+             @brief Numéro du bus I2C par défaut
+          */
           inline int defaultI2cBus() const {
             return _default_i2c_id;
           }
 
           /**
-           * @brief Numéro du bus SPI par défaut
-           */
+             @brief Numéro du bus SPI par défaut
+          */
           inline int defaultSpiBus() const {
             return _default_spi_id;
           }
 
           /**
-           * @brief Numéro de l'UART par défaut
-           */
+             @brief Numéro de l'UART par défaut
+          */
           inline int defaultUart() const {
             return _default_uart_id;
           }
 
-          friend std::ostream& operator<< (std::ostream& os, const Board& c);
+          /**
+           * @brief stream operator for printing the board information
+           */
+          friend std::ostream &operator<< (std::ostream &os, const Board &c);
+
+          /**
+           * @brief return the list of all boards in the database
+           */
+          static bool boardList (std::map<long long, Board> &boardList);
+
+        private:
+          bool selectFromSystem();
+          bool selectWhereRevision (int rev);
+          bool selectWhereTag (const std::string &armbianBoardTag);
+          bool selectWhereModel (Model::Id modelId);
 
         private:
           long long _id;
@@ -278,20 +290,20 @@ namespace Piduino {
       //                      Database Class
       //
       // -----------------------------------------------------------------------
-      Database (const std::string & connectionInfo = std::string());
-      Database (int cpuinfoBoardRevision, const std::string & connectionInfo = std::string());
-      Database (const std::string & armbianBoardTag, const std::string & connectionInfo = std::string());
+      Database (const std::string &connectionInfo = std::string());
+      Database (int cpuinfoBoardRevision, const std::string &connectionInfo = std::string());
+      Database (const std::string &armbianBoardTag, const std::string &connectionInfo = std::string());
       virtual ~Database();
 
-      static std::string findConnectionInfo (const std::string & connectionInfo = std::string());
+      static std::string findConnectionInfo (const std::string &connectionInfo = std::string());
 
-      void setConnectionInfo (const std::string & connectionInfo);
+      void setConnectionInfo (const std::string &connectionInfo);
 
-      inline const std::string& connectionInfo() const {
+      inline const std::string &connectionInfo() const {
         return _cinfo;
       }
 
-      inline const Board & board() const {
+      inline const Board &board() const {
         return *_board;
       }
 
@@ -307,12 +319,12 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   extern Database db; ///< Piduino Database Global Object
   /**
-   * @}
-   */
+     @}
+  */
 }
 /**
- *  @}
- */
+    @}
+*/
 
 /* ========================================================================== */
 #endif /*PIDUINO_DATABASE_H defined */
