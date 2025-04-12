@@ -394,7 +394,6 @@ namespace Piduino {
           // All boards with this model are the same gpio, we can decode the revision
 
           _revision = system.raspianInfo().value();
-          _pcb_revision = system.raspianInfo().revision();
 
           switch (system.raspianInfo().manufacturer()) {
             case System::RaspianInfo::Manufacturer::SonyUK:
@@ -459,7 +458,7 @@ namespace Piduino {
 
             if (sz != std::string::npos) {
 
-              std::string rev = hardware.substr (sz + 4);
+              _pcb_revision = hardware.substr (sz + 4);
               _name = hardware.substr (0, sz - 1);
             }
             else {
