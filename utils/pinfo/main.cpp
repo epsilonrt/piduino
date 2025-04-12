@@ -48,6 +48,7 @@
 #define OPT_I2C     0x0400
 #define OPT_SPI     0x0800
 #define OPT_SER     0x1000
+#define OPT_MODEL   0x2000
 #define OPT_ALL     0xFFFF
 
 namespace Pinfo {
@@ -73,7 +74,7 @@ using namespace Pinfo;
 /* main ===================================================================== */
 int
 main (int argc, char **argv) {
-  const char *short_options = "srgmpbnitfahvwl"
+  const char *short_options = "srgmMpbnitfahvwl"
                               #if PIDUINO_WITH_I2C
                               "I"
                               #endif
@@ -105,6 +106,7 @@ main (int argc, char **argv) {
     {"help",  no_argument, NULL, 'h'},
     {"version",  no_argument, NULL, 'v'},
     {"list",  no_argument, NULL, 'l'},
+    {"model",  no_argument, NULL, 'M'},     // OPT_MODEL
     {NULL, 0, NULL, 0} /* End of array need by getopt_long do not delete it*/
   };
 
@@ -184,6 +186,11 @@ main (int argc, char **argv) {
       case 'S':
         count++;
         flags |= OPT_SER;
+        break;
+
+      case 'M':
+        count++;
+        flags |= OPT_MODEL;
         break;
 
       case 'a':
@@ -269,6 +276,9 @@ main (int argc, char **argv) {
         case OPT_NAME:
           cout  << db.board().name() << endl;
           break;
+        case OPT_MODEL:
+          cout  << db.board().model().name() << endl;
+          break;
         case OPT_ID:
           cout  << db.board().id() << endl;
           break;
@@ -320,7 +330,9 @@ namespace Pinfo {
     if (Database::Board::boardList (boardList)) {
       std::map<long long, Database::Board>::iterator it = boardList.begin();
 
-      cout << "ID\tTag/Revision\tName" << endl;
+      cout << "List of all boards in the database " << db.connectionInfo() << endl << endl;
+
+      cout << "ID\tTag/Revision\tModel" << endl;
       while (it != boardList.end()) {
 
         cout << it->first << "\t";
@@ -330,7 +342,7 @@ namespace Pinfo {
         else if (it->second.revision() > 0) {
           cout << showbase << setiosflags (ios::internal) << setfill ('0') << setw (8) << hex << it->second.revision() << noshowbase << dec << "\t";
         }
-        cout << it->second.name() << endl;
+        cout << it->second.model().name()  << endl;
         ++it;
       }
     }
@@ -355,6 +367,9 @@ namespace Pinfo {
   printWithLabels (uint16_t flags) {
     if (flags & OPT_NAME) {
       cout << "Name            : " << db.board().name() << endl;
+    }
+    if (flags & OPT_MODEL) {
+      cout << "Model           : " << db.board().model().name() << endl;
     }
     if (flags & OPT_FAM) {
       cout << "Family          : " << db.board().family().name() << endl;
@@ -459,6 +474,7 @@ namespace Pinfo {
     //01234567890123456789012345678901234567890123456789012345678901234567890123456789
     cout << "  -a  --all       \tPrints all informations about the board (default)" << endl;
     cout << "  -n  --name      \tPrints the \"human-readable\" name of the board." << endl;
+    cout << "  -M  --model     \tPrints the model name of the board." << endl;
     cout << "  -f  --family    \tPrints the board family (raspberrypi, nanopi, ...)" << endl;
     cout << "  -i  --id        \tPrints the piduino database id (for debug purpose)" << endl;
     cout << "  -s  --soc       \tPrints the SoC model (bcm2708 ...)" << endl;
