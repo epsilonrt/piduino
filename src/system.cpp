@@ -293,7 +293,6 @@ namespace Piduino {
         std::string str;
         
         std::getline (f, str);
-        transform (str.begin(), str.end(), str.begin(), ::tolower);
         _hardware = str;
       }
     }

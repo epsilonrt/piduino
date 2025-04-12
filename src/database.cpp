@@ -452,6 +452,21 @@ namespace Piduino {
               _ram = system.totalRam();
               break;
           }
+
+          std::string hardware = system.hardware();
+          if (hardware.find ("Raspberry Pi") == 0) {
+            std::string::size_type sz = hardware.find ("Rev ");
+
+            if (sz != std::string::npos) {
+
+              std::string rev = hardware.substr (sz + 4);
+              _name = hardware.substr (0, sz - 1);
+            }
+            else {
+
+              _name = hardware;
+            }
+          }
         }
       }
     }
