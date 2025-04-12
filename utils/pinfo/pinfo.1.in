@@ -4,7 +4,7 @@
 pinfo \- Allow the user obtain information about the Pi board.
 
 .SH SYNOPSIS
-\fBpinfo\fR [\fB\-anfisrtgmpbIPSvwh\fR]
+\fBpinfo\fR [\fB\-alMnfisrtgmpbIPSvwh\fR]
 
 .SH DESCRIPTION
 .PP
@@ -24,7 +24,17 @@ otherwise each information is displayed on a line preceded by its name.
 .PP
 \fB\-a\fR, \fB\-\-all\fR
 .RS 4
-Show all informations (default)
+Show all informations about the Pi board (default)
+.RE
+.PP
+\fB\-l\fR, \fB\-\-list\fR
+.RS 4
+Show a list of all available boards in the database.
+.RE
+.PP
+\fB\-M\fR, \fB\-\-model\fR
+.RS 4
+Show the model name of the board (raspberrypi3, nanopi2, ...)
 .RE
 .PP
 \fB\-n\fR, \fB\-\-name\fR
