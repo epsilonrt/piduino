@@ -164,7 +164,7 @@ namespace Piduino {
     if (Piduino::db.is_open()) {
 
       cppdb::result res = Piduino::db <<
-                          "SELECT id,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id"
+                          "SELECT id,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id"
                           " FROM board"
                           " INNER JOIN revision ON board.id = revision.board_id"
                           " WHERE revision.revision=?" << rev << cppdb::row;
@@ -172,7 +172,7 @@ namespace Piduino {
         int bmid;
         int mid;
 
-        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
+        res >> _id  >> _ram >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
         _model.setId (static_cast<Database::Board::Model::Id> (bmid));
         _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         _revision = rev;
@@ -190,7 +190,7 @@ namespace Piduino {
 
     if (Piduino::db.is_open()) {
       cppdb::result res = Piduino::db <<
-                          "SELECT id,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id"
+                          "SELECT id,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id"
                           " FROM board"
                           " INNER JOIN tag ON board.id = tag.board_id"
                           " WHERE tag.tag=?" << t << cppdb::row;
@@ -198,7 +198,7 @@ namespace Piduino {
         int bmid;
         int mid;
 
-        res >> _id >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
+        res >> _id  >> _ram >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
         _model.setId (static_cast<Database::Board::Model::Id> (bmid));
         _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         _tag = t;
@@ -511,7 +511,7 @@ namespace Piduino {
     if (Piduino::db.is_open()) {
 
       cppdb::result res = Piduino::db <<
-                          "SELECT id,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id,revision"
+                          "SELECT id,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id,revision"
                           " FROM board"
                           " INNER JOIN revision ON board.id = revision.board_id";
 
@@ -520,7 +520,7 @@ namespace Piduino {
         int bmid;
         int mid;
 
-        res >> b._id >> b._pcb_revision >> bmid >> b._gpio_id >> mid >> b._default_i2c_id >> b._default_spi_id >> b._default_uart_id >> b._revision;
+        res >> b._id  >> b._ram >> b._pcb_revision >> bmid >> b._gpio_id >> mid >> b._default_i2c_id >> b._default_spi_id >> b._default_uart_id >> b._revision;
         b._model.setId (static_cast<Database::Board::Model::Id> (bmid));
         b._manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         boardList[b.id()] = b;
@@ -528,7 +528,7 @@ namespace Piduino {
       res.clear();
 
       res = Piduino::db <<
-            "SELECT id,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id,tag"
+            "SELECT id,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id,tag"
             " FROM board"
             " INNER JOIN tag ON board.id = tag.board_id";
       while (res.next()) {
@@ -536,7 +536,7 @@ namespace Piduino {
         int bmid;
         int mid;
 
-        res >> b._id >> b._pcb_revision >> bmid >> b._gpio_id >> mid >> b._default_i2c_id >> b._default_spi_id >> b._default_uart_id >> b._tag;
+        res >> b._id  >> b._ram >> b._pcb_revision >> bmid >> b._gpio_id >> mid >> b._default_i2c_id >> b._default_spi_id >> b._default_uart_id >> b._tag;
         b._model.setId (static_cast<Database::Board::Model::Id> (bmid));
         b._manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         boardList[b.id()] = b;
