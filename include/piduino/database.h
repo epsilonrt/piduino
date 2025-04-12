@@ -190,7 +190,7 @@ namespace Piduino {
           }
 
           inline const std::string &name() const {
-            return model().name();
+            return _name;
           }
 
           inline const std::string &tag() const {
@@ -283,6 +283,7 @@ namespace Piduino {
           int _default_i2c_id;
           int _default_spi_id;
           int _default_uart_id;
+          std::string _name;
       };
 
       // -----------------------------------------------------------------------
