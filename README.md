@@ -19,7 +19,7 @@ The updated list of all the boards in the database is available in the
 [Wiki](https://github.com/epsilonrt/piduino/wiki/List-of-all-the-boards-currently-in-the-Piduino-database).  
 Note that if the revision number of your Raspberry Pi board is not in the database, piduino will use this number to find the same model boards in the database to make the right settings.
 
-To learn more about PiDuino, you can follow the **
+To learn more about PiDuino, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki), but if you're in a hurry, 
 let's go to the quick start version...
 
