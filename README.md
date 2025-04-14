@@ -161,8 +161,8 @@ You can then execute the program :
 `sudo` is necessary for an access to the memory mapping of the GPIO). 
 You can enable the **setuid** bit to avoid `sudo` in the future :
 
-    $ sudo chmod u+s blink
-    $ ./blink
+    $ sudo chmod u+s Blink
+    $ ./Blink
 
 It is possible to use Visual Studio Code for development with a SSH connection, but you have to install the
 [CMake Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
