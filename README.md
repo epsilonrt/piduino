@@ -9,7 +9,7 @@ I2C, SPI, UART ... with an API as close as possible to the Arduino language.
 The description of Pi cards uses a stored "Object" model in a database that 
 allows to add new models of boards easily.  
 
-This approach allows you to compile libraries normally intended for Arduino, for example, [Radiohead](https://github.com/epsilonrt/RadioHead). Normally, all libraries that do not use the specificities of a target microcontroller should be able to compile.
+This approach allows you to compile libraries normally intended for Arduino, for example, [Radiohead](https://github.com/epsilonrt/RadioHead). Normally, all libraries that do not use the specificities of a target microcontroller should be able to compile. There is a [tutorial](https://epsilonrt.fr/2019/02/arduino-lib-on-pi/) explaining how to do this, in French, but Google will translate it into your language...
 
 At this time, the SoC models supported are AllWinner H-Series and Broadcom 
 BCM2708 through 2711 which allows it to be used on Raspberry Pi and most Nano Pi, 
