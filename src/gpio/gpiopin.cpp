@@ -351,7 +351,11 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   int
   Pin::systemNumber () const {
+    
+    if (device()) {
 
+      return _descriptor->num.system + device()->systemNumberOffset();
+    }
     return _descriptor->num.system;
   }
 

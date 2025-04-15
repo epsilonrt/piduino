@@ -67,6 +67,7 @@ namespace Piduino {
         static const std::map<Pin::Mode, unsigned int> _mode2int;
         static const std::map<Pin::Mode, std::string> _modes;
         static bool _is2711;
+        static int _systemNumberOffset;
     };
   }
 }

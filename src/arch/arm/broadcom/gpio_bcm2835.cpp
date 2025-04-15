@@ -18,6 +18,7 @@
 #include <iostream>
 #include <iomanip>
 #include <exception>
+#include <sys/utsname.h>
 #include <piduino/clock.h>
 #include <piduino/database.h>
 #include "gpio_bcm2835.h"
@@ -36,6 +37,35 @@ namespace Piduino {
     // -------------------------------------------------------------------------
     GpioDevice::GpioDevice() : Piduino::GpioDevice () {
 
+      // sysfs access to gpio is deprecated
+      // https://github.com/raspberrypi/linux/issues/5668
+      // up to kernel version 6.5.6
+      // the first line of /sys/kernel/debug/gpio is:
+      // gpiochip0: GPIOs 0-53, parent: platform/3f200000.gpio, pinctrl-bcm2835:
+      // since kernel 6.5.7, the first line of /sys/kernel/debug/gpio is:
+      // gpiochip0: GPIOs 512-569, parent: platform/fe200000.gpio, pinctrl-bcm2711:
+      // The code below is to get the offset of the GPIOs, this is a temporary fix awaiting migration to libgpiod
+      if (_systemNumberOffset < 0) {
+        std::ifstream f ("/sys/kernel/debug/gpio");
+        std::string line;
+
+        if (f.is_open()) {
+          while (std::getline (f, line)) {
+            if (line.find ("gpiochip0: GPIOs ") != std::string::npos) {
+              break;
+            }
+          }
+          f.close();
+
+          std::string str = line.substr (line.find ("GPIOs ") + 6);
+          str = str.substr (0, str.find (","));
+          _systemNumberOffset = std::stoi (str);
+        }
+        else {
+          // No GPIOs found, use default
+          _systemNumberOffset = 0;
+        }
+      }
       _piobase = iobase () + PioOffset;
       _is2711 = (db.board().soc().id() == SoC::Bcm2711);
     }
@@ -280,10 +310,10 @@ namespace Piduino {
     }
 
     // -------------------------------------------------------------------------
-    int 
+    int
     GpioDevice::systemNumberOffset() const {
-      // TODO : check if this is correct
-      return 512;
+
+      return _systemNumberOffset;
     }
 
     // -------------------------------------------------------------------------
@@ -322,8 +352,9 @@ namespace Piduino {
       {Pin::ModeAlt4, 3},
       {Pin::ModeAlt5, 2},
     };
-
+    // static
     bool GpioDevice::_is2711;
+    int GpioDevice::_systemNumberOffset = -1;
   }
 }
 /* ========================================================================== */
