@@ -47,6 +47,7 @@ namespace Piduino {
         bool read (const Pin * pin) const;
         Pin::Mode mode (const Pin * pin) const;
         Pin::Pull pull (const Pin * pin) const;
+        int systemNumberOffset() const;
 
         const std::map<Pin::Mode, std::string> & modes() const;
 

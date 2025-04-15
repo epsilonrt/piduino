@@ -67,6 +67,7 @@ namespace Piduino {
       virtual int drive (const Pin * pin) const;
 
       virtual const std::map<Pin::Mode, std::string> & modes() const = 0;
+      virtual int systemNumberOffset() const;
 
     protected:
       virtual void setOpen (bool open);

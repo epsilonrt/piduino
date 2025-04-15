@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <iostream>
 #include <iomanip>
@@ -80,7 +80,7 @@ namespace Piduino {
 
     // -------------------------------------------------------------------------
     Pin::Mode
-    GpioDevice::mode (const Pin * pin) const {
+    GpioDevice::mode (const Pin *pin) const {
       Pin::Mode m;
       int g;
       unsigned int r;
@@ -89,11 +89,11 @@ namespace Piduino {
       r = readReg (GFPSEL0 + g / 10) >> ( (g % 10) * 3) & 7;
       m = _int2mode.at (r);
       /*
-       *  - BCM12 ALT0 -> PWM0
-       *  - BCM13 ALT0 -> PWM1
-       *  - BCM18 ALT5 -> PWM0
-       *  - BCM19 ALT5 -> PWM1
-       */
+          - BCM12 ALT0 -> PWM0
+          - BCM13 ALT0 -> PWM1
+          - BCM18 ALT5 -> PWM0
+          - BCM19 ALT5 -> PWM1
+      */
 
       if ( ( (m == Pin::ModeAlt0) && ( (g == 12) || (g == 13))) ||
            ( (m == Pin::ModeAlt5) && ( (g == 18) || (g == 19)))) {
@@ -104,7 +104,7 @@ namespace Piduino {
 
     // -------------------------------------------------------------------------
     void
-    GpioDevice::setMode (const Pin * pin, Pin::Mode m) {
+    GpioDevice::setMode (const Pin *pin, Pin::Mode m) {
       int g;
       unsigned int offset, rval, lsr, mval;
 
@@ -138,7 +138,7 @@ namespace Piduino {
 
     // -------------------------------------------------------------------------
     Pin::Pull
-    GpioDevice::pull (const Pin * pin) const {
+    GpioDevice::pull (const Pin *pin) const {
 
       if (_is2711) {
         int g = pin->mcuNumber();
@@ -166,7 +166,7 @@ namespace Piduino {
 
     // -------------------------------------------------------------------------
     void
-    GpioDevice::setPull (const Pin * pin, Pin::Pull p) {
+    GpioDevice::setPull (const Pin *pin, Pin::Pull p) {
       uint32_t pval;
       int g = pin->mcuNumber();
 
@@ -234,7 +234,7 @@ namespace Piduino {
           4. Wait 150 cycles – this provides the required hold time for the control signal
           5. Write to GPPUD to remove the control signal
           6. Write to GPPUDCLK0/1 to remove the clock
-         */
+        */
         writeReg (GPPUD, pval);
         Clock::delayMicroseconds (10);
         writeReg (pclk, 1 << g);
@@ -246,7 +246,7 @@ namespace Piduino {
 
     // -------------------------------------------------------------------------
     void
-    GpioDevice::write (const Pin * pin, bool v) {
+    GpioDevice::write (const Pin *pin, bool v) {
       unsigned int offset = v ? GPSET0 : GPCLR0;
       int g = pin->mcuNumber();
 
@@ -260,7 +260,7 @@ namespace Piduino {
 
     // -------------------------------------------------------------------------
     bool
-    GpioDevice::read (const Pin * pin) const {
+    GpioDevice::read (const Pin *pin) const {
       unsigned int offset = GPLEV0;
       int g = pin->mcuNumber();
 
@@ -277,6 +277,13 @@ namespace Piduino {
     const std::map<Pin::Mode, std::string> &
     GpioDevice::modes() const {
       return _modes;
+    }
+
+    // -------------------------------------------------------------------------
+    int 
+    GpioDevice::systemNumberOffset() const {
+      // TODO : check if this is correct
+      return 512;
     }
 
     // -------------------------------------------------------------------------
