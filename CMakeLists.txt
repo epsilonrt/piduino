@@ -158,7 +158,8 @@ endif()
 
 add_definitions ( -DPIDUINO_INSTALL_DATA_DIR="${PIDUINO_INSTALL_DATA_DIR}" 
                   -DPIDUINO_INSTALL_ETC_DIR="${PIDUINO_INSTALL_ETC_DIR}"
-                  -DPIDUINO_PROJECT_BUILD)
+                  -DPIDUINO_PROJECT_BUILD
+                  -DPIDUINO_BUILD_YEAR="${DATE_YEAR}")
                   
 # Suppress GCC warnings
 # See https://gcc.gnu.org/gcc-7/changes.html

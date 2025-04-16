@@ -156,6 +156,6 @@ Please report bugs to https://github.com/epsilonrt/piduino/issues
 Pascal JEAN, aka epsilonrt
 
 .SH COPYRIGHT
-Copyright (c) 2018 Pascal JEAN
+Copyright (c) 2018-@DATE_YEAR@ Pascal JEAN
 This is free software; see the source for copying conditions. There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

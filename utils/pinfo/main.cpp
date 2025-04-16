@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
 
    Piduino pinfo is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -435,7 +435,7 @@ namespace Pinfo {
   version() {
 
     cout << "Piduino pinfo version " << VERSION_SHORT << endl;
-    cout << "Copyright © 2018-2019 " << authors << ", " << website << endl;
+    cout << "Copyright © 2018-" << PIDUINO_BUILD_YEAR << " " << authors << ", " << website << endl;
     cout << "This program comes with ABSOLUTELY NO WARRANTY." << endl;
     cout << "This is free software, and you are welcome to redistribute it" << endl;
     cout << "under certain conditions; type 'pinfo -w' for details." << endl << endl;
@@ -445,7 +445,7 @@ namespace Pinfo {
   void
   warranty () {
     cout <<
-         "Copyright © 2018-2019 " << authors << ", All rights reserved.\n\n"
+         "Copyright © 2018-" << PIDUINO_BUILD_YEAR << " " << authors << ", All rights reserved.\n\n"
 
          " Piduino pinfo is free software: you can redistribute it and/or modify\n"
          " it under the terms of the GNU General Public License as published by\n"

@@ -1,18 +1,18 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
- *
- * Piduino pido tool is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Piduino pido tool is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Piduino pido tool.  If not, see <http://www.gnu.org/licenses/>.
- */
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
+
+   Piduino pido tool is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Piduino pido tool is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Piduino pido tool.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -41,39 +41,39 @@ const int pwmDefaultFreq = 1000;
 const long pwmDefautRange = 1024;
 
 /* types ==================================================================== */
-typedef void (*func) (int argc, char * argv[]);
+typedef void (*func) (int argc, char *argv[]);
 
 /* private variables ======================================================== */
 Pin::Numbering numbering = Pin::NumberingLogical;
 int pinnumber = -1;
 int connector = -1;
 bool physicalNumbering = false;
-Pin * pin = nullptr;
+Pin *pin = nullptr;
 bool debug = false;
 bool forceSysFs = false;
 int useSysFsBeforeWfi = -1;
 
 /* private functions ======================================================== */
-void mode (int argc, char * argv[]);
-void pull (int argc, char * argv[]);
-void read (int argc, char * argv[]);
-void write (int argc, char * argv[]);
-void toggle (int argc, char * argv[]);
-void blink (int argc, char * argv[]);
-void readall (int argc, char * argv[]);
-void wfi (int argc, char * argv[]);
-void pwm (int argc, char * argv[]);
-void pwmr (int argc, char * argv[]);
-void pwmf (int argc, char * argv[]);
-void drive (int argc, char * argv[]);
+void mode (int argc, char *argv[]);
+void pull (int argc, char *argv[]);
+void read (int argc, char *argv[]);
+void write (int argc, char *argv[]);
+void toggle (int argc, char *argv[]);
+void blink (int argc, char *argv[]);
+void readall (int argc, char *argv[]);
+void wfi (int argc, char *argv[]);
+void pwm (int argc, char *argv[]);
+void pwmr (int argc, char *argv[]);
+void pwmf (int argc, char *argv[]);
+void drive (int argc, char *argv[]);
 
-Pin * getPin (char * c_str);
+Pin *getPin (char *c_str);
 void usage ();
 void version ();
 void warranty ();
 void sig_handler (int sig);
-vector<string> split (const string& s, char seperator);
-void debug_pwm (SocPwm & p);
+vector<string> split (const string &s, char seperator);
+void debug_pwm (SocPwm &p);
 
 /* main ===================================================================== */
 int
@@ -154,7 +154,7 @@ main (int argc, char **argv) {
 
       do_it = str2func. at (argv[optind]);
     }
-    catch (out_of_range& e) {
+    catch (out_of_range &e) {
 
       throw Exception (Exception::UnknownCommand, argv[optind]);
     }
@@ -167,28 +167,28 @@ main (int argc, char **argv) {
     /* Execute command */
     do_it (argc, argv);
   }
-  catch (Exception& e) {
+  catch (Exception &e) {
 
     cerr << System::progName() << ": " << e.what() << " !" << endl;
     cerr << System::progName() << " -h or man " << System::progName() << " for help." << endl;
     ret = -1;
   }
-  catch (out_of_range& e) {
+  catch (out_of_range &e) {
 
     cerr << System::progName() << ": out of range value (" << e.what() << ")" << endl;
     ret = -1;
   }
-  catch (invalid_argument& e) {
+  catch (invalid_argument &e) {
 
     cerr << System::progName() << ": invalid argument (" << e.what() << ") !" << endl;
     ret = -1;
   }
-  catch (domain_error& e) {
+  catch (domain_error &e) {
 
     cerr << System::progName() << ": bad pin type (" << e.what() << ") !" << endl;
     ret = -1;
   }
-  catch (exception& e) {
+  catch (exception &e) {
 
     cerr << System::progName() << ": " << e.what() << " !" << endl;
     ret = -1;
@@ -207,9 +207,9 @@ main (int argc, char **argv) {
     Output a table of all GPIO pins values.
     The values represent the actual values read if the pin is in input mode,
     or the last value written if the pin is in output mode.
- */
+*/
 void
-readall (int argc, char * argv[]) {
+readall (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc >= 1) {
@@ -228,9 +228,9 @@ readall (int argc, char * argv[]) {
 /* -----------------------------------------------------------------------------
   mode <pin> <in/out/pwm/off/alt{0..9}>
     Get/Set a pin mode into input, output, off, alt0..9 or pwm mode.
- */
+*/
 void
-mode (int argc, char * argv[]) {
+mode (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 1)    {
@@ -277,9 +277,9 @@ mode (int argc, char * argv[]) {
 /* -----------------------------------------------------------------------------
   pull <pin> <up/down/off>
     Get/Set the internal pull-up, pull-down or off controls.
- */
+*/
 void
-pull (int argc, char * argv[]) {
+pull (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 1)    {
@@ -315,9 +315,9 @@ pull (int argc, char * argv[]) {
 /* -----------------------------------------------------------------------------
   drive <pin> <level>
     Get/Set the multi-driving output level
- */
+*/
 void
-drive (int argc, char * argv[]) {
+drive (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 1)    {
@@ -347,9 +347,9 @@ drive (int argc, char * argv[]) {
 /* -----------------------------------------------------------------------------
   read <pin>
     Read  the  digital value of the given pin (0 or 1)
- */
+*/
 void
-read (int argc, char * argv[]) {
+read (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 1)    {
@@ -366,9 +366,9 @@ read (int argc, char * argv[]) {
 /* -----------------------------------------------------------------------------
   write <pin> <value>
     Write the given value (0 or 1) to the given pin (output).
- */
+*/
 void
-write (int argc, char * argv[]) {
+write (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 2)    {
@@ -399,9 +399,9 @@ write (int argc, char * argv[]) {
 /* -----------------------------------------------------------------------------
   toggle <pin>
     Changes the state of a GPIO pin; 0 to 1, or 1 to 0 (output).
- */
+*/
 void
-toggle (int argc, char * argv[]) {
+toggle (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 1)    {
@@ -424,9 +424,9 @@ toggle (int argc, char * argv[]) {
 /* -----------------------------------------------------------------------------
   blink <pin> [period]
     Blinks the given pin on/off (explicitly sets the pin to output)
- */
+*/
 void
-blink (int argc, char * argv[]) {
+blink (int argc, char *argv[]) {
   int paramc = (argc - optind);
   Clock clk;
 
@@ -470,9 +470,9 @@ blink (int argc, char * argv[]) {
     This set the given pin to the supplied interrupt mode:  rising,  falling  or
     both  then waits  for  the  interrupt  to happen.
     It's a non-busy wait, so does not consume and CPU while it's waiting.
- */
+*/
 void
-wfi (int argc, char * argv[]) {
+wfi (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 2)    {
@@ -509,9 +509,9 @@ wfi (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   pwm <pin> [value]
- */
+*/
 void
-pwm (int argc, char * argv[]) {
+pwm (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 1) {
@@ -535,10 +535,10 @@ pwm (int argc, char * argv[]) {
 
     socpwm.setRange (pwmDefautRange);
     socpwm.setFrequency (pwmDefaultFreq);
-#ifndef NDEBUG
+    #ifndef NDEBUG
     cout << "Sets frequency  to " << socpwm.frequency() << endl;
     cout << "Sets range to " << socpwm.range() << endl;
-#endif
+    #endif
   }
 
   if (paramc >= 2) {
@@ -566,9 +566,9 @@ pwm (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   pwmr <pin> [range]
- */
+*/
 void
-pwmr (int argc, char * argv[]) {
+pwmr (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 1) {
@@ -605,9 +605,9 @@ pwmr (int argc, char * argv[]) {
 
 /* -----------------------------------------------------------------------------
   pwmf <pin> [freq]
- */
+*/
 void
-pwmf (int argc, char * argv[]) {
+pwmf (int argc, char *argv[]) {
   int paramc = (argc - optind);
 
   if (paramc < 1) {
@@ -644,7 +644,7 @@ pwmf (int argc, char * argv[]) {
 
 // -----------------------------------------------------------------------------
 vector<string>
-split (const string& s, char seperator) {
+split (const string &s, char seperator) {
   vector<string> output;
   string::size_type prev_pos = 0, pos = 0;
 
@@ -661,8 +661,8 @@ split (const string& s, char seperator) {
 
 // -----------------------------------------------------------------------------
 Pin *
-getPin (char * c_str) {
-  Pin * p;
+getPin (char *c_str) {
+  Pin *p;
   string s (c_str);
 
   string::size_type n = s.find ('.');
@@ -694,7 +694,7 @@ getPin (char * c_str) {
       p = &gpio.connector (connector)->pin (pinnumber);
     }
   }
-  catch (out_of_range& e) {
+  catch (out_of_range &e) {
 
     throw Exception (Exception::BadPinNumber, s);
   }
@@ -725,7 +725,7 @@ void
 version() {
 
   cout << "Piduino pido version " << VERSION_SHORT << endl;
-  cout << "Copyright © 2018-2019 " << authors << ", " << website << endl;
+  cout << "Copyright © 2018-" << PIDUINO_BUILD_YEAR << " " << authors << ", " << website << endl;
   cout << "This program comes with ABSOLUTELY NO WARRANTY." << endl;
   cout << "This is free software, and you are welcome to redistribute it" << endl;
   cout << "under certain conditions; type 'pido -w' for details." << endl << endl;
@@ -735,7 +735,7 @@ version() {
 void
 warranty () {
   cout <<
-       "Copyright © 2018-2019 " << authors << ", All rights reserved.\n\n"
+       "Copyright © 2018-" << PIDUINO_BUILD_YEAR << " " << authors << ", All rights reserved.\n\n"
 
        " Piduino pido is free software: you can redistribute it and/or modify\n"
        " it under the terms of the GNU General Public License as published by\n"
@@ -796,8 +796,8 @@ usage () {
 }
 
 // -----------------------------------------------------------------------------
-void debug_pwm (SocPwm & p) {
-#ifndef NDEBUG
+void debug_pwm (SocPwm &p) {
+  #ifndef NDEBUG
   cout << "Pwm " << p.deviceName() << endl;
   cout << "hasEngine : " << p.hasEngine() << endl;
   cout << "isOpen    : " << p.isOpen() << endl;
@@ -812,6 +812,6 @@ void debug_pwm (SocPwm & p) {
     cout << "isEnabled : " << p.isEnabled() << endl;
     cout << "Cur value : " << p.read() << endl;
   }
-#endif
+  #endif
 }
 /* ========================================================================== */
