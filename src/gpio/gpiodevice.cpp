@@ -15,83 +15,106 @@
    along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <piduino/gpiodevice.h>
+#include "gpiodevice_p.h"
 #include "config.h"
 
 namespace Piduino {
+  // -----------------------------------------------------------------------------
+  //
+  //                        GpioDevice::Private Class
+  //
+  // -----------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  GpioDevice::Private::Private (GpioDevice *q) :
+    q_ptr (q), isopen (false), isdebug (false) {}
+
+  // ---------------------------------------------------------------------------
+  GpioDevice::Private::~Private()  {}
 
   // -----------------------------------------------------------------------------
   //
   //                        GpioDevice Class
   //
   // -----------------------------------------------------------------------------
-  GpioDevice::GpioDevice() : _isopen (false), _isdebug (false) {
+  // ---------------------------------------------------------------------------
+  GpioDevice::GpioDevice (GpioDevice::Private &dd) : d_ptr (&dd) {
 
   }
 
-  // -----------------------------------------------------------------------------
-  GpioDevice::~GpioDevice() {
+  // ---------------------------------------------------------------------------
+  GpioDevice::GpioDevice () :
+    d_ptr (new Private (this))  {
 
   }
+
+  // ---------------------------------------------------------------------------
+  GpioDevice::~GpioDevice() = default;
 
   // -----------------------------------------------------------------------------
   bool
   GpioDevice::isOpen() const {
+    PIMP_D (const GpioDevice);
 
-    return _isopen;
+    return d->isopen;
   }
 
-  // -----------------------------------------------------------------------------
-  void
-  GpioDevice::setOpen (bool open) {
-    _isopen = open;
-  }
 
   // -----------------------------------------------------------------------------
   bool
   GpioDevice::isDebug() const {
-    return _isdebug;
+    PIMP_D (const GpioDevice);
+
+    return d->isdebug;
   }
 
   // -----------------------------------------------------------------------------
   void
   GpioDevice::setDebug (bool enable) {
-    _isdebug = enable;
+    PIMP_D (GpioDevice);
+
+    d->isdebug = enable;
   }
 
   // -----------------------------------------------------------------------------
   void
   GpioDevice::toggle (const Pin *pin) {
+
+    write (pin, !read (pin));
   }
 
   // -----------------------------------------------------------------------------
   Pin::Pull
   GpioDevice::pull (const Pin *pin) const {
+
     return Pin::PullUnknown;
   }
 
   // -----------------------------------------------------------------------------
   unsigned int
   GpioDevice::flags() const {
+
     return 0;
   }
 
   // -----------------------------------------------------------------------------
   void
   GpioDevice::setDrive (const Pin *pin, int d) {
+
   }
 
   // -----------------------------------------------------------------------------
   int
   GpioDevice::drive (const Pin *pin) const {
+
     return -1;
   }
 
   // -----------------------------------------------------------------------------
   int
   GpioDevice::systemNumberOffset() const {
+
     return 0;
   }
-  // -----------------------------------------------------------------------------
 }
 /* ========================================================================== */

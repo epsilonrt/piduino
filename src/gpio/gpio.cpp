@@ -42,12 +42,12 @@ namespace Piduino {
     switch (socFamilyId) {
 #if PIDUINO_DRIVER_BCM2835 != 0
       case SoC::Family::BroadcomBcm2835 :
-        _device = new Bcm2835::GpioDevice();
+        _device = new Bcm2835Gpio();
         break;
 #endif /* PIDUINO_DRIVER_BCM2835 */
 #if PIDUINO_DRIVER_ALLWINNERH != 0
       case SoC::Family::AllwinnerH :
-        _device = new AllWinnerHx::GpioDevice();
+        _device = new AllWinnerHxGpio();
         break;
 #endif /* PIDUINO_DRIVER_ALLWINNERH */
       default:

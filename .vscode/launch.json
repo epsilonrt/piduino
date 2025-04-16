@@ -8,7 +8,7 @@
       // Resolved by CMake Tools:
       "program": "${command:cmake.launchTargetPath}",
       "args": [
-        "wfi","3","rising"
+        "readall"
       ],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",
