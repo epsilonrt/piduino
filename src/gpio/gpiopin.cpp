@@ -17,19 +17,8 @@
 
 #include <piduino/gpio.h>
 #include <piduino/gpiodevice.h>
-#include <piduino/scheduler.h>
-#include <piduino/system.h>
 #include <exception>
-#include <fstream>
-#include <sstream>
-#include <chrono>
-//
-#include <csignal>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <poll.h>
+#include "gpiopin_p.h"
 #include "config.h"
 
 namespace Piduino {
@@ -39,118 +28,16 @@ namespace Piduino {
   //                              Pin Class
   //
   // -----------------------------------------------------------------------------
-  // ---------------------------------------------------------------------------
-  std::string Pin::_syspath = "/sys/class/gpio";
 
   // ---------------------------------------------------------------------------
-  const std::map<Pin::Type, std::string> Pin::_types = {
-    {TypeGpio, "Gpio"},
-    {TypePower, "Power"},
-    {TypeUsb, "Usb"},
-    {TypeSound, "Sound"},
-    {TypeVideo, "Video"},
-    {TypeNotConnected, "Not Connected"},
-    {TypeUnknown, "Unknown"}
-  };
+  Pin::Pin (Pin::Private &dd) : d_ptr (&dd) {
 
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Numbering, std::string> Pin::_numberings = {
-    {NumberingLogical, "Logical"},
-    {NumberingMcu, "Mcu"},
-    {NumberingSystem, "System"},
-    {NumberingUnknown, "Unknown"}
-  };
-
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Pull, std::string> Pin::_pulls = {
-    {PullOff, "off"},
-    {PullDown, "down"},
-    {PullUp, "up"},
-    {PullUnknown, "unk"}
-  };
-
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Edge, std::string> Pin::_edges = {
-    {EdgeNone, "none"},
-    {EdgeRising, "rising"},
-    {EdgeFalling, "falling"},
-    {EdgeBoth, "both"},
-    {EdgeUnknown, "unk"}
-  };
-
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Mode, std::string> Pin::_sysfsmodes = {
-    { ModeInput, "in" },
-    { ModeOutput, "out" },
-    { ModeUnknown, "unk" }
-  };
-
-  // ---------------------------------------------------------------------------
-  const std::map<std::string, Pin::Edge> Pin::_str2edge = {
-    { "none", EdgeNone },
-    { "rising", EdgeRising },
-    { "falling", EdgeFalling },
-    { "both", EdgeBoth }
-  };
-
-  // ---------------------------------------------------------------------------
-  const std::map<std::string, Pin::Mode> Pin::_str2mode = {
-    { "in", ModeInput },
-    { "out", ModeOutput }
-  };
+  }
 
   // ---------------------------------------------------------------------------
   Pin::Pin (Connector *parent, const Descriptor *desc) :
-    _isopen (false), _parent (parent), _descriptor (desc), _holdMode (ModeUnknown),
-    _holdPull (PullUnknown), _holdState (false), _useSysFs (false),
-    _valueFd (-1), _firstPolling (true), _edge (EdgeUnknown), _mode (ModeUnknown),
-    _pull (PullUnknown), _dac (0), _drive (-1) {
+    d_ptr (new Private (this, parent, desc))  {
 
-    if ( (parent->gpio()->accessLayer() & AccessLayerIoMap) != AccessLayerIoMap) {
-
-      _useSysFs = true;
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::analogWrite (long value) {
-
-    if (_dac != nullptr) {
-
-      if (!_dac->isOpen()) {
-
-        _dac->open();
-      }
-      _dac->write (value);
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  bool Pin::setDac (Converter *dac) {
-
-    if (dac) {
-
-      if (dac->type() == Converter::DigitalToAnalog) {
-
-        _dac.reset (dac);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // ---------------------------------------------------------------------------
-  void Pin::resetDac () {
-
-    _dac.reset ();
-  }
-
-  // ---------------------------------------------------------------------------
-  Converter *
-  Pin::dac() {
-
-    return _dac.get();
   }
 
   // ---------------------------------------------------------------------------
@@ -160,14 +47,62 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  bool Pin::isOpen() const {
+  void
+  Pin::analogWrite (long value) {
+    PIMP_D (Pin);
 
-    return _isopen;
+    if (d->dac != nullptr) {
+
+      if (!d->dac->isOpen()) {
+
+        d->dac->open();
+      }
+      d->dac->write (value);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Pin::setDac (Converter *dac) {
+
+    if (dac) {
+
+      if (dac->type() == Converter::DigitalToAnalog) {
+        PIMP_D (Pin);
+
+        d->dac.reset (dac);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
+  void Pin::resetDac () {
+    PIMP_D (Pin);
+
+    d->dac.reset ();
+  }
+
+  // ---------------------------------------------------------------------------
+  Converter *
+  Pin::dac() {
+    PIMP_D (Pin);
+
+    return d->dac.get();
+  }
+
+
+  // ---------------------------------------------------------------------------
+  bool Pin::isOpen() const {
+    PIMP_D (const Pin);
+
+    return d->isopen;
   }
 
   // ---------------------------------------------------------------------------
   Pin::Pull
   Pin::pull () {
+    PIMP_D (Pin);
 
     if (type() == TypeGpio) {
 
@@ -175,7 +110,7 @@ namespace Piduino {
 
         if (device()->flags() & GpioDevice::hasPullRead) {
 
-          readPull();
+          d->readPull();
         }
         else {
 
@@ -187,19 +122,20 @@ namespace Piduino {
 
       throw std::domain_error ("This pin is not a GPIO pin");
     }
-    return _pull;
+    return d->pull;
   }
 
   // ---------------------------------------------------------------------------
   void
   Pin::setPull (Pin::Pull p) {
+    PIMP_D (Pin);
 
     if (type() == TypeGpio) {
 
-      _pull = p;
+      d->pull = p;
       if (isOpen()) {
 
-        writePull();
+        d->writePull();
       }
     }
     else {
@@ -211,27 +147,29 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   Pin::Mode
   Pin::mode () {
+    PIMP_D (Pin);
 
     if (type() == TypeGpio) {
 
       if (isOpen()) {
 
-        readMode();
+        d->readMode();
       }
     }
-    return _mode;
+    return d->mode;
   }
 
   // ---------------------------------------------------------------------------
   void
   Pin::setMode (Pin::Mode m) {
+    PIMP_D (Pin);
 
     if (type() == TypeGpio) {
 
-      _mode = m;
+      d->mode = m;
       if (isOpen()) {
 
-        writeMode();
+        d->writeMode();
       }
     }
     else {
@@ -243,13 +181,14 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void
   Pin::setEdge (Pin::Edge e) {
+    PIMP_D (Pin);
 
     if (type() == TypeGpio) {
 
-      _edge = e;
-      if (isOpen() && _useSysFs) {
+      d->edge = e;
+      if (isOpen() && d->useSysFs) {
 
-        sysFsSetEdge();
+        d->sysFsSetEdge();
       }
     }
     else {
@@ -262,49 +201,52 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   Pin::Edge
   Pin::edge() {
+    PIMP_D (Pin);
 
     if (type() == TypeGpio) {
 
-      if (isOpen() && _useSysFs) {
+      if (isOpen() && d->useSysFs) {
 
-        sysFsGetEdge();
+        d->sysFsGetEdge();
       }
     }
     else {
 
       throw std::domain_error ("This pin is not a GPIO pin");
     }
-    return _edge;
+    return d->edge;
   }
 
   // ---------------------------------------------------------------------------
   int
   Pin::drive () {
+    PIMP_D (Pin);
 
     if (type() == TypeGpio) {
 
       if (isOpen()) {
 
-        readDrive();;
+        d->readDrive();;
       }
     }
     else {
 
       throw std::domain_error ("This pin is not a GPIO pin");
     }
-    return _drive;
+    return d->drive;
   }
 
   // ---------------------------------------------------------------------------
   void
-  Pin::setDrive (int d) {
+  Pin::setDrive (int drive) {
+    PIMP_D (Pin);
 
     if (type() == TypeGpio) {
 
-      _drive = d;
+      d->drive = drive;
       if (isOpen()) {
 
-        writeDrive();
+        d->writeDrive();
       }
     }
     else {
@@ -316,8 +258,9 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   bool
   Pin::useSysFs() const {
+    PIMP_D (const Pin);
 
-    return _useSysFs;
+    return d->useSysFs;
   }
 
   // ---------------------------------------------------------------------------
@@ -330,38 +273,43 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   Pin::Type
   Pin::type() const {
+    PIMP_D (const Pin);
 
-    return _descriptor->type;
+    return d->descriptor->type;
   }
 
   // ---------------------------------------------------------------------------
   int
   Pin::logicalNumber () const {
+    PIMP_D (const Pin);
 
-    return _descriptor->num.logical;
+    return d->descriptor->num.logical;
   }
 
   // ---------------------------------------------------------------------------
   int
   Pin::mcuNumber () const {
+    PIMP_D (const Pin);
 
-    return _descriptor->num.mcu;
+    return d->descriptor->num.mcu;
   }
 
   // ---------------------------------------------------------------------------
   int
   Pin::systemNumber () const {
-    
+    PIMP_D (const Pin);
+
     if (device()) {
 
-      return _descriptor->num.system + device()->systemNumberOffset();
+      return d->descriptor->num.system + device()->systemNumberOffset();
     }
-    return _descriptor->num.system;
+    return d->descriptor->num.system;
   }
 
   // ---------------------------------------------------------------------------
   int
   Pin::number (Pin::Numbering n) const {
+    PIMP_D (const Pin);
 
     switch (n) {
       case NumberingLogical:
@@ -380,20 +328,23 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   int
   Pin::row() const {
+    PIMP_D (const Pin);
 
-    return _descriptor->num.row;
+    return d->descriptor->num.row;
   }
 
   // ---------------------------------------------------------------------------
   int
   Pin::column() const {
+    PIMP_D (const Pin);
 
-    return _descriptor->num.column;
+    return d->descriptor->num.column;
   }
 
   // ---------------------------------------------------------------------------
   int
   Pin::physicalNumber () const {
+    PIMP_D (const Pin);
 
     return connector()->pinNumber (row(), column());
   }
@@ -401,27 +352,31 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   const std::string &
   Pin::name (Pin::Mode m) const {
+    PIMP_D (const Pin);
 
-    return _descriptor->name.at (m);
+    return d->descriptor->name.at (m);
   }
 
   // ---------------------------------------------------------------------------
   long long
   Pin::id() const {
+    PIMP_D (const Pin);
 
-    return _descriptor->id;
+    return d->descriptor->id;
   }
 
   // ---------------------------------------------------------------------------
   Connector *
   Pin::connector() const {
+    PIMP_D (const Pin);
 
-    return _parent;
+    return d->parent;
   }
 
   // ---------------------------------------------------------------------------
   Gpio *
   Pin::gpio() const {
+    PIMP_D (const Pin);
 
     return connector()->gpio();
   }
@@ -429,90 +384,31 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   const std::string &
   Pin::typeName() const {
+    PIMP_D (const Pin);
 
     return typeName (type());
   }
 
   // ---------------------------------------------------------------------------
   const std::string &
-  Pin::numberingName (Pin::Numbering n)  {
-
-    return _numberings.at (n);
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::string &
-  Pin::typeName (Pin::Type t) {
-
-    return _types.at (t);
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::string &
-  Pin::edgeName (Pin::Edge e) {
-
-    return _edges.at (e);
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::string &
-  Pin::pullName (Pin::Pull p) {
-
-    return _pulls.at (p);
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Type, std::string> &
-  Pin::types () {
-
-    return _types;
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Numbering, std::string> &
-  Pin::numberings () {
-
-    return _numberings;
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Pull, std::string> &
-  Pin::pulls () {
-
-    return _pulls;
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Edge, std::string> &
-  Pin::edges () {
-
-    return _edges;
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::string &
   Pin::modeName (Pin::Mode m) const {
+    PIMP_D (const Pin);
 
     return modes().at (m);
   }
 
   // ---------------------------------------------------------------------------
-  GpioDevice *
-  Pin::device() const {
-
-    return connector()->device();
-  }
-
-  // ---------------------------------------------------------------------------
   const std::map<Pin::Mode, std::string> &
   Pin::modes () const {
+    PIMP_D (const Pin);
 
-    return device() ? device()->modes() : _sysfsmodes;
+    return device() ? device()->modes() : Private::sysfsmodes;
   }
 
   // ---------------------------------------------------------------------------
   bool
   Pin::isDebug() const {
+    PIMP_D (const Pin);
 
     return device() ? device()->isDebug() : false;
   }
@@ -520,6 +416,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void
   Pin::setDebug (bool enable) {
+    PIMP_D (Pin);
 
     if (device()) {
 
@@ -563,10 +460,11 @@ namespace Piduino {
   Pin::write (bool value) {
 
     if (isOpen() && (type() == TypeGpio)) {
+      PIMP_D (Pin);
 
-      if (_useSysFs) {
+      if (d->useSysFs) {
 
-        if (sysFsWrite (_valueFd, value) < 0) {
+        if (d->sysFsWrite (d->valueFd, value) < 0) {
 
           throw std::system_error (errno, std::system_category(), __FUNCTION__);
         }
@@ -583,8 +481,9 @@ namespace Piduino {
   Pin::toggle () {
 
     if (isOpen() && (type() == TypeGpio)) {
+      PIMP_D (Pin);
 
-      if (!_useSysFs) {
+      if (!d->useSysFs) {
 
         if (device()->flags() & GpioDevice::hasToggle) {
 
@@ -602,9 +501,10 @@ namespace Piduino {
   Pin::read () const {
 
     if (isOpen() && (type() == TypeGpio)) {
+      PIMP_D (const Pin);
 
-      if (_useSysFs) {
-        int ret = sysFsRead (_valueFd);
+      if (d->useSysFs) {
+        int ret = d->sysFsRead (d->valueFd);
 
         if (ret < 0) {
 
@@ -623,21 +523,22 @@ namespace Piduino {
   Pin::release () {
 
     if (isOpen() && (type() == TypeGpio)) {
+      PIMP_D (Pin);
 
-      if (_holdMode != ModeUnknown) {
+      if (d->holdMode != ModeUnknown) {
 
-        setMode (_holdMode);
-        if (_holdMode == ModeOutput) {
+        setMode (d->holdMode);
+        if (d->holdMode == ModeOutput) {
 
-          write (_holdState);
+          write (d->holdState);
         }
-        _holdMode = ModeUnknown;
+        d->holdMode = ModeUnknown;
       }
 
-      if (_holdPull != PullUnknown) {
+      if (d->holdPull != PullUnknown) {
 
-        setPull (_holdPull);
-        _holdPull = PullUnknown;
+        setPull (d->holdPull);
+        d->holdPull = PullUnknown;
       }
     }
   }
@@ -645,14 +546,15 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   bool
   Pin::forceUseSysFs (bool enable) {
+    PIMP_D (Pin);
 
-    if (isOpen() && (_useSysFs != enable)) {
+    if (isOpen() && (d->useSysFs != enable)) {
 
-      _useSysFs = sysFsEnable (enable);
+      d->useSysFs = d->sysFsEnable (enable);
     }
     else {
 
-      _useSysFs = enable;
+      d->useSysFs = enable;
     }
     return useSysFs();
   }
@@ -662,27 +564,28 @@ namespace Piduino {
   Pin::waitForInterrupt (Pin::Edge e, int timeout_ms) {
 
     if (isOpen()) {
+      PIMP_D (Pin);
       int ret;
 
-      if (_firstPolling) {
+      if (d->firstPolling) {
 
         setEdge (EdgeNone);
         forceUseSysFs (true);
         setEdge (e);
         // clear pending irq
-        if (sysFsPoll (_valueFd, 1) > 0) {
+        if (d->sysFsPoll (d->valueFd, 1) > 0) {
 
-          sysFsRead (_valueFd);
+          d->sysFsRead (d->valueFd);
         }
-        _firstPolling = false;
+        d->firstPolling = false;
       }
 
-      if (e != _edge) {
+      if (e != d->edge) {
 
         setEdge (e);
       }
 
-      ret = sysFsPoll (_valueFd, timeout_ms);
+      ret = d->sysFsPoll (d->valueFd, timeout_ms);
       if (ret < 0) {
 
         throw std::system_error (errno, std::system_category(), __FUNCTION__);
@@ -697,33 +600,35 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void
   Pin::attachInterrupt (Isr isr, Edge e, void *userData) {
+    PIMP_D (Pin);
 
-    if (!_thread.joinable()) {
+    if (!d->thread.joinable()) {
 
       setEdge (EdgeNone);
       forceUseSysFs (true);
       setEdge (e);
       // clear pending irq
-      if (sysFsPoll (_valueFd, 1) > 0) {
+      if (d->sysFsPoll (d->valueFd, 1) > 0) {
 
-        sysFsRead (_valueFd);
+        d->sysFsRead (d->valueFd);
       }
 
       // Fetch std::future object associated with promise
-      std::future<void> running = _stopRead.get_future();
-      _thread = std::thread (irqThread, std::move (running), _valueFd, isr, userData);
+      std::future<void> running = d->stopRead.get_future();
+      d->thread = std::thread (Private::irqThread, std::move (running), d->valueFd, isr, userData);
     }
   }
 
   // ---------------------------------------------------------------------------
   void
   Pin::detachInterrupt() {
+    PIMP_D (Pin);
 
-    if (_thread.joinable()) {
+    if (d->thread.joinable()) {
 
       // Set the value in promise
-      _stopRead.set_value();
-      _thread.join();
+      d->stopRead.set_value();
+      d->thread.join();
     }
   }
 
@@ -731,70 +636,77 @@ namespace Piduino {
   //                                   Protected
   // -----------------------------------------------------------------------------
 
+  // ---------------------------------------------------------------------------
+  GpioDevice *
+  Pin::device() const {
+
+    return connector()->device();
+  }
 
   // ---------------------------------------------------------------------------
   bool Pin::open() {
 
     if (!isOpen()) {
+      PIMP_D (Pin);
 
       if (type() == TypeGpio) {
 
-        if (_useSysFs) {
+        if (d->useSysFs) {
 
-          _isopen = sysFsEnable (true);
+          d->isopen = d->sysFsEnable (true);
         }
         else {
 
-          _isopen = true;
+          d->isopen = true;
         }
 
-        if (_isopen) {
+        if (d->isopen) {
 
-          if (_mode != ModeUnknown) {
+          if (d->mode != ModeUnknown) {
 
-            writeMode();
+            d->writeMode();
           }
           else {
 
-            readMode();
+            d->readMode();
           }
 
           if (device()) {
 
-            if (_pull != PullUnknown) {
+            if (d->pull != PullUnknown) {
 
-              writePull();
+              d->writePull();
             }
             else {
 
-              readPull();
+              d->readPull();
             }
-            if (_drive != -1) {
+            if (d->drive != -1) {
 
-              writeDrive();
+              d->writeDrive();
             }
             else {
 
               if (device()->flags() & GpioDevice::hasDrive) {
-                readDrive();
+                d->readDrive();
               }
             }
 
           }
 
-          if (_edge != EdgeUnknown) {
+          if (d->edge != EdgeUnknown) {
 
-            writeEdge();
+            d->writeEdge();
           }
           else {
 
-            readEdge();
+            d->readEdge();
           }
         }
       }
       else {
 
-        _isopen = true;
+        d->isopen = true;
       }
     }
     return isOpen();
@@ -805,6 +717,7 @@ namespace Piduino {
   Pin::close() {
 
     if (isOpen()) {
+      PIMP_D (Pin);
 
       if (type() == TypeGpio) {
 
@@ -815,461 +728,68 @@ namespace Piduino {
           release();
         }
       }
-      _isopen = false;
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::writePull () {
-
-    if (device()) {
-
-      holdPull();
-      device()->setPull (this, _pull);
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::readPull ()  {
-
-    if (device()) {
-
-      if (device()->flags() & GpioDevice::hasPullRead) {
-
-        _pull = device()->pull (this);
-        return;
-      }
-    }
-    _pull = PullUnknown;
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::readMode ()  {
-
-    if (_useSysFs) {
-
-      sysFsGetMode();
-    }
-    else {
-
-      _mode = device()->mode (this);
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::writeMode () {
-
-    holdMode();
-    if (_useSysFs) {
-
-      sysFsSetMode();
-    }
-    else {
-
-      device()->setMode (this, _mode);
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::readEdge()  {
-
-    if (_useSysFs) {
-
-      sysFsGetEdge();
-    }
-    else {
-
-      _edge = EdgeUnknown;
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::writeEdge () {
-
-    if (_useSysFs) {
-
-      sysFsSetEdge();
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::writeDrive () {
-
-    if (device()) {
-
-      if (device()->flags() & GpioDevice::hasDrive) {
-
-        device()->setDrive (this, _drive);
-      }
-      else {
-
-        throw std::domain_error ("Unable to set the drive strength for this pin, not supported on this board!");
-      }
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::readDrive ()  {
-
-    if (device()) {
-
-      if (device()->flags() & GpioDevice::hasDrive) {
-
-        _drive = device()->drive (this);
-      }
-      else {
-
-        throw std::domain_error ("Unable to get the drive strength for this pin, not supported on this board!");
-      }
+      d->isopen = false;
     }
   }
 
   // -----------------------------------------------------------------------------
-  //                                   Private
+  //                                   Static
   // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  // Thread de surveillance des entrées du port
-  void *
-  Pin::irqThread (std::future<void> run, int fd, Isr isr, void *userData) {
-    int ret;
+  const std::string &
+  Pin::numberingName (Pin::Numbering n)  {
 
-    Scheduler::setRtPriority (50);
-
-    try {
-      while (run.wait_for (std::chrono::milliseconds (1)) == std::future_status::timeout) {
-
-        ret = sysFsPoll (fd, 10);
-        if (ret > 0) {
-
-          isr (userData);
-          sysFsRead (fd);
-        }
-        else if (ret < 0) {
-
-          throw std::system_error (errno, std::system_category(), __FUNCTION__);
-        }
-      }
-    }
-    catch (std::system_error &e) {
-
-      std::cerr << e.what() << "(code " << e.code() << ")" << std::endl;
-      std::terminate();
-    }
-    catch (...) {
-
-    }
-#ifndef NDEBUG
-    std::cout << std::endl << __FUNCTION__ << " terminated" << std::endl;
-#endif
-    return 0;
+    return Private::numberings.at (n);
   }
 
   // ---------------------------------------------------------------------------
-  void Pin::holdPull() {
+  const std::string &
+  Pin::typeName (Pin::Type t) {
 
-    if ( (_holdPull == PullUnknown) && device()) {
-
-      _holdPull = device()->pull (this);
-    }
+    return Private::types.at (t);
   }
 
   // ---------------------------------------------------------------------------
-  void
-  Pin::holdMode() {
+  const std::string &
+  Pin::edgeName (Pin::Edge e) {
 
-    if ( (_holdMode == ModeUnknown) && device()) {
-
-      _holdMode = device()->mode (this);
-      if (_holdMode == ModeOutput) {
-
-        _holdState = device()->read (this);
-      }
-    }
+    return Private::edges.at (e);
   }
 
   // ---------------------------------------------------------------------------
-  bool
-  Pin::sysFsEnable (bool enable) {
+  const std::string &
+  Pin::pullName (Pin::Pull p) {
 
-    if (enable) {
-
-      holdMode();
-      holdPull();
-      sysFsExport (true);
-      return sysFsOpen();
-    }
-
-    sysFsClose();
-    sysFsExport (false);
-    return false;
+    return Private::pulls.at (p);
   }
 
   // ---------------------------------------------------------------------------
-  void
-  Pin::sysFsExport (bool enable) {
+  const std::map<Pin::Type, std::string> &
+  Pin::types () {
 
-    if ( (type() == TypeGpio) && (enable != sysFsIsExport())) {
-      std::ostringstream fn;
-      std::ofstream f;
-
-      if (systemNumber() < 0) {
-        std::ostringstream msg;
-
-        msg << "Unknown pin number in SysFs for " << name (ModeInput) << " !";
-        throw std::invalid_argument (msg.str());
-      }
-
-      if (enable) {
-
-        // Export
-        fn << _syspath << "/export";
-
-      }
-      else {
-
-        // Unexport
-        if (sysFsFileExist ("edge")) {
-
-          setEdge (EdgeNone);
-        }
-        fn << _syspath << "/unexport";
-      }
-
-      f.open (fn.str());
-      f.exceptions (f.failbit | f.badbit);
-      f << systemNumber() << std::endl;
-      f.exceptions (f.failbit | f.badbit);
-      f.close();
-    }
+    return Private::types;
   }
 
   // ---------------------------------------------------------------------------
-  bool
-  Pin::sysFsOpen() {
+  const std::map<Pin::Numbering, std::string> &
+  Pin::numberings () {
 
-    if (_valueFd < 0) {
-      std::ostringstream fn;
-      char buffer[2];
-
-      // Construction du nom du fichier
-      fn << _syspath << "/gpio" << systemNumber() << "/value";
-      // std::cout << "Open: " << fn.str() << std::endl;
-
-      // Ouvrir le fichier
-      if ( (_valueFd = ::open (fn.str().c_str(), O_RDWR)) < 0) { //
-
-        throw std::system_error (errno, std::system_category(), __FUNCTION__);
-      }
-
-      if (_mode != ModeUnknown) {
-
-        sysFsSetMode();
-      }
-      else {
-
-        sysFsGetMode();
-      }
-
-      if (_edge != EdgeUnknown) {
-
-        sysFsSetEdge();
-      }
-      else {
-
-        sysFsGetEdge();
-      }
-
-    }
-    return _valueFd >= 0;
+    return Private::numberings;
   }
 
   // ---------------------------------------------------------------------------
-  void
-  Pin::sysFsClose() {
+  const std::map<Pin::Pull, std::string> &
+  Pin::pulls () {
 
-    if (_valueFd >= 0) {
-
-      // fermeture fichier value sysFs
-      if (::close (_valueFd) < 0) {
-
-        throw std::system_error (errno, std::system_category(), __FUNCTION__);
-      }
-      _valueFd = -1;
-    }
+    return Private::pulls;
   }
 
   // ---------------------------------------------------------------------------
-  int
-  Pin::sysFsPoll (int fd, int timeout_ms) {
-    struct pollfd  fds;
+  const std::map<Pin::Edge, std::string> &
+  Pin::edges () {
 
-    fds.fd = fd;
-    fds.events = POLLPRI | POLLERR;
-    return poll (& fds, 1, timeout_ms);
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::sysFsGetEdge() {
-
-    if (sysFsFileExist ("edge")) {
-      std::string value;
-
-      value = sysFsReadFile ("edge");
-      _edge = _str2edge.at (value);
-    }
-    else {
-
-      _edge = EdgeUnknown;
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::sysFsSetEdge () {
-
-    if (sysFsFileExist ("edge")) {
-
-      sysFsWriteFile ("edge", edgeName (_edge));
-    }
-    else {
-      std::ostringstream msg;
-
-      msg << "Pin " << name (ModeInput) << " does not have interrupt";
-      throw std::system_error (ENOTSUP, std::system_category(), msg.str());
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::sysFsGetMode() {
-
-    if (sysFsFileExist ("direction")) {
-
-      std::string value = sysFsReadFile ("direction");
-      _mode = _str2mode.at (value);
-    }
-    else {
-
-      _mode = ModeUnknown;
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::sysFsSetMode () {
-
-    if (sysFsFileExist ("direction") && ( (_mode == ModeInput) || (_mode == ModeOutput))) {
-
-      sysFsWriteFile ("direction", modeName (_mode));
-    }
-  }
-
-
-  // ---------------------------------------------------------------------------
-  int
-  Pin::sysFsRead (int fd) {
-    int ret;
-
-    ret = lseek (fd, 0, SEEK_SET);
-    if (ret >= 0) {
-      char buffer[2];
-
-      // Lire la valeur actuelle du GPIO.
-      ret = ::read (fd, buffer, sizeof (buffer));
-      if (ret > 0) {
-
-        ret = (buffer[0] != '0');
-      }
-      else {
-
-        ret = -1;
-      }
-    }
-    return ret;
-  }
-
-  // ---------------------------------------------------------------------------
-  int
-  Pin::sysFsWrite (int fd, bool value) {
-    int ret;
-
-    if (value) {
-
-      ret = ::write (fd, "1\n", 2);
-    }
-    else {
-
-      ret = ::write (fd, "0\n", 2);
-    }
-    return ret;
-  }
-
-  // ---------------------------------------------------------------------------
-  std::string
-  Pin::sysFsReadFile (const char *n) const {
-    std::ostringstream fn;
-    std::ifstream f;
-    std::string value;
-    std::string::size_type pos;
-
-    fn << _syspath << "/gpio" << systemNumber() << "/" << n;
-    f.open (fn.str());
-    f.exceptions (f.failbit | f.badbit);
-
-    std::getline (f, value);
-    f.exceptions (f.failbit | f.badbit);
-
-    pos = value.rfind ('\n');
-    if (pos != std::string::npos) {
-      value.resize (pos + 1);
-    }
-
-    f.close();
-    return value;
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::sysFsWriteFile (const char *n, const std::string &v) {
-    std::ostringstream fn;
-    std::ofstream f;
-
-    fn << _syspath << "/gpio" << systemNumber() << "/" << n;
-    f.open (fn.str());
-    f.exceptions (f.failbit | f.badbit);
-
-    f << v << std::endl;
-    f.exceptions (f.failbit | f.badbit);
-    f.close();
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  Pin::sysFsIsExport () const {
-    std::ostringstream fn;
-
-    fn << _syspath << "/gpio" << systemNumber();
-    return System::directoryExists (fn.str());
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  Pin::sysFsFileExist (const char *n) const {
-    struct stat sb;
-    std::ostringstream fn;
-
-    fn << _syspath << "/gpio" << systemNumber() << "/" << n;
-    return (stat (fn.str().c_str(), &sb) == 0 && S_ISREG (sb.st_mode));
+    return Private::edges;
   }
 
 }

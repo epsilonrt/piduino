@@ -2,13 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "(gdbasroot) Launch pido readall",
+      "name": "(gdbasroot) Debug as root",
       "type": "cppdbg",
       "request": "launch",
       // Resolved by CMake Tools:
       "program": "${command:cmake.launchTargetPath}",
       "args": [
-        "readall"
+        "wfi","3","rising"
       ],
       "stopAtEntry": true,
       "cwd": "${workspaceFolder}",

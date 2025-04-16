@@ -19,6 +19,7 @@
 #define PIDUINO_GPIO_CONNECTOR_H
 
 #include <iostream>
+#include <vector>
 #include <piduino/gpiopin.h>
 
 namespace Piduino {
