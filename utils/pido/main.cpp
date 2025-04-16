@@ -29,14 +29,13 @@
 #include "exception.h"
 #include "version.h"
 
-//#undef NDEBUG
-
 using namespace std;
 using namespace Piduino;
 
 /* constants ================================================================ */
 const string authors = "Pascal JEAN";
 const string website = "https://github.com/epsilonrt/piduino";
+const string pidoVersion = VERSION_SHORT;
 const int pwmDefaultFreq = 1000;
 const long pwmDefautRange = 1024;
 
@@ -724,7 +723,7 @@ sig_handler (int sig) {
 void
 version() {
 
-  cout << "Piduino pido version " << VERSION_SHORT << endl;
+  cout << "Piduino pido version " << pidoVersion << endl;
   cout << "Copyright © 2018-" << PIDUINO_BUILD_YEAR << " " << authors << ", " << website << endl;
   cout << "This program comes with ABSOLUTELY NO WARRANTY." << endl;
   cout << "This is free software, and you are welcome to redistribute it" << endl;

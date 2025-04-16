@@ -55,6 +55,8 @@ namespace Pinfo {
 
   const std::string authors = "Pascal JEAN";
   const std::string website = "https://github.com/epsilonrt/piduino";
+  const std::string pinfoVersion = VERSION_SHORT;
+
 
   /* private functions ======================================================== */
   void warranty ();
@@ -434,7 +436,7 @@ namespace Pinfo {
   void
   version() {
 
-    cout << "Piduino pinfo version " << VERSION_SHORT << endl;
+    cout << "Piduino pinfo version " << pinfoVersion << endl;
     cout << "Copyright © 2018-" << PIDUINO_BUILD_YEAR << " " << authors << ", " << website << endl;
     cout << "This program comes with ABSOLUTELY NO WARRANTY." << endl;
     cout << "This is free software, and you are welcome to redistribute it" << endl;
