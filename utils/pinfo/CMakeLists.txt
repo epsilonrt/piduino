@@ -76,11 +76,11 @@ include_directories(
 
 
 # Compiler options
-add_definitions(-O2)
-add_definitions(-Wall)
-add_definitions(
-    -DNDEBUG
-)
+# add_definitions(-O2)
+# add_definitions(-Wall)
+# add_definitions(
+#     -DNDEBUG
+# )
 
 
 # Linker options
