@@ -1,94 +1,115 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
+   This file is part of the Piduino Library.
 
-#include <piduino/gpio.h>
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <piduino/gpiodevice.h>
 #include <piduino/database.h>
 #ifdef __ARM_ARCH
 #include  "arch/arm/allwinner/gpio_hx.h"
 #include  "arch/arm/broadcom/gpio_bcm2835.h"
 #endif /* __ARM_ARCH */
+#include "gpio_p.h"
 #include "config.h"
 
 namespace Piduino {
-
-// -----------------------------------------------------------------------------
-//
-//                           Gpio Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                        Gpio::Private Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  Gpio::Gpio (long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer) :
-    _roc (true), _isopen (false), _accesslayer (layer), _device (nullptr),
-    _numbering (Pin::NumberingUnknown) {
+  Gpio::Private::Private (Gpio *q, long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer) :
+    q_ptr (q), roc (true), isopen (false), accesslayer (layer), device (nullptr),
+    numbering (Pin::NumberingUnknown) {
 
-    _descriptor = std::make_shared<Descriptor> (gpioDatabaseId);
+    descriptor = std::make_shared<Descriptor> (gpioDatabaseId);
 
     switch (socFamilyId) {
-#if PIDUINO_DRIVER_BCM2835 != 0
+        #if PIDUINO_DRIVER_BCM2835 != 0
       case SoC::Family::BroadcomBcm2835 :
-        _device = new Bcm2835Gpio();
+        device = new Bcm2835Gpio();
         break;
-#endif /* PIDUINO_DRIVER_BCM2835 */
-#if PIDUINO_DRIVER_ALLWINNERH != 0
+        #endif /* PIDUINO_DRIVER_BCM2835 */
+        #if PIDUINO_DRIVER_ALLWINNERH != 0
       case SoC::Family::AllwinnerH :
-        _device = new AllWinnerHxGpio();
+        device = new AllWinnerHxGpio();
         break;
-#endif /* PIDUINO_DRIVER_ALLWINNERH */
+        #endif /* PIDUINO_DRIVER_ALLWINNERH */
       default:
         throw std::system_error (ENOTSUP, std::system_category(),
                                  "It seems that this system is not supported !");
         break;
     }
 
-    std::vector<Connector::Descriptor> & v = _descriptor->connector;
-
     if (layer == AccessLayerAuto) {
 
-      _accesslayer = _device->preferedAccessLayer();
+      accesslayer = device->preferedAccessLayer();
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  Gpio::Private::~Private()  {
+    delete device;
+  }
+
+  // -----------------------------------------------------------------------------
+  //
+  //                           Gpio Class
+  //
+  // -----------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  Gpio::Gpio (Gpio::Private &dd) : d_ptr (&dd) {}
+
+  // ---------------------------------------------------------------------------
+  Gpio::Gpio (long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer) :
+    d_ptr (new Private (this, gpioDatabaseId, socFamilyId, layer)) {
+    PIMP_D (Gpio);
 
     // Création des connecteurs à partir des descripteurs
+    std::vector<Connector::Descriptor> &v = d->descriptor->connector;
     for (int i = 0; i < v.size(); i++) {
 
-      _connector[v[i].number] = std::make_shared<Connector> (this, & v[i]);
+      d->connector[v[i].number] = std::make_shared<Connector> (this, & v[i]);
     }
+    // code below throws a segfault, why ?
+    // for (auto c: d->descriptor->connector) {
+
+    //   d->connector[c.number] = std::make_shared<Connector> (this, &c);
+    // }
     setNumbering (Pin::NumberingLogical);
   }
 
   // ---------------------------------------------------------------------------
   Gpio::Gpio (AccessLayer layer) :
-    Gpio (db.board().gpioId(), db.board().soc().family().id(), layer) {
-
-  }
+    Gpio (db.board().gpioId(), db.board().soc().family().id(), layer) {}
 
   // ---------------------------------------------------------------------------
   Gpio::~Gpio() {
 
     close();
-    delete _device;
   }
 
   // ---------------------------------------------------------------------------
   AccessLayer
   Gpio::accessLayer() const {
+    PIMP_D (const Gpio);
 
-    return _accesslayer;
+    return d->accesslayer;
   }
 
   // ---------------------------------------------------------------------------
@@ -96,8 +117,9 @@ namespace Piduino {
   Gpio::open () {
 
     if (!isOpen()) {
+      PIMP_D (Gpio);
 
-      if (_accesslayer & AccessLayerIoMap) {
+      if (d->accesslayer & AccessLayerIoMap) {
 
         if (! device()->open()) {
 
@@ -105,7 +127,7 @@ namespace Piduino {
         }
       }
 
-      for (auto c = _connector.cbegin(); c != _connector.cend(); ++c) {
+      for (auto c = d->connector.cbegin(); c != d->connector.cend(); ++c) {
 
         if (!c->second->open()) {
 
@@ -113,7 +135,7 @@ namespace Piduino {
         }
       }
 
-      _isopen = true;
+      d->isopen = true;
     }
 
     return isOpen();
@@ -124,28 +146,31 @@ namespace Piduino {
   Gpio::close() {
 
     if (isOpen()) {
+      PIMP_D (Gpio);
 
-      for (auto c = _connector.cbegin(); c != _connector.cend(); ++c) {
+      for (auto c = d->connector.cbegin(); c != d->connector.cend(); ++c) {
 
         c->second->close();
       }
       device()->close();
-      _isopen = false;
+      d->isopen = false;
     }
   }
 
   // ---------------------------------------------------------------------------
   bool
   Gpio::isOpen() const {
+    PIMP_D (const Gpio);
 
-    return _isopen;
+    return d->isopen;
   }
 
   // ---------------------------------------------------------------------------
   Pin::Numbering
   Gpio::numbering() const {
+    PIMP_D (const Gpio);
 
-    return _numbering;
+    return d->numbering;
   }
 
   // ---------------------------------------------------------------------------
@@ -153,12 +178,13 @@ namespace Piduino {
   Gpio::setNumbering (Pin::Numbering nb) {
 
     if (nb != numbering()) {
+      PIMP_D (Gpio);
 
-      _pin.clear();
+      d->pin.clear();
 
-      for (auto cpair = _connector.cbegin(); cpair != _connector.cend(); ++cpair) {
-        const std::shared_ptr<Connector> & conn = cpair->second;
-        const std::map<int, std::shared_ptr<Pin>> & pinmap = conn->pin();
+      for (auto cpair = d->connector.cbegin(); cpair != d->connector.cend(); ++cpair) {
+        const std::shared_ptr<Connector> &conn = cpair->second;
+        const std::map<int, std::shared_ptr<Pin>> &pinmap = conn->pin();
 
         for (auto pair = pinmap.cbegin(); pair != pinmap.cend(); ++pair) {
 
@@ -166,17 +192,18 @@ namespace Piduino {
           if (p->type() == Pin::TypeGpio) {
 
             int num = p->number (nb);
-            _pin[num] = p;
+            d->pin[num] = p;
           }
         }
       }
-      _numbering = nb;
+      d->numbering = nb;
     }
   }
 
   // ---------------------------------------------------------------------------
   const std::string &
   Gpio::numberingName () const {
+    PIMP_D (const Gpio);
 
     return Pin::numberingName (numbering());
   }
@@ -184,57 +211,65 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   bool
   Gpio::releaseOnClose() const {
+    PIMP_D (const Gpio);
 
-    return _roc;
+    return d->roc;
   }
 
   // ---------------------------------------------------------------------------
   void
   Gpio::setReleaseOnClose (bool enable) {
+    PIMP_D (Gpio);
 
-    _roc = enable;
+    d->roc = enable;
   }
 
   // ---------------------------------------------------------------------------
   const std::string &
   Gpio::name() const {
+    PIMP_D (const Gpio);
 
-    return _descriptor->name;
+    return d->descriptor->name;
   }
 
   // ---------------------------------------------------------------------------
   long long
   Gpio::id() const {
+    PIMP_D (const Gpio);
 
-    return _descriptor->id;
+    return d->descriptor->id;
   }
 
   // ---------------------------------------------------------------------------
   int
   Gpio::size() const {
+    PIMP_D (const Gpio);
 
-    return _pin.size();
+    return d->pin.size();
   }
 
   // ---------------------------------------------------------------------------
   const std::map<int, std::shared_ptr<Pin>> &
   Gpio::pin() {
+    PIMP_D (Gpio);
 
-    return _pin;
+    return d->pin;
   }
 
   // ---------------------------------------------------------------------------
   Pin &
   Gpio::pin (int number) const {
+    PIMP_D (const Gpio);
 
-    return *_pin.at (number).get();
+    return *d->pin.at (number).get();
   };
 
   // ---------------------------------------------------------------------------
   Pin *
   Gpio::pin (long long id) const {
+    PIMP_D (const Gpio);
 
-    for (auto pair = _pin.cbegin(); pair != _pin.cend(); ++pair) {
+    for (auto pair = d->pin.cbegin(); pair != d->pin.cend(); ++pair) {
       std::shared_ptr<Pin> p = pair->second;
 
       if (p->id() == id) {
@@ -249,28 +284,33 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   int
   Gpio::connectors() const {
+    PIMP_D (const Gpio);
 
-    return _connector.size();
+    return d->connector.size();
   }
 
   // ---------------------------------------------------------------------------
   Connector *
   Gpio::connector (int num) const {
+    PIMP_D (const Gpio);
 
-    return _connector.at (num).get();
+    return d->connector.at (num).get();
   }
 
   // ---------------------------------------------------------------------------
   const std::map<int, std::shared_ptr<Connector>> &
   Gpio::connector() {
-    return _connector;
+    PIMP_D (Gpio);
+
+    return d->connector;
   }
 
   // ---------------------------------------------------------------------------
   GpioDevice *
   Gpio::device() const {
+    PIMP_D (const Gpio);
 
-    return _device;
+    return d->device;
   }
 
   // ---------------------------------------------------------------------------
