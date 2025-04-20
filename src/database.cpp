@@ -172,7 +172,13 @@ namespace Piduino {
         int bmid;
         int mid;
 
-        res >> _id >> _name >> _ram >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
+        res >> _id >> _name;
+        if (!res.fetch(_ram)) {
+          
+          _ram = system.totalRam();
+        }
+
+        res >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
         _model.setId (static_cast<Database::Board::Model::Id> (bmid));
         _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         _revision = rev;
@@ -198,7 +204,13 @@ namespace Piduino {
         int bmid;
         int mid;
 
-        res >> _id >> _name >> _ram >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
+        res >> _id >> _name;
+        if (!res.fetch(_ram)) {
+          
+          _ram = system.totalRam();
+        }
+
+        res >> _pcb_revision >> bmid >> _gpio_id >> mid >> _default_i2c_id >> _default_spi_id >> _default_uart_id;
         _model.setId (static_cast<Database::Board::Model::Id> (bmid));
         _manufacturer.setId (static_cast<Manufacturer::Id> (mid));
         _tag = t;

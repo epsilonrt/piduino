@@ -5,7 +5,7 @@
   <Project Name="libpiduino-dev" Path="dev/libpiduino-dev.project" Active="No"/>
   <Project Name="piduino-utils" Path="utils/piduino-utils.project" Active="No"/>
   <Project Name="pido" Path="utils/pido/pido.project" Active="Yes"/>
-  <Project Name="pinfo" Path="../../../home/pi/src/piduino/utils/pinfo/pinfo.project" Active="No"/>
+  <Project Name="pinfo" Path="utils/pinfo/pinfo.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -15,6 +15,7 @@
       <Project Name="piduino-utils" ConfigName="Debug"/>
       <Project Name="pido" ConfigName="Debug"/>
       <Project Name="pinfo" ConfigName="Debug"/>
+      <Project Name="pinfo" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -23,6 +24,7 @@
       <Project Name="libpiduino-dev" ConfigName="Release"/>
       <Project Name="piduino-utils" ConfigName="Release"/>
       <Project Name="pido" ConfigName="Release"/>
+      <Project Name="pinfo" ConfigName="Release"/>
       <Project Name="pinfo" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
