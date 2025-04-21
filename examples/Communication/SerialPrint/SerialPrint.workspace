@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="ASCIIPing" Database="" Version="10.0.0">
-  <Project Name="ASCIIPing" Path="ASCIIPing.project" Active="Yes"/>
+<CodeLite_Workspace Name="SerialPrint" Database="" Version="10.0.0">
+  <Project Name="SerialPrint" Path="SerialPrint.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
-      <Project Name="ASCIIPing" ConfigName="Debug"/>
+      <Project Name="SerialPrint" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
-      <Project Name="ASCIIPing" ConfigName="Release"/>
+      <Project Name="SerialPrint" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

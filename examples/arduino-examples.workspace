@@ -2,7 +2,7 @@
 <CodeLite_Workspace Name="piduino-examples" Database="" Version="10.0.0">
   <Project Name="Blink" Path="Blink/Blink.project" Active="Yes"/>
   <Project Name="Button" Path="Button/Button.project" Active="No"/>
-  <Project Name="ASCIIPing" Path="Communication/ASCIIPing/ASCIIPing.project" Active="No"/>
+  <Project Name="SerialPong" Path="Communication/SerialPong/SerialPong.project" Active="No"/>
   <Project Name="ASCIITable" Path="Communication/ASCIITable/ASCIITable.project" Active="No"/>
   <Project Name="Console" Path="Communication/Console/Console.project" Active="No"/>
   <Project Name="ReadASCIIString" Path="Communication/ReadASCIIString/ReadASCIIString.project" Active="No"/>
@@ -16,12 +16,14 @@
   <Project Name="WireRtcBq32k" Path="Wire/WireRtcBq32k/WireRtcBq32k.project" Active="No"/>
   <Project Name="Fade" Path="Fade/Fade.project" Active="No"/>
   <Project Name="Blinkd" Path="Blink-Daemon/Blinkd.project" Active="No"/>
+  <Project Name="SerialPrint" Path="Communication/SerialPrint/SerialPrint.project" Active="No"/>
+  <Project Name="SerialPing" Path="Communication/SerialPing/SerialPing.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
       <Project Name="Blink" ConfigName="Debug"/>
       <Project Name="Button" ConfigName="Debug"/>
-      <Project Name="ASCIIPing" ConfigName="Debug"/>
+      <Project Name="SerialPong" ConfigName="Debug"/>
       <Project Name="ASCIITable" ConfigName="Debug"/>
       <Project Name="Console" ConfigName="Debug"/>
       <Project Name="ReadASCIIString" ConfigName="Debug"/>
@@ -34,12 +36,14 @@
       <Project Name="WireRtcBq32k" ConfigName="Debug"/>
       <Project Name="Fade" ConfigName="Debug"/>
       <Project Name="Blinkd" ConfigName="Debug"/>
+      <Project Name="SerialPrint" ConfigName="Debug"/>
+      <Project Name="SerialPing" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
       <Project Name="Blink" ConfigName="Release"/>
       <Project Name="Button" ConfigName="Release"/>
-      <Project Name="ASCIIPing" ConfigName="Release"/>
+      <Project Name="SerialPong" ConfigName="Release"/>
       <Project Name="ASCIITable" ConfigName="Release"/>
       <Project Name="Console" ConfigName="Release"/>
       <Project Name="ReadASCIIString" ConfigName="Release"/>
@@ -52,6 +56,8 @@
       <Project Name="WireRtcBq32k" ConfigName="Release"/>
       <Project Name="Fade" ConfigName="Release"/>
       <Project Name="Blinkd" ConfigName="Release"/>
+      <Project Name="SerialPrint" ConfigName="Release"/>
+      <Project Name="SerialPing" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
