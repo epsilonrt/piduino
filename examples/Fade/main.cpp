@@ -8,9 +8,7 @@
 
   http://www.arduino.cc/en/Tutorial/Fade
 */
-#ifdef __unix__
 #include <Piduino.h>  // All the magic is here ;-)
-#endif
 
 
 // <DANGER> Be careful !!! Before launching this program :

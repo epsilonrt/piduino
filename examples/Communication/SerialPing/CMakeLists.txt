@@ -10,7 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(PkgConfig REQUIRED) 
 pkg_check_modules(PIDUINO REQUIRED IMPORTED_TARGET piduino)
 
-add_executable(${PROJECT_NAME} main.cpp)
+file(GLOB SOURCES *.cpp)
+add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC PkgConfig::PIDUINO)
 
 set(PROGRAM_PERMISSIONS_BY_ROOT

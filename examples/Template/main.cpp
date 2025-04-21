@@ -1,9 +1,7 @@
 // #{PROJECT}
 // by #{AUTHOR}
 // #{DESCRIPTION}
-#ifdef __unix__
 #include <Piduino.h>  // All the magic is here ;-)
-#endif
 
 
 

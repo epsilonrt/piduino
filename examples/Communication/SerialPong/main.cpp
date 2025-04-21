@@ -1,62 +1,72 @@
+
 // SerialPong
 
-// Wait for the characters on the serial port and return them, repeatedly.
-
-// Created 10 september 2018
-// by Pascal JEAN https://github.com/epsilonrt
+// This program demonstrates a basic "Serial Pong" application where it reads
+// a message ("ping") from the serial port, converts it to lowercase, and sends
+// it back as a response ("pong"). It also outputs the received and sent messages
+// to the console for debugging purposes.
+// The program initializes the console for debugging and sets up serial communication
+// with a specified baud rate and configuration. It continuously listens for incoming
+// serial data, processes it, and responds accordingly.
 
 // This example code is in the public domain.
 
-#include <Piduino.h>  // All the magic is here ;-)
 
+// Include the Piduino library for serial communication and utilities
+#include <Piduino.h>  
+
+// Console baud rate for debugging output
 const unsigned long ConsoleBaudrate = 115200;
 
-// Serial constants
-const unsigned long SerialBaudrate = 38400;
-const uint8_t SerialConfig = SERIAL_8E1;
-
+// Serial communication constants
+const unsigned long SerialBaudrate = 38400; // Baud rate for serial communication
+const uint8_t SerialConfig = SERIAL_8E1;   // Serial configuration: 8 data bits, even parity, 1 stop bit
 
 void setup() {
   
-  Console.begin (ConsoleBaudrate);
-  Console.print ("SerialPong to ");
-  Console.println (Serial.portName());
+  // Initialize the console for debugging
+  Console.begin(ConsoleBaudrate);
+  Console.print("SerialPong to ");
+  Console.println(Serial.portName()); // Print the name of the serial port
 
-  // initialize serial:
-  Serial.begin (SerialBaudrate, SerialConfig);
+  // Initialize the serial communication with the specified baud rate and configuration
+  Serial.begin(SerialBaudrate, SerialConfig);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
+    ; // Wait for the serial port to connect (needed for native USB ports)
   }
-
 }
 
-void loop () {
-  String ping;
+void loop() {
+  String ping; // Variable to store the received message
 
-  // Press Ctrl+C to abort ...
-  while (Serial.available() > 0) { // if there's any serial available ...
-    int c = Serial.read(); //  read it !
-
-    delay (10);
-    if (c > 0) { // if the reading was successful ...
-      ping.concat ( (char) c);
+  // Check if there is any data available on the serial port
+  while (Serial.available() > 0) {
+    int c = Serial.read(); // Read one character from the serial port
+    delay(10); // Small delay to ensure proper reading
+    if (c > 0) { // If the character was successfully read
+      ping.concat((char)c); // Append the character to the "ping" string
     }
   }
 
+  // If a message ("ping") was received
   if (ping.length() > 0) {
-    String pong;
+    String pong; // Variable to store the response message
 
-    Console.print (ping); // write the character on the buffer
-    Console.println(); // flush the buffer on the console
+    // Print the received message to the console
+    Console.print(ping); 
+    Console.println(); 
 
+    // Copy the received message and convert it to lowercase
     pong = ping;
     pong.toLowerCase();
     
-    Serial.print (pong); // write the character on the buffer
+    // Send the modified message ("pong") back over serial
+    Serial.print(pong); 
     Serial.flush();
     
-    Console.print (pong); // write the character on the buffer
-    Console.println(); // flush the buffer on the console
+    // Print the modified message to the console
+    Console.print(pong); 
+    Console.println(); 
   }
 }
 

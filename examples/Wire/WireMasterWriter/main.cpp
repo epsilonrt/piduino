@@ -8,9 +8,7 @@
 // Created 29 March 2006
 
 // This example code is in the public domain.
-#ifdef __unix__
 #include <Piduino.h>  // All the magic is here ;-)
-#endif
 #include <Wire.h>
 
 void setup() {
