@@ -43,8 +43,10 @@ namespace Piduino {
   enum AccessLayer {
     AccessLayerAuto  = 0, //< Choix automatique (à utiliser la plupart du temps), c'est la plateforme qui choisit par le GpioDevice
     AccessLayerIoMap = 0x0001, ///< Accès par les registres du SOC, la plus performante mais il faut être sûr que cela est disponible sur la plateforme
-    AccessLayerSysFs = 0x0002, ///< Accès par l'interface "utilisateur" dans /sys/class/gpio, la plus générique
-    AccessLayerAll = AccessLayerIoMap + AccessLayerSysFs ///< Le mieux, toutes les fonctions sont disponibles
+    AccessLayerSysFs = 0x0002, ///< Accès par l'interface "utilisateur" dans /sys/class/gpio, la plus générique (deprecated)
+    AccessLayerGpioDev = 0x0004, ///< Accès par l'interface "utilisateur" dans /dev/gpiochip, remplace sysfs, la plus générique
+    AccessLayerAll = AccessLayerIoMap + AccessLayerSysFs, ///< Le mieux, toutes les fonctions sont disponibles
+    AccessLayerUnk = -1
   };
   /**
      @}

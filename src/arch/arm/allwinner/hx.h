@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * The Piduino Library is free software; you can redistribute it and/or
@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PIDUINO_ARCH_ARM_ALLWINNER_HX_H
-#define PIDUINO_ARCH_ARM_ALLWINNER_HX_H
+#pragma once
 
 #include <piduino/global.h>
 
 namespace Piduino {
 
   namespace AllWinnerHx {
+    
+    const unsigned int NumberOfChips = 2;
+    unsigned int ChipOfPinFunc (int &systemNumber);
 
     const off_t Io1Base = 0x01C20000;
     const off_t Io2Base = 0x01F02000;
@@ -72,4 +74,3 @@ namespace Piduino {
   }
 }
 /* ========================================================================== */
-#endif /* PIDUINO_ARCH_ARM_ALLWINNER_HX_H defined */
