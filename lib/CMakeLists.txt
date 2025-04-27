@@ -27,40 +27,40 @@ file(GLOB src_piduino  ${PIDUINO_SRC_DIR}/*.cpp)
 list(REMOVE_ITEM src_piduino ${PIDUINO_SRC_DIR}/piduino.cpp)
 
 set (hdr_piduino 
-  ${PIDUINO_INC_DIR}/piduino/global.h
-  ${PIDUINO_INC_DIR}/piduino/clock.h
-  ${PIDUINO_INC_DIR}/piduino/scheduler.h
-  ${PIDUINO_INC_DIR}/piduino/iomap.h
   ${PIDUINO_INC_DIR}/piduino/board.h
-  ${PIDUINO_INC_DIR}/piduino/soc.h
-  ${PIDUINO_INC_DIR}/piduino/manufacturer.h
-  ${PIDUINO_INC_DIR}/piduino/database.h
+  ${PIDUINO_INC_DIR}/piduino/clock.h
   ${PIDUINO_INC_DIR}/piduino/configfile.h
-  ${PIDUINO_INC_DIR}/piduino/system.h
-  ${PIDUINO_INC_DIR}/piduino/string.h
-  ${PIDUINO_INC_DIR}/piduino/memory.h
-  ${PIDUINO_INC_DIR}/piduino/ringbuffer.h
-  ${PIDUINO_INC_DIR}/piduino/linearbuffer.h
-  ${PIDUINO_INC_DIR}/piduino/threadsafebuffer.h
+  ${PIDUINO_INC_DIR}/piduino/converter.h
+  ${PIDUINO_INC_DIR}/piduino/database.h
   ${PIDUINO_INC_DIR}/piduino/fifo.h
-  ${PIDUINO_INC_DIR}/piduino/flags.h
-  ${PIDUINO_INC_DIR}/piduino/iodevice.h
   ${PIDUINO_INC_DIR}/piduino/filedevice.h
+  ${PIDUINO_INC_DIR}/piduino/fileno.h
   ${PIDUINO_INC_DIR}/piduino/filestream.h
+  ${PIDUINO_INC_DIR}/piduino/flags.h
+  ${PIDUINO_INC_DIR}/piduino/global.h
+  ${PIDUINO_INC_DIR}/piduino/iodevice.h
+  ${PIDUINO_INC_DIR}/piduino/iomap.h
+  ${PIDUINO_INC_DIR}/piduino/linearbuffer.h
+  ${PIDUINO_INC_DIR}/piduino/manufacturer.h
+  ${PIDUINO_INC_DIR}/piduino/memory.h
+  ${PIDUINO_INC_DIR}/piduino/popl.h
+  ${PIDUINO_INC_DIR}/piduino/pwm.h
+  ${PIDUINO_INC_DIR}/piduino/ringbuffer.h
+  ${PIDUINO_INC_DIR}/piduino/scheduler.h
+  ${PIDUINO_INC_DIR}/piduino/soc.h
+  ${PIDUINO_INC_DIR}/piduino/socpwm.h
+  ${PIDUINO_INC_DIR}/piduino/string.h
+  ${PIDUINO_INC_DIR}/piduino/syslog.h
+  ${PIDUINO_INC_DIR}/piduino/system.h
   ${PIDUINO_INC_DIR}/piduino/terminal.h
   ${PIDUINO_INC_DIR}/piduino/terminalnotifier.h
-  ${PIDUINO_INC_DIR}/piduino/fileno.h
-  ${PIDUINO_INC_DIR}/piduino/converter.h
-  ${PIDUINO_INC_DIR}/piduino/pwm.h
-  ${PIDUINO_INC_DIR}/piduino/socpwm.h
-  ${PIDUINO_INC_DIR}/piduino/popl.h
-  ${PIDUINO_INC_DIR}/piduino/syslog.h
+  ${PIDUINO_INC_DIR}/piduino/threadsafebuffer.h
 )
 
 set (hdr_gpio 
   ${PIDUINO_INC_DIR}/piduino/gpio.h
-  ${PIDUINO_INC_DIR}/piduino/gpiopin.h
   ${PIDUINO_INC_DIR}/piduino/gpioconnector.h
+  ${PIDUINO_INC_DIR}/piduino/gpiopin.h
   ${PIDUINO_INC_DIR}/piduino/gpiopwm.h
 )
 
