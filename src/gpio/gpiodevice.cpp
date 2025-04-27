@@ -77,6 +77,13 @@ namespace Piduino {
   }
 
   // -----------------------------------------------------------------------------
+  unsigned int
+  GpioDevice::flags() const {
+
+    return 0;
+  }
+
+  // -----------------------------------------------------------------------------
   void
   GpioDevice::toggle (const Pin *pin) {
 
@@ -91,13 +98,6 @@ namespace Piduino {
   }
 
   // -----------------------------------------------------------------------------
-  unsigned int
-  GpioDevice::flags() const {
-
-    return 0;
-  }
-
-  // -----------------------------------------------------------------------------
   void
   GpioDevice::setDrive (const Pin *pin, int d) {
 
@@ -108,6 +108,37 @@ namespace Piduino {
   GpioDevice::drive (const Pin *pin) const {
 
     return -1;
+  }
+
+  // -----------------------------------------------------------------------------
+  int GpioDevice::waitForInterrupt (const Pin *pin, Pin::Edge edge, int timeout_ms) {
+    return -1;
+  }
+
+  // -----------------------------------------------------------------------------
+  bool GpioDevice::attachInterrupt (const Pin *pin, Pin::Isr isr, Pin::Edge edge, void *userData) {
+  }
+
+  // -----------------------------------------------------------------------------
+  void GpioDevice::detachInterrupt (const Pin *pin) {
+  }
+
+  // -----------------------------------------------------------------------------
+  void GpioDevice::setDebounce (const Pin *pin, uint32_t debounce_ms) {
+  }
+
+  // -----------------------------------------------------------------------------
+  uint32_t GpioDevice::debounce (const Pin *pin) const {
+    return 0;
+  }
+
+  // -----------------------------------------------------------------------------
+  void GpioDevice::setActiveLow (const Pin *pin, bool activeLow) {
+  }
+
+  // -----------------------------------------------------------------------------
+  bool GpioDevice::isActiveLow (const Pin *pin) const {
+    return false;
   }
 
   // -----------------------------------------------------------------------------
