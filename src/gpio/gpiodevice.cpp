@@ -117,6 +117,7 @@ namespace Piduino {
 
   // -----------------------------------------------------------------------------
   bool GpioDevice::attachInterrupt (const Pin *pin, Pin::Isr isr, Pin::Edge edge, void *userData) {
+    return false;
   }
 
   // -----------------------------------------------------------------------------
