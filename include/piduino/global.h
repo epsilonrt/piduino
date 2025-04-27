@@ -94,6 +94,10 @@
 */
 #define PIMP_DECLARE_PUBLIC(Class)
 #else
+#define EXCEPTION_MSG(m) std::string{} + __FILE__ + "(" + std::to_string(__LINE__) + "): [" + __func__ +"] " + m
+
+// ---------------------------------------------------------
+// PIMP_D
 #define PIMP_D(Class) Class::Private * const d = d_func()
 #define PIMP_Q(Class) Class * const q = q_func()
 #define PIMP_DECLARE_PRIVATE(Class)\
@@ -108,6 +112,7 @@
   inline Class* q_func() { return reinterpret_cast<Class *>(q_ptr); } \
   inline const Class* q_func() const { return reinterpret_cast<const Class *>(q_ptr); } \
   friend class Class;
+// ---------------------------------------------------------
 #endif
 
 /**
