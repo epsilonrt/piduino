@@ -1,44 +1,75 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <SPI.h>
+#include <system_error>
 
 // -----------------------------------------------------------------------------
 // Initialize the SPI library
 void SPIClass::begin() {
 
-  setBus (Info::defaultBus());
-  setSettings (SPISettings());
-  
-  if (!open ()) {
-    throw std::system_error (errno, std::system_category(),
-                             "Error when opening the SPI bus " +
-                             bus().path());
+  if (isOpen() == false) {
+    const Info &busInfo = _defaultBus.exists() ? _defaultBus : Info::defaultBus();
+
+    setBus (busInfo);
+    setSettings (SPISettings());
+
+    if (!open ()) {
+      throw std::system_error (errno, std::system_category(),
+                               "Error when opening the SPI bus " +
+                               bus().path());
+    }
   }
 }
 
 // -----------------------------------------------------------------------------
 void SPIClass::begin (int idBus, int idCs) {
 
-  setBus (idBus, idCs);
-  setSettings (SPISettings());
-  if (!open ()) {
-    throw std::system_error (errno, std::system_category(),
-                             "Error when opening the SPI bus " +
-                             bus().path());
+  if (isOpen() == false) {
+    setBus (idBus, idCs);
+    setSettings (SPISettings());
+    if (!open ()) {
+      throw std::system_error (errno, std::system_category(),
+                               "Error when opening the SPI bus " +
+                               bus().path());
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+// Piduino Only: Set the SPI bus to use
+void SPIClass::setDefaultBus (int bus, int cs) {
+
+  if (isOpen() == false) {
+    Info info (bus, cs);
+
+    if (info.exists()) {
+
+      _defaultBus = info;
+    }
+    else {
+
+      throw std::system_error (ENOENT, std::system_category(),
+                               info.path() + " not found, please check system configuration !");
+    }
+  }
+  else {
+    
+    throw std::system_error (EBUSY, std::system_category(),
+                             "SPI bus " + bus().path() + " is already opened !");
   }
 }
 
@@ -52,8 +83,8 @@ void SPIClass::end() {
 // Before using SPI.transfer() or asserting chip select pins,
 // this function is used to gain exclusive access to the SPI bus
 // and configure the correct settings.
-void SPIClass::beginTransaction (const SPISettings & s) {
-  
+void SPIClass::beginTransaction (const SPISettings &s) {
+
   setSettings (s);
   _pendingTransaction.lock();
 }
@@ -62,7 +93,7 @@ void SPIClass::beginTransaction (const SPISettings & s) {
 // After performing a group of transfers and releasing the chip select
 // signal, this function allows others to access the SPI bus
 void SPIClass::endTransaction (void) {
-  
+
   _pendingTransaction.unlock();
 }
 
@@ -90,7 +121,7 @@ uint16_t SPIClass::transfer16 (uint16_t data) {
 }
 
 // -----------------------------------------------------------------------------
-void SPIClass::transfer (void * buf, size_t count) {
+void SPIClass::transfer (void *buf, size_t count) {
   Piduino::SpiDev::transfer (static_cast<const uint8_t *> (buf), static_cast<uint8_t *> (buf), count);
 }
 
@@ -122,3 +153,5 @@ void SPIClass::setClockDivider (uint8_t clockDiv) {
 SPIClass SPI;
 
 /* ========================================================================== */
+
+
