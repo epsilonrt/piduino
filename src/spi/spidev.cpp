@@ -17,10 +17,12 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <libudev.h>
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
+#include <system_error>
 #include <piduino/spidev.h>
 #include <piduino/gpio.h>
 #include <piduino/database.h>
@@ -282,8 +284,19 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   SpiDev::Info
   SpiDev::Info::defaultBus () {
+    Info info (db.board().defaultSpiBus());
 
-    return Info (db.board().defaultSpiBus());
+    if (info.exists() == false) {
+      const std::deque<Info> & list = availableBuses ();
+
+      if (list.empty()) {
+        throw std::system_error (ENOENT, std::system_category(),
+                                  "No spi bus found, please check system configuration !");
+
+      }
+      info = list.at(0);
+    }
+    return info;
   }
 
   // ---------------------------------------------------------------------------
