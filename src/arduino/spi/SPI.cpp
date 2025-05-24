@@ -52,9 +52,9 @@ void SPIClass::begin (int idBus, int idCs) {
 //------------------------------------------------------------------------------
 // Piduino Only: Set the SPI bus to use
 void SPIClass::setDefaultBus (int bus, int cs) {
+  Info info (bus, cs);
 
   if (isOpen() == false) {
-    Info info (bus, cs);
 
     if (info.exists()) {
 
@@ -67,9 +67,9 @@ void SPIClass::setDefaultBus (int bus, int cs) {
     }
   }
   else {
-    
+
     throw std::system_error (EBUSY, std::system_category(),
-                             "SPI bus " + bus().path() + " is already opened !");
+                             "SPI bus " + info.path() + " is already opened !");
   }
 }
 
