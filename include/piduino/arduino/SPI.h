@@ -81,6 +81,27 @@ public:
     // It may call before begin() to set the bus
     void setDefaultBus (int bus, int cs = 0);
 
+    // Piduino Only: Set the default bus path
+    // This function is used to set the default bus path for SPI
+    // It may call before begin() to set the bus
+    void setDefaultBusPath (const String &path);
+
+    // Piduino Only: Get the default bus path
+    // This function returns the path of the default SPI bus
+    String defaultBusPath() const {
+      return _defaultBus.path();
+    }
+
+    // Piduino Only: Get the default bus identifier
+    int defaultBusId() const {
+      return _defaultBus.busId();
+    }
+
+    // Piduino Only: Get the default chip select identifier
+    int defaultCsId() const {
+      return _defaultBus.csId();
+    }
+
     // -------------------------------------------------------------------------
     // Before using SPI.transfer() or asserting chip select pins,
     // this function is used to gain exclusive access to the SPI bus

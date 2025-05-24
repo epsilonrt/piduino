@@ -73,6 +73,26 @@ void SPIClass::setDefaultBus (int bus, int cs) {
   }
 }
 
+//------------------------------------------------------------------------------
+// Piduino Only: Set the default bus path
+void SPIClass::setDefaultBusPath (const String &path) {
+  Info info;
+  if (info.setPath (path)) {
+    if (isOpen() == false) {
+      _defaultBus = info;
+    }
+    else {
+      throw std::system_error (EBUSY, std::system_category(),
+                               "SPI bus " + path + " is already opened !");
+    }
+  }
+  else {
+    throw std::system_error (ENOENT, std::system_category(),
+                             path + " not found, please check system configuration !");
+  }
+}
+
+
 // -----------------------------------------------------------------------------
 // Disable the SPI bus
 void SPIClass::end() {
