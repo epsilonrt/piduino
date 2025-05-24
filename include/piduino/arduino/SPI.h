@@ -64,7 +64,7 @@ class SPISettings : public Piduino::SpiDev::Settings {
 class SPIClass : protected Piduino::SpiDev {
 public:
   
-    SPIClass() {}
+    SPIClass() : _defaultBus(Info::defaultBus()) {}
 
     // Initialize the SPI library with the default bus
     // calling end() before reusing SPI
