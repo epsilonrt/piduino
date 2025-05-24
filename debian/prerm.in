@@ -1,0 +1,29 @@
+#!/bin/sh
+# Filename:      prerm
+# Purpose:       prerm script for package libpiduino
+# Authors:       Copyright © 2018-2025 Pascal JEAN, All rights reserved.
+# Bug-Reports:   https://github.com/epsilonrt/piduino/issues
+# SPDX-License-Identifier: LGPL-3.0-or-later
+set -e
+
+PIDUINO_CONF_FILE=@PIDUINO_INSTALL_ETC_DIR@/piduino.conf
+
+echo "Running prerm($1) script for package libpiduino..."
+
+case "$1" in
+    purge)
+        rm -f "$PIDUINO_CONF_FILE" "$PIDUINO_CONF_FILE.dpkg-dist" && echo "File '$PIDUINO_CONF_FILE' and its backup '$PIDUINO_CONF_FILE.dpkg-dist' have been removed."
+    ;;
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    ;;
+    remove)
+        if [ -e "$PIDUINO_CONF_FILE" ]; then
+            cp -n "$PIDUINO_CONF_FILE" "$PIDUINO_CONF_FILE".dpkg-dist && echo "File '$PIDUINO_CONF_FILE' has been backed up as '$PIDUINO_CONF_FILE.dpkg-dist'."
+        fi
+    ;;
+    *)
+        echo "prerm called with unknown argument $1" >&2
+        exit 1
+esac
+
+exit 0
