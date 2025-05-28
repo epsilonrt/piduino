@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2010 by Cristian Maglie <c.maglie@arduino.cc>
- * Copyright (c) 2014 by Paul Stoffregen <paul@pjrc.com> (Transaction API)
- * Copyright (c) 2014 by Matthijs Kooijman <matthijs@stdin.nl> (SPISettings AVR)
- * Copyright (c) 2014 by Andrew J. Kroll <xxxajk@gmail.com> (atomicity fixes)
- * SPI Master library for arduino.
- *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of either the GNU General Public License version 2
- * or the GNU Lesser General Public License version 2.1, both as
- * published by the Free Software Foundation.
- *
- * Modified 2018 by Pascal JEAN for Piduino Library
- */
+   Copyright (c) 2010 by Cristian Maglie <c.maglie@arduino.cc>
+   Copyright (c) 2014 by Paul Stoffregen <paul@pjrc.com> (Transaction API)
+   Copyright (c) 2014 by Matthijs Kooijman <matthijs@stdin.nl> (SPISettings AVR)
+   Copyright (c) 2014 by Andrew J. Kroll <xxxajk@gmail.com> (atomicity fixes)
+   SPI Master library for arduino.
+
+   This file is free software; you can redistribute it and/or modify
+   it under the terms of either the GNU General Public License version 2
+   or the GNU Lesser General Public License version 2.1, both as
+   published by the Free Software Foundation.
+
+   Modified 2018 by Pascal JEAN for Piduino Library
+*/
 
 #ifndef _SPI_H_INCLUDED
 #define _SPI_H_INCLUDED
@@ -64,21 +64,49 @@ class SPISettings : public Piduino::SpiDev::Settings {
 class SPIClass : protected Piduino::SpiDev {
 public:
   
-    SPIClass() {}
-    
-    // Initialize the SPI library
+    SPIClass() : _defaultBus(Info::defaultBus()) {}
+
+    // Initialize the SPI library with the default bus
+    // calling end() before reusing SPI
     void begin();
 
+    // Piduino Only: Initialize the SPI library with a specific bus
     void begin (int idBus, int idCs = 0);
 
     // Disable the SPI bus
     void end();
 
+    // Piduino Only: Set the SPI bus to use
+    // This function is used to set the default bus for SPI
+    // It may call before begin() to set the bus
+    void setDefaultBus (int bus, int cs = 0);
+
+    // Piduino Only: Set the default bus path
+    // This function is used to set the default bus path for SPI
+    // It may call before begin() to set the bus
+    void setDefaultBusPath (const String &path);
+
+    // Piduino Only: Get the default bus path
+    // This function returns the path of the default SPI bus
+    String defaultBusPath() const {
+      return _defaultBus.path();
+    }
+
+    // Piduino Only: Get the default bus identifier
+    int defaultBusId() const {
+      return _defaultBus.busId();
+    }
+
+    // Piduino Only: Get the default chip select identifier
+    int defaultCsId() const {
+      return _defaultBus.csId();
+    }
+
     // -------------------------------------------------------------------------
     // Before using SPI.transfer() or asserting chip select pins,
     // this function is used to gain exclusive access to the SPI bus
     // and configure the correct settings.
-    void beginTransaction (const SPISettings & s);
+    void beginTransaction (const SPISettings &s);
 
     // -------------------------------------------------------------------------
     // After performing a group of transfers and releasing the chip select
@@ -93,7 +121,7 @@ public:
     uint16_t transfer16 (uint16_t data);
 
     // -------------------------------------------------------------------------
-    void transfer (void * buf, size_t count);
+    void transfer (void *buf, size_t count);
 
     // -------------------------------------------------------------------------
     // This function is deprecated.  New applications should use
@@ -126,6 +154,7 @@ public:
 
   private:
     std::mutex _pendingTransaction;
+    Piduino::SpiDev::Info _defaultBus;
 };
 
 extern SPIClass SPI;

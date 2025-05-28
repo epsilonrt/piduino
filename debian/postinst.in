@@ -1,0 +1,26 @@
+#!/bin/sh
+# Filename:      postinst
+# Purpose:       postinst script for package libpiduino
+# Authors:       Copyright © 2018-2025 Pascal JEAN, All rights reserved.
+# Bug-Reports:   https://github.com/epsilonrt/piduino/issues
+# SPDX-License-Identifier: LGPL-3.0-or-later
+set -e
+
+PIDUINO_CONF_FILE=@PIDUINO_INSTALL_ETC_DIR@/piduino.conf
+
+echo "Running postinst($1) script for package libpiduino..."
+
+case "$1" in
+    install|upgrade|configure)
+        # echo "Checking if file '$PIDUINO_CONF_FILE.dpkg-dist' exists..."
+        
+        if [ -e "$PIDUINO_CONF_FILE.dpkg-dist" ]; then
+          mv -f "$PIDUINO_CONF_FILE.dpkg-dist" "$PIDUINO_CONF_FILE" && echo "File '$PIDUINO_CONF_FILE' restored from backup '$PIDUINO_CONF_FILE.dpkg-dist'."
+        fi
+    ;;
+    *)
+        echo "postinst called with unknown argument $1" >&2
+        exit 1
+esac
+
+exit 0

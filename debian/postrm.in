@@ -1,0 +1,24 @@
+#!/bin/sh
+# Filename:      postrm
+# Purpose:       postrm script for package libpiduino
+# Authors:       Copyright © 2018-2025 Pascal JEAN, All rights reserved.
+# Bug-Reports:   https://github.com/epsilonrt/piduino/issues
+# SPDX-License-Identifier: LGPL-3.0-or-later
+set -e
+
+PIDUINO_CONF_FILE=@PIDUINO_INSTALL_ETC_DIR@/piduino.conf
+
+echo "Running postrm($1) script for package libpiduino..."
+
+case "$1" in
+    purge)
+        rm -f "$PIDUINO_CONF_FILE" "$PIDUINO_CONF_FILE.dpkg-dist"  "$PIDUINO_CONF_FILE.dpkg-old" && echo "File '$PIDUINO_CONF_FILE' and its backups have been removed."
+    ;;
+    upgrade|failed-upgrade|abort-install|abort-upgrade|disappear|remove)
+    ;;
+    *)
+        echo "postrm called with unknown argument $1" >&2
+        exit 1
+esac
+
+exit 0
