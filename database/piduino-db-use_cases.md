@@ -3,8 +3,8 @@
 Piduino uses a relational database which ensures very good
 data integrity and avoids redundancies.
 
-| ![db model](piduino-db-model.png) |
-|:--:|
+|  ![db model](piduino-db-model.png)  |
+| :---------------------------------: |
 | *Piduino Relational Database Model* |
 
 ## Addition of a new Raspberry Pi model with its variants (CM3+)
@@ -12,13 +12,13 @@ data integrity and avoids redundancies.
 **TODO**
 
 | Rev 0x | Rev      | Model | PCB Rev | RAM | Manufacturer |
-|--------|----------|-------|---------|-----|--------------|
+| ------ | -------- | ----- | ------- | --- | ------------ |
 | A02100 | 10494208 | CM3+  | 1.0     | 1GB | Sony UK      |
 
 ## Addition of a new Raspberry Pi model with its variants (4B)
 
 | Rev 0x | Rev      | Model | PCB Rev | RAM | Manufacturer |
-|--------|----------|-------|---------|-----|--------------|
+| ------ | -------- | ----- | ------- | --- | ------------ |
 | A03111 | 10498321 | 4B    | 1.1     | 1GB | Sony UK(1)   |
 | B03111 | 11546897 | 4B    | 1.1     | 2GB | Sony UK(1)   |
 | C03111 | 12595473 | 4B    | 1.1     | 4GB | Sony UK(1)   |
@@ -43,12 +43,12 @@ data integrity and avoids redundancies.
 ## Addition of Raspberry Pi variants of existing models
 
 
-| Rev 0x | Rev        | Model             | PCB Rev | RAM     | Manufacturer |
-|--------|------------|-------------------|---------|---------|--------------|
-| A220A0 | 10625184   | CM3               | 1.0     | 1GB     | Embest(4)    |
-| A22083 | 10625155   | 3B                | 1.3     | 1GB     | Embest(4)    |
-| 900061 | 9437281    | CM                | 1.1     | 512MB   | Sony UK      |
-| A02042 | 10494018   | 2B (with BCM2837) | 1.2     | 1GB     | Sony UK      |
+| Rev 0x | Rev      | Model             | PCB Rev | RAM   | Manufacturer |
+| ------ | -------- | ----------------- | ------- | ----- | ------------ |
+| A220A0 | 10625184 | CM3               | 1.0     | 1GB   | Embest(4)    |
+| A22083 | 10625155 | 3B                | 1.3     | 1GB   | Embest(4)    |
+| 900061 | 9437281  | CM                | 1.1     | 512MB | Sony UK      |
+| A02042 | 10494018 | 2B (with BCM2837) | 1.2     | 1GB   | Sony UK      |
 
 
     -- (id,name,ram,pcb_revision,board_model_id,gpio_id,manufacturer_id,default_i2c_id,default_spi_id,default_uart_id) 
@@ -68,7 +68,7 @@ data integrity and avoids redundancies.
 Add manufacturer, existing card (30)
 
 | Rev 0x | Rev      | Model | PCB Rev | RAM | Manufacturer  |
-|--------|----------|-------|---------|-----|---------------|
+| ------ | -------- | ----- | ------- | --- | ------------- |
 | A32082 | 10690690 | 3B    | 1.2     | 1GB | Sony Japan(8) |
 
 
@@ -178,11 +178,108 @@ Add manufacturer, existing card (30)
 
 ## List the pins of a SoC
 
+```sql
     SELECT soc_has_pin.pin_id,name FROM soc_has_pin 
     INNER JOIN  pin_has_name on soc_has_pin.pin_id = pin_has_name.pin_id
     INNER JOIN  pin_name on pin_name.id = pin_has_name.pin_name_id 
     WHERE soc_id=3 and pin_has_name.pin_mode_id = 0
     ORDER BY name;
+```
+
+## List GPIO pins of a SoC with their numbers
+
+```sql
+SELECT
+    pin_number.pin_id AS item_id,
+    pin_type_id,
+    system_num,
+    chip_num,
+    chip_offset
+  FROM
+    pin_number
+  INNER JOIN  
+    soc_has_pin ON pin_number.pin_id = soc_has_pin.pin_id 
+  INNER JOIN  
+    pin ON pin.id = pin_number.pin_id 
+  WHERE 
+    soc_id=2 
+    AND 
+    pin.pin_type_id = 0
+  ORDER BY 
+    system_num;
+```
+## modify the chip_num and chip_offset of the GPIO pins of a SoC
+
+```sql
+UPDATE pin_number
+SET
+  chip_num = 0,
+  chip_offset = selected_items.system_num
+FROM
+  (
+    SELECT
+      pin_number.pin_id AS item_id,
+      system_num
+    FROM
+      pin_number
+    INNER JOIN  
+      soc_has_pin ON pin_number.pin_id = soc_has_pin.pin_id 
+    INNER JOIN  
+      pin ON pin.id = pin_number.pin_id 
+    WHERE 
+      soc_id=2 
+      AND 
+      pin.pin_type_id = 0
+  ) AS selected_items
+WHERE
+  pin_number.pin_id  = selected_items.item_id;
+```
+
+## modify chip_num and chip_offset of the GPIO pins of a SoC whose system_num is greater than 352
+
+```sql
+UPDATE pin_number
+SET
+  chip_num = 0,
+  chip_offset = selected_items.system_num - 352
+FROM
+  (
+    SELECT
+      pin_number.pin_id AS item_id,
+      system_num
+    FROM
+      pin_number
+    INNER JOIN  
+      soc_has_pin ON pin_number.pin_id = soc_has_pin.pin_id 
+    INNER JOIN  
+      pin ON pin.id = pin_number.pin_id 
+    WHERE 
+      soc_id=3 
+      AND 
+      pin.pin_type_id = 0
+      AND
+      system_num >= 352
+  ) AS selected_items
+WHERE
+  pin_number.pin_id  = selected_items.item_id;
+```
+
+```sql
+INSERT INTO 
+		soc_has_pin 
+	SELECT 
+		5,pin.id
+    FROM
+      pin_number
+    INNER JOIN  
+      soc_has_pin ON pin_number.pin_id = soc_has_pin.pin_id 
+    INNER JOIN  
+      pin ON pin.id = pin_number.pin_id 
+    WHERE 
+      soc_id=2 
+      AND 
+      pin.pin_type_id = 0;
+```
 
 ## List the power pins
 

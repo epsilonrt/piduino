@@ -50,8 +50,8 @@ namespace Piduino {
       stat.exec();
       id = stat.last_insert_id();
       if (type == TypeGpio) {
-        stat = Piduino::db << "INSERT INTO pin_number(pin_id,logical_num,mcu_num,system_num) "
-               "VALUES(?,?,?,?)" << id << num.logical << num.mcu << num.system;
+        stat = Piduino::db << "INSERT INTO pin_number(pin_id,logical_num,mcu_num,system_num,chip_num,chip_offset) "
+               "VALUES(?,?,?,?,?,?)" << id << num.logical << num.mcu << num.system << num.chip << num.offset;
       }
       for (auto n = name.begin(); n != name.end(); ++n) {
 
@@ -211,13 +211,13 @@ namespace Piduino {
           name[static_cast<Pin::Mode> (pin_mode)] = pin_name;
         }
         res = Piduino::db <<
-              "SELECT logical_num,mcu_num,system_num "
+              "SELECT logical_num,mcu_num,system_num,chip_num,chip_offset "
               " FROM pin_number "
               " WHERE "
               "   pin_id=?"
               << id << cppdb::row;
         if (!res.empty()) {
-          res >> num.logical >> num.mcu >> num.system;
+          res >> num.logical >> num.mcu >> num.system >> num.chip >> num.offset;
         }
       }
     }

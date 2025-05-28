@@ -152,7 +152,9 @@ namespace Piduino {
           int system; ///< Numéro dans numérotation du système d'exploitation (commence à 0)
           int row; ///< Numéro de ligne dans la connecteur (commence à 1)
           int column; ///< Numéro de colonne dans la connecteur (commence à 1)
-          Number() : logical (-1), mcu (-1), system (-1), row (-1), column (-1) {}
+          int chip; ///< Numéro de la puce (commence à 0)
+          int offset; ///< Offset de la broche dans la puce (commence à 0)
+          Number() : logical (-1), mcu (-1), system (-1), row (-1), column (-1), chip(-1), offset(-1) {}
       };
 
       /**
@@ -451,6 +453,26 @@ namespace Piduino {
       int physicalNumber () const;
 
       /**
+         @brief Numéro de la puce de la broche
+
+         Il s'agit du numéro X correspondant au fichier /dev/gpiochipX
+         Cette numérotation commence à 0.
+
+         @return Numéro de puce système
+      */
+      int chipNumber() const;
+      
+      /**
+         @brief Offset de la broche dans la puce
+
+         Il s'agit du numéro de la broche dans sa puce correspondant au fichier /dev/gpiochipX
+         Cette numérotation commence à 0.
+
+         @return Offset de la broche dans la puce
+      */
+      int chipOffset() const;
+
+      /**
         @brief Numéro de la broche dans la numérotation demandé.
 
          La numérotation commence à 0.
@@ -474,6 +496,9 @@ namespace Piduino {
          @return Numéro de colonne, commence à 1
       */
       int column() const;
+
+
+
 
       /**
          @brief Nom de la broche
