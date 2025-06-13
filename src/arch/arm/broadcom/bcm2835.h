@@ -23,9 +23,6 @@ namespace Piduino {
   namespace Bcm2835 {
 
     off_t iobase ();
-    unsigned int ChipOfPinFunc (int &systemNumber);
-
-    const unsigned int NumberOfChips = 1;
 
     const off_t Bcm2708Base  = 0x20000000;
     const off_t Bcm2709Base  = 0x3F000000;

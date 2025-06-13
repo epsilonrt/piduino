@@ -22,9 +22,6 @@ namespace Piduino {
 
   namespace AllWinnerHx {
     
-    const unsigned int NumberOfChips = 2;
-    unsigned int ChipOfPinFunc (int &systemNumber);
-
     const off_t Io1Base = 0x01C20000;
     const off_t Io2Base = 0x01F02000;
     const size_t  MapBlockSize = 4 * 1024;

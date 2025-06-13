@@ -39,14 +39,6 @@ namespace Piduino {
       }
       return list.at (db.board().soc().id());
     }
-
-    // -------------------------------------------------------------------------
-    unsigned int ChipOfPinFunc (int &systemNumber) {
-
-      // TODO: check the systemNumber for gpiochip1
-      
-      return 0;
-    }
   }
 }
 /* ========================================================================== */

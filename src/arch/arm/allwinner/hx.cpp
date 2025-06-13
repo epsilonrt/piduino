@@ -16,12 +16,3 @@
 */
 #include "hx.h"
 
-unsigned int Piduino::AllWinnerHx::ChipOfPinFunc (int &systemNumber) {
-
-  if (systemNumber < 352) {
-
-    return 1;
-  }
-  systemNumber -= 352;
-  return 0;
-}
