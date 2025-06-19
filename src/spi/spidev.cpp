@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -34,14 +34,14 @@ using namespace std;
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                         SpiDev::Private Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                         SpiDev::Private Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  SpiDev::Private::Private (SpiDev * q) :
+  SpiDev::Private::Private (SpiDev *q) :
     IoDevice::Private (q), fd (-1) {
 
     isSequential = true;
@@ -171,11 +171,11 @@ namespace Piduino {
     setBitsPerWord();
   }
 
-// -----------------------------------------------------------------------------
-//
-//                           SpiDev::Cs Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                           SpiDev::Cs Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
   void
@@ -223,15 +223,15 @@ namespace Piduino {
     return _driverControl;
   }
 
-// -----------------------------------------------------------------------------
-//
-//                           SpiDev::Info Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                           SpiDev::Info Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
   bool
-  SpiDev::Info::setPath (const std::string & p) {
+  SpiDev::Info::setPath (const std::string &p) {
 
     for (int c = 0; c < MaxCs; c++) {
 
@@ -251,7 +251,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void
   SpiDev::Info::setId (int idBus, int idCs) {
-    const vector<Pin::SpiCs> & socCsList = db.board().soc().spiCs();
+    const vector<Pin::SpiCs> &socCsList = db.board().soc().spiCs();
 
     _bus = idBus;
     _cs = idCs;
@@ -259,7 +259,7 @@ namespace Piduino {
     _csList.clear();
 
     for (int i = 0; i < socCsList.size(); i++) {
-      const Pin::SpiCs & socCs = socCsList[i];
+      const Pin::SpiCs &socCs = socCsList[i];
 
       if (socCs.bus == idBus) {
         Cs cs;
@@ -286,15 +286,13 @@ namespace Piduino {
   SpiDev::Info::defaultBus () {
     Info info (db.board().defaultSpiBus());
 
-    if (info.exists() == false) {
-      const std::deque<Info> & list = availableBuses ();
+    if (info.exists() == false) { // The default bus doesn't exist, try to get the first bus available
+      const std::deque<Info> &list = availableBuses ();
 
-      if (list.empty()) {
-        throw std::system_error (ENOENT, std::system_category(),
-                                  "No spi bus found, please check system configuration !");
+      if (list.empty() == false) {
 
+        info = list.at (0);
       }
-      info = list.at(0);
     }
     return info;
   }
@@ -307,9 +305,9 @@ namespace Piduino {
 
     udev = udev_new();
     if (udev) {
-      struct udev_enumerate * enumerate;
-      struct udev_list_entry * devices, * dev_list_entry;
-      struct udev_device * dev;
+      struct udev_enumerate *enumerate;
+      struct udev_list_entry *devices, * dev_list_entry;
+      struct udev_device *dev;
 
       enumerate = udev_enumerate_new (udev);
       udev_enumerate_add_match_subsystem (enumerate, "spidev");
@@ -325,7 +323,7 @@ namespace Piduino {
           break;
         }
 
-        const char * path = udev_device_get_devnode (dev);
+        const char *path = udev_device_get_devnode (dev);
         if (path) {
           Info bus;
           if (bus.setPath (path)) {
@@ -339,14 +337,14 @@ namespace Piduino {
     return buses;
   }
 
-// -----------------------------------------------------------------------------
-//
-//                             SpiDev Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                             SpiDev Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  SpiDev::SpiDev (SpiDev::Private & dd) : IoDevice (dd) {
+  SpiDev::SpiDev (SpiDev::Private &dd) : IoDevice (dd) {
 
   }
 
@@ -357,19 +355,19 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  SpiDev::SpiDev (const char * path) : SpiDev() {
+  SpiDev::SpiDev (const char *path) : SpiDev() {
 
     setBusPath (path);
   }
 
   // ---------------------------------------------------------------------------
-  SpiDev::SpiDev (const std::string & path) : SpiDev() {
+  SpiDev::SpiDev (const std::string &path) : SpiDev() {
 
     setBusPath (path);
   }
 
   // ---------------------------------------------------------------------------
-  SpiDev::SpiDev (const Info & bus) : SpiDev() {
+  SpiDev::SpiDev (const Info &bus) : SpiDev() {
 
     setBus (bus);
   }
@@ -425,13 +423,18 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  SpiDev::setBus (const Info & bus) {
+  SpiDev::setBus (const Info &bus) {
     PIMP_D (SpiDev);
 
     if (d->bus != bus) {
 
-      d->bus = bus;
+      if (!bus.exists()) {
+        
+        throw std::system_error (ENOENT, std::system_category(),
+                                 "SPI bus " + bus.path() + " not found, please check system configuration !");
+      }
 
+      d->bus = bus;
       if (isOpen()) {
         OpenMode m = openMode();
 
@@ -460,7 +463,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  SpiDev::setBusPath (const std::string & path) {
+  SpiDev::setBusPath (const std::string &path) {
     PIMP_D (SpiDev);
 
     if (d->bus.path() != path) {
@@ -477,14 +480,14 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  SpiDev::setBusPath (const char * path) {
+  SpiDev::setBusPath (const char *path) {
     PIMP_D (SpiDev);
 
     setBusPath (std::string (path));
   }
 
   // ---------------------------------------------------------------------------
-  const SpiDev::Settings & SpiDev::settings() const {
+  const SpiDev::Settings &SpiDev::settings() const {
     PIMP_D (const SpiDev);
 
     return d->settings;
@@ -527,7 +530,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  void SpiDev::setSettings (const SpiDev::Settings & settings) {
+  void SpiDev::setSettings (const SpiDev::Settings &settings) {
     PIMP_D (SpiDev);
 
     if (d->settings != settings) {
@@ -582,7 +585,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  void SpiDev::pushTransfer (Transfer & t) {
+  void SpiDev::pushTransfer (Transfer &t) {
     PIMP_D (SpiDev);
 
     d->tstack.push_back (&t);
@@ -607,7 +610,7 @@ namespace Piduino {
       ret = 0;
 
       if (nofmsg) {
-        struct spi_ioc_transfer * spi_message = new spi_ioc_transfer[nofmsg];
+        struct spi_ioc_transfer *spi_message = new spi_ioc_transfer[nofmsg];
         memset (spi_message, 0, sizeof (struct spi_ioc_transfer) * nofmsg);
 
         for (unsigned int i = 0; i < nofmsg; i++)   {
@@ -637,7 +640,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  int SpiDev::transfer (const uint8_t * txbuf, uint8_t * rxbuf, uint32_t len) {
+  int SpiDev::transfer (const uint8_t *txbuf, uint8_t *rxbuf, uint32_t len) {
     Transfer t (txbuf, rxbuf, len);
 
     pushTransfer (t);
@@ -645,18 +648,18 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  int SpiDev::read (uint8_t * buffer, uint32_t len) {
+  int SpiDev::read (uint8_t *buffer, uint32_t len) {
 
     return transfer (0, buffer, len);
   }
 
   // ---------------------------------------------------------------------------
-  int SpiDev::write (const uint8_t * buffer, uint32_t len) {
+  int SpiDev::write (const uint8_t *buffer, uint32_t len) {
 
     return transfer (buffer, 0, len);
   }
 
-#if 0
+  #if 0
   // ---------------------------------------------------------------------------
   // TODO: Utilisation du flag SPI_NO_CS ?
   int
@@ -681,7 +684,7 @@ namespace Piduino {
     }
     return ret;
   }
-#endif
+  #endif
 
 }
 
