@@ -39,8 +39,10 @@ void SPIClass::begin() {
 void SPIClass::begin (int idBus, int idCs) {
 
   if (isOpen() == false) {
+
     setBus (idBus, idCs);
     setSettings (SPISettings());
+    
     if (!open ()) {
       throw std::system_error (errno, std::system_category(),
                                "Error when opening the SPI bus " +
