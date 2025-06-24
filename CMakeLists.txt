@@ -1,4 +1,4 @@
-# Copyright © 2018 Pascal JEAN, All rights reserved.
+# Copyright © 2018-2025 Pascal JEAN, All rights reserved.
 # This file is part of the Piduino Project.
 #
 # The Piduino Project is free software: you can redistribute it and/or modify
@@ -52,6 +52,7 @@ set (PIDUINO_WITH_GPIO 1 CACHE BOOL "Enable GPIO")
 set (PIDUINO_WITH_I2C 1 CACHE BOOL "Enable I2C bus")
 set (PIDUINO_WITH_SPI 1 CACHE BOOL "Enable SPI bus")
 set (PIDUINO_WITH_STATIC 0 CACHE BOOL "Enable building static libraries.")
+set (PIDUINO_UNIT_TESTS 1 CACHE BOOL "Enable building unit tests.")
 set (PIDUINO_DRIVER_BCM2835 1 CACHE BOOL "Build the BCM2835 GPIO/PWM driver")
 set (PIDUINO_DRIVER_ALLWINNERH 1 CACHE BOOL "Build the AllWinner H-series GPIO/PWM driver")
 
@@ -84,6 +85,8 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBUDEV REQUIRED libudev)
 
 find_package(GZIP)
+
+pkg_check_modules (UNITTESTPP UnitTest++>=2.0.0)
 
 set(PIDUINO_CFLAGS_OTHER ${CMAKE_THREAD_LIBS_INIT} ${LIBUDEV_CFLAGS})
 set(PIDUINO_LDFLAGS_OTHER ${CPPDB_LDFLAGS} ${LIBUDEV_LDFLAGS} -lpthread)
@@ -176,6 +179,12 @@ add_subdirectory(dev)
 add_subdirectory(lib)
 add_subdirectory(utils)
 add_subdirectory(doc)
+
+if (UNITTESTPP_FOUND AND PIDUINO_UNIT_TESTS)
+  include(CTest)
+  enable_testing()
+  add_subdirectory (tests)
+endif()
 
 if(PIDUINO_WITH_DOXYGEN_DOC)
   add_dependencies(piduino-shared doc)

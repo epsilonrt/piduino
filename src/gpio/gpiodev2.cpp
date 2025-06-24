@@ -14,211 +14,83 @@
    You should have received a copy of the GNU Lesser General Public License
    along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
 */
-#include <system_error>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/poll.h>
-#include <piduino/global.h>
-#include "gpiodev2.h"
+#include <array>
+#include <iostream>
+#include <piduino/gpiodev2.h>
 
 namespace GpioDev2 {
-  // ---------------------------------------------------------------------------
-  //                        Line Class
-  // ---------------------------------------------------------------------------
+
+  struct GpioFlag {
+    char *name;
+    unsigned long long mask;
+    GpioFlag (const char *name, unsigned long long mask)
+      : name (const_cast<char *> (name)), mask (mask) {}
+  };
+
+  std::array <GpioFlag, 10> flagnames = {
+    GpioFlag ("used", GPIO_V2_LINE_FLAG_USED),
+    GpioFlag ("input", GPIO_V2_LINE_FLAG_INPUT),
+    GpioFlag ("output", GPIO_V2_LINE_FLAG_OUTPUT),
+    GpioFlag ("active-low", GPIO_V2_LINE_FLAG_ACTIVE_LOW),
+    GpioFlag ("open-drain", GPIO_V2_LINE_FLAG_OPEN_DRAIN),
+    GpioFlag ("open-source", GPIO_V2_LINE_FLAG_OPEN_SOURCE),
+    GpioFlag ("pull-up", GPIO_V2_LINE_FLAG_BIAS_PULL_UP),
+    GpioFlag ("pull-down", GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN),
+    GpioFlag ("bias-disabled", GPIO_V2_LINE_FLAG_BIAS_DISABLED),
+    GpioFlag ("clock-realtime", GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME),
+  };
+
+  // --------------------------------------------------------------------------
+  void LineInfo::printAttributes (std::ostream &os) const {
+    int k = 0; // Counter for printed items
+    std::string sep = "";
+
+    for (int i = 0; i < flagnames.size(); i++) {
+
+      if (this->flags & flagnames[i].mask) {
 
 
-  // ---------------------------------------------------------------------------
-  // Constructor with multiple lines
-  Line::Line (Chip *chip, uint32_t num_lines, const uint32_t *offsets) : m_chip (chip) {
-
-    memset (&m_req, 0, sizeof (m_req));
-    m_req.num_lines = num_lines;
-    m_req.fd = -1;
-    memcpy (m_req.offsets, offsets, num_lines * sizeof (uint32_t));
-
-    // m_req.config.flags |= GPIO_V2_LINE_FLAG_INPUT;
-    strncpy (m_req.consumer, chip->consumer().c_str(), sizeof (m_req.consumer));
-  }
-
-  // ---------------------------------------------------------------------------
-  // Constructor with single line
-  Line::Line (Chip *chip, uint32_t offset) : Line (chip, 1, &offset) {}
-
-
-  // ---------------------------------------------------------------------------
-  // Constructor with LineRequest
-  Line::Line (Chip *chip, const LineRequest &request) : m_chip (chip), m_req (request) {
-
-    // m_req.config.flags |= GPIO_V2_LINE_FLAG_INPUT;
-    strncpy (m_req.consumer, chip->consumer().c_str(), sizeof (m_req.consumer));
-  }
-
-  // ---------------------------------------------------------------------------
-  bool Line::open (uint64_t flags) {
-
-    if (m_chip->isOpen() && !isOpen()) {
-
-      m_req.config.flags = flags;
-      return m_chip->ioCtl (GPIO_V2_GET_LINE_IOCTL, &m_req);
-    }
-    return isOpen();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Open the line with a specific configuration
-  bool Line::open (const LineConfig &config) {
-
-    if (m_chip->isOpen() && !isOpen()) {
-
-      m_req.config = config;
-      return m_chip->ioCtl (GPIO_V2_GET_LINE_IOCTL, &m_req);
-    }
-    return isOpen();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Set the configuration of the line
-  // The configuration is set only if the line is already open
-  // if not, config is set in the request and will be used when the line is opened
-  // return if the configuration was effectively set
-  bool Line::setConfig (const LineConfig &config) {
-
-    m_req.config = config;
-    if (isOpen()) {
-
-      int ret = ::ioctl (m_req.fd, GPIO_V2_LINE_SET_CONFIG_IOCTL, &config);
-      return (ret >= 0);
-    }
-    return false;
-  }
-
-  // ---------------------------------------------------------------------------
-  bool Line::isOpen() const {
-
-    return m_req.fd >= 0;
-  }
-
-  // ---------------------------------------------------------------------------
-  bool Line::close() {
-
-    if (isOpen()) {
-      int ret = ::close (m_req.fd);
-      m_req.fd = -1;
-      return ret == 0;
-    }
-    return false;
-  }
-
-  // ---------------------------------------------------------------------------
-
-  bool Line::setDebounce (uint32_t debounce_ms) {
-
-    if (debounce_ms != debounce()) {
-      LineConfig &cfg = m_req.config;
-      auto &debounce = cfg.attrs[0];
-
-      if (debounce_ms > 0) {
-
-        debounce.attr.id = GPIO_V2_LINE_ATTR_ID_DEBOUNCE;
-        debounce.attr.debounce_period_us = debounce_ms * 1000;
-        debounce.mask |= 1 << 0;
-        cfg.num_attrs = 1;
-      }
-      else {
-
-        debounce.attr.id = GPIO_V2_LINE_ATTR_ID_DEBOUNCE;
-        debounce.attr.debounce_period_us = 0;
-        debounce.mask = 0;
-        cfg.num_attrs = 0;
-      }
-      if (isOpen()) {
-
-        return setConfig (m_req.config);
+        if (k > 0)  {
+          sep = ", ";
+        }
+        os << sep << flagnames[i].name;
+        k++;
       }
     }
-    return false;
-  }
 
+    if ( (this->flags & GPIO_V2_LINE_FLAG_EDGE_RISING) &&
+         (this->flags & GPIO_V2_LINE_FLAG_EDGE_FALLING)) {
+      os << sep << "both-edges";
+      k++;
+    }
+    else if (this->flags & GPIO_V2_LINE_FLAG_EDGE_RISING) {
+      os << sep << "rising-edge";
+      k++;
+    }
+    else if (this->flags & GPIO_V2_LINE_FLAG_EDGE_FALLING) {
+      os << sep << "falling-edge";
+      k++;
+    }
 
-  // ---------------------------------------------------------------------------
-  bool Line::waitForEvent (LineEvent &event, int timeout_ms) {
+    if (k > 0) {
+      sep = ", ";
+    }
 
-    if (isOpen()) {
-
-      pollfd pfd[1];
-      pfd[0].fd = m_req.fd;
-      pfd[0].events = POLLIN | POLLPRI;
-
-      int ret = ::poll (pfd, 1, timeout_ms);
-      if (ret > 0) {
-        return ::read (m_req.fd, &event, sizeof (event)) == sizeof (event);
+    for (int i = 0; i < this->num_attrs; i++) {
+      if (this->attrs[i].id == GPIO_V2_LINE_ATTR_ID_DEBOUNCE) {
+        os << sep << "debounce_period=" << this->attrs[i].debounce_period_us << "usec";
       }
     }
-    return false;
-  }
 
-  // ---------------------------------------------------------------------------
-  bool Line::getValues (LineValues &values) const {
-
-    if (isOpen()) {
-
-      int ret = ::ioctl (m_req.fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &values);
-      return (ret >= 0);
+    if (k == 0) {
+      os << "none";
     }
-    return false;
   }
 
-  // ---------------------------------------------------------------------------
-  // Get the value of a specific line
+  // --------------------------------------------------------------------------
+  std::ostream &operator<< (std::ostream &os, const LineInfo &info) {
 
-  bool Line::getValue (int line_no) const {
-
-    if (isOpen()) {
-      LineValues values;
-      values.mask = 1 << line_no;
-      values.bits = 0;
-
-      if (getValues (values)) {
-
-        return ( (values.bits & values.mask) != 0);
-      }
-      else {
-
-        throw std::system_error (errno, std::system_category(), EXCEPTION_MSG ("Failed to get line values"));
-      }
-    }
-    return false;
+    info.printAttributes (os);
+    return os;
   }
-
-  // ---------------------------------------------------------------------------
-  // Set the value of a specific line
-  bool Line::setValue (int line_no, bool value) {
-
-    if (isOpen()) {
-      LineValues values;
-      values.mask = 1 << line_no;
-      values.bits = value ? values.mask : 0;
-
-      return setValues (values);
-    }
-    return false;
-  }
-
-  // ---------------------------------------------------------------------------
-  // Set the values of the lines
-  // The values are set in the same order as the offsets in the request
-  // The mask is used to select the lines to set
-  // The bits are used to set the values of the lines
-  bool Line::setValues (const LineValues &values) {
-
-    if (isOpen()) {
-
-      int ret = ::ioctl (m_req.fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &values);
-      return (ret >= 0);
-    }
-    return false;
-  }
-
-
-
 }
