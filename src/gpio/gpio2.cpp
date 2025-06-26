@@ -16,9 +16,9 @@
 */
 #include <array>
 #include <iostream>
-#include <piduino/gpiodev2.h>
+#include <piduino/gpio2.h>
 
-namespace GpioDev2 {
+namespace Gpio2 {
 
   struct GpioFlag {
     char *name;

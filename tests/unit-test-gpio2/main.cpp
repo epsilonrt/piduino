@@ -1,4 +1,4 @@
-// GpioDev2 Unit Test
+// Gpio2 Unit Test
 // Use UnitTest++ framework -> https://github.com/unittest-cpp/unittest-cpp/wiki
 #include <iostream>
 #include <iomanip>
@@ -11,14 +11,14 @@
 #include <chrono>
 #include <map>
 
-#include <piduino/gpiodev2.h>
+#include <piduino/gpio2.h>
 #include <piduino/system.h>
 #include <piduino/tsqueue.h>
 #include <piduino/gpio.h>
 #include <UnitTest++/UnitTest++.h>
 
 using namespace std;
-using namespace GpioDev2;
+using namespace Gpio2;
 using namespace Piduino;
 
 // Configuration settings -----------------------------------

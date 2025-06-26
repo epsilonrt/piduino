@@ -38,7 +38,7 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/filestream.h
   ${PIDUINO_INC_DIR}/piduino/flags.h
   ${PIDUINO_INC_DIR}/piduino/global.h
-  ${PIDUINO_INC_DIR}/piduino/gpiodev2.h
+  ${PIDUINO_INC_DIR}/piduino/gpio2.h
   ${PIDUINO_INC_DIR}/piduino/iodevice.h
   ${PIDUINO_INC_DIR}/piduino/iomap.h
   ${PIDUINO_INC_DIR}/piduino/linearbuffer.h

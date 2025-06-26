@@ -39,13 +39,13 @@
 #include <piduino/global.h>
 
 /**
-   @namespace GpioDev2
+   @namespace Gpio2
    @brief Namespace containing classes and types for GPIO device interaction.
    Use the kernel GPIO interface version 2.
    This API is documented in the Linux kernel documentation:
    https://www.kernel.org/doc/html/next/userspace-api/gpio/chardev.html
 */
-namespace GpioDev2 {
+namespace Gpio2 {
 
   class Line;
 
@@ -535,7 +535,7 @@ namespace GpioDev2 {
   };
 
   /**
-     @class GpioDev2::Chip
+     @class Gpio2::Chip
      @brief Represents a GPIO chip and provides methods to interact with it.
 
      This class encapsulates the functionality to open, close, and query information
@@ -746,7 +746,7 @@ namespace GpioDev2 {
   };
 
   /**
-     @class GpioDev2::Line
+     @class Gpio2::Line
      @brief Represents a GPIO line and provides methods to interact with it.
 
      This class encapsulates the functionality to open, close, configure, and
