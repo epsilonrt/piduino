@@ -305,6 +305,20 @@ namespace Piduino {
     }
     return d->descriptor->num.system;
   }
+  
+  // ---------------------------------------------------------------------------
+  int Pin::chipNumber() const {
+    PIMP_D (const Pin);
+
+    return d->descriptor->num.chip;
+  }
+
+  // ---------------------------------------------------------------------------
+  int Pin::chipOffset() const {
+    PIMP_D (const Pin);
+
+    return d->descriptor->num.offset;
+  }
 
   // ---------------------------------------------------------------------------
   int
