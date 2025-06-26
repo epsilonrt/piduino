@@ -22,7 +22,7 @@ using namespace GpioDev2;
 using namespace Piduino;
 
 // Configuration settings -----------------------------------
-// #warning "Check this pin numbers and chip numbers, they must match your hardware setup! then comment this line"
+#warning "Check this pin numbers and chip numbers, they must match your hardware setup! then comment this line"
 
 // Lines used for read only pins (input), must be on the same chip
 const int Pin1 = 2; // iNo number for first input pin, use pido to get the pin number
