@@ -206,7 +206,7 @@ struct LineInOutFixture : public LineInFixture, public LineOutFixture {
 
   LineInOutFixture() : LineInFixture(), LineOutFixture() {
 
-    std::cout << "<WARNING> Pin iNo#" << testPin4.iNo() << " must be connected to Pin #" << testPin3.iNo() << " with a wire!" << std::endl;
+    std::cout << "<WARNING> Pin iNo#" << testPin4.iNo() << " must be connected to Pin iNo#" << testPin3.iNo() << " with a wire!" << std::endl;
   }
 };
 
