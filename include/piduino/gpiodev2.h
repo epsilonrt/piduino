@@ -552,6 +552,16 @@ namespace GpioDev2 {
       Chip (const std::string &consumer = std::string()) : m_consumer (consumer), m_fd (-1), m_last_error (0), m_last_result (0) {}
 
       /**
+         @brief Destructor for the Chip class.
+         @note Ensures that the chip is closed when the object is destroyed.
+      */
+      ~Chip() {
+
+        // Ensure the chip is closed when the object is destroyed.
+        close();
+      }
+
+      /**
          @brief Gets the consumer label of the GPIO chip.
          @return A string containing the consumer label.
       */
@@ -759,7 +769,7 @@ namespace GpioDev2 {
          @param num_lines The number of lines.
          @param offsets A pointer to an array of line offsets.
       */
-      Line (Chip *dev, uint32_t num_lines, const uint32_t *offsets) : m_chip (dev), m_req (dev->consumer())  {
+      Line (Chip *dev, uint32_t num_lines, const uint32_t *offsets) : m_chip (dev), m_req (dev->consumer()), m_last_error (0), m_last_result (0) {
 
         m_req.num_lines = num_lines;
         m_req.fd = -1;
@@ -771,7 +781,7 @@ namespace GpioDev2 {
          @param dev A pointer to the associated Chip object.
          @param request A LineRequest object containing the line configuration.
       */
-      Line (Chip *dev, const LineRequest &request) : m_chip (dev), m_req (request) {
+      Line (Chip *dev, const LineRequest &request) : m_chip (dev), m_req (request), m_last_error (0), m_last_result (0) {
 
         strncpy (m_req.consumer, dev->consumer().c_str(), sizeof (m_req.consumer));
       }
@@ -788,6 +798,33 @@ namespace GpioDev2 {
       Line (Line &&) = delete;
       Line &operator= (const Line &) = delete;
       Line &operator= (Line &&) = delete;
+
+      /**
+         @brief Gets the last error code from the IOCTL operation.
+         @return The error code.
+      */
+      int errorCode() const {
+
+        return m_last_error;
+      }
+
+      /**
+         @brief Gets the result of the last IOCTL operation.
+         @return The result of the operation.
+      */
+      int result() const {
+
+        return m_last_result;
+      }
+
+      /**
+         @brief Gets the error message corresponding to the last error code.
+         @return A string describing the error.
+      */
+      const char *errorMessage() const {
+
+        return strerror (errorCode());
+      }
 
       /**
          @brief Gets the current line request configuration.
@@ -856,7 +893,14 @@ namespace GpioDev2 {
 
           if (!m_chip->lineInfo (m_req.offsets[i], &info[i])) {
 
+            m_last_error = m_chip->errorCode();
+            m_last_result = m_chip->result();
             return false;
+          }
+          else {
+
+            m_last_error = 0;
+            m_last_result = 0;
           }
         }
         return true;
@@ -872,7 +916,16 @@ namespace GpioDev2 {
         if (m_chip->isOpen() && !isOpen()) {
 
           m_req.config.flags = flags;
-          return m_chip->ioCtl (GPIO_V2_GET_LINE_IOCTL, &m_req);
+          if (!m_chip->ioCtl (GPIO_V2_GET_LINE_IOCTL, &m_req)) {
+
+            m_last_error = m_chip->errorCode();
+            m_last_result = m_chip->result();
+          }
+          else  {
+
+            m_last_error = 0;
+            m_last_result = 0;
+          }
         }
         return isOpen();
       }
@@ -887,7 +940,16 @@ namespace GpioDev2 {
         if (m_chip->isOpen() && !isOpen()) {
 
           m_req.config = config;
-          return m_chip->ioCtl (GPIO_V2_GET_LINE_IOCTL, &m_req);
+          if (!m_chip->ioCtl (GPIO_V2_GET_LINE_IOCTL, &m_req)) {
+
+            m_last_error = m_chip->errorCode();
+            m_last_result = m_chip->result();
+          }
+          else {
+
+            m_last_error = 0;
+            m_last_result = 0;
+          }
         }
         return isOpen();
       }
@@ -902,8 +964,16 @@ namespace GpioDev2 {
         m_req.config = config;
         if (isOpen()) {
 
-          int ret = ::ioctl (m_req.fd, GPIO_V2_LINE_SET_CONFIG_IOCTL, &config);
-          return (ret >= 0);
+          m_last_result = ::ioctl (m_req.fd, GPIO_V2_LINE_SET_CONFIG_IOCTL, &config);
+          if (m_last_result == -1) {
+
+            m_last_error = errno;
+          }
+          else {
+
+            m_last_error = 0;
+          }
+          return (m_last_result >= 0);
         }
         return false;
       }
@@ -924,9 +994,17 @@ namespace GpioDev2 {
       bool close() {
 
         if (isOpen()) {
-          int ret = ::close (m_req.fd);
+          m_last_result = ::close (m_req.fd);
           m_req.fd = -1;
-          return ret == 0;
+          if (m_last_result == -1) {
+
+            m_last_error = errno;
+          }
+          else {
+
+            m_last_error = 0;
+          }
+          return m_last_result == 0;
         }
         return false;
       }
@@ -951,8 +1029,16 @@ namespace GpioDev2 {
 
         if (isOpen()) {
 
-          int ret = ::ioctl (m_req.fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &values); // TODO: use Chip::ioCtl() instead
-          return (ret >= 0);
+          m_last_result = ::ioctl (m_req.fd, GPIO_V2_LINE_GET_VALUES_IOCTL, &values);
+          if (m_last_result == -1) {
+
+            m_last_error = errno;
+          }
+          else {
+
+            m_last_error = 0;
+          }
+          return (m_last_result != -1);
         }
         return false;
       }
@@ -1033,9 +1119,16 @@ namespace GpioDev2 {
 
         if (isOpen()) {
 
-          int ret = ::ioctl (m_req.fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &values); // TODO: use Chip::ioCtl() instead
-          // TODO: retrieve errno from the ioctl call
-          return (ret >= 0);
+          m_last_result = ::ioctl (m_req.fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &values);
+          if (m_last_result == -1) {
+
+            m_last_error = errno;
+          }
+          else {
+
+            m_last_error = 0;
+          }
+          return (m_last_result != -1);
         }
         return false;
       }
@@ -1097,10 +1190,17 @@ namespace GpioDev2 {
           pfd[0].fd = m_req.fd;
           pfd[0].events = POLLIN | POLLPRI;
 
-          int ret = ::poll (pfd, 1, timeout_ms);
-          if (ret > 0) {
-            return ::read (m_req.fd, &event, sizeof (event)) == sizeof (event);
+          m_last_result = ::poll (pfd, 1, timeout_ms);
+          if (m_last_result > 0) {
+
+            m_last_result = ::read (m_req.fd, &event, sizeof (event));
+            if (m_last_result == sizeof (event)) {
+
+              m_last_error = 0;
+              return true;
+            }
           }
+          m_last_error = errno;
         }
         return false;
       }
@@ -1108,6 +1208,8 @@ namespace GpioDev2 {
     private:
       Chip *m_chip;
       LineRequest m_req;
+      mutable int m_last_error;
+      mutable int m_last_result;
   };
 
 }

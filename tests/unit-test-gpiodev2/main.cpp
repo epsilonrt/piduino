@@ -9,10 +9,12 @@
 #include <future>
 #include <atomic>
 #include <chrono>
+#include <map>
 
 #include <piduino/gpiodev2.h>
 #include <piduino/system.h>
 #include <piduino/tsqueue.h>
+#include <piduino/gpio.h>
 #include <UnitTest++/UnitTest++.h>
 
 using namespace std;
@@ -20,17 +22,15 @@ using namespace GpioDev2;
 using namespace Piduino;
 
 // Configuration settings -----------------------------------
+// #warning "Check this pin numbers and chip numbers, they must match your hardware setup! then comment this line"
 
-// ChipFixture settings for chip tests
-const std::string ChipFixtureDev = "/dev/gpiochip0"; // Default GPIO chip device path
+// Lines used for read only pins (input), must be on the same chip
+const int Pin1 = 2; // iNo number for first input pin, use pido to get the pin number
+const int Pin2 = 4; // iNo number for second input pin, use pido to get the pin number
 
-// LineFixture settings for line tests
-// Lines used for read only pins (input)
-const std::array<uint32_t, 2> LineFixtureInputOffsets = { 23, 27 };
 // Line used for write only pin (output)
-const uint32_t LineFixtureOutputOffset = 17;
-// Line connected to the output pin with a jumper or a wire
-const uint32_t LineFixtureInputOffset = 18;
+const int Pin3 = 0; // iNo number for output pin, use pido to get the pin number
+const int Pin4 = 1; // iNo number for input pin connected to the output pin, use pido to get the pin number
 
 // WaitLineFixture settings for waitForInterrupt() tests
 const unsigned int WaitLineFixturePw = 50; // Pulse width in milliseconds
@@ -42,16 +42,256 @@ const unsigned int WaitLineFixtureDtmax = 10; // Maximum time to generate short 
 static_assert (WaitLineFixtureDtmax < (WaitLineFixturePw - WaitLineFixtureDebounceMs), "dtmax must be less than (pw - debounce) and even");
 static_assert (WaitLineFixtureDtmax % 2 == 0, "dtmax must be even");
 
-// -----------------------------------------------------------------------------
-struct ChipFixture {
-  const std::string dev = ChipFixtureDev;
+/**
+   @struct TestPin
+   @brief Structure to hold information about a GPIO pin.
+*/
+class TestPin {
 
-  ChipFixture()  : chip (System::progName()) {
-    CHECK (chip.isOpen() == false);
+  public:
+    /**
+       @brief Constructor for TestPin.
+       @param inoNumber The GPIO pin number (iNo).
+       Initializes the pin and opens the corresponding chip if not already opened.
+    */
+    TestPin (int inoNumber) : m_ino (inoNumber) {
+      gpio.setNumbering (Pin::NumberingLogical);
+      Pin &pin = gpio.pin (inoNumber);
+      m_offset = pin.chipOffset();
+      m_chip = pin.chipNumber();
+
+      if (chips.find (m_chip) == chips.end()) {
+
+        chips[m_chip] = new Chip (System::progName());
+      }
+    }
+
+    /**
+       @brief returns the Chip instance associated with this pin.
+       @return Pointer to the Chip instance.
+    */
+    Chip *chip() {
+      return chips[m_chip];
+    }
+
+    const Chip *chip() const {
+      return chips[m_chip];
+    }
+
+    /**
+       @brief returns the device path for the GPIO chip.
+       @return A string representing the device path for the GPIO chip.
+       The path is in the format "/dev/gpiochipX" where X is the chip number.
+       This is used to open the GPIO chip device.
+       @note The chip number is determined by the pin's chip number.
+    */
+    std::string dev() const {
+      std::ostringstream ss;
+
+      ss << "/dev/gpiochip" << m_chip;
+      return ss.str();
+    }
+
+    /**
+       @brief Opens the GPIO chip device if it is not already open.
+       @return true if the chip was successfully opened, false if it was already open.
+       This method checks if the chip is already open and opens it if not.
+    */
+    bool open() {
+
+      if (!chip()->isOpen()) {
+
+        return chip()->open (dev());
+      }
+      return isOpen();
+    }
+
+    /**
+     * @brief Checks if the GPIO chip device is open.
+       @return true if the chip is open, false otherwise.
+       This method checks the state of the chip to determine if it is open.
+     */
+    bool isOpen() const {
+      return chip()->isOpen();
+    }
+
+    /**
+       @brief return the GPIO pin number (iNo).
+       @return The GPIO pin number (iNo).
+    */
+    int iNo() const {
+      return m_ino;
+    }
+
+    /**
+       @brief returns the GPIO pin offset on the chip.
+       The offset is the local pin number on the chip, which may differ from the iNo number.
+       This is useful for accessing the pin on the chip directly.
+       @return The GPIO pin offset.
+    */
+    uint32_t offset() const {
+      return m_offset;
+    }
+
+    /**
+       @brief returns the chip number where this pin is located.
+       The chip number is the index of the GPIO chip in the system, starting from 0.
+       @return The chip number.
+    */
+    int chipNumber() const {
+      return m_chip;
+    }
+
+  private:
+    int m_ino;
+    uint32_t m_offset; // GPIO pin offset
+    int m_chip; // Chip number
+
+    static std::map<int, Chip *> chips; // Global map to hold chip instances
+};
+
+std::map<int, Chip *> TestPin::chips;
+
+
+// -----------------------------------------------------------------------------
+struct LineInFixture {
+  TestPin testPin4;
+  Line input;
+
+  LineInFixture() :
+    testPin4 (Pin4), input (testPin4.chip(), testPin4.offset()) {
+
+    REQUIRE CHECK (testPin4.open());
+    CHECK (input.isOpen() == false);
+    CHECK_EQUAL (testPin4.offset(), input.offset());
   }
 
-  Chip chip;
+  ~LineInFixture() {
+    // Clean up
+    CHECK (input.close());
+    CHECK (input.isOpen() == false);
+  }
+
+  unsigned int numLines() const {
+    return input.numLines();
+  }
 };
+
+// -----------------------------------------------------------------------------
+struct LineOutFixture {
+  TestPin testPin3;
+  Line output;
+
+  LineOutFixture() :
+    testPin3 (Pin3), output (testPin3.chip(), testPin3.offset()) {
+
+    REQUIRE CHECK (testPin3.open());
+    CHECK (output.isOpen() == false);
+    CHECK_EQUAL (testPin3.offset(), output.offset());
+  }
+
+  ~LineOutFixture() {
+    // Clean up
+    CHECK (output.close());
+    CHECK (output.isOpen() == false);
+  }
+
+  unsigned int numLines() const {
+    return output.numLines();
+  }
+};
+
+// -----------------------------------------------------------------------------
+struct LineInOutFixture : public LineInFixture, public LineOutFixture {
+
+  LineInOutFixture() : LineInFixture(), LineOutFixture() {
+
+    std::cout << "<WARNING> Pin iNo#" << testPin4.iNo() << " must be connected to Pin #" << testPin3.iNo() << " with a wire!" << std::endl;
+  }
+};
+
+// -----------------------------------------------------------------------------
+struct LineIn1Fixture {
+  TestPin testPin1;
+  Line line;
+
+  LineIn1Fixture() :
+    testPin1 (Pin1), line (testPin1.chip(), testPin1.offset()) {
+
+    REQUIRE CHECK (testPin1.open());
+    CHECK (line.isOpen() == false);
+    CHECK_EQUAL (testPin1.offset(), line.offset());
+  }
+
+  ~LineIn1Fixture() {
+    // Clean up
+    CHECK (line.close());
+    CHECK (line.isOpen() == false);
+  }
+  unsigned int numLines() const {
+    return line.numLines();
+  }
+};
+
+// -----------------------------------------------------------------------------
+struct LineIn12Fixture  {
+  TestPin testPin1;
+  TestPin testPin2;
+  uint32_t offsets[2];
+  Line line;
+
+  LineIn12Fixture() :
+    testPin1 (Pin1), testPin2 (Pin2), offsets {testPin1.offset(), testPin2.offset() },
+    line (testPin1.chip(), 2, offsets) {
+
+    REQUIRE CHECK_EQUAL (0, testPin1.chipNumber()); // To comment, when check is verified
+    REQUIRE CHECK_EQUAL (27, testPin1.offset()); // To comment, when check is verified
+    REQUIRE CHECK_EQUAL (testPin1.chipNumber(), testPin2.chipNumber());
+    REQUIRE CHECK (testPin1.open());
+    REQUIRE CHECK (testPin2.open());
+    CHECK (line.isOpen() == false);
+  }
+
+  ~LineIn12Fixture() {
+    // Clean up
+    CHECK (line.close());
+    CHECK (line.isOpen() == false);
+  }
+};
+
+// -----------------------------------------------------------------------------
+struct ChipFixture {
+  TestPin testPin1;
+  Chip &chip;
+  std::string dev;
+
+  ChipFixture() : testPin1 (Pin1), chip (*testPin1.chip()), dev (testPin1.dev()) {
+
+    CHECK (chip.isOpen() == false);
+  }
+};
+
+// -----------------------------------------------------------------------------
+// To comment, when check is verified
+TEST (TestPinConstructor) {
+  TestPin testPin1 (Pin1);
+  TestPin testPin2 (Pin2);
+  TestPin testPin3 (Pin3);
+  TestPin testPin4 (Pin4);
+
+  REQUIRE CHECK_EQUAL (0, testPin1.chipNumber());
+  REQUIRE CHECK_EQUAL (27, testPin1.offset());
+  REQUIRE CHECK_EQUAL (Pin1, testPin1.iNo());
+  REQUIRE CHECK_EQUAL (false, testPin1.isOpen());
+  REQUIRE CHECK_EQUAL ("/dev/gpiochip0", testPin1.dev());
+
+  REQUIRE CHECK_EQUAL (0, testPin2.chipNumber());
+  REQUIRE CHECK_EQUAL (23, testPin2.offset());
+  REQUIRE CHECK_EQUAL (0, testPin3.chipNumber());
+  REQUIRE CHECK_EQUAL (17, testPin3.offset());
+  REQUIRE CHECK_EQUAL (0, testPin4.chipNumber());
+  REQUIRE CHECK_EQUAL (18, testPin4.offset());
+}
 
 /**
    Synopsis:
@@ -96,39 +336,18 @@ TEST_FIXTURE (ChipFixture, ChipTest) {
   CHECK (chip.errorCode() == 0);
 }
 
-// -----------------------------------------------------------------------------
-struct LineFixture : public ChipFixture {
-
-  const std::array<uint32_t, 2> inputOffsets = LineFixtureInputOffsets;
-  const uint32_t outputOffset = LineFixtureOutputOffset;
-  const uint32_t inputOffset = LineFixtureInputOffset;
-
-  LineFixture() : ChipFixture() {
-    REQUIRE CHECK (chip.open (dev));
-  }
-
-  ~LineFixture() {
-    CHECK (chip.close());
-  }
-};
-
 /*
   Synopsis:
   - Configure a line and check if this configuration may be read
   -----------------------------------------------------------------------------
 */
-TEST_FIXTURE (LineFixture, LineConfigTest) {
+TEST_FIXTURE (LineIn1Fixture, LineConfigTest) {
   LineInfo info;
-  Line line (&chip, outputOffset);
-  CHECK (line.isOpen() == false);
-  CHECK (line.offset() == outputOffset);
+  LineConfig config (GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED);
 
-  LineConfig config;
-  config.flags = GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED;
-
-  // Open the line with the configuration
+  // Open the output with the configuration
   CHECK (line.open (config));
-  std::cout << "line.open: " << chip.errorCode() << " (" << chip.errorMessage() << ")" << std::endl;
+  std::cout << "line.open: " << line.errorCode() << " (" << line.errorMessage() << ")" << std::endl;
   REQUIRE CHECK (line.isOpen());
 
   // Check if the configuration is store correctly
@@ -148,7 +367,7 @@ TEST_FIXTURE (LineFixture, LineConfigTest) {
       GPIO_V2_LINE_FLAG_BIAS_DISABLED   = _BITULL (10), ///< line has bias disabled
 
   */
-  CHECK (info.offset == outputOffset);
+  CHECK_EQUAL (line.offset(), info.offset);
   CHECK_EQUAL ( (info.flags & ~GPIO_V2_LINE_FLAG_USED), config.flags);
   CHECK_EQUAL (info.num_attrs, 0); // No attributes set
 
@@ -185,7 +404,7 @@ TEST_FIXTURE (LineFixture, LineConfigTest) {
   config.flags = GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN | GPIO_V2_LINE_FLAG_EDGE_RISING;
   config.attrs[0].attr.id = GPIO_V2_LINE_ATTR_ID_DEBOUNCE;
   config.attrs[0].attr.debounce_period_us = 20000; // 20 ms debounce
-  config.attrs[0].mask = 1 << 0; // Apply to the first line
+  config.attrs[0].mask = 1 << 0; // Apply to the first output
   config.num_attrs = 1;
   CHECK (line.setConfig (config));
   CHECK (line.getInfo (&info));
@@ -202,10 +421,6 @@ TEST_FIXTURE (LineFixture, LineConfigTest) {
   std::cout << "Line " << info.offset << ": " << info.name << ", attrs: " << info << std::endl;
   CHECK_EQUAL ( (info.flags & ~GPIO_V2_LINE_FLAG_USED), config.flags);
   CHECK_EQUAL (info.num_attrs, 0);
-
-  // Clean up
-  CHECK (line.close());
-  CHECK (line.isOpen() == false);
 }
 
 /*
@@ -218,19 +433,16 @@ TEST_FIXTURE (LineFixture, LineConfigTest) {
   - Check if the values are updated correctly (low level)
   -----------------------------------------------------------------------------
 */
-TEST_FIXTURE (LineFixture, LineTestInput) {
-  const unsigned int numLines = inputOffsets.size();
+TEST_FIXTURE (LineIn12Fixture, LineTestInput) {
+  const unsigned int numLines = line.numLines();
 
-  // Create a Line object with multiple input offsets
-  Line line (&chip, inputOffsets.size(), inputOffsets.data());
   // Chech getters
   CHECK (line.isOpen() == false);
-  CHECK (line.numLines() == numLines);
-  for (unsigned int i = 0; i < numLines; ++i) {
-    CHECK (line.offset (i) == inputOffsets[i]);
+  for (unsigned int i = 0; i < line.numLines(); ++i) {
+    CHECK (line.offset (i) == offsets[i]);
   }
   std::cout << "Line offsets: ";
-  for (const auto &offset : inputOffsets) {
+  for (const auto &offset : offsets) {
     std::cout << offset << " ";
   }
   std::cout << std::endl;
@@ -240,7 +452,7 @@ TEST_FIXTURE (LineFixture, LineTestInput) {
   config.flags = GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_BIAS_PULL_UP;
 
   CHECK (line.open (config));
-  std::cout << "line.open: " << chip.errorCode() << " (" << chip.errorMessage() << ")" << std::endl;
+  std::cout << "line.open: " << line.errorCode() << " (" << line.errorMessage() << ")" << std::endl;
   REQUIRE CHECK (line.isOpen());
 
   // Read line informations
@@ -254,14 +466,11 @@ TEST_FIXTURE (LineFixture, LineTestInput) {
   // Change the line configuration to pull-down and check values
   config.flags = GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN;
   CHECK (line.setConfig (config));
-  std::cout << "line.setConfig: " << chip.errorCode() << " (" << chip.errorMessage() << ")" << std::endl;
+  std::cout << "line.setConfig: " << line.errorCode() << " (" << line.errorMessage() << ")" << std::endl;
   for (unsigned int i = 0; i < numLines; ++i) {
     CHECK (line.getValue (i) == false);
   }
 
-  // Clean up
-  CHECK (line.close());
-  CHECK (line.isOpen() == false);
 }
 
 /* Synopsis:
@@ -277,18 +486,7 @@ TEST_FIXTURE (LineFixture, LineTestInput) {
   If the lines are not connected, the test will fail when checking the input value.
   -----------------------------------------------------------------------------
 */
-TEST_FIXTURE (LineFixture, LineTestOutput) {
-
-  Line output (&chip, outputOffset);
-  CHECK (output.isOpen() == false);
-  CHECK (output.offset() == outputOffset);
-
-  Line input (&chip, inputOffset);
-  CHECK (input.isOpen() == false);
-  CHECK (input.offset() == inputOffset);
-
-  std::cout << "<WARNING> Input line " << input.offset() << " must be connected to output line " << output.offset() << " with a wire!" << std::endl;
-
+TEST_FIXTURE (LineInOutFixture, LineTestOutput) {
   LineConfig config;
 
   // Configure output line
@@ -298,16 +496,17 @@ TEST_FIXTURE (LineFixture, LineTestOutput) {
   config.attrs[0].attr.values = 1; // Set output to high
   config.attrs[0].mask = 1 << 0; // Apply to the first line
   config.num_attrs = 1;
-  CHECK (output.open (config));
 
-  std::cout << "output.open: " << chip.errorCode() << " (" << chip.errorMessage() << ")" << std::endl;
+  CHECK (output.open (config));
+  std::cout << "output.open: " << output.errorCode() << " (" << output.errorMessage() << ")" << std::endl;
   REQUIRE CHECK (output.isOpen());
 
   // Configure input line
   config.clear();
   config.flags = GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED;
+
   CHECK (input.open (config));
-  std::cout << "input.open: " << chip.errorCode() << " (" << chip.errorMessage() << ")" << std::endl;
+  std::cout << "input.open: " << input.errorCode() << " (" << input.errorMessage() << ")" << std::endl;
   REQUIRE CHECK (input.isOpen());
 
   // Check if input reads the output values
@@ -321,38 +520,28 @@ TEST_FIXTURE (LineFixture, LineTestOutput) {
     CHECK_EQUAL (state, output.getValue()); // Check if output reads the same value
     CHECK_EQUAL (state, input.getValue()); // Check if input reads the same value as output
   }
-
-  // Clean up
-  CHECK (input.close());
-  CHECK (input.isOpen() == false);
-  CHECK (output.close());
-  CHECK (output.isOpen() == false);
 }
 
 // -----------------------------------------------------------------------------
-TEST_FIXTURE (LineFixture, LineTestInputActiveLow) {
-  LineConfig config (GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_ACTIVE_LOW | GPIO_V2_LINE_FLAG_BIAS_PULL_UP);
-  Line line (&chip, inputOffsets[0]);
+TEST_FIXTURE (LineIn1Fixture, LineTestInputActiveLow) {
 
+  LineConfig config (GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_ACTIVE_LOW | GPIO_V2_LINE_FLAG_BIAS_PULL_UP);
   CHECK (line.open (config));
   REQUIRE CHECK (line.isOpen());
   CHECK (line.getValue() == false); // Should read low due to pull-up and active low configuration
   config.flags = GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_ACTIVE_LOW | GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN;
   CHECK (line.setConfig (config));
   CHECK (line.getValue() == true); // Should read high due to pull-down and active low configuration
-  CHECK (line.close());
 }
 
 // -----------------------------------------------------------------------------
-TEST_FIXTURE (LineFixture, LineTestOutputActiveLow) {
-  LineConfig config (GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_ACTIVE_LOW);
-  Line output (&chip, outputOffset);
+TEST_FIXTURE (LineInOutFixture, LineTestOutputActiveLow) {
 
+  LineConfig config (GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_ACTIVE_LOW);
   CHECK (output.open (config));
   REQUIRE CHECK (output.isOpen());
 
   config.flags = GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED;
-  Line input (&chip, inputOffset);
   CHECK (input.open (config));
   REQUIRE CHECK (input.isOpen());
 
@@ -365,20 +554,15 @@ TEST_FIXTURE (LineFixture, LineTestOutputActiveLow) {
   // We can read the output value directly, and it should be at the same state as we wrote
   CHECK (output.getValue() == false); // Should read high due to active low configuration
   CHECK (input.getValue() == true); // Input should read high due to active low configuration
-
-  CHECK (output.close());
-  CHECK (input.close());
 }
 
 // -----------------------------------------------------------------------------
-struct WaitLineFixture : public LineFixture {
+struct WaitLineFixture : public LineInOutFixture {
   const unsigned int pw = WaitLineFixturePw; // Pulse width in milliseconds
   const int loopCount = WaitLineFixtureLoopCount; // Number of loops to test
   const bool initialState = WaitLineFixtureInitialState;
   const uint32_t debounce = WaitLineFixtureDebounceMs; // Debounce period in milliseconds
   const unsigned int dtmax = WaitLineFixtureDtmax; // Maximum time to generate short pulses, to generate short pulses at the beginning of each loop, must be even and less than (pw - debounce)
-
-
 
   std::promise<void> killThread;
   std::thread isrThread;
@@ -444,11 +628,6 @@ TEST_FIXTURE (WaitLineFixture, LineTestInterrupt) {
   int eventCount = 0;
   LineConfig config;
 
-  Line output (&chip, outputOffset);
-  Line input (&chip, inputOffset);
-
-  std::cout << "<WARNING> Input line " << input.offset() << " must be connected to output line " << output.offset() << " with a wire!" << std::endl;
-
   // Configure output line
   config.flags = GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED; // Set as output line
   // Set initial output value to high
@@ -512,9 +691,6 @@ TEST_FIXTURE (WaitLineFixture, LineTestInterrupt) {
   CHECK_EQUAL (loopCount, eventCount); // Check if the number of events matches the loop count
   detachInterrupt(); // Detach the interrupt handler
 
-  // Clean up
-  CHECK (input.close());
-  CHECK (output.close());
 }
 
 // -----------------------------------------------------------------------------
@@ -524,11 +700,6 @@ TEST_FIXTURE (WaitLineFixture, LineTestDebounce) {
   LineEvent prevEvent;
   int eventCount = 0;
   LineConfig config;
-
-  Line output (&chip, outputOffset);
-  Line input (&chip, inputOffset);
-
-  std::cout << "<WARNING> Input line " << input.offset() << " must be connected to output line " << output.offset() << " with a wire!" << std::endl;
 
   // Configure output line
   config.flags = GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED; // Set as output line
@@ -603,10 +774,6 @@ TEST_FIXTURE (WaitLineFixture, LineTestDebounce) {
 
   CHECK_EQUAL (loopCount, eventCount); // Check if the number of events matches the loop count
   detachInterrupt(); // Detach the interrupt handler
-
-  // Clean up
-  CHECK (input.close());
-  CHECK (output.close());
 }
 
 // run all tests
