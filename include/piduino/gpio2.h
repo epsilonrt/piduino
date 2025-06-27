@@ -645,6 +645,17 @@ namespace Gpio2 {
       }
 
       /**
+       * @brief Opens the GPIO chip device using a chip number.
+       * @param chip_no The chip number of the GPIO chip.
+       * @return true if the device was successfully opened, false otherwise.
+       */
+      bool open (uint32_t chip_no) {
+
+        // Open the GPIO chip device using the chip number.
+        return open (devPath (chip_no));
+      }
+
+      /**
          @brief Checks if the GPIO chip device is open.
          @return true if the device is open, false otherwise.
       */
@@ -657,7 +668,7 @@ namespace Gpio2 {
          @brief Gets the path to the GPIO chip device.
          @return A string containing the device path.
       */
-      std::string  path() const {
+      std::string  dev() const {
 
         return m_dev;
       }
@@ -734,6 +745,17 @@ namespace Gpio2 {
         memset (info, 0, sizeof (*info));
         info->offset = offset;
         return ioCtl (GPIO_V2_GET_LINEINFO_IOCTL, info);
+      }
+
+      /**
+       * @brief Gets the path to a GPIO chip device based on its chip number.
+       * @param chip_no The chip number of the GPIO chip.
+       * @return A string representing the path to the GPIO chip device.
+       * @note The path is constructed as "/dev/gpiochip<chip_no>".
+       */
+      static std::string devPath (uint32_t chip_no) {
+
+        return "/dev/gpiochip" + std::to_string (chip_no);
       }
 
     private:
