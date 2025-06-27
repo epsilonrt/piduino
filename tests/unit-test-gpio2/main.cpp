@@ -86,10 +86,8 @@ class TestPin {
        @note The chip number is determined by the pin's chip number.
     */
     std::string dev() const {
-      std::ostringstream ss;
 
-      ss << "/dev/gpiochip" << m_chip;
-      return ss.str();
+      return Chip::devPath (m_chip);
     }
 
     /**
@@ -273,25 +271,25 @@ struct ChipFixture {
 
 // -----------------------------------------------------------------------------
 // To comment, when check is verified
-TEST (TestPinConstructor) {
-  TestPin testPin1 (Pin1);
-  TestPin testPin2 (Pin2);
-  TestPin testPin3 (Pin3);
-  TestPin testPin4 (Pin4);
+// TEST (TestPinConstructor) {
+//   TestPin testPin1 (Pin1);
+//   TestPin testPin2 (Pin2);
+//   TestPin testPin3 (Pin3);
+//   TestPin testPin4 (Pin4);
 
-  REQUIRE CHECK_EQUAL (0, testPin1.chipNumber());
-  REQUIRE CHECK_EQUAL (27, testPin1.offset());
-  REQUIRE CHECK_EQUAL (Pin1, testPin1.iNo());
-  REQUIRE CHECK_EQUAL (false, testPin1.isOpen());
-  REQUIRE CHECK_EQUAL ("/dev/gpiochip0", testPin1.dev());
+//   REQUIRE CHECK_EQUAL (0, testPin1.chipNumber());
+//   REQUIRE CHECK_EQUAL (27, testPin1.offset());
+//   REQUIRE CHECK_EQUAL (Pin1, testPin1.iNo());
+//   REQUIRE CHECK_EQUAL (false, testPin1.isOpen());
+//   REQUIRE CHECK_EQUAL ("/dev/gpiochip0", testPin1.dev());
 
-  REQUIRE CHECK_EQUAL (0, testPin2.chipNumber());
-  REQUIRE CHECK_EQUAL (23, testPin2.offset());
-  REQUIRE CHECK_EQUAL (0, testPin3.chipNumber());
-  REQUIRE CHECK_EQUAL (17, testPin3.offset());
-  REQUIRE CHECK_EQUAL (0, testPin4.chipNumber());
-  REQUIRE CHECK_EQUAL (18, testPin4.offset());
-}
+//   REQUIRE CHECK_EQUAL (0, testPin2.chipNumber());
+//   REQUIRE CHECK_EQUAL (23, testPin2.offset());
+//   REQUIRE CHECK_EQUAL (0, testPin3.chipNumber());
+//   REQUIRE CHECK_EQUAL (17, testPin3.offset());
+//   REQUIRE CHECK_EQUAL (0, testPin4.chipNumber());
+//   REQUIRE CHECK_EQUAL (18, testPin4.offset());
+// }
 
 /**
    Synopsis:
@@ -314,7 +312,7 @@ TEST_FIXTURE (ChipFixture, ChipTest) {
   REQUIRE CHECK (chip.isOpen() == true);
   CHECK (chip.errorCode() == 0);
 
-  CHECK (chip.path() == dev);
+  CHECK (chip.dev() == dev);
 
   REQUIRE CHECK (chip.fillInfo());
 
@@ -365,7 +363,6 @@ TEST_FIXTURE (LineIn1Fixture, LineConfigTest) {
       GPIO_V2_LINE_FLAG_BIAS_PULL_UP    = _BITULL (8), ///< line has pull-up bias enabled
       GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN  = _BITULL (9), ///< line has pull-down bias enabled
       GPIO_V2_LINE_FLAG_BIAS_DISABLED   = _BITULL (10), ///< line has bias disabled
-
   */
   CHECK_EQUAL (line.offset(), info.offset);
   CHECK_EQUAL ( (info.flags & ~GPIO_V2_LINE_FLAG_USED), config.flags);
