@@ -187,29 +187,6 @@ namespace Piduino {
       virtual int waitForInterrupt (const Pin *pin, Pin::Edge edge, int timeout_ms);
 
       /**
-         @brief Attaches an interrupt handler to a GPIO pin.
-
-         The default implementation does nothing.
-
-         @note If reimplemented, the hasIrq flag must be set.
-         @param pin Pointer to the Pin object.
-         @param isr Pointer to the interrupt service routine.
-         @param edge The edge to trigger the interrupt (rising, falling, or both).
-         @param userData Pointer to user data to pass to the ISR.
-         @return true if the interrupt was successfully attached, false otherwise.
-      */
-      virtual bool attachInterrupt (const Pin *pin, Pin::Isr isr, Pin::Edge edge, void *userData);
-
-      /**
-         @brief Detaches the interrupt handler from a GPIO pin.
-
-         The default implementation does nothing.
-
-         @note If reimplemented, the hasIrq flag must be set.
-      */
-      virtual void detachInterrupt (const Pin *pin);
-
-      /**
          @brief Sets the debounce period for the GPIO line.
           The default implementation does nothing.
 
@@ -277,7 +254,6 @@ namespace Piduino {
          - hasAltRead: The device supports reading alternate functions.
          - hasDrive: The device supports setting drive strength.
          - hasWfi: The device supports waiting for interrupts.
-         - hasIrq: The device supports interrupts.
          - hasActiveLow: The device supports active low configuration.
          - hasDebounce: The device supports debounce configuration.
       */
@@ -287,9 +263,8 @@ namespace Piduino {
         hasAltRead    = 0x0004,
         hasDrive      = 0x0008,
         hasWfi        = 0x0010,
-        hasIrq        = 0x0020,
-        hasActiveLow  = 0x0040,
-        hasDebounce   = 0x0080
+        hasActiveLow  = 0x0020,
+        hasDebounce   = 0x0040
       };
 
       /**

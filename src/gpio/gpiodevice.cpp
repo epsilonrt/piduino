@@ -116,15 +116,6 @@ namespace Piduino {
   }
 
   // -----------------------------------------------------------------------------
-  bool GpioDevice::attachInterrupt (const Pin *pin, Pin::Isr isr, Pin::Edge edge, void *userData) {
-    return false;
-  }
-
-  // -----------------------------------------------------------------------------
-  void GpioDevice::detachInterrupt (const Pin *pin) {
-  }
-
-  // -----------------------------------------------------------------------------
   void GpioDevice::setDebounce (const Pin *pin, uint32_t debounce_ms) {
   }
 
