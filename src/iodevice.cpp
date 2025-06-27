@@ -174,7 +174,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  IoDevice::Private::setError (int error) {
+  IoDevice::Private::setError (int error) const {
 
     error = error;
     errorString.assign (strerror (error));
@@ -182,7 +182,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  IoDevice::Private::setError (int error, const std::string & str) {
+  IoDevice::Private::setError (int error, const std::string & str) const {
 
     error = error;
     errorString = str;
@@ -190,7 +190,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  IoDevice::Private::setError () {
+  IoDevice::Private::setError () const {
 
     if (errno) {
       error = errno;
@@ -200,7 +200,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  IoDevice::Private::clearError () {
+  IoDevice::Private::clearError () const {
 
     error = 0;
     errorString.clear();

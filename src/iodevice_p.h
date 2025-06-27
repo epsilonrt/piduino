@@ -33,10 +33,10 @@ namespace Piduino {
       virtual void close();
       virtual bool isOpen() const;
       
-      virtual void clearError();
-      virtual void setError ();
-      virtual void setError (int error);
-      virtual void setError (int error, const std::string & errorString);
+      virtual void clearError() const;
+      virtual void setError () const;
+      virtual void setError (int error) const;
+      virtual void setError (int error, const std::string & errorString) const;
       
       static int modeToPosixFlags (OpenMode mode);
 
@@ -44,8 +44,8 @@ namespace Piduino {
 
       OpenMode openMode;
       bool isSequential;
-      int error;
-      std::string errorString;
+      mutable int error;
+      mutable std::string errorString;
 
       PIMP_DECLARE_PUBLIC (IoDevice)
   };
