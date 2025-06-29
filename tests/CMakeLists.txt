@@ -21,19 +21,25 @@ include(SubDirList)
 SUBDIRLIST(TESTS ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CTEST_OUTPUT_ON_FAILURE OFF)
+find_program (SUDO_EXECUTABLE NAMES sudo)
 
 if(PIDUINO_LIB_DIR)
   link_directories(${PIDUINO_LIB_DIR})
   add_definitions(${PIDUINO_CFLAGS_OTHER})
-  include_directories(BEFORE ${PIDUINO_INC_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+  include_directories(BEFORE ${PIDUINO_INC_DIR} ${PIDUINO_SRC_DIR} ${CMAKE_CURRENT_BINARY_DIR})
   list(APPEND LINK_OPTIONS piduino Threads::Threads ${PIDUINO_LDFLAGS_OTHER})
 else()
   find_package(piduino CONFIG REQUIRED)
   link_directories(${PIDUINO_LIBRARY_DIRS})
   add_definitions(${PIDUINO_CFLAGS})
-  include_directories(BEFORE ${PIDUINO_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+  include_directories(BEFORE ${PIDUINO_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/src ${CMAKE_CURRENT_BINARY_DIR})
   list(APPEND LINK_OPTIONS ${PIDUINO_LIBRARIES})
 endif()
+
+# get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+# foreach(dir ${dirs})
+#   message(STATUS "dir='${dir}'")
+# endforeach()
 
 add_custom_target(build_and_test ${CMAKE_CTEST_COMMAND} -V)
 
@@ -48,7 +54,13 @@ foreach(test ${TESTS})
   target_compile_options(${test} PUBLIC ${COMPILE_DEFINITIONS} ${UNITTESTPP_CFLAGS})
 
   # now register the executable with CTest
-  add_test(NAME ${test} COMMAND ${test})
+  if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${test}/run_as_root")
+    message (STATUS " test ${test} requires root privileges, it will run with sudo")
+    add_test(NAME ${test} COMMAND ${SUDO_EXECUTABLE} ./${test})
+  else()
+    add_test(NAME ${test} COMMAND ${test})
+  endif()
 endforeach()
 
 add_dependencies(build_and_test piduino-shared)
+

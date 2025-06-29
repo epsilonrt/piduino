@@ -108,14 +108,7 @@ namespace Piduino {
 
       if (isOpen()) {
 
-        if (device()->flags() & GpioDevice::hasPullRead) {
-
-          d->readPull();
-        }
-        else {
-
-          throw std::invalid_argument ("Unable to read pull resistor");
-        }
+        d->readPull();
       }
     }
     else {
@@ -305,7 +298,7 @@ namespace Piduino {
     }
     return d->descriptor->num.system;
   }
-  
+
   // ---------------------------------------------------------------------------
   int Pin::chipNumber() const {
     PIMP_D (const Pin);
@@ -575,6 +568,12 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
+  Pin::waitForInterrupt (Pin::Edge e, Event & event, int timeout_ms) {
+    // TODO: implement this function to wait for an interrupt
+  }
+
+  // ---------------------------------------------------------------------------
+  void
   Pin::waitForInterrupt (Pin::Edge e, int timeout_ms) {
 
     if (isOpen()) {
@@ -611,6 +610,8 @@ namespace Piduino {
     }
   }
 
+
+
   // ---------------------------------------------------------------------------
   void
   Pin::attachInterrupt (Isr isr, Edge e, void *userData) {
@@ -632,6 +633,47 @@ namespace Piduino {
       d->thread = std::thread (Private::irqThread, std::move (running), d->valueFd, isr, userData);
     }
   }
+
+  #if 0
+  // -----------------------------------------------------------------------------
+  bool GpioDev2::Private::attachInterrupt (const Pin *pin, Pin::Isr isr, void *userData) {
+    // place here the code to attach an interrupt to the pin
+    // this function should create a thread that waits for the interrupt
+    // and calls the isr function when the interrupt occurs
+    std::thread &thread = isrThreadOfPin (pin);
+
+    if (!thread.joinable()) {
+      std::promise<void> &kill = killThreadOfPin (pin);
+
+      // Fetch std::future object associated with promise
+      std::future<void> running = kill.get_future();
+      thread = std::thread (Private::isrFunc, std::move (running), pin, this, isr, userData);
+      return true;
+    }
+    return false;
+  }
+
+  // -----------------------------------------------------------------------------
+  void GpioDev2::Private::detachInterrupt (const Pin *pin) {
+    // place here the code to detach the interrupt from the pin
+    // this function should stop the thread that waits for the interrupt
+
+    if (isrThread.find (irqLine (pin)) == isrThread.end()) {
+      std::thread &thread = isrThreadOfPin (pin);
+      std::promise<void> &kill = killThreadOfPin (pin);
+
+      if (thread.joinable()) {
+
+        // Set the value in promise
+        kill.set_value();
+        thread.join();
+        // is not needed anymore ?
+        // thread = std::thread();
+        // kill = std::promise<void>();
+      }
+    }
+  }
+  #endif // 0
 
   // ---------------------------------------------------------------------------
   void

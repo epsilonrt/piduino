@@ -20,6 +20,7 @@
 #include <string>
 #include <map>
 #include <piduino/converter.h>
+#include <piduino/gpio2.h>
 
 namespace Piduino {
 
@@ -186,6 +187,8 @@ namespace Piduino {
           int cs; ///< Chip select number
           Pin::Mode mode; ///< Pin mode for this CS
       };
+
+      using Event = Gpio2::LineEvent;
 
       /**
         @brief Constructeur
@@ -362,6 +365,7 @@ namespace Piduino {
          déclenchée.
       */
       void waitForInterrupt (Edge edge, int timeout_ms = -1);
+      void waitForInterrupt (Edge edge, Event & event, int timeout_ms = -1);
 
       /**
          @brief Routine d'interruption
@@ -370,7 +374,7 @@ namespace Piduino {
 
          @param userData pointeur sur les données de l'utilisateur
       */
-      typedef void (* Isr) (void *userData);
+      typedef void (* Isr) (Event event, void *userData);
 
       /**
          @brief Installe une routine d'interruption (Isr)

@@ -737,7 +737,7 @@ TEST_FIXTURE (WaitLineFixture, LineTestDebounce) {
 
       deb = !deb; // Toggle the output value
       std::this_thread::sleep_for (std::chrono::milliseconds (1));
-      output.setValue (outState);
+      output.setValue (deb);
     }
 
     outState = !outState; // Toggle outState

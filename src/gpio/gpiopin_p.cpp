@@ -336,7 +336,6 @@ namespace Piduino {
         return;
       }
     }
-    pull = PullUnknown;
   }
 
   // ---------------------------------------------------------------------------
@@ -482,7 +481,6 @@ namespace Piduino {
     return ret;
   }
 
-
   // ---------------------------------------------------------------------------
   // static
   // Thread de surveillance des entrées du port
@@ -497,8 +495,8 @@ namespace Piduino {
 
         ret = sysFsPoll (fd, 10);
         if (ret > 0) {
-
-          isr (userData);
+          Event event;
+          isr (event, userData);
           sysFsRead (fd);
         }
         else if (ret < 0) {

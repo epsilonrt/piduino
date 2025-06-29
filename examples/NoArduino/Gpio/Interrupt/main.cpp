@@ -1,12 +1,12 @@
 // interrupt
 
-// This program captures the rising and falling edges sent on a digital pin. 
-// A led copies the state of the input signal and the console displays the 
+// This program captures the rising and falling edges sent on a digital pin.
+// A led copies the state of the input signal and the console displays the
 // time differences between edges.
 
 // How to make this program work ?
 
-// 1- Connect the irqPin to another pin of the GPIO connector with a wire 
+// 1- Connect the irqPin to another pin of the GPIO connector with a wire
 // (eg Pin 10: Pin Header 24, GPIOC3 for NanoPi, GPIO8 for RaspberryPi).
 
 // 2- Configure pin 10 as output with the pido utility:
@@ -21,10 +21,10 @@
 
 // 5- The console should display the time differences between edges (100ms):
 //  Press Ctrl+C to abort ...
-//  27047:	0
-//  100:	  1
-//  100:	  0
-//  100:	  1
+//  27047:  0
+//  100:    1
+//  100:    0
+//  100:    1
 
 // Created 6 March 2018
 // This example code is in the public domain.
@@ -40,19 +40,19 @@ using namespace Piduino;
 const int ledPin = 0; // Header Pin 11: GPIO17 for RPi, GPIOA0 for NanoPi
 const int irqPin = 3; // Header Pin 15: GPIO22 for RPi, GPIOA3 for NanoPi
 
-Pin & led = gpio.pin (ledPin); // led is a reference on pin 11 of the GPIO
-Pin & irq = gpio.pin (irqPin); // irq is a reference on pin 15 of the GPIO
+Pin &led = gpio.pin (ledPin);  // led is a reference on pin 11 of the GPIO
+Pin &irq = gpio.pin (irqPin);  // irq is a reference on pin 15 of the GPIO
 unsigned long t1, t2; // for calculating time differences between interruptions
 
 // -----------------------------------------------------------------------------
 // Interrupt Service Routine
 // Called at each interruption triggered by a rising or falling edge
-void isr(void * data) {
+void isr (Pin::Event event, void *data) {
 
   t2 = clk.millis(); // second time
   led.toggle(); // toggle the led state
   cout << t2 - t1 << ":\t" << irq.read() << endl;  // prints the time difference
-                                  // between edges and the state of the irq pin.
+  // between edges and the state of the irq pin.
   t1 = t2; // the new time becomes the first for the next irq
 }
 
