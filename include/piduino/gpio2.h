@@ -1158,7 +1158,7 @@ namespace Gpio2 {
       /**
          @brief Sets the debounce period for the GPIO line.
          @param debounce_ms The debounce period in milliseconds.
-         @return true if the debounce period was successfully set, false otherwise.
+         @return true if the debounce period was successfully set or unchanged, false otherwise.
       */
       bool setDebounce (uint32_t debounce_ms) {
 
@@ -1185,7 +1185,7 @@ namespace Gpio2 {
             return setConfig (config()); // TODO: Debug this, it may not work as expected
           }
         }
-        return false;
+        return true;
       }
 
       /**
