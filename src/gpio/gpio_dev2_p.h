@@ -20,6 +20,8 @@
 #include <string>
 #include <thread>
 #include <future>
+#include <memory>
+#include <map>
 #include <piduino/gpio2.h>
 #include "gpio_dev2.h"
 #include "../iodevice_p.h"
@@ -30,12 +32,12 @@ namespace Piduino {
 
     public:
       Pin *pin; // pointer to the pin associated with this device
-      Gpio2::Chip *chip;
-      Gpio2::Line *line;
+      std::shared_ptr<Gpio2::Chip> chip; // shared pointer to the GPIO chip instance
+      std::unique_ptr<Gpio2::Line> line;
       uint32_t debounce;
       std::promise<void> killIsrThread;
       std::thread isrThread;
-      static std::map<int, Gpio2::Chip *> chips; // map to hold chip instances, key is the chip number
+      static std::map<int, std::shared_ptr<Gpio2::Chip>> chips; // map to hold chip instances, key is the chip number
 
       Private (GpioDev2 *q, Pin *pin);
       virtual ~Private();

@@ -783,7 +783,7 @@ namespace Gpio2 {
          @param dev A pointer to the associated Chip object.
          @param offset The offset of the GPIO line.
       */
-      Line (Chip *dev, uint32_t offset) : Line (dev, 1, &offset) {}
+      Line (std::shared_ptr<Chip> dev, uint32_t offset) : Line (dev, 1, &offset) {}
 
       /**
          @brief Constructor for the Line class with multiple lines.
@@ -791,7 +791,7 @@ namespace Gpio2 {
          @param num_lines The number of lines.
          @param offsets A pointer to an array of line offsets.
       */
-      Line (Chip *dev, uint32_t num_lines, const uint32_t *offsets) : m_chip (dev), m_req (dev->consumer()), m_last_error (0), m_last_result (0) {
+      Line (std::shared_ptr<Chip> dev, uint32_t num_lines, const uint32_t *offsets) : m_chip (dev), m_req (dev->consumer()), m_last_error (0), m_last_result (0) {
 
         m_req.num_lines = num_lines;
         m_req.fd = -1;
@@ -803,7 +803,7 @@ namespace Gpio2 {
          @param dev A pointer to the associated Chip object.
          @param request A LineRequest object containing the line configuration.
       */
-      Line (Chip *dev, const LineRequest &request) : m_chip (dev), m_req (request), m_last_error (0), m_last_result (0) {
+      Line (std::shared_ptr<Chip> dev, const LineRequest &request) : m_chip (dev), m_req (request), m_last_error (0), m_last_result (0) {
 
         strncpy (m_req.consumer, dev->consumer().c_str(), sizeof (m_req.consumer));
       }
@@ -1226,7 +1226,7 @@ namespace Gpio2 {
       }
 
     private:
-      Chip *m_chip;
+      std::shared_ptr<Chip> m_chip;
       LineRequest m_req;
       mutable int m_last_error;
       mutable int m_last_result;

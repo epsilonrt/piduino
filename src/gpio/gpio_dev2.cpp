@@ -262,7 +262,7 @@ namespace Piduino {
   //                         GpioDev2::Private Class
   //
   // -----------------------------------------------------------------------------
-  std::map<int, Gpio2::Chip *> GpioDev2::Private::chips;
+  std::map<int, std::shared_ptr<Gpio2::Chip>> GpioDev2::Private::chips;
 
   // ---------------------------------------------------------------------------
   GpioDev2::Private::Private (GpioDev2 *q, Pin *pin) :
@@ -271,31 +271,23 @@ namespace Piduino {
     // If the chip is not already in the map, create a new instance
     if (chips.find (pin->chipNumber()) == chips.end()) {
 
-      chips[pin->chipNumber()] = new Gpio2::Chip (System::progName());
+      chips[pin->chipNumber()] = std::make_shared<Gpio2::Chip> (System::progName());
+      // Note: make_shared call std::bad_alloc if allocation fails
     }
 
     chip = chips[pin->chipNumber()]; // Get the chip instance from the map
+    if (!chip->open (pin->chipNumber())) {
 
-    if (chip) {
-      if (!chip->open (pin->chipNumber())) {
-
-        setError (chip->errorCode(), chip->errorMessage());
-      }
-    }
-    else {
-
-      throw std::runtime_error (EXCEPTION_MSG ("Failed to create GPIO chip for pin " + std::to_string (pin->id())));
+      setError (chip->errorCode(), chip->errorMessage());
     }
 
-    line = new Gpio2::Line (chip, pin->chipOffset());
-    if (!line) {
-
-      throw std::runtime_error (EXCEPTION_MSG ("Failed to create GPIO line for pin " + std::to_string (pin->id())));
-    }
+    line = std::make_unique<Gpio2::Line> (chip, pin->chipOffset());
+    // Note: make_unique call std::bad_alloc if allocation fails
   }
 
   // ---------------------------------------------------------------------------
-  GpioDev2::Private::~Private() = default;
+  GpioDev2::Private::~Private() {
+  }
 
   // ---------------------------------------------------------------------------
   bool GpioDev2::Private::open (OpenMode mode) {
