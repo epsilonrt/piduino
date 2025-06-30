@@ -319,7 +319,8 @@ namespace Piduino {
         dev = udev_device_new_from_syspath (
                 udev, udev_list_entry_get_name (dev_list_entry));
 
-        if (!dev) {
+        if (dev == nullptr) {
+
           break;
         }
 
@@ -330,7 +331,9 @@ namespace Piduino {
             buses.push_back (bus);
           }
         }
+        udev_device_unref (dev);
       }
+      udev_enumerate_unref (enumerate);
       udev_unref (udev);
     }
 
