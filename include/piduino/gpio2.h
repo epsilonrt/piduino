@@ -645,10 +645,10 @@ namespace Gpio2 {
       }
 
       /**
-       * @brief Opens the GPIO chip device using a chip number.
-       * @param chip_no The chip number of the GPIO chip.
-       * @return true if the device was successfully opened, false otherwise.
-       */
+         @brief Opens the GPIO chip device using a chip number.
+         @param chip_no The chip number of the GPIO chip.
+         @return true if the device was successfully opened, false otherwise.
+      */
       bool open (uint32_t chip_no) {
 
         // Open the GPIO chip device using the chip number.
@@ -748,11 +748,11 @@ namespace Gpio2 {
       }
 
       /**
-       * @brief Gets the path to a GPIO chip device based on its chip number.
-       * @param chip_no The chip number of the GPIO chip.
-       * @return A string representing the path to the GPIO chip device.
-       * @note The path is constructed as "/dev/gpiochip<chip_no>".
-       */
+         @brief Gets the path to a GPIO chip device based on its chip number.
+         @param chip_no The chip number of the GPIO chip.
+         @return A string representing the path to the GPIO chip device.
+         @note The path is constructed as "/dev/gpiochip<chip_no>".
+      */
       static std::string devPath (uint32_t chip_no) {
 
         return "/dev/gpiochip" + std::to_string (chip_no);
@@ -1163,7 +1163,7 @@ namespace Gpio2 {
       bool setDebounce (uint32_t debounce_ms) {
 
         if (debounce_ms != debounce()) {
-          LineConfig &cfg = reinterpret_cast<LineConfig &> (m_req.config);
+          LineConfig cfg = * (reinterpret_cast<LineConfig *> (&m_req.config));
           auto &debounce = cfg.attrs[0];
 
           if (debounce_ms > 0) {
@@ -1180,10 +1180,8 @@ namespace Gpio2 {
             debounce.mask = 0;
             cfg.num_attrs = 0;
           }
-          if (isOpen()) {
 
-            return setConfig (config()); // TODO: Debug this, it may not work as expected
-          }
+          return setConfig (cfg);
         }
         return true;
       }

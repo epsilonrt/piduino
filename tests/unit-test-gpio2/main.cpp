@@ -10,6 +10,7 @@
 #include <atomic>
 #include <chrono>
 #include <map>
+#include <memory>
 
 #include <piduino/gpio2.h>
 #include <piduino/system.h>
@@ -62,20 +63,21 @@ class TestPin {
 
       if (chips.find (m_chip) == chips.end()) {
 
-        chips[m_chip] = new Chip (System::progName());
+        chips[m_chip] = std::make_shared<Chip> (System::progName());
       }
     }
+    
 
     /**
        @brief returns the Chip instance associated with this pin.
        @return Pointer to the Chip instance.
     */
     Chip *chip() {
-      return chips[m_chip];
+      return chips[m_chip].get();
     }
 
     const Chip *chip() const {
-      return chips[m_chip];
+      return chips[m_chip].get();
     }
 
     /**
@@ -145,10 +147,10 @@ class TestPin {
     uint32_t m_offset; // GPIO pin offset
     int m_chip; // Chip number
 
-    static std::map<int, Chip *> chips; // Global map to hold chip instances
+    static std::map<int, std::shared_ptr<Chip>> chips; // Global map to hold chip instances
 };
 
-std::map<int, Chip *> TestPin::chips;
+std::map<int, std::shared_ptr<Chip>> TestPin::chips;
 
 
 // -----------------------------------------------------------------------------
