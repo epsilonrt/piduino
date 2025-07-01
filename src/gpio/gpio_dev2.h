@@ -139,6 +139,14 @@ namespace Piduino {
       */
       Pin &pin() const;
 
+      /**
+         @brief Gets a map of supported GPIO modes.
+         @return A constant reference to a map where keys are Pin::Mode and values are
+                 their string representations.
+         @note This map is static and shared across all instances of GpioDev2.
+      */
+      static const std::map<Pin::Mode, std::string> &modes ();
+
     protected:
       /**
          @brief Private implementation class for GpioDev2.

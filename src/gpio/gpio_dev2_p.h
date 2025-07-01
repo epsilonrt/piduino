@@ -38,6 +38,7 @@ namespace Piduino {
       std::promise<void> killIsrThread;
       std::thread isrThread;
       static std::map<int, std::shared_ptr<Gpio2::Chip>> chips; // map to hold chip instances, key is the chip number
+      static const std::map<Pin::Mode, std::string> modes;
 
       Private (GpioDev2 *q, Pin *pin);
       virtual ~Private();

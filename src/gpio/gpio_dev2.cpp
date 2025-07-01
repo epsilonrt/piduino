@@ -41,6 +41,8 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   GpioDev2::~GpioDev2() {
+
+    detachInterrupt();
     close();
   }
 
@@ -258,11 +260,28 @@ namespace Piduino {
   }
 
   // -----------------------------------------------------------------------------
+  const std::map<Pin::Mode, std::string> &GpioDev2::modes () {
+    
+    return Private::modes;
+  }
+
+  // -----------------------------------------------------------------------------
   //
   //                         GpioDev2::Private Class
   //
   // -----------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  // static
   std::map<int, std::shared_ptr<Gpio2::Chip>> GpioDev2::Private::chips;
+
+  // ---------------------------------------------------------------------------
+  // static
+  const std::map<Pin::Mode, std::string> GpioDev2::Private::modes = {
+    { Pin::ModeInput, "in" },
+    { Pin::ModeOutput, "out" },
+    { Pin::ModeUnknown, "unk" }
+  };
 
   // ---------------------------------------------------------------------------
   GpioDev2::Private::Private (GpioDev2 *q, Pin *pin) :
