@@ -72,12 +72,12 @@ class TestPin {
        @brief returns the Chip instance associated with this pin.
        @return Pointer to the Chip instance.
     */
-    Chip *chip() {
-      return chips[m_chip].get();
+    std::shared_ptr<Chip> chip() {
+      return chips[m_chip];
     }
 
-    const Chip *chip() const {
-      return chips[m_chip].get();
+    const std::shared_ptr<Chip> chip() const {
+      return chips[m_chip];
     }
 
     /**

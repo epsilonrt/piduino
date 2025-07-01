@@ -2,6 +2,7 @@
 
 macro(SUBDIRLIST result curdir)
   file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+  list(SORT children)
   set(dirlist "")
   foreach(child ${children})
     if(IS_DIRECTORY ${curdir}/${child})
