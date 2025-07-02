@@ -49,8 +49,8 @@ int connector = -1;
 bool physicalNumbering = false;
 Pin *pin = nullptr;
 bool debug = false;
-bool forceSysFs = false;
-int useSysFsBeforeWfi = -1;
+bool forceGpioDev = false;
+int useGpioDevBeforeWfi = -1;
 
 /* private functions ======================================================== */
 void mode (int argc, char *argv[]);
@@ -119,7 +119,7 @@ main (int argc, char **argv) {
           break;
 
         case 'f':
-          forceSysFs = true;
+          forceGpioDev = true;
           break;
 
         case 'h':
@@ -286,7 +286,7 @@ pull (int argc, char *argv[]) {
     throw Exception (Exception::ArgumentExpected);
   }
   else {
-    forceSysFs = false;
+    // forceGpioDev = false;
     pin = getPin (argv[optind]);
 
     if (paramc > 1) {
@@ -324,7 +324,7 @@ drive (int argc, char *argv[]) {
     throw Exception (Exception::ArgumentExpected);
   }
   else {
-    forceSysFs = false;
+    // forceGpioDev = false;
     pin = getPin (argv[optind]);
 
     if (paramc > 1) {
@@ -442,9 +442,9 @@ blink (int argc, char *argv[]) {
     if (paramc > 1)    {
 
       period = stoi (string (argv[optind + 1]));
-      if (pin->useSysFs() && period < 1) {
+      if (period < 1) {
         period = 1;
-        cout << "Warning: Pin " << pin->name() << " uses SYSFS, the delay has been set to " << period << " ms (min.) !" << endl;
+        cout << "Warning: Pin " << pin->name() << " the period has been set to " << period << " ms (min.) !" << endl;
       }
     }
 
@@ -489,7 +489,7 @@ wfi (int argc, char *argv[]) {
     Pin::Edge e;
     string edge (argv[optind + 1]);
 
-    forceSysFs = false;
+    // forceGpioDev = false;
     pin = getPin (argv[optind]);
     e = str2edge.at (edge);
     if (paramc > 2) {
@@ -698,7 +698,7 @@ getPin (char *c_str) {
     throw Exception (Exception::BadPinNumber, s);
   }
 
-  p->forceUseSysFs (forceSysFs);
+  p->enableGpioDev (forceGpioDev);
   return p;
 }
 
@@ -708,9 +708,9 @@ sig_handler (int sig) {
 
   if (gpio.isOpen()) {
 
-    if (useSysFsBeforeWfi >= 0) {
+    if (useGpioDevBeforeWfi >= 0) {
 
-      pin->forceUseSysFs (useSysFsBeforeWfi != 0);
+      pin->enableGpioDev (useGpioDevBeforeWfi != 0);
     }
 
     cout << endl << "everything was closed.";
@@ -761,7 +761,7 @@ usage () {
   cout << "valid options are :" << endl;
   cout << "  -g\tUse the SOC pins numbers rather than PiDuino pin numbers." << endl;
   cout << "  -s\tUse the System pin numbers rather than PiDuino pin numbers." << endl;
-  cout << "  -f\tForce to use SysFS interface (/sys/class/gpio)." << endl;
+  cout << "  -f\tForce to use Gpio2 device interface (/dev/gpiochipX)." << endl;
   cout << "  -1\tUse the connector pin numbers rather than PiDuino pin numbers." << endl;
   cout << "    \ta number is written in the form C.P, eg: 1.5 denotes pin 5 of connector #1." << endl;
   cout << "  -v\tOutput the current version and exit." << endl;

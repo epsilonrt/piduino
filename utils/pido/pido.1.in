@@ -140,7 +140,7 @@ Use the System pin numbers rather than PiDuino pin numbers.
 
 .TP
 .B \-f
-Force to use SysFS interface (/sys/class/gpio) to control pin features.
+Force to use Gpio2 device interface (/dev/gpiochipX) to control pin features.
 
 .TP
 .B \-v

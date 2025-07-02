@@ -15,10 +15,9 @@
    along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
 */
 #pragma once
-#include <thread>
-#include <future>
 #include <memory>
 #include <piduino/gpiopin.h>
+#include "gpio_dev2.h"
 
 namespace Piduino {
 
@@ -34,30 +33,47 @@ namespace Piduino {
       void writePull();
       void readMode();
       void writeMode ();
-      void readEdge();
-      void writeEdge ();
       void readDrive ();
       void writeDrive();
 
-      bool sysFsEnable (bool enable);
-      void sysFsExport (bool enable);
-      bool sysFsIsExport () const;
-      bool sysFsOpen();
-      void sysFsClose();
+      // ----------------------------------------------------------------------
+      bool isGpioDevEnabled() const {
 
-      void sysFsGetEdge();
-      void sysFsSetEdge ();
-      void sysFsGetMode();
-      void sysFsSetMode ();
+        return gpiodev != nullptr;
+      }
 
-      void sysFsWriteFile (const char *n, const std::string &v);
-      std::string sysFsReadFile (const char *n) const;
-      bool sysFsFileExist (const char *n) const;
+      // ----------------------------------------------------------------------
+      bool isGpioDevOpen() const {
 
-      static int sysFsPoll (int fd, int timeout_ms = -1);
-      static int sysFsRead (int fd);
-      static int sysFsWrite (int fd, bool value);
-      static void *irqThread (std::future<void> run, int fd, Isr isr, void *userData);
+        if (isGpioDevEnabled()) {
+
+          return gpiodev->isOpen();
+        }
+        return false;
+      }
+
+      // ----------------------------------------------------------------------
+      bool enableGpioDev (bool enable = true) {
+
+        if (enable && !gpiodev && (descriptor->type == TypeGpio)) {
+
+          gpiodev = std::make_unique<GpioDev2> (*q_ptr);
+          if (isopen) {
+
+            setHoldMode();
+            setHoldPull();
+            if (!gpiodev->open()) {
+
+              gpiodev.reset(); // failed to open, reset the pointer
+            }
+          }
+        }
+        else if (!enable && gpiodev) {
+
+          gpiodev.reset(); // call the destructor that closes the device
+        }
+        return gpiodev != nullptr;
+      }
 
     public:
       Pin *const q_ptr;
@@ -67,28 +83,19 @@ namespace Piduino {
       Mode holdMode;
       Pull holdPull;
       bool holdState;
-      bool useSysFs;
-      int valueFd;
-      bool firstPolling;
 
-      Edge edge;
       Mode mode;
       Pull pull;
-
-      std::promise<void> stopRead;
-      std::thread thread;
 
       std::shared_ptr<Converter> dac;
       int drive;
 
+      std::unique_ptr<GpioDev2> gpiodev;
+
+
       static const std::map<Pull, std::string> pulls;
       static const std::map<Type, std::string> types;
       static const std::map<Numbering, std::string> numberings;
-      static const std::map<Mode, std::string> sysfsmodes;
-      static const std::map<Edge, std::string> edges;
-      static const std::map<std::string, Edge> str2edge;
-      static const std::map<std::string, Mode> str2mode;
-      static std::string syspath;
 
       PIMP_DECLARE_PUBLIC (Pin)
   };

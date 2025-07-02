@@ -113,7 +113,7 @@ namespace Piduino {
     }
     else {
 
-      throw std::domain_error ("This pin is not a GPIO pin");
+      throw std::domain_error (EXCEPTION_MSG ("This pin is not a GPIO pin"));
     }
     return d->pull;
   }
@@ -133,7 +133,7 @@ namespace Piduino {
     }
     else {
 
-      throw std::domain_error ("This pin is not a GPIO pin");
+      throw std::domain_error (EXCEPTION_MSG ("This pin is not a GPIO pin"));
     }
   }
 
@@ -167,47 +167,8 @@ namespace Piduino {
     }
     else {
 
-      throw std::domain_error ("This pin is not a GPIO pin");
+      throw std::domain_error (EXCEPTION_MSG ("This pin is not a GPIO pin"));
     }
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::setEdge (Pin::Edge e) {
-    PIMP_D (Pin);
-
-    if (type() == TypeGpio) {
-
-      d->edge = e;
-      if (isOpen() && d->useSysFs) {
-
-        d->sysFsSetEdge();
-      }
-    }
-    else {
-
-      throw std::domain_error ("This pin is not a GPIO pin");
-    }
-  }
-
-
-  // ---------------------------------------------------------------------------
-  Pin::Edge
-  Pin::edge() {
-    PIMP_D (Pin);
-
-    if (type() == TypeGpio) {
-
-      if (isOpen() && d->useSysFs) {
-
-        d->sysFsGetEdge();
-      }
-    }
-    else {
-
-      throw std::domain_error ("This pin is not a GPIO pin");
-    }
-    return d->edge;
   }
 
   // ---------------------------------------------------------------------------
@@ -224,7 +185,7 @@ namespace Piduino {
     }
     else {
 
-      throw std::domain_error ("This pin is not a GPIO pin");
+      throw std::domain_error (EXCEPTION_MSG ("This pin is not a GPIO pin"));
     }
     return d->drive;
   }
@@ -244,16 +205,8 @@ namespace Piduino {
     }
     else {
 
-      throw std::domain_error ("This pin is not a GPIO pin");
+      throw std::domain_error (EXCEPTION_MSG ("This pin is not a GPIO pin"));
     }
-  }
-
-  // ---------------------------------------------------------------------------
-  bool
-  Pin::useSysFs() const {
-    PIMP_D (const Pin);
-
-    return d->useSysFs;
   }
 
   // ---------------------------------------------------------------------------
@@ -292,10 +245,6 @@ namespace Piduino {
   Pin::systemNumber () const {
     PIMP_D (const Pin);
 
-    if (device()) {
-
-      return d->descriptor->num.system + device()->systemNumberOffset();
-    }
     return d->descriptor->num.system;
   }
 
@@ -329,7 +278,7 @@ namespace Piduino {
         break;
     }
 
-    throw std::invalid_argument ("Bad pin numbering requested");
+    throw std::invalid_argument (EXCEPTION_MSG ("Bad pin numbering requested"));
   }
 
   // ---------------------------------------------------------------------------
@@ -405,14 +354,6 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  const std::map<Pin::Mode, std::string> &
-  Pin::modes () const {
-    PIMP_D (const Pin);
-
-    return device() ? device()->modes() : Private::sysfsmodes;
-  }
-
-  // ---------------------------------------------------------------------------
   bool
   Pin::isDebug() const {
     PIMP_D (const Pin);
@@ -463,17 +404,35 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  const std::map<Pin::Mode, std::string> &
+  Pin::modes () const {
+    PIMP_D (const Pin);
+
+    if (type() != TypeGpio) {
+
+      throw std::domain_error (EXCEPTION_MSG ("This pin is not a GPIO pin"));
+    }
+    if (d->isGpioDevEnabled() || device() == nullptr) {
+
+      return d->gpiodev->modes();
+    }
+
+    return device()->modes();
+  }
+
+  // ---------------------------------------------------------------------------
   void
   Pin::write (bool value) {
 
     if (isOpen() && (type() == TypeGpio)) {
       PIMP_D (Pin);
 
-      if (d->useSysFs) {
+      if (d->isGpioDevOpen()) {
 
-        if (d->sysFsWrite (d->valueFd, value) < 0) {
+        d->gpiodev->write (value);
+        if (d->gpiodev->error()) {
 
-          throw std::system_error (errno, std::system_category(), __FUNCTION__);
+          throw std::system_error (d->gpiodev->error(), std::system_category(), EXCEPTION_MSG ("Failed to write value to GPIO pin"));
         }
       }
       else {
@@ -490,7 +449,7 @@ namespace Piduino {
     if (isOpen() && (type() == TypeGpio)) {
       PIMP_D (Pin);
 
-      if (!d->useSysFs) {
+      if (!d->isGpioDevOpen()) {
 
         if (device()->flags() & GpioDevice::hasToggle) {
 
@@ -510,14 +469,9 @@ namespace Piduino {
     if (isOpen() && (type() == TypeGpio)) {
       PIMP_D (const Pin);
 
-      if (d->useSysFs) {
-        int ret = d->sysFsRead (d->valueFd);
+      if (d->isGpioDevOpen()) {
 
-        if (ret < 0) {
-
-          throw std::system_error (errno, std::system_category(), __FUNCTION__);
-        }
-        return ret > 0;
+        return d->gpiodev->read();
       }
 
       return device()->read (this);
@@ -551,140 +505,86 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  bool
-  Pin::forceUseSysFs (bool enable) {
-    PIMP_D (Pin);
+  void Pin::waitForInterrupt (Edge edge, int debounce_ms, Event &event, int timeout_ms) {
 
-    if (isOpen() && (d->useSysFs != enable)) {
-
-      d->useSysFs = d->sysFsEnable (enable);
-    }
-    else {
-
-      d->useSysFs = enable;
-    }
-    return useSysFs();
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::waitForInterrupt (Pin::Edge e, Event & event, int timeout_ms) {
-    // TODO: implement this function to wait for an interrupt
-  }
-
-  // ---------------------------------------------------------------------------
-  void
-  Pin::waitForInterrupt (Pin::Edge e, int timeout_ms) {
-
-    if (isOpen()) {
+    if (isOpen() && (type() == TypeGpio)) {
       PIMP_D (Pin);
-      int ret;
 
-      if (d->firstPolling) {
+      if (!d->enableGpioDev()) {
 
-        setEdge (EdgeNone);
-        forceUseSysFs (true);
-        setEdge (e);
-        // clear pending irq
-        if (d->sysFsPoll (d->valueFd, 1) > 0) {
+        throw std::domain_error (EXCEPTION_MSG ("Failed to enable GPIO device for waiting interrupt"));
+      }
 
-          d->sysFsRead (d->valueFd);
+      if (debounce_ms >= 0) {
+
+        d->gpiodev->setDebounce (debounce_ms);
+      }
+      d->gpiodev->read(); // clear pending irq
+
+      if (!d->gpiodev->waitForInterrupt (edge, event, timeout_ms)) {
+
+        if (d->gpiodev->error()) {
+
+          throw std::system_error (d->gpiodev->error(), std::system_category(), EXCEPTION_MSG ("Failed to wait for GPIO interrupt"));
         }
-        d->firstPolling = false;
       }
 
-      if (e != d->edge) {
-
-        setEdge (e);
-      }
-
-      ret = d->sysFsPoll (d->valueFd, timeout_ms);
-      if (ret < 0) {
-
-        throw std::system_error (errno, std::system_category(), __FUNCTION__);
-      }
-      else if (ret == 0) {
-
-        throw std::system_error (ETIME, std::generic_category());
-      }
     }
   }
-
-
 
   // ---------------------------------------------------------------------------
   void
-  Pin::attachInterrupt (Isr isr, Edge e, void *userData) {
-    PIMP_D (Pin);
+  Pin::waitForInterrupt (Pin::Edge edge, Event &event, int timeout_ms) {
 
-    if (!d->thread.joinable()) {
+    waitForInterrupt (edge, -1, event, timeout_ms);
+  }
 
-      setEdge (EdgeNone);
-      forceUseSysFs (true);
-      setEdge (e);
-      // clear pending irq
-      if (d->sysFsPoll (d->valueFd, 1) > 0) {
+  // ---------------------------------------------------------------------------
+  void
+  Pin::waitForInterrupt (Pin::Edge edge, int timeout_ms) {
+    Event event;
 
-        d->sysFsRead (d->valueFd);
+    waitForInterrupt (edge, -1, event, timeout_ms);
+  }
+
+  // ---------------------------------------------------------------------------
+  void
+  Pin::attachInterrupt (Isr isr, Edge edge, int debounce_ms, void *userData) {
+
+    if (isOpen() && (type() == TypeGpio)) {
+      PIMP_D (Pin);
+
+      if (!d->enableGpioDev()) {
+
+        throw std::domain_error (EXCEPTION_MSG ("Failed to enable GPIO device for waiting interrupt"));
       }
+      if (debounce_ms >= 0) {
 
-      // Fetch std::future object associated with promise
-      std::future<void> running = d->stopRead.get_future();
-      d->thread = std::thread (Private::irqThread, std::move (running), d->valueFd, isr, userData);
-    }
-  }
+        d->gpiodev->setDebounce (debounce_ms);
+      }
+      d->gpiodev->read(); // clear pending irq
+      if (!d->gpiodev->attachInterrupt (isr, edge, userData)) {
 
-  #if 0
-  // -----------------------------------------------------------------------------
-  bool GpioDev2::Private::attachInterrupt (const Pin *pin, Pin::Isr isr, void *userData) {
-    // place here the code to attach an interrupt to the pin
-    // this function should create a thread that waits for the interrupt
-    // and calls the isr function when the interrupt occurs
-    std::thread &thread = isrThreadOfPin (pin);
-
-    if (!thread.joinable()) {
-      std::promise<void> &kill = killThreadOfPin (pin);
-
-      // Fetch std::future object associated with promise
-      std::future<void> running = kill.get_future();
-      thread = std::thread (Private::isrFunc, std::move (running), pin, this, isr, userData);
-      return true;
-    }
-    return false;
-  }
-
-  // -----------------------------------------------------------------------------
-  void GpioDev2::Private::detachInterrupt (const Pin *pin) {
-    // place here the code to detach the interrupt from the pin
-    // this function should stop the thread that waits for the interrupt
-
-    if (isrThread.find (irqLine (pin)) == isrThread.end()) {
-      std::thread &thread = isrThreadOfPin (pin);
-      std::promise<void> &kill = killThreadOfPin (pin);
-
-      if (thread.joinable()) {
-
-        // Set the value in promise
-        kill.set_value();
-        thread.join();
-        // is not needed anymore ?
-        // thread = std::thread();
-        // kill = std::promise<void>();
+        throw std::system_error (d->gpiodev->error(), std::system_category(), EXCEPTION_MSG ("Failed to attach GPIO interrupt"));
       }
     }
   }
-  #endif // 0
 
+  // ---------------------------------------------------------------------------
+  void
+  Pin::attachInterrupt (Isr isr, Edge edge, void *userData) {
+
+    attachInterrupt (isr, edge, -1, userData);
+  }
+  
   // ---------------------------------------------------------------------------
   void
   Pin::detachInterrupt() {
     PIMP_D (Pin);
 
-    if (d->thread.joinable()) {
+    if (d->isGpioDevEnabled()) {
 
-      // Set the value in promise
-      d->stopRead.set_value();
-      d->thread.join();
+      d->gpiodev->detachInterrupt();
     }
   }
 
@@ -707,9 +607,9 @@ namespace Piduino {
 
       if (type() == TypeGpio) {
 
-        if (d->useSysFs) {
+        if (d->isGpioDevEnabled()) {
 
-          d->isopen = d->sysFsEnable (true);
+          d->isopen = d->gpiodev->open();
         }
         else {
 
@@ -749,15 +649,6 @@ namespace Piduino {
             }
 
           }
-
-          if (d->edge != EdgeUnknown) {
-
-            d->writeEdge();
-          }
-          else {
-
-            d->readEdge();
-          }
         }
       }
       else {
@@ -778,13 +669,35 @@ namespace Piduino {
       if (type() == TypeGpio) {
 
         detachInterrupt();
-        forceUseSysFs (false); // close & unexport
+        d->enableGpioDev (false);
         if (gpio()->releaseOnClose()) {
 
           release();
         }
       }
       d->isopen = false;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  Pin::isGpioDevEnabled() const {
+    PIMP_D (const Pin);
+    return d->isGpioDevEnabled();
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  Pin::enableGpioDev (bool enable) {
+    PIMP_D (Pin);
+
+    if (type() == TypeGpio) {
+
+      return d->enableGpioDev (enable);
+    }
+    else {
+
+      throw std::domain_error (EXCEPTION_MSG ("This pin is not a GPIO pin"));
     }
   }
 
@@ -804,13 +717,6 @@ namespace Piduino {
   Pin::typeName (Pin::Type t) {
 
     return Private::types.at (t);
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::string &
-  Pin::edgeName (Pin::Edge e) {
-
-    return Private::edges.at (e);
   }
 
   // ---------------------------------------------------------------------------
@@ -839,13 +745,6 @@ namespace Piduino {
   Pin::pulls () {
 
     return Private::pulls;
-  }
-
-  // ---------------------------------------------------------------------------
-  const std::map<Pin::Edge, std::string> &
-  Pin::edges () {
-
-    return Private::edges;
   }
 
 }

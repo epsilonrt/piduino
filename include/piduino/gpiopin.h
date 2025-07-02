@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
    This file is part of the Piduino Library.
 
    The Piduino Library is free software; you can redistribute it and/or
@@ -155,7 +155,10 @@ namespace Piduino {
           int column; ///< Numéro de colonne dans la connecteur (commence à 1)
           int chip; ///< Numéro de la puce (commence à 0)
           int offset; ///< Offset de la broche dans la puce (commence à 0)
-          Number() : logical (-1), mcu (-1), system (-1), row (-1), column (-1), chip(-1), offset(-1) {}
+          Number (int logical = -1, int mcu = -1, int system = -1,
+                  int row = -1, int column = -1, int chip = -1, int offset = -1)
+            : logical (logical), mcu (mcu), system (system), row (row),
+              column (column), chip (chip), offset (offset) {}
       };
 
       /**
@@ -190,235 +193,40 @@ namespace Piduino {
 
       using Event = Gpio2::LineEvent;
 
-      /**
-        @brief Constructeur
-
-        Une broche ne peut être instanciée que par une classe Connector.
-
-        @param parent pointeur sur le GPIO parent
-        @param desc pointeur sur la description
-        @param dacName nom du convertisseur numérique-analogique à utiliser pour analogWrite()
-      */
-      Pin (Connector *parent, const Descriptor *desc);
 
       /**
-         @brief Desctructeur
+         @brief Couches d'accès autorisées
       */
-      virtual ~Pin();
-
-      //------------------------------------------------------------------------
-      //                          Opérations
-      //------------------------------------------------------------------------
+      // TODO: to remove
+      AccessLayer accessLayer() const;
 
       /**
-         @brief Mode actuel d'une broche de type GPIO
-
-         @return le mode actuel, si la broche n'est pas
-         de type GPIO, ModeUnknown est retourné.
+        @brief Indique si ouvert
       */
-      Mode mode();
+      bool isOpen() const;
 
       /**
-         @brief Modification du mode d'une broche de type GPIO
+        @brief Numéro de la broche dans la numérotation demandé.
 
-         Déclenche une exception std::domain_error si la broche n'est pas de
-         type \c TypeGpio.
+         La numérotation commence à 0.
 
-         @param mode nouveau mode, une exception std::invalid_argument est
-         déclenchée si le mode demandé n'est pas supporté.
+        @param numbering numérotation demandée, déclenche
+        une exception std::invalid_argument si incorrecte
+        @return Numéro de broche, -1 si la broche n'est pas de type GPIO ( \c TypeGpio)
       */
-      void setMode (Mode mode);
+      int number (Numbering numbering) const;
 
       /**
-         @brief Résistance de tirage d'une broche de type GPIO
+         @brief Listes des numérotations avec leurs noms
 
-         @return la résistance actuellement appliquée, si la broche n'est pas
-         de type GPIO, PullUnknown est retourné.
+         Permet de parcourir les numérotations à l'aide des itérateurs de la STL.
       */
-      Pull pull();
+      static const std::map<Numbering, std::string> &numberings ();
 
       /**
-         @brief Modification de la résistance de tirage d'une broche de type GPIO
-
-         Déclenche une exception std::domain_error si la broche n'est pas de
-         type \c TypeGpio.
-
-         @param pull nouvelle résistance, PullOff pour désactiver, une exception
-         std::invalid_argument est déclenchée si la résistance demandée n'est pas
-         supportée.
+        @brief Nom d'une numérotation
       */
-      void setPull (Pull pull);
-
-      /**
-         @brief Front de déclenchement
-
-         @return le front actuel, si la broche n'est pas en mode SysFs,
-         EdgeUnknown est retourné.
-      */
-      Edge edge();
-
-      /**
-         @brief Modification du front de déclenchement
-
-         L'accès par SysFs doit donc être autorisée dans le Gpio parent
-         (AccessLayerSysFs ou AccessLayerAll) ou par l'appel à forceUseSysFs(true). \n
-         Si la broche n'est pas en mode SysFs et que cet accès est autorisé, la
-         broche est passée automatiquement en mode SysFs.
-         @param edge choix du front
-      */
-      void setEdge (Edge edge);
-
-      /**
-         @brief Niveau du courant de sortie d'une broche de type GPIO
-
-         Déclenche une exception std::domain_error si la broche n'est pas de
-         type \c TypeGpio ou si cette fonction n'est pas prise en charge par
-         la plateforme.
-
-         @return le niveau du courant de sortie.
-      */
-      int drive();
-
-      /**
-         @brief Modification du niveau du courant de sortie d'une broche de type GPIO
-
-         Déclenche une exception std::domain_error si la broche n'est pas de
-         type \c TypeGpio.
-
-         @param drive nouveau niveau, une exception  std::invalid_argument est
-         déclenchée si la valeur demandée n'est pas supportée.
-      */
-      void setDrive (int drive);
-
-      /**
-         @brief Modification de l'état binaire d'une sortie
-
-         Déclenche une exception std::domain_error si la broche n'est pas de
-         type \c TypeGpio ou si elle n'est pas en sortie (ModeOutput).
-
-         @param value true pour un état logique haut (VccIo).
-      */
-      void write (bool value);
-
-      /**
-         @brief Génération signal analogique
-         Le type de signal dépend de la plate-forme, la plupart du temps, il
-         s'agit d'un signal PWM. \n
-         Le mode de la broche est éventuellement modifié afin de générer le
-         signal demandé.
-         @param value valeur entre dac().min() et dac().max()
-      */
-      void analogWrite (long value);
-
-      /**
-         @brief Bascule de l'état binaire d'une sortie
-
-         Si la sortie est à l'état bas, elle passe à l'état haut et inversement.
-
-         Déclenche une exception std::domain_error si la broche n'est pas de
-         type \c TypeGpio ou si elle n'est pas en sortie (ModeOutput).
-      */
-      void toggle();
-
-      /**
-         @brief Lecture de l'état binaire d'une broche de type GPIO
-
-         Déclenche une exception std::domain_error si la broche n'est pas de
-         type \c TypeGpio et une exeception std::system_error si la lecture est
-         impossible sur le système.
-
-         @return true pour un état logique haut (VccIo).
-      */
-      bool read() const;
-
-      /**
-         @brief Restaure le mode et la résistance de pull-up d'une broche de type GPIO
-
-         La broche correspondante est remise dans son état initial mémorisé avant
-         le premier appel à \c setMode() ou/et \c setPull().
-
-         Déclenche une exception std::domain_error si la broche n'est pas de
-         type \c TypeGpio.
-      */
-      void release();
-
-      /**
-         @brief Attente passive d'un front
-
-         L'implémentation utilise les interruptions matérielles gérées par SysFs. \n
-         Toutes les broches du GPIO ne disposent pas ce cette fonctionnalité (cela
-         dépend de la plateforme). Généralement, on pourra identifier une telle
-         broche du GPIO ou du SOC par un INT se trouvant dans le nom.
-         Par exemple, la broche PA0 sur un SOC AllWinner H3 a cette fonctionnalité
-         car sa fonction ALT6 est PA_EINT0. Si les interruptions ne sont pas
-         supportées par la broche, un appel à \c waitForInterrupt() déclenchera une
-         exeception std::system_error avec le code ENOSYS (function_not_supported). \n
-         L'accès par SysFs doit donc être autorisée dans le Gpio parent
-         (AccessLayerSysFs ou AccessLayerAll) ou par l'appel à forceUseSysFs(true). \n
-         Si la broche n'est pas en mode SysFs et que cet accès est autorisé, la
-         broche est passée automatiquement en mode SysFs.
-
-         @param edge front de déclenchement
-         @param timeout temps maximal d'attente en millisecondes. -1 pour l'infini.
-         Si une autre valeur est fournie et que le délai est atteint avant que le
-         front survienne, une exception std::system_error avec le code ETIME est
-         déclenchée.
-      */
-      void waitForInterrupt (Edge edge, int timeout_ms = -1);
-      void waitForInterrupt (Edge edge, Event & event, int timeout_ms = -1);
-
-      /**
-         @brief Routine d'interruption
-
-         Une routine d'interruption ne renvoie aucun paramètre.
-
-         @param userData pointeur sur les données de l'utilisateur
-      */
-      typedef void (* Isr) (Event event, void *userData);
-
-      /**
-         @brief Installe une routine d'interruption (Isr)
-
-         Cette fonction créée un thread qui attend l'arrivée d'une interruption
-         déclenchée par chaque front edge et exécute la fonction isr.
-
-         @param isr fonction exécuté à chaque interruption
-         @param edge front déclenchant l'interruption
-         @param userData pointeur sur les données de l'utilisateur
-      */
-      void attachInterrupt (Isr isr, Edge edge, void *userData = 0);
-
-      /**
-         @brief Désinstalle la routine d'interruption
-
-         Le thread est détruit.
-      */
-      void detachInterrupt();
-
-      //------------------------------------------------------------------------
-      //                          Propriétés
-      //------------------------------------------------------------------------
-
-      /**
-         @brief Type de broche
-      */
-      Type type() const;
-
-      /**
-         @brief DAC utilisé par la broche
-      */
-      Converter *dac();
-
-      /**
-         @brief Affecte un convertisseur analogique-numérique
-         @param dac
-      */
-      bool setDac (Converter *dac);
-
-      /**
-         @brief Retire le convertisseur analogique-numérique
-      */
-      void resetDac ();
+      static const std::string &numberingName (Numbering n);
 
       /**
          @brief Numéro de la broche dans la numérotation logique \c NumberingLogical
@@ -465,7 +273,7 @@ namespace Piduino {
          @return Numéro de puce système
       */
       int chipNumber() const;
-      
+
       /**
          @brief Offset de la broche dans la puce
 
@@ -476,16 +284,6 @@ namespace Piduino {
       */
       int chipOffset() const;
 
-      /**
-        @brief Numéro de la broche dans la numérotation demandé.
-
-         La numérotation commence à 0.
-
-        @param numbering numérotation demandée, déclenche
-        une exception std::invalid_argument si incorrecte
-        @return Numéro de broche, -1 si la broche n'est pas de type GPIO ( \c TypeGpio)
-      */
-      int number (Numbering numbering) const;
 
       /**
          @brief Numéro de ligne dans la connecteur
@@ -501,8 +299,27 @@ namespace Piduino {
       */
       int column() const;
 
+      /**
+         @brief Type de broche
+      */
+      Type type() const;
 
+      /**
+        @brief Nom du type de la broche
+      */
+      const std::string &typeName() const;
 
+      /**
+        @brief Nom d'un type
+      */
+      static const std::string &typeName (Type t);
+
+      /**
+         @brief Listes des types avec leurs noms
+
+         Permet de parcourir les types à l'aide des itérateurs de la STL
+      */
+      static const std::map<Type, std::string> &types ();
 
       /**
          @brief Nom de la broche
@@ -514,22 +331,244 @@ namespace Piduino {
       const std::string &name();
 
       /**
+         @brief Nom de la broche correspondant à un mode donné
+
+         @param mode mode demandée, déclenche une exception std::out_of_range il
+         n'est pas supporté par cette broche.
+         @return le nom de la broche correspondant au mode
+      */
+      const std::string &name (Mode mode) const;
+
+      /**
+         @brief Modification du mode d'une broche de type GPIO
+
+         Déclenche une exception std::domain_error si la broche n'est pas de
+         type \c TypeGpio.
+
+         @param mode nouveau mode, une exception std::invalid_argument est
+         déclenchée si le mode demandé n'est pas supporté.
+      */
+      void setMode (Mode mode);
+
+      /**
+        @brief Mode actuel d'une broche de type GPIO
+
+        @return le mode actuel, si la broche n'est pas
+        de type GPIO, ModeUnknown est retourné.
+      */
+      Mode mode();
+
+      /**
+        @brief Listes des modes avec leurs noms
+
+        Cette liste dépend de la plateforme et de \c isGpioDevEnabled().
+        Une exception std::domain_error est déclenchée si la broche n'est pas de
+        type \c TypeGpio.
+
+        Permet de parcourir les modes à l'aide des itérateurs de la STL
+      */
+      const std::map<Mode, std::string> &modes () const;
+
+      /**
+        @brief Nom du mode actuel
+      */
+      const std::string &modeName();
+
+      /**
+         @brief Nom d'un mode
+      */
+      const std::string &modeName (Mode mode) const;
+
+      /**
+         @brief Modification de la résistance de tirage d'une broche de type GPIO
+
+         Déclenche une exception std::domain_error si la broche n'est pas de
+         type \c TypeGpio.
+
+         @param pull nouvelle résistance, PullOff pour désactiver, une exception
+         std::invalid_argument est déclenchée si la résistance demandée n'est pas
+         supportée.
+      */
+      void setPull (Pull pull);
+
+      /**
+        @brief Résistance de tirage d'une broche de type GPIO
+
+        @return la résistance actuellement appliquée, si la broche n'est pas
+        de type GPIO, PullUnknown est retourné.
+      */
+      Pull pull();
+
+      /**
+        @brief Listes des résistances de tirage avec leurs noms
+
+        Permet de parcourir les types de résistance de tirage à l'aide des itérateurs de la STL.
+      */
+      static const std::map<Pull, std::string> &pulls ();
+
+      /**
+         @brief Nom de la résistance de tirage actuelle
+      */
+      const std::string &pullName ();
+
+      /**
+         @brief Nom d'une résistance de tirage
+      */
+      static const std::string &pullName (Pull n);
+
+      /**
+         @brief Niveau du courant de sortie d'une broche de type GPIO
+
+         Déclenche une exception std::domain_error si la broche n'est pas de
+         type \c TypeGpio ou si cette fonction n'est pas prise en charge par
+         la plateforme.
+
+         @return le niveau du courant de sortie.
+      */
+      int drive();
+
+      /**
+         @brief Modification du niveau du courant de sortie d'une broche de type GPIO
+
+         Déclenche une exception std::domain_error si la broche n'est pas de
+         type \c TypeGpio.
+
+         @param drive nouveau niveau, une exception  std::invalid_argument est
+         déclenchée si la valeur demandée n'est pas supportée.
+      */
+      void setDrive (int drive);
+
+      /**
+         @brief Modification de l'état binaire d'une sortie
+
+         Déclenche une exception std::domain_error si la broche n'est pas de
+         type \c TypeGpio ou si elle n'est pas en sortie (ModeOutput).
+
+         @param value true pour un état logique haut (VccIo).
+      */
+      void write (bool value);
+
+      /**
+         @brief Lecture de l'état binaire d'une broche de type GPIO
+
+         Déclenche une exception std::domain_error si la broche n'est pas de
+         type \c TypeGpio et une exeception std::system_error si la lecture est
+         impossible sur le système.
+
+         @return true pour un état logique haut (VccIo).
+      */
+      bool read() const;
+
+      /**
+        @brief Bascule de l'état binaire d'une sortie
+
+        Si la sortie est à l'état bas, elle passe à l'état haut et inversement.
+
+        Déclenche une exception std::domain_error si la broche n'est pas de
+        type \c TypeGpio ou si elle n'est pas en sortie (ModeOutput).
+      */
+      void toggle();
+
+      /**
+         @brief Restaure le mode et la résistance de pull-up d'une broche de type GPIO
+
+         La broche correspondante est remise dans son état initial mémorisé avant
+         le premier appel à \c setMode() ou/et \c setPull().
+
+         Déclenche une exception std::domain_error si la broche n'est pas de
+         type \c TypeGpio.
+      */
+      void release();
+
+      /**
+         @brief Attente passive d'un front
+
+         L'implémentation utilise les interruptions matérielles gérées par le kernel (/dev/gpiochipX). \n
+         Toutes les broches du GPIO ne disposent pas ce cette fonctionnalité (cela
+         dépend de la plateforme). Généralement, on pourra identifier une telle
+         broche du GPIO ou du SOC par un INT se trouvant dans le nom.
+         Par exemple, la broche PA0 sur un SOC AllWinner H3 a cette fonctionnalité
+         car sa fonction ALT6 est PA_EINT0. Si les interruptions ne sont pas
+         supportées par la broche, un appel à \c waitForInterrupt() déclenchera une
+         exeception std::system_error avec le code ENOSYS (function_not_supported). \n
+
+         @param edge front de déclenchement
+         @param timeout temps maximal d'attente en millisecondes. -1 pour l'infini.
+         Si une autre valeur est fournie et que le délai est atteint avant que le
+         front survienne, une exception std::system_error avec le code ETIME est
+         déclenchée.
+      */
+      void waitForInterrupt (Edge edge, int timeout_ms = -1);
+
+      void waitForInterrupt (Edge edge, Event &event, int timeout_ms = -1);
+      
+      void waitForInterrupt (Edge edge, int debounce_ms, Event &event, int timeout_ms = -1);
+
+      /**
+         @brief Routine d'interruption
+
+         Une routine d'interruption ne renvoie aucun paramètre.
+
+         @param userData pointeur sur les données de l'utilisateur
+      */
+      typedef void (* Isr) (Event event, void *userData);
+
+
+      /**
+         @brief Installe une routine d'interruption (Isr)
+
+         Cette fonction créée un thread qui attend l'arrivée d'une interruption
+         déclenchée par chaque front edge et exécute la fonction isr.
+
+         @param isr fonction exécuté à chaque interruption
+         @param edge front déclenchant l'interruption
+         @param userData pointeur sur les données de l'utilisateur
+      */
+      void attachInterrupt (Isr isr, Edge edge, void *userData = nullptr);
+
+      void attachInterrupt (Isr isr, Edge edge, int debounce_ms, void *userData = nullptr);
+
+      /**
+         @brief Désinstalle la routine d'interruption
+
+         Le thread est détruit.
+      */
+      void detachInterrupt();
+
+      bool isGpioDevEnabled() const;
+
+      bool enableGpioDev (bool enable = true);
+
+      /**
+         @brief Génération signal analogique
+         Le type de signal dépend de la plate-forme, la plupart du temps, il
+         s'agit d'un signal PWM. \n
+         Le mode de la broche est éventuellement modifié afin de générer le
+         signal demandé.
+         @param value valeur entre dac().min() et dac().max()
+      */
+      void analogWrite (long value);
+
+      /**
+        @brief DAC utilisé par la broche
+      */
+      Converter *dac();
+
+      /**
+         @brief Affecte un convertisseur analogique-numérique
+         @param dac
+      */
+      bool setDac (Converter *dac);
+
+      /**
+         @brief remove the digital-to-analog converter (DAC)
+      */
+      void resetDac ();
+
+      /**
         @brief Identifiant en base de données
       */
       long long id() const;
-
-      /**
-         @brief Indique si la broche utilise SysFs
-      */
-      bool useSysFs() const;
-
-      /**
-         @brief Force ou non l'utilisation de SysFs
-
-         Si le Gpio parent n'autorise que la couche d'accès SysFs (AccessLayerSysFs),
-         cette fonction ne fait rien.
-      */
-      bool forceUseSysFs (bool enable);
 
       /**
         @brief Accès au connecteur parent
@@ -540,16 +579,6 @@ namespace Piduino {
          @brief Accès au GPIO parent
       */
       Gpio *gpio() const;
-
-      /**
-         @brief Couches d'accès autorisées
-      */
-      AccessLayer accessLayer() const;
-
-      /**
-         @brief Indique si ouvert
-      */
-      bool isOpen() const;
 
       /**
          @brief Indique si le mode mise au point est actif
@@ -565,90 +594,20 @@ namespace Piduino {
       void setDebug (bool enable);
 
       /**
-         @brief Nom correspondant à un mode
+        @brief Constructeur
 
-         @param mode mode demandée, déclenche une exception std::out_of_range il
-         n'est pas supporté par cette broche.
-         @return le nom de la broche correspondant au mode
+        Une broche ne peut être instanciée que par une classe Connector.
+
+        @param parent pointeur sur le GPIO parent
+        @param desc pointeur sur la description
+        @param dacName nom du convertisseur numérique-analogique à utiliser pour analogWrite()
       */
-      const std::string &name (Mode mode) const;
+      Pin (Connector *parent, const Descriptor *desc);
 
       /**
-         @brief Nom du mode actuel
+         @brief Desctructeur
       */
-      const std::string &modeName();
-
-      /**
-         @brief Nom d'un mode
-      */
-      const std::string &modeName (Mode mode) const;
-
-      /**
-         @brief Nom de la résistance de tirage actuelle
-      */
-      const std::string &pullName ();
-
-      /**
-        @brief Listes des modes avec leurs noms
-
-        Permet de parcourir les modes à l'aide des itérateurs de la STL
-      */
-      const std::map<Mode, std::string> &modes () const;
-
-      /**
-         @brief Nom du type de la broche
-      */
-      const std::string &typeName() const;
-
-      // ------------- Static functions ----------------
-
-      /**
-         @brief Nom d'une résistance de tirage
-      */
-     static const std::string &pullName (Pull n);
-
-     /**
-         @brief Nom d'un type
-      */
-      static const std::string &typeName (Type t);
-
-      /**
-         @brief Nom d'une numérotation
-      */
-      static const std::string &numberingName (Numbering n);
-
-      /**
-         @brief Nom d'un front
-      */
-      static const std::string &edgeName (Edge e);
-
-      /**
-         @brief Listes des résistances de tirage avec leurs noms
-
-         Permet de parcourir les numérotations à l'aide des itérateurs de la STL.
-      */
-      static const std::map<Pull, std::string> &pulls ();
-
-      /**
-         @brief Listes des types avec leurs noms
-
-         Permet de parcourir les modes à l'aide des itérateurs de la STL
-      */
-      static const std::map<Type, std::string> &types ();
-
-      /**
-         @brief Listes des numérotations avec leurs noms
-
-         Permet de parcourir les numérotations à l'aide des itérateurs de la STL.
-      */
-      static const std::map<Numbering, std::string> &numberings ();
-
-      /**
-         @brief Listes des fronts posibles avec leurs noms
-
-         Permet de parcourir les fronts à l'aide des itérateurs de la STL.
-      */
-      static const std::map<Edge, std::string> &edges ();
+      virtual ~Pin();
 
     protected:
       // Protected access for friend class Connector

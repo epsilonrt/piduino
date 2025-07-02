@@ -279,8 +279,7 @@ namespace Piduino {
   // static
   const std::map<Pin::Mode, std::string> GpioDev2::Private::modes = {
     { Pin::ModeInput, "in" },
-    { Pin::ModeOutput, "out" },
-    { Pin::ModeUnknown, "unk" }
+    { Pin::ModeOutput, "out" }
   };
 
   // ---------------------------------------------------------------------------
