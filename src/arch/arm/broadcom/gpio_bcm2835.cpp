@@ -42,35 +42,6 @@ namespace Piduino {
     GpioDevice (*new Private (this)) {
     PIMP_D (Bcm2835Gpio);
 
-    // sysfs access to gpio is deprecated
-    // https://github.com/raspberrypi/linux/issues/5668
-    // up to kernel version 6.5.6
-    // the first line of /sys/kernel/debug/gpio is:
-    // gpiochip0: GPIOs 0-53, parent: platform/3f200000.gpio, pinctrl-bcm2835:
-    // since kernel 6.5.7, the first line of /sys/kernel/debug/gpio is:
-    // gpiochip0: GPIOs 512-569, parent: platform/fe200000.gpio, pinctrl-bcm2711:
-    // The code below is to get the offset of the GPIOs, this is a temporary fix awaiting migration to libgpiod
-    if (Private::systemNumberOffset < 0) {
-      std::ifstream f ("/sys/kernel/debug/gpio");
-      std::string line;
-
-      if (f.is_open()) {
-        while (std::getline (f, line)) {
-          if (line.find ("gpiochip0: GPIOs ") != std::string::npos) {
-            break;
-          }
-        }
-        f.close();
-
-        std::string str = line.substr (line.find ("GPIOs ") + 6);
-        str = str.substr (0, str.find (","));
-        Private::systemNumberOffset = std::stoi (str);
-      }
-      else {
-        // No GPIOs found, use default
-        Private::systemNumberOffset = 0;
-      }
-    }
     d->piobase =iobase () + PioOffset;
     Private::is2711 = (db.board().soc().id() == SoC::Bcm2711);
   }
@@ -323,12 +294,6 @@ namespace Piduino {
     return Private::modes;
   }
 
-  // -------------------------------------------------------------------------
-  int
-  Bcm2835Gpio::systemNumberOffset() const {
-
-    return Private::systemNumberOffset;
-  }
 
   // -----------------------------------------------------------------------------
   //
@@ -385,6 +350,5 @@ namespace Piduino {
 
   // static
   bool Bcm2835Gpio::Private::is2711;
-  int Bcm2835Gpio::Private::systemNumberOffset = -1;
 }
 /* ========================================================================== */

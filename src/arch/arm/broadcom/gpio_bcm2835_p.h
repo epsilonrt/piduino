@@ -44,7 +44,6 @@ namespace Piduino {
       static const std::map<Pin::Mode, unsigned int> mode2int;
       static const std::map<Pin::Mode, std::string> modes;
       static bool is2711;
-      static int systemNumberOffset;
 
       PIMP_DECLARE_PUBLIC (Bcm2835Gpio)
   };

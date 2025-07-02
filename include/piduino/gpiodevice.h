@@ -237,15 +237,6 @@ namespace Piduino {
       virtual bool isActiveLow (const Pin *pin) const;
 
       /**
-         @brief Gets the system number offset for the GPIO device.
-
-         The default implementation returns 0.
-
-         @return The system number offset.
-      */
-      virtual int systemNumberOffset() const;
-
-      /**
          @enum Flags
          @brief Flags indicating the capabilities of the GPIO device.
 
