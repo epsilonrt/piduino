@@ -45,6 +45,7 @@ namespace Piduino {
     pull (PullUnknown), drive (-1) {}
 
   // ---------------------------------------------------------------------------
+  // Sets the holdPull member to the current pull state if unknown
   void Pin::Private::setHoldPull() {
 
     if ( (holdPull == PullUnknown) && parent->device()) {
@@ -55,6 +56,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Sets the holdMode member to the current mode if unknown, and saves output state
   void
   Pin::Private:: setHoldMode() {
 
@@ -70,6 +72,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Writes the current pull configuration to the hardware
   void
   Pin::Private::writePull () {
 
@@ -86,6 +89,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Reads the current pull configuration from the hardware
   void
   Pin::Private::readPull ()  {
 
@@ -104,6 +108,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Reads the current mode from the hardware
   void
   Pin::Private::readMode ()  {
 
@@ -119,6 +124,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Writes the current mode to the hardware
   void
   Pin::Private::writeMode () {
 
@@ -135,6 +141,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Writes the drive strength to the hardware, if supported
   void
   Pin::Private::writeDrive () {
 
@@ -153,6 +160,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Reads the drive strength from the hardware, if supported
   void
   Pin::Private::readDrive ()  {
 
@@ -172,6 +180,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   // static
+  // Map of Pin types to their string representations
   const std::map<Pin::Type, std::string> Pin::Private::types = {
     {TypeGpio, "Gpio"},
     {TypePower, "Power"},
@@ -184,6 +193,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   // static
+  // Map of Pin numbering schemes to their string representations
   const std::map<Pin::Numbering, std::string> Pin::Private::numberings = {
     {NumberingLogical, "Logical"},
     {NumberingMcu, "Mcu"},
@@ -193,6 +203,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   // static
+  // Map of Pin pull configurations to their string representations
   const std::map<Pin::Pull, std::string> Pin::Private::pulls = {
     {PullOff, "off"},
     {PullDown, "down"},

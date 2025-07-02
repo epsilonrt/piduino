@@ -30,23 +30,27 @@ namespace Piduino {
   // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
+  // Constructor: Initializes Pin with a given Private implementation
   Pin::Pin (Pin::Private &dd) : d_ptr (&dd) {
 
   }
 
   // ---------------------------------------------------------------------------
+  // Constructor: Initializes Pin with parent Connector and Descriptor
   Pin::Pin (Connector *parent, const Descriptor *desc) :
     d_ptr (new Private (this, parent, desc))  {
 
   }
 
   // ---------------------------------------------------------------------------
+  // Destructor: Closes the pin on destruction
   Pin::~Pin() {
 
     close();
   }
 
   // ---------------------------------------------------------------------------
+  // Writes an analog value to the pin using DAC if available
   void
   Pin::analogWrite (long value) {
     PIMP_D (Pin);
@@ -62,6 +66,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Sets the DAC converter for the pin
   bool Pin::setDac (Converter *dac) {
 
     if (dac) {
@@ -77,6 +82,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Resets the DAC converter
   void Pin::resetDac () {
     PIMP_D (Pin);
 
@@ -84,6 +90,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the DAC converter
   Converter *
   Pin::dac() {
     PIMP_D (Pin);
@@ -91,8 +98,8 @@ namespace Piduino {
     return d->dac.get();
   }
 
-
   // ---------------------------------------------------------------------------
+  // Returns true if the pin is open
   bool Pin::isOpen() const {
     PIMP_D (const Pin);
 
@@ -100,6 +107,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the current pull configuration of the pin
   Pin::Pull
   Pin::pull () {
     PIMP_D (Pin);
@@ -119,6 +127,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Sets the pull configuration of the pin
   void
   Pin::setPull (Pin::Pull p) {
     PIMP_D (Pin);
@@ -138,6 +147,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the current mode of the pin
   Pin::Mode
   Pin::mode () {
     PIMP_D (Pin);
@@ -153,6 +163,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Sets the mode of the pin
   void
   Pin::setMode (Pin::Mode m) {
     PIMP_D (Pin);
@@ -172,6 +183,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the drive strength of the pin
   int
   Pin::drive () {
     PIMP_D (Pin);
@@ -191,6 +203,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Sets the drive strength of the pin
   void
   Pin::setDrive (int drive) {
     PIMP_D (Pin);
@@ -210,6 +223,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the access layer of the pin
   AccessLayer
   Pin::accessLayer() const {
 
@@ -217,6 +231,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the type of the pin
   Pin::Type
   Pin::type() const {
     PIMP_D (const Pin);
@@ -225,6 +240,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the logical number of the pin
   int
   Pin::logicalNumber () const {
     PIMP_D (const Pin);
@@ -233,6 +249,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the MCU number of the pin
   int
   Pin::mcuNumber () const {
     PIMP_D (const Pin);
@@ -241,6 +258,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the system number of the pin
   int
   Pin::systemNumber () const {
     PIMP_D (const Pin);
@@ -249,6 +267,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the chip number of the pin
   int Pin::chipNumber() const {
     PIMP_D (const Pin);
 
@@ -256,6 +275,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the chip offset of the pin
   int Pin::chipOffset() const {
     PIMP_D (const Pin);
 
@@ -263,6 +283,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the pin number according to the specified numbering scheme
   int
   Pin::number (Pin::Numbering n) const {
     PIMP_D (const Pin);
@@ -282,6 +303,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the row of the pin on the connector
   int
   Pin::row() const {
     PIMP_D (const Pin);
@@ -290,6 +312,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the column of the pin on the connector
   int
   Pin::column() const {
     PIMP_D (const Pin);
@@ -298,6 +321,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the physical number of the pin on the connector
   int
   Pin::physicalNumber () const {
     PIMP_D (const Pin);
@@ -306,6 +330,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the name of the pin for the specified mode
   const std::string &
   Pin::name (Pin::Mode m) const {
     PIMP_D (const Pin);
@@ -314,6 +339,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the unique identifier of the pin
   long long
   Pin::id() const {
     PIMP_D (const Pin);
@@ -322,6 +348,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the parent connector of the pin
   Connector *
   Pin::connector() const {
     PIMP_D (const Pin);
@@ -330,6 +357,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the GPIO controller associated with the pin
   Gpio *
   Pin::gpio() const {
     PIMP_D (const Pin);
@@ -338,6 +366,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the type name of the pin
   const std::string &
   Pin::typeName() const {
     PIMP_D (const Pin);
@@ -346,6 +375,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the name of the specified mode
   const std::string &
   Pin::modeName (Pin::Mode m) const {
     PIMP_D (const Pin);
@@ -354,6 +384,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns true if debug is enabled for the pin's device
   bool
   Pin::isDebug() const {
     PIMP_D (const Pin);
@@ -362,6 +393,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Enables or disables debug for the pin's device
   void
   Pin::setDebug (bool enable) {
     PIMP_D (Pin);
@@ -373,6 +405,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the name of the current mode
   const std::string &
   Pin::modeName() {
 
@@ -380,6 +413,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the name of the current pull configuration
   const std::string &
   Pin::pullName ()  {
 
@@ -387,6 +421,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the name of the pin for the current mode, or default if not open
   const std::string &
   Pin::name() {
 
@@ -397,13 +432,14 @@ namespace Piduino {
         return name (mode());
       }
       catch (...) {
-        // Pas de nom pour le mode concerné
+        // No name for the current mode
       }
     }
     return name (ModeInput);
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the map of available modes for the pin
   const std::map<Pin::Mode, std::string> &
   Pin::modes () const {
     PIMP_D (const Pin);
@@ -421,6 +457,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Writes a digital value to the pin
   void
   Pin::write (bool value) {
 
@@ -443,6 +480,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Toggles the digital value of the pin
   void
   Pin::toggle () {
 
@@ -463,6 +501,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Reads the digital value from the pin
   bool
   Pin::read () const {
 
@@ -480,6 +519,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Releases the pin, restoring previous mode and pull state if held
   void
   Pin::release () {
 
@@ -505,6 +545,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Waits for an interrupt event on the pin with debounce and timeout
   void Pin::waitForInterrupt (Edge edge, int debounce_ms, Event &event, int timeout_ms) {
 
     if (isOpen() && (type() == TypeGpio)) {
@@ -533,6 +574,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Waits for an interrupt event on the pin with timeout
   void
   Pin::waitForInterrupt (Pin::Edge edge, Event &event, int timeout_ms) {
 
@@ -540,6 +582,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Waits for an interrupt event on the pin with timeout, no event object
   void
   Pin::waitForInterrupt (Pin::Edge edge, int timeout_ms) {
     Event event;
@@ -548,6 +591,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Attaches an interrupt service routine to the pin with debounce
   void
   Pin::attachInterrupt (Isr isr, Edge edge, int debounce_ms, void *userData) {
 
@@ -571,6 +615,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Attaches an interrupt service routine to the pin without debounce
   void
   Pin::attachInterrupt (Isr isr, Edge edge, void *userData) {
 
@@ -578,6 +623,7 @@ namespace Piduino {
   }
   
   // ---------------------------------------------------------------------------
+  // Detaches the interrupt service routine from the pin
   void
   Pin::detachInterrupt() {
     PIMP_D (Pin);
@@ -593,6 +639,7 @@ namespace Piduino {
   // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
+  // Returns the GpioDevice associated with the pin
   GpioDevice *
   Pin::device() const {
 
@@ -600,6 +647,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Opens the pin for use, initializing mode, pull, and drive as needed
   bool Pin::open() {
 
     if (!isOpen()) {
@@ -660,6 +708,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Closes the pin, detaching interrupts and releasing resources
   void
   Pin::close() {
 
@@ -680,6 +729,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns true if the GPIO device is enabled for this pin
   bool
   Pin::isGpioDevEnabled() const {
     PIMP_D (const Pin);
@@ -687,6 +737,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Enables or disables the GPIO device for this pin
   bool
   Pin::enableGpioDev (bool enable) {
     PIMP_D (Pin);
@@ -706,6 +757,7 @@ namespace Piduino {
   // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
+  // Returns the name of the specified numbering scheme
   const std::string &
   Pin::numberingName (Pin::Numbering n)  {
 
@@ -713,6 +765,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the name of the specified pin type
   const std::string &
   Pin::typeName (Pin::Type t) {
 
@@ -720,6 +773,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the name of the specified pull configuration
   const std::string &
   Pin::pullName (Pin::Pull p) {
 
@@ -727,6 +781,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the map of pin types
   const std::map<Pin::Type, std::string> &
   Pin::types () {
 
@@ -734,6 +789,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the map of pin numbering schemes
   const std::map<Pin::Numbering, std::string> &
   Pin::numberings () {
 
@@ -741,6 +797,7 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // Returns the map of pull configurations
   const std::map<Pin::Pull, std::string> &
   Pin::pulls () {
 
