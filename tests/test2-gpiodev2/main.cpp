@@ -1,4 +1,4 @@
-// Gpio2 Unit Test
+// GpioDev2 Unit Test
 // Use UnitTest++ framework -> https://github.com/unittest-cpp/unittest-cpp/wiki
 #include <iostream>
 #include <iomanip>
@@ -23,7 +23,7 @@ using namespace Gpio2;
 using namespace Piduino;
 
 // Configuration settings -----------------------------------
-// #warning "Check this pin numbers and chip numbers, they must match your hardware setup! then comment this line"
+#warning "Check this pin numbers and chip numbers, they must match your hardware setup! then comment this line"
 
 const int Pin1 = 2; // iNo number for first input pin, use pido to get the pin number
 const int Pin2 = 0; // iNo number for output pin, use pido to get the pin number
