@@ -28,8 +28,7 @@ namespace Bcm2835 {
 
 namespace AllWinnerHx {
 
-  // TODO: complete all the AllWinner Hx pin numbers
-  const Pin::Number PinNumber1 (::Pin1, 0, 0, 0, 0, 0, 0); // AllWinner H3/H5 GPIO pin 2
+  const Pin::Number PinNumber1 (::Pin1, 2, 2, 7, 1, 1, 2); // AllWinner H3/H5 GPIO pin 2
   const int DriveMin = 0; // Minimum drive strength
   const int DriveMax = 3; // Maximum drive strength
   const int DriveDefault = 1; // Default drive strength
