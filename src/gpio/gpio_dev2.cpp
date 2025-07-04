@@ -61,60 +61,64 @@ namespace Piduino {
   Pin::Mode
   GpioDev2::mode () const {
     PIMP_D (const GpioDev2);
-    Pin::Mode m = Pin::ModeUnknown;
-    Gpio2::LineInfo info;
 
-    if (d->line->getInfo (&info)) {
+    if (isOpen()) {
+      Gpio2::LineInfo info;
 
-      if (info.flags & GPIO_V2_LINE_FLAG_OUTPUT) {
+      if (d->line->getInfo (&info)) {
 
-        m = Pin::ModeOutput;
-      }
-      else if (info.flags & GPIO_V2_LINE_FLAG_INPUT) {
+        if (info.flags & GPIO_V2_LINE_FLAG_OUTPUT) {
 
-        m = Pin::ModeInput;
+          d->mode = Pin::ModeOutput;
+        }
+        else if (info.flags & GPIO_V2_LINE_FLAG_INPUT) {
+
+          d->mode = Pin::ModeInput;
+        }
+        else {
+
+          d->mode = Pin::ModeDisabled;
+        }
       }
       else {
 
-        m = Pin::ModeDisabled;
+        d->setError (d->line->errorCode(), d->line->errorMessage());
       }
     }
-    else {
 
-      d->setError (d->line->errorCode(), d->line->errorMessage());
-    }
-
-    return m;
+    return d->mode;
   }
 
   // -----------------------------------------------------------------------------
   Pin::Pull
   GpioDev2::pull () const {
     PIMP_D (const GpioDev2);
-    Pin::Pull p = Pin::PullUnknown;
-    Gpio2::LineInfo info;
 
-    if (d->line->getInfo (&info)) {
+    if (isOpen()) {
+      Gpio2::LineInfo info;
 
-      if (info.flags & GPIO_V2_LINE_FLAG_BIAS_PULL_UP) {
+      if (d->line->getInfo (&info)) {
 
-        p = Pin::PullUp;
+        if (info.flags & GPIO_V2_LINE_FLAG_BIAS_PULL_UP) {
+
+          d->pull = Pin::PullUp;
+        }
+        else if (info.flags & GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN) {
+
+          d->pull = Pin::PullDown;
+        }
+        else if (info.flags & GPIO_V2_LINE_FLAG_BIAS_DISABLED) {
+
+          d->pull = Pin::PullOff;
+        }
       }
-      else if (info.flags & GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN) {
+      else {
 
-        p = Pin::PullDown;
-      }
-      else if (info.flags & GPIO_V2_LINE_FLAG_BIAS_DISABLED) {
-
-        p = Pin::PullOff;
+        d->setError (d->line->errorCode(), d->line->errorMessage());
       }
     }
-    else {
 
-      d->setError (d->line->errorCode(), d->line->errorMessage());
-    }
-
-    return p;
+    return d->pull;
   }
 
   // -------------------------------------------------------------------------
@@ -122,27 +126,35 @@ namespace Piduino {
   GpioDev2::setMode (Pin::Mode m) {
     PIMP_D (GpioDev2);
 
-    Gpio2::LineConfig config = d->line->config();
-    switch (m) {
-      case Pin::ModeInput:
-        config.flags |= GPIO_V2_LINE_FLAG_INPUT;
-        config.flags &= ~GPIO_V2_LINE_FLAG_OUTPUT;
-        break;
-      case Pin::ModeOutput:
-        config.flags |= GPIO_V2_LINE_FLAG_OUTPUT;
-        config.flags &= ~GPIO_V2_LINE_FLAG_INPUT;
-        break;
-      case Pin::ModeDisabled:
-        config.flags &= ~ (GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_OUTPUT);
-        break;
-      default:
-        throw std::invalid_argument (EXCEPTION_MSG ("Invalid mode for pin " + std::to_string (d->pin->id())));
-    }
-    if (!d->line->setConfig (config)) {
+    if (d->modes.find (m) == d->modes.end()) {
 
-      d->setError (d->line->errorCode(), d->line->errorMessage());
+      throw std::invalid_argument (EXCEPTION_MSG ("Invalid mode for pin " + std::to_string (d->pin->id())));
     }
 
+    d->mode = m; // Store the mode for later use
+    if (isOpen()) {
+      Gpio2::LineConfig config = d->line->config();
+
+      switch (m) {
+        case Pin::ModeInput:
+          config.flags |= GPIO_V2_LINE_FLAG_INPUT;
+          config.flags &= ~GPIO_V2_LINE_FLAG_OUTPUT;
+          break;
+        case Pin::ModeOutput:
+          config.flags |= GPIO_V2_LINE_FLAG_OUTPUT;
+          config.flags &= ~GPIO_V2_LINE_FLAG_INPUT;
+          break;
+        case Pin::ModeDisabled:
+          config.flags &= ~ (GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_OUTPUT);
+          break;
+        default:
+          break;
+      }
+      if (!d->line->setConfig (config)) {
+
+        d->setError (d->line->errorCode(), d->line->errorMessage());
+      }
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -150,25 +162,33 @@ namespace Piduino {
   GpioDev2::setPull (Pin::Pull p) {
     PIMP_D (GpioDev2);
 
-    Gpio2::LineConfig config = d->line->config();
-    switch (p) {
-      case Pin::PullUp:
-        config.flags |= GPIO_V2_LINE_FLAG_BIAS_PULL_UP;
-        config.flags &= ~ (GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN | GPIO_V2_LINE_FLAG_BIAS_DISABLED);
-        break;
-      case Pin::PullDown:
-        config.flags |= GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN;
-        config.flags &= ~ (GPIO_V2_LINE_FLAG_BIAS_PULL_UP | GPIO_V2_LINE_FLAG_BIAS_DISABLED);
-        break;
-      case Pin::PullOff:
-        config.flags |= GPIO_V2_LINE_FLAG_BIAS_DISABLED;
-        config.flags &= ~ (GPIO_V2_LINE_FLAG_BIAS_PULL_UP | GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN);
-        break;
-      default:
-        throw std::invalid_argument (EXCEPTION_MSG ("Invalid pull for pin " + std::to_string (d->pin->id())));
+    if (p == Pin::PullUnknown) {
+      throw std::invalid_argument (EXCEPTION_MSG ("Invalid pull for pin " + std::to_string (d->pin->id())));
     }
-    if (!d->line->setConfig (config)) {
-      d->setError (d->line->errorCode(), d->line->errorMessage());
+
+    d->pull = p; // Store the pull configuration for later use
+    if (isOpen()) {
+
+      Gpio2::LineConfig config = d->line->config();
+      switch (p) {
+        case Pin::PullUp:
+          config.flags |= GPIO_V2_LINE_FLAG_BIAS_PULL_UP;
+          config.flags &= ~ (GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN | GPIO_V2_LINE_FLAG_BIAS_DISABLED);
+          break;
+        case Pin::PullDown:
+          config.flags |= GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN;
+          config.flags &= ~ (GPIO_V2_LINE_FLAG_BIAS_PULL_UP | GPIO_V2_LINE_FLAG_BIAS_DISABLED);
+          break;
+        case Pin::PullOff:
+          config.flags |= GPIO_V2_LINE_FLAG_BIAS_DISABLED;
+          config.flags &= ~ (GPIO_V2_LINE_FLAG_BIAS_PULL_UP | GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN);
+          break;
+        default:
+          throw std::invalid_argument (EXCEPTION_MSG ("Invalid pull for pin " + std::to_string (d->pin->id())));
+      }
+      if (!d->line->setConfig (config)) {
+        d->setError (d->line->errorCode(), d->line->errorMessage());
+      }
     }
   }
 
@@ -177,13 +197,21 @@ namespace Piduino {
   GpioDev2::write (bool v) {
     PIMP_D (GpioDev2);
 
-    if (d->line->setValue (v)) {
+    if (isOpen()) {
 
-      d->clearError();
+      if (d->line->setValue (v)) {
+
+        d->clearError();
+      }
+      else {
+
+        d->setError (d->line->errorCode(), d->line->errorMessage());
+      }
     }
     else {
 
-      d->setError (d->line->errorCode(), d->line->errorMessage());
+      // If the device is not open, store the value to be written later
+      d->outputValue = v ? 1 : 0; // Store as integer for consistency
     }
   }
 
@@ -192,7 +220,7 @@ namespace Piduino {
   GpioDev2::read () const {
     PIMP_D (const GpioDev2);
 
-    return d->line->getValue();
+    return isOpen() ? d->line->getValue() : false;
   }
 
   // -----------------------------------------------------------------------------
@@ -213,11 +241,13 @@ namespace Piduino {
   bool GpioDev2::waitForInterrupt (Pin::Edge edge, Pin::Event &event, int timeout_ms) {
     PIMP_D (GpioDev2);
 
-    // place here the code to wait for an interrupt on the pin
-    if (d->setPinEdge (edge) && d->setDebounce()) {
+    if (isOpen()) {
+      // place here the code to wait for an interrupt on the pin
+      if (d->setPinEdge (edge) && d->setDebounce()) {
 
-      d->clearError();
-      return d->waitForInterrupt (event, timeout_ms);
+        d->clearError();
+        return d->waitForInterrupt (event, timeout_ms);
+      }
     }
     return false;
   }
@@ -225,11 +255,12 @@ namespace Piduino {
   // -----------------------------------------------------------------------------
   bool GpioDev2::attachInterrupt (Pin::Isr isr, Pin::Edge edge, void *userData) {
     PIMP_D (GpioDev2);
+    if (isOpen()) {
+      if (d->setPinEdge (edge) && d->setDebounce()) {
 
-    if (d->setPinEdge (edge) && d->setDebounce()) {
-
-      d->clearError();
-      return d->attachInterrupt (isr, userData);
+        d->clearError();
+        return d->attachInterrupt (isr, userData);
+      }
     }
     return false;
   }
@@ -261,7 +292,7 @@ namespace Piduino {
 
   // -----------------------------------------------------------------------------
   const std::map<Pin::Mode, std::string> &GpioDev2::modes () {
-    
+
     return Private::modes;
   }
 
@@ -284,7 +315,8 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   GpioDev2::Private::Private (GpioDev2 *q, Pin *pin) :
-    IoDevice::Private (q), pin (pin), chip (nullptr), line (nullptr), debounce (0) {
+    IoDevice::Private (q), pin (pin), chip (nullptr), line (nullptr), debounce (0),
+    mode (Pin::ModeUnknown), pull (Pin::PullUnknown), outputValue (-1) {
 
     // If the chip is not already in the map, create a new instance
     if (chips.find (pin->chipNumber()) == chips.end()) {
@@ -327,6 +359,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void GpioDev2::Private::close() {
 
+    detachInterrupt(); // Detach any attached interrupt
     if (line->close()) {
 
       clearError();
@@ -335,6 +368,7 @@ namespace Piduino {
 
       setError (line->errorCode(), line->errorMessage());
     }
+    outputValue = -1; // Reset output value
     IoDevice::Private::close();
   }
 
@@ -342,26 +376,33 @@ namespace Piduino {
   Gpio2::LineConfig GpioDev2::Private::pinConfig() const {
     Gpio2::LineConfig config;
 
+    Pin::Mode m = (mode == Pin::ModeUnknown ? pin->mode() : mode);
+    Pin::Pull p = (pull == Pin::PullUnknown ? pin->pull() : pull);
+
     // Initialize the configuration with default flags
-    switch (pin->mode()) {
+    switch (m) {
 
       case Pin::ModeInput: // Set the pin as input
         config.flags |= GPIO_V2_LINE_FLAG_INPUT;
         break;
 
-      case Pin::ModeOutput: // Set the pin as output and set the initial value
+      case Pin::ModeOutput: { // Set the pin as output and set the initial value
+        bool initialValue = (outputValue >= 0 ? outputValue : pin->read());
         config.flags |= GPIO_V2_LINE_FLAG_OUTPUT;
         config.attrs[0].attr.id = GPIO_V2_LINE_ATTR_ID_OUTPUT_VALUES;
-        config.attrs[0].attr.values = pin->read();
+        config.attrs[0].attr.values = initialValue;
         config.attrs[0].mask = 1 << 0; // Apply to the first line
         config.num_attrs = 1;
         break;
+      }
 
-      default:
+      default: // current mode not supported, configure as input with pull-down
+        config.flags |= GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN;
+        return config;
         break;
     }
 
-    switch (pin->pull()) {
+    switch (p) {
 
       case Pin::PullUp:
         config.flags |= GPIO_V2_LINE_FLAG_BIAS_PULL_UP;

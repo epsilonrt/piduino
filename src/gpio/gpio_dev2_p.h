@@ -35,6 +35,9 @@ namespace Piduino {
       std::shared_ptr<Gpio2::Chip> chip; // shared pointer to the GPIO chip instance
       std::unique_ptr<Gpio2::Line> line;
       uint32_t debounce;
+      mutable Pin::Mode mode; // mutable to allow const methods to modify it
+      mutable Pin::Pull pull; // mutable to allow const methods to modify it
+      int outputValue; // used for output mode, to store the written value when closed
       std::promise<void> killIsrThread;
       std::thread isrThread;
       static std::map<int, std::shared_ptr<Gpio2::Chip>> chips; // map to hold chip instances, key is the chip number
@@ -87,7 +90,7 @@ namespace Piduino {
       }
 
       // -----------------------------------------------------------------------------
-      inline bool waitForInterrupt (Pin::Event & event, int timeout_ms) {
+      inline bool waitForInterrupt (Pin::Event &event, int timeout_ms) {
 
         if (line->waitForEvent (event, timeout_ms)) {
 
@@ -95,7 +98,7 @@ namespace Piduino {
           return true;
         }
         setError (line->errorCode(), line->errorMessage());
-        return false; 
+        return false;
       }
 
       // it is used by the PIMP_DECLARE_PRIVATE macro

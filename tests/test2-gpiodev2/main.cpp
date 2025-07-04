@@ -212,9 +212,8 @@ struct LinInOutFixture : public GpioFixture {
     input (ipin), output (opin) {
 
     REQUIRE CHECK (input.chip().isOpen());
-    CHECK (input.isOpen() == false);
     REQUIRE CHECK (output.chip().isOpen());
-    CHECK (output.isOpen() == false);
+    
     // Check if the input line is closed initially
     CHECK (input.isOpen() == false);
     CHECK (output.isOpen() == false);
