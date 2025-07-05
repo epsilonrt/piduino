@@ -57,20 +57,15 @@ class TestPin {
        @param inoNumber The GPIO pin number (iNo).
        Initializes the pin and opens the corresponding chip if not already opened.
     */
-    TestPin (int inoNumber) : m_ino (inoNumber), pin (gpio.pin (inoNumber)) {
+    TestPin (int inoNumber) : m_ino (inoNumber), m_pin (gpio.pin (inoNumber)) {
       gpio.setNumbering (Pin::NumberingLogical);
-      m_offset = pin.chipOffset();
-      m_chip = pin.chipNumber();
+      m_offset = m_pin.chipOffset();
+      m_chip = m_pin.chipNumber();
 
       if (chips.find (m_chip) == chips.end()) {
 
         chips[m_chip] = std::make_shared<Chip> (System::progName());
       }
-    }
-
-    void print (std::string name = std::string()) {
-
-      std::cout << name << ": " << pin << std::endl;
     }
 
     /**
@@ -147,11 +142,15 @@ class TestPin {
       return m_chip;
     }
 
+    const Pin &pin() const {
+      return m_pin;
+    }
+
   private:
     int m_ino;
     uint32_t m_offset; // GPIO pin offset
     int m_chip; // Chip number
-    Pin &pin;
+    Pin &m_pin;
 
     static std::map<int, std::shared_ptr<Chip>> chips; // Global map to hold chip instances
 };
@@ -159,10 +158,17 @@ class TestPin {
 std::map<int, std::shared_ptr<Chip>> TestPin::chips;
 
 // -----------------------------------------------------------------------------
-void testTitle (int number, const char title[]) {
-  std::cout << std::endl << "--------------------------------------------------------------------------->>>" << std::endl;
-  std::cout << "Test" << number << ": " << title << std::endl;
-}
+struct TestFixture {
+
+  void begin (int number, const char title[]) {
+    std::cout << std::endl << "--------------------------------------------------------------------------->>>" << std::endl;
+    std::cout << "Test" << number << ": " << title << std::endl;
+  }
+
+  void end() {
+    std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  }
+};
 
 // -----------------------------------------------------------------------------
 // To comment, when check is verified
@@ -187,7 +193,7 @@ void testTitle (int number, const char title[]) {
 // }
 
 // -----------------------------------------------------------------------------
-struct ChipFixture {
+struct ChipFixture : public TestFixture {
   TestPin testPin1;
   Chip &chip;
   std::string dev;
@@ -195,6 +201,11 @@ struct ChipFixture {
   ChipFixture() : testPin1 (Pin1), chip (*testPin1.chip()), dev (testPin1.dev()) {
 
     CHECK (chip.isOpen() == false);
+  }
+
+  void begin (int number, const char title[]) {
+    TestFixture::begin (number, title);
+    std::cout << "Pin1: " << testPin1.pin() << std::endl << std::endl;
   }
 };
 
@@ -209,8 +220,7 @@ struct ChipFixture {
 */
 TEST_FIXTURE (ChipFixture, Test1) {
 
-  testTitle (1, "Chip tests");
-  testPin1.print ("testPin1");
+  begin (1, "Chip tests");
 
   CHECK (chip.isOpen() == false);
   CHECK (chip.consumer() == System::progName());
@@ -240,11 +250,11 @@ TEST_FIXTURE (ChipFixture, Test1) {
   CHECK (chip.close());
   CHECK (chip.isOpen() == false);
   CHECK (chip.errorCode() == 0);
-  std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  end();
 }
 
 // -----------------------------------------------------------------------------
-struct LineIn1Fixture {
+struct LineIn1Fixture: public TestFixture {
   TestPin testPin1;
   Line line;
 
@@ -261,6 +271,12 @@ struct LineIn1Fixture {
     CHECK (line.close());
     CHECK (line.isOpen() == false);
   }
+
+  void begin (int number, const char title[]) {
+    TestFixture::begin (number, title);
+    std::cout << "Pin1: " << testPin1.pin() << std::endl << std::endl;
+  }
+
   unsigned int numLines() const {
     return line.numLines();
   }
@@ -275,8 +291,7 @@ TEST_FIXTURE (LineIn1Fixture, Test2) {
   LineInfo info;
   LineConfig config (GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED);
 
-  testTitle (2, "LineConfig tests");
-  testPin1.print ("testPin1");
+  begin (2, "LineConfig tests");
 
   // Open the output with the configuration
   CHECK (line.open (config));
@@ -352,7 +367,7 @@ TEST_FIXTURE (LineIn1Fixture, Test2) {
   std::cout << "Line " << info.offset << ": " << info.name << ", attrs: " << info << std::endl;
   CHECK_EQUAL ( (info.flags & ~GPIO_V2_LINE_FLAG_USED), config.flags);
   CHECK_EQUAL (info.num_attrs, 0);
-  std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -360,8 +375,7 @@ TEST_FIXTURE (LineIn1Fixture, Test3) {
 
   LineConfig config (GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_ACTIVE_LOW | GPIO_V2_LINE_FLAG_BIAS_PULL_UP);
 
-  testTitle (3, "Active low input tests");
-  testPin1.print ("testPin1");
+  begin (3, "Active low input tests");
 
   CHECK (line.open (config));
   REQUIRE CHECK (line.isOpen());
@@ -369,12 +383,12 @@ TEST_FIXTURE (LineIn1Fixture, Test3) {
   config.flags = GPIO_V2_LINE_FLAG_INPUT | GPIO_V2_LINE_FLAG_ACTIVE_LOW | GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN;
   CHECK (line.setConfig (config));
   CHECK (line.getValue() == true); // Should read high due to pull-down and active low configuration
-  std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  end();
 }
 
 
 // -----------------------------------------------------------------------------
-struct LineIn12Fixture  {
+struct LineIn12Fixture: public TestFixture  {
   TestPin testPin1;
   TestPin testPin2;
   uint32_t offsets[2];
@@ -397,6 +411,12 @@ struct LineIn12Fixture  {
     CHECK (line.close());
     CHECK (line.isOpen() == false);
   }
+
+  void begin (int number, const char title[]) {
+    TestFixture::begin (number, title);
+    std::cout << "Pin1: " << testPin1.pin() << std::endl;
+    std::cout << "Pin2: " << testPin2.pin() << std::endl << std::endl;
+  }
 };
 
 /*
@@ -412,9 +432,7 @@ struct LineIn12Fixture  {
 TEST_FIXTURE (LineIn12Fixture, Test4) {
   const unsigned int numLines = line.numLines();
 
-  testTitle (4, "Multiple Line tests");
-  testPin1.print ("testPin1");
-  testPin2.print ("testPin2");
+  begin (4, "Multiple Line tests");
 
   // Chech getters
   CHECK (line.isOpen() == false);
@@ -448,7 +466,7 @@ TEST_FIXTURE (LineIn12Fixture, Test4) {
   for (unsigned int i = 0; i < numLines; ++i) {
     CHECK (line.getValue (i) == false);
   }
-  std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -500,14 +518,15 @@ struct LineOutFixture {
 };
 
 // -----------------------------------------------------------------------------
-struct LineInOutFixture : public LineInFixture, public LineOutFixture {
+struct LineInOutFixture : public TestFixture, public LineInFixture, public LineOutFixture {
 
-  LineInOutFixture() : LineInFixture(), LineOutFixture() {}
-  void inOutTitle (int n, const char title[]) {
-    testTitle (n, title);
-    testPin3.print ("testPin3 (output)");
-    testPin4.print ("testPin4  (input)");
-    std::cout << "<WARNING> Pin iNo#" << testPin3.iNo() << " must be connected to Pin iNo#" << testPin4.iNo() << " with a wire!" << std::endl;
+  LineInOutFixture() :  LineInFixture(), LineOutFixture() {}
+
+  void begin (int n, const char title[]) {
+    TestFixture::begin (n, title);
+    std::cout << "Pin3 (output): " << testPin3.pin() << std::endl;
+    std::cout << "Pin4  (input): " << testPin4.pin() << std::endl;
+    std::cout << "<WARNING> Pin iNo#" << testPin3.iNo() << " must be connected to Pin iNo#" << testPin4.iNo() << " with a wire!" << std::endl << std::endl;
   }
 };
 
@@ -527,7 +546,7 @@ struct LineInOutFixture : public LineInFixture, public LineOutFixture {
 TEST_FIXTURE (LineInOutFixture, Test5) {
   LineConfig config;
 
-  inOutTitle (5, "Output -> Input tests");
+  begin (5, "Output -> Input tests");
 
   // Configure output line
   config.flags = GPIO_V2_LINE_FLAG_OUTPUT; // Set as output line
@@ -558,7 +577,7 @@ TEST_FIXTURE (LineInOutFixture, Test5) {
     CHECK_EQUAL (state, output.getValue()); // Check if output reads the same value
     CHECK_EQUAL (state, input.getValue()); // Check if input reads the same value as output
   }
-  std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  end();
 }
 
 
@@ -566,7 +585,7 @@ TEST_FIXTURE (LineInOutFixture, Test5) {
 TEST_FIXTURE (LineInOutFixture, Test6) {
 
   LineConfig config (GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_ACTIVE_LOW);
-  inOutTitle (6, "Active low output tests");
+  begin (6, "Active low output tests");
 
   CHECK (output.open (config));
   REQUIRE CHECK (output.isOpen());
@@ -584,7 +603,7 @@ TEST_FIXTURE (LineInOutFixture, Test6) {
   // We can read the output value directly, and it should be at the same state as we wrote
   CHECK (output.getValue() == false); // Should read high due to active low configuration
   CHECK (input.getValue() == true); // Input should read high due to active low configuration
-  std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -622,6 +641,14 @@ struct WaitLineFixture : public LineInOutFixture {
       killThread.set_value();
       isrThread.join();
     }
+  }
+
+  void begin (int n, const char title[]) {
+    TestFixture::begin (n, title);
+    std::cout << "Pin3 (output): " << testPin3.pin() << std::endl;
+    std::cout << "Pin4  (input): " << testPin4.pin() << std::endl;
+    std::cout << "Pulse width: " << pw << " ms, loop count: " << loopCount << ", initial state: " << (initialState ? "high" : "low") << std::endl;
+    std::cout << "<WARNING> Pin iNo#" << testPin3.iNo() << " must be connected to Pin iNo#" << testPin4.iNo() << " with a wire!" << std::endl << std::endl;
   }
 };
 
@@ -661,7 +688,7 @@ TEST_FIXTURE (WaitLineFixture, Test7) {
   int eventCount = 0;
   LineConfig config;
 
-  inOutTitle (7, "Interrupt tests");
+  begin (7, "Interrupt tests");
 
   // Configure output line
   config.flags = GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED; // Set as output line
@@ -725,7 +752,7 @@ TEST_FIXTURE (WaitLineFixture, Test7) {
 
   CHECK_EQUAL (loopCount, eventCount); // Check if the number of events matches the loop count
   detachInterrupt(); // Detach the interrupt handler
-  std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -736,7 +763,7 @@ TEST_FIXTURE (WaitLineFixture, Test8) {
   int eventCount = 0;
   LineConfig config;
 
-  inOutTitle (8, " Debounce Interrupt tests");
+  begin (8, " Debounce Interrupt tests");
 
   // Configure output line
   config.flags = GPIO_V2_LINE_FLAG_OUTPUT | GPIO_V2_LINE_FLAG_BIAS_DISABLED; // Set as output line
@@ -814,7 +841,7 @@ TEST_FIXTURE (WaitLineFixture, Test8) {
 
   CHECK_EQUAL (loopCount, eventCount); // Check if the number of events matches the loop count
   detachInterrupt(); // Detach the interrupt handler
-  std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  end();
 }
 
 // run all tests

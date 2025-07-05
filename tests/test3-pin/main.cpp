@@ -44,9 +44,21 @@ const unsigned int WaitLineFixtureDtmax = 10; // Maximum time to generate short 
 static_assert (WaitLineFixtureDtmax < (WaitLineFixturePw - WaitLineFixtureDebounceMs), "dtmax must be less than (pw - debounce) and even");
 static_assert (WaitLineFixtureDtmax % 2 == 0, "dtmax must be even");
 
+// -----------------------------------------------------------------------------
+struct TestFixture {
+
+  void begin (int number, const char title[]) {
+    std::cout << std::endl << "--------------------------------------------------------------------------->>>" << std::endl;
+    std::cout << "Test" << number << ": " << title << std::endl;
+  }
+
+  void end() {
+    std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  }
+};
 
 // -----------------------------------------------------------------------------
-struct GpioFixture {
+struct GpioFixture: public TestFixture {
 
   GpioFixture()  {
     CHECK (gpio.open());
@@ -87,24 +99,20 @@ struct Line1Fixture : public GpioFixture {
         throw std::out_of_range ("Unsupported SoC family: " + db.board().soc().family().name());
         break;
     }
-    std::cout << std::endl << "Line1Fixture: Pin " << pin.name() << " (" << pin.id() << ") initialized." << std::endl
-              << "   Type          : " << pin.typeName() << std::endl
-              << "   Id            : " << pin.id() << std::endl
-              << "   Logical Number: " << pin.logicalNumber() << std::endl
-              << "   Mcu Number    : " << pin.mcuNumber() << std::endl
-              << "   System Number : " << pin.systemNumber() << std::endl
-              << "   Row           : " << pin.row() << std::endl
-              << "   Column        : " << pin.column() << std::endl
-              << "   Chip Number   : " << pin.chipNumber() << std::endl
-              << "   Chip Offset   : " << pin.chipOffset() << std::endl;
+
   }
 
   ~Line1Fixture() {}
+
+  void begin (int number, const char title[]) {
+    TestFixture::begin (number, title);
+    std::cout << "Pin1: " << pin << std::endl << std::endl;
+  }
 };
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test1) {
-  std::cout << "Test1: Type and Numbering tests" << std::endl;
+  begin (1, "Type and Numbering tests");
 
   REQUIRE CHECK_EQUAL (Pin::TypeGpio, pin.type());
 
@@ -120,11 +128,12 @@ TEST_FIXTURE (Line1Fixture, Test1) {
   CHECK_EQUAL (pinNumber.column, pin.column());
   CHECK_EQUAL (pinNumber.chip, pin.chipNumber());
   CHECK_EQUAL (pinNumber.offset, pin.chipOffset());
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test2) {
-  std::cout << "Test2: Mode and Name tests" << std::endl;
+  begin (2, "Mode and Name tests");
 
   for (const auto &mode : pin.modes()) {
 
@@ -152,11 +161,12 @@ TEST_FIXTURE (Line1Fixture, Test2) {
       // No name for the mode, continue
     }
   }
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test3) {
-  std::cout << "Test3: Gpiodev mode tests" << std::endl;
+  begin (3, "Gpiodev mode tests");
 
   // Check if the pin is a GPIO pin
   CHECK (pin.enableGpioDev (true));
@@ -189,11 +199,12 @@ TEST_FIXTURE (Line1Fixture, Test3) {
   }
   CHECK_EQUAL (false, pin.enableGpioDev (false)); // Disable GpioDev
   REQUIRE CHECK (pin.isGpioDevEnabled() == false);
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test4) {
-  std::cout << "Test4: Pull resistors tests" << std::endl;
+  begin (4, "Pull resistors tests");
 
   for (const auto &pull : pin.pulls()) {
 
@@ -217,11 +228,12 @@ TEST_FIXTURE (Line1Fixture, Test4) {
     CHECK_EQUAL (pull.first, pin.pull());
     CHECK_EQUAL (pull.second, pin.pullName());
   }
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test5) {
-  std::cout << "Test5: GpioDev Pull resistors tests" << std::endl;
+  begin (5, "GpioDev Pull resistors tests");
 
   // Check if the pin is a GPIO pin
   CHECK (pin.enableGpioDev (true));
@@ -251,11 +263,12 @@ TEST_FIXTURE (Line1Fixture, Test5) {
 
   CHECK_EQUAL (false, pin.enableGpioDev (false)); // Disable GpioDev
   REQUIRE CHECK (pin.isGpioDevEnabled() == false);
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test6) {
-  std::cout << "Test6: Output drive tests" << std::endl;
+  begin (6, "Output drive tests");
 
   try {
     int drive = pin.drive(); // Get the current output drive
@@ -273,11 +286,12 @@ TEST_FIXTURE (Line1Fixture, Test6) {
     std::cerr << "  Unable to set Output Drive: " << e.what() << std::endl;
     return; // Skip if the mode is not supported
   }
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test7) {
-  std::cout << "Test7: Read/Write tests" << std::endl;
+  begin (7, "Read/Write tests");
 
   pin.setMode (Pin::ModeInput);
   REQUIRE CHECK_EQUAL (Pin::ModeInput, pin.mode());
@@ -298,11 +312,12 @@ TEST_FIXTURE (Line1Fixture, Test7) {
 
   pin.setMode (Pin::ModeInput);
   CHECK_EQUAL (Pin::ModeInput, pin.mode());
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test8) {
-  std::cout << "Test8: GpioDev Read/Write tests" << std::endl;
+  begin (8, "GpioDev Read/Write tests");
 
   CHECK (pin.enableGpioDev ());
   REQUIRE CHECK (pin.isGpioDevEnabled());
@@ -329,6 +344,7 @@ TEST_FIXTURE (Line1Fixture, Test8) {
 
   CHECK_EQUAL (false, pin.enableGpioDev (false)); // Disable GpioDev
   REQUIRE CHECK (pin.isGpioDevEnabled() == false);
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -345,9 +361,7 @@ struct LinInOutFixture : public GpioFixture {
 
     output.setMode (Pin::ModeOutput);
     input.setMode (Pin::ModeInput);
-    std::cout << std::endl << "LinInOutFixture: Input and Output pins initialized." << std::endl
-              << "   Input Pin  : " << input.name() << " (" << input.id() << ")" << std::endl
-              << "   Output Pin : " << output.name() << " (" << output.id() << ")" << std::endl;
+
   }
 
   void WriteTest() {
@@ -370,13 +384,20 @@ struct LinInOutFixture : public GpioFixture {
     CHECK_EQUAL (Pin::PullDown, input.pull());
     CHECK_EQUAL (Pin::ModeInput, output.mode());
     CHECK_EQUAL (Pin::PullDown, output.pull());
-    std::cout << "LinInOutFixture: Input and Output pins reset to Input mode with PullDown resistor." << std::endl;
+  }
+
+  void begin (int n, const char title[]) {
+    TestFixture::begin (n, title);
+    std::cout << "Pin2 (output): " << output << std::endl;
+    std::cout << "Pin3  (input): " << input << std::endl;
+    std::cout << "<WARNING> Pin iNo#" << output.logicalNumber() << " must be connected to Pin iNo#" << input.logicalNumber() << " with a wire!" << std::endl << std::endl;
   }
 };
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (LinInOutFixture, Test9) {
-  std::cout << "Test9: Output -> Input tests" << std::endl;
+  begin (9, "Output -> Input tests");
+
   REQUIRE CHECK_EQUAL (Pin::ModeOutput, output.mode());
   REQUIRE CHECK_EQUAL (Pin::ModeInput, input.mode());
 
@@ -388,11 +409,12 @@ TEST_FIXTURE (LinInOutFixture, Test9) {
 
   input.setPull (Pin::PullOff);
   WriteTest();
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (LinInOutFixture, Test10) {
-  std::cout << "Test10: GpioDev Output -> Input tests" << std::endl;
+  begin (10, "GpioDev Output -> Input tests");
 
   CHECK_EQUAL (true, input.enableGpioDev (true)); // Disable GpioDev
   REQUIRE CHECK (input.isGpioDevEnabled() == true);
@@ -415,6 +437,7 @@ TEST_FIXTURE (LinInOutFixture, Test10) {
   REQUIRE CHECK (input.isGpioDevEnabled() == false);
   CHECK_EQUAL (false, output.enableGpioDev (false)); // Disable GpioDev
   REQUIRE CHECK (output.isGpioDevEnabled() == false);
+  end();
 }
 
 
@@ -435,15 +458,20 @@ struct InterruptFixture : public LinInOutFixture {
     input.setPull (Pin::PullDown); // Set pull-up resistor for input line
     output.write (initialState); // Set initial output value
     REQUIRE CHECK_EQUAL (initialState, output.read());
-    std::cout << std::endl << "InterruptFixture: Input and Output pins initialized for interrupt tests." << std::endl
-              << "   Pulse width: " << pw << " ms, loop count: " << loopCount << ", initial state: " << (initialState ? "high" : "low") << std::endl;
   }
 
   ~InterruptFixture() {
     // Detach the interrupt handler
     input.detachInterrupt();
-    CHECK_EQUAL (false, input.enableGpioDev(false));
-    std::cout << "InterruptFixture: Input pin interrupt handler detached." << std::endl;
+    CHECK_EQUAL (false, input.enableGpioDev (false));
+  }
+
+  void begin (int n, const char title[]) {
+    TestFixture::begin (n, title);
+    std::cout << "Pin2 (output): " << output << std::endl;
+    std::cout << "Pin3  (input): " << input << std::endl;
+    std::cout << "Pulse width: " << pw << " ms, loop count: " << loopCount << ", initial state: " << (initialState ? "high" : "low") << std::endl;
+    std::cout << "<WARNING> Pin iNo#" << output.logicalNumber() << " must be connected to Pin iNo#" << input.logicalNumber() << " with a wire!" << std::endl << std::endl;
   }
 };
 
@@ -461,7 +489,7 @@ TEST_FIXTURE (InterruptFixture, Test11) {
   Pin::Event prevEvent;
   int eventCount = 0;
 
-  std::cout << "Test11: Interrupt tests" << std::endl;
+  begin (11, "Interrupt tests");
 
   input.attachInterrupt (isr, Pin::EdgeBoth, this);
   REQUIRE CHECK (input.isGpioDevEnabled());
@@ -509,6 +537,7 @@ TEST_FIXTURE (InterruptFixture, Test11) {
   std::cout << "Average duration: " << averageDuration << " ms, expected: " << pw << " ms" << std::endl;
 
   CHECK_EQUAL (loopCount, eventCount); // Check if the number of events matches the loop count
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -518,8 +547,7 @@ TEST_FIXTURE (InterruptFixture, Test12) {
   Pin::Event prevEvent;
   int eventCount = 0;
 
-  std::cout << "Test12: Debounce Interrupt tests" << std::endl;
-
+  begin (12, "Debounce Interrupt tests");
 
   // Attach the interrupt handler
   input.attachInterrupt (isr, Pin::EdgeBoth, debounce, this);
@@ -576,6 +604,7 @@ TEST_FIXTURE (InterruptFixture, Test12) {
   std::cout << "Average duration: " << averageDuration << " ms, expected: " << pw << " ms" << std::endl;
 
   CHECK_EQUAL (loopCount, eventCount); // Check if the number of events matches the loop count
+  end();
 }
 
 // run all tests

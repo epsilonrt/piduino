@@ -39,9 +39,21 @@ const unsigned int WaitLineFixtureDtmax = 10; // Maximum time to generate short 
 static_assert (WaitLineFixtureDtmax < (WaitLineFixturePw - WaitLineFixtureDebounceMs), "dtmax must be less than (pw - debounce) and even");
 static_assert (WaitLineFixtureDtmax % 2 == 0, "dtmax must be even");
 
+// -----------------------------------------------------------------------------
+struct TestFixture {
+
+  void begin (int number, const char title[]) {
+    std::cout << std::endl << "--------------------------------------------------------------------------->>>" << std::endl;
+    std::cout << "Test" << number << ": " << title << std::endl;
+  }
+
+  void end() {
+    std::cout << "---------------------------------------------------------------------------<<<" << std::endl << std::endl;
+  }
+};
 
 // -----------------------------------------------------------------------------
-struct GpioFixture {
+struct GpioFixture : public TestFixture {
 
   GpioFixture()  {
     CHECK (gpio.open());
@@ -67,6 +79,11 @@ struct Line1Fixture : public GpioFixture {
 
     REQUIRE CHECK (line.chip().isOpen());
     CHECK (line.isOpen() == false);
+  }
+
+  void begin (int number, const char title[]) {
+    TestFixture::begin (number, title);
+    std::cout << "Pin1: " << pin << std::endl << std::endl;
   }
 
   void OpenCloseTest() {
@@ -113,7 +130,7 @@ struct Line1Fixture : public GpioFixture {
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test1) {
-  std::cout << "Test1: Open/Close tests" << std::endl;
+  begin (1, "Open/Close tests");
   OpenCloseTest();
 
   pin.setMode (Pin::ModeOutput);
@@ -129,11 +146,12 @@ TEST_FIXTURE (Line1Fixture, Test1) {
 
   pin.setPull (Pin::PullOff);
   OpenCloseTest();
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test2) {
-  std::cout << "Test2: Set mode and pull tests" << std::endl;
+  begin (2, "Set mode and pull tests");
 
   // Open the line and check if it is open
   CHECK (line.open());
@@ -173,11 +191,12 @@ TEST_FIXTURE (Line1Fixture, Test2) {
   CHECK_EQUAL (Pin::PullDown, line.pull());
   CHECK_EQUAL (Pin::PullDown, pin.pull());
   ModePullTest();
+  end();
 }
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (Line1Fixture, Test3) {
-  std::cout << "Test3: Read and Write tests" << std::endl;
+  begin (3, "Read and Write tests");
 
   // Open the line and check if it is open
   CHECK (line.open());
@@ -198,6 +217,7 @@ TEST_FIXTURE (Line1Fixture, Test3) {
 
   line.setPull (Pin::PullOff);
   WriteTest ();
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -213,7 +233,7 @@ struct LinInOutFixture : public GpioFixture {
 
     REQUIRE CHECK (input.chip().isOpen());
     REQUIRE CHECK (output.chip().isOpen());
-    
+
     // Check if the input line is closed initially
     CHECK (input.isOpen() == false);
     CHECK (output.isOpen() == false);
@@ -228,6 +248,13 @@ struct LinInOutFixture : public GpioFixture {
 
     output.setMode (Pin::ModeOutput);
     input.setMode (Pin::ModeInput);
+  }
+
+  void begin (int n, const char title[]) {
+    TestFixture::begin (n, title);
+    std::cout << "Pin2 (output): " << opin << std::endl;
+    std::cout << "Pin3  (input): " << ipin << std::endl;
+    std::cout << "<WARNING> Pin iNo#" << opin.logicalNumber() << " must be connected to Pin iNo#" << ipin.logicalNumber() << " with a wire!" << std::endl << std::endl;
   }
 
   void WriteTest() {
@@ -256,7 +283,7 @@ struct LinInOutFixture : public GpioFixture {
 
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (LinInOutFixture, Test4) {
-  std::cout << "Test4: Output -> Input tests" << std::endl;
+  begin (4, "Output -> Input tests");
 
   input.setPull (Pin::PullUp);
   WriteTest();
@@ -266,6 +293,7 @@ TEST_FIXTURE (LinInOutFixture, Test4) {
 
   input.setPull (Pin::PullOff);
   WriteTest();
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -291,6 +319,15 @@ struct InterruptFixture : public LinInOutFixture {
     // Detach the interrupt handler
     input.detachInterrupt();
   }
+
+  void begin (int n, const char title[]) {
+    TestFixture::begin (n, title);
+    std::cout << "Pin2 (output): " << opin << std::endl;
+    std::cout << "Pin3  (input): " << ipin << std::endl;
+    std::cout << "Pulse width: " << pw << " ms, loop count: " << loopCount << ", initial state: " << (initialState ? "high" : "low") << std::endl;
+    std::cout << "<WARNING> Pin iNo#" << opin.logicalNumber() << " must be connected to Pin iNo#" << ipin.logicalNumber() << " with a wire!" << std::endl << std::endl;
+  }
+
 };
 
 void InterruptFixture::isr (Pin::Event event, void *userData) {
@@ -307,8 +344,7 @@ TEST_FIXTURE (InterruptFixture, Test5) {
   Pin::Event prevEvent;
   int eventCount = 0;
 
-  std::cout << "Test5: Interrupt tests" << std::endl;
-  std::cout << "Pulse width: " << pw << " ms, loop count: " << loopCount << ", initial state: " << (initialState ? "high" : "low") << std::endl;
+  begin (5, "Interrupt tests");
 
   // Attach the interrupt handler
   CHECK (input.attachInterrupt (isr, Pin::EdgeBoth, this));
@@ -356,6 +392,7 @@ TEST_FIXTURE (InterruptFixture, Test5) {
   std::cout << "Average duration: " << averageDuration << " ms, expected: " << pw << " ms" << std::endl;
 
   CHECK_EQUAL (loopCount, eventCount); // Check if the number of events matches the loop count
+  end();
 }
 
 // -----------------------------------------------------------------------------
@@ -365,9 +402,7 @@ TEST_FIXTURE (InterruptFixture, Test6) {
   Pin::Event prevEvent;
   int eventCount = 0;
 
-  std::cout << "Test6: Debounce Interrupt tests" << std::endl;
-  std::cout << "Pulse width: " << pw << " ms, loop count: " << loopCount << ", initial state: " << (initialState ? "high" : "low") << std::endl;
-
+  begin (6, "Debounce Interrupt tests");
 
   input.setDebounce (debounce); // Set debounce to 20 ms
   CHECK_EQUAL (debounce, input.debounce()); // Check if the debounce value is set correctly
@@ -425,6 +460,7 @@ TEST_FIXTURE (InterruptFixture, Test6) {
   std::cout << "Average duration: " << averageDuration << " ms, expected: " << pw << " ms" << std::endl;
 
   CHECK_EQUAL (loopCount, eventCount); // Check if the number of events matches the loop count
+  end();
 }
 
 // run all tests
