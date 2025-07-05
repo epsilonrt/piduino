@@ -563,6 +563,28 @@ namespace Piduino {
       void setDebug (bool enable);
 
       /**
+         @brief Overloaded output stream operator for Pin.
+         @param os The output stream.
+         @param p The Pin object to output.
+         @return The output stream with pin information.
+
+         The pin will print its details in the following format:
+         
+         @code
+         Pin iNo#1 (GPIO18) -----
+            Database Id   : 10
+            Row           : 6
+            Column        : 2
+            Logical Number: 1
+            Mcu Number    : 18
+            System Number : 18
+            Chip Number   : 0
+            Chip Offset   : 18
+         @endcode
+      */
+      friend std::ostream &operator<< (std::ostream &os, const Pin &p);
+
+      /**
          @brief Constructs a Pin object.
          @param parent Pointer to the parent Connector.
          @param desc Pointer to the pin Descriptor.

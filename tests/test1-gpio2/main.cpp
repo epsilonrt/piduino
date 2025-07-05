@@ -46,6 +46,8 @@ static_assert (WaitLineFixtureDtmax % 2 == 0, "dtmax must be even");
 /**
    @struct TestPin
    @brief Structure to hold information about a GPIO pin.
+
+   This is the skeleton for future GpioDev2 class.
 */
 class TestPin {
 
@@ -67,18 +69,9 @@ class TestPin {
     }
 
     void print (std::string name = std::string()) {
-      std::cout << name << ": Pin iNo#" << pin.logicalNumber() << " (" << pin.name() << ") initialized." << std::endl
-                << "   Type          : " << pin.typeName() << std::endl
-                << "   Id            : " << pin.id() << std::endl
-                << "   Logical Number: " << pin.logicalNumber() << std::endl
-                << "   Mcu Number    : " << pin.mcuNumber() << std::endl
-                << "   System Number : " << pin.systemNumber() << std::endl
-                << "   Row           : " << pin.row() << std::endl
-                << "   Column        : " << pin.column() << std::endl
-                << "   Chip Number   : " << pin.chipNumber() << std::endl
-                << "   Chip Offset   : " << pin.chipOffset() << std::endl;
-    }
 
+      std::cout << name << ": " << pin << std::endl;
+    }
 
     /**
        @brief returns the Chip instance associated with this pin.

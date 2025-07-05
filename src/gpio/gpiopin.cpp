@@ -804,5 +804,29 @@ namespace Piduino {
     return Private::pulls;
   }
 
-}
+  // ---------------------------------------------------------------------------
+  // Overloaded operator to print Pin information
+  std::ostream &operator<< (std::ostream &os, const Pin &p) {
+
+    if (p.type() == Pin::TypeGpio) {
+      os << "Pin iNo#" << p.logicalNumber() << " (" << p.name() << ") -----" << std::endl;
+    }
+    else {
+      os << "Pin " <<  p.name() << " -----" << std::endl;
+    }
+    os   << "   Database Id   : " << p.id() << std::endl
+         << "   Row           : " << p.row() << std::endl
+         << "   Column        : " << p.column();
+    if (p.type() == Pin::TypeGpio) {
+      os   << std::endl
+           << "   Logical Number: " << p.logicalNumber() << std::endl
+           << "   Mcu Number    : " << p.mcuNumber() << std::endl
+           << "   System Number : " << p.systemNumber() << std::endl
+           << "   Chip Number   : " << p.chipNumber() << std::endl
+           << "   Chip Offset   : " << p.chipOffset();
+    }
+    return os;
+  }
+
+} // namesapce Piduino
 /* ========================================================================== */
