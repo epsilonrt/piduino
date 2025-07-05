@@ -109,8 +109,8 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // Returns the current pull configuration of the pin
   Pin::Pull
-  Pin::pull () {
-    PIMP_D (Pin);
+  Pin::pull () const {
+    PIMP_D (const Pin);
 
     if (type() == TypeGpio) {
 
@@ -149,8 +149,8 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // Returns the current mode of the pin
   Pin::Mode
-  Pin::mode () {
-    PIMP_D (Pin);
+  Pin::mode () const {
+    PIMP_D (const Pin);
 
     if (type() == TypeGpio) {
 
@@ -186,7 +186,7 @@ namespace Piduino {
   // Returns the drive strength of the pin
   int
   Pin::drive () {
-    PIMP_D (Pin);
+    PIMP_D (const Pin);
 
     if (type() == TypeGpio) {
 
@@ -423,7 +423,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // Returns the name of the pin for the current mode, or default if not open
   const std::string &
-  Pin::name() {
+  Pin::name() const {
 
     if (isOpen() && (type() == TypeGpio)) {
 
@@ -621,7 +621,7 @@ namespace Piduino {
 
     attachInterrupt (isr, edge, -1, userData);
   }
-  
+
   // ---------------------------------------------------------------------------
   // Detaches the interrupt service routine from the pin
   void

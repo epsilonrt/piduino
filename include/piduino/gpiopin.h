@@ -336,7 +336,7 @@ namespace Piduino {
          @brief Returns the default name of the pin.
          @return Reference to the pin name.
       */
-      const std::string &name();
+      const std::string &name() const;
 
       /**
          @brief Returns the name of the pin for a specific mode.
@@ -355,7 +355,7 @@ namespace Piduino {
          @brief Returns the current mode of the pin.
          @return The pin mode.
       */
-      Mode mode();
+      Mode mode() const;
 
       /**
          @brief Returns the map of available modes and their names.
@@ -386,7 +386,7 @@ namespace Piduino {
          @brief Returns the current pull resistor configuration.
          @return The pull configuration.
       */
-      Pull pull();
+      Pull pull() const;
 
       /**
          @brief Returns the map of available pull configurations and their names.

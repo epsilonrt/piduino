@@ -57,7 +57,7 @@ namespace Piduino {
       /**
          @brief Reads the current pull configuration from the hardware.
       */
-      void readPull();
+      void readPull() const;
 
       /**
          @brief Writes the current pull configuration to the hardware.
@@ -67,7 +67,7 @@ namespace Piduino {
       /**
          @brief Reads the current mode from the hardware.
       */
-      void readMode();
+      void readMode() const;
 
       /**
          @brief Writes the current mode to the hardware.
@@ -77,7 +77,7 @@ namespace Piduino {
       /**
          @brief Reads the current drive strength from the hardware.
       */
-      void readDrive();
+      void readDrive() const;
 
       /**
          @brief Writes the current drive strength to the hardware.
@@ -142,10 +142,10 @@ namespace Piduino {
       Mode holdMode;                     ///< Previously held mode for restoration.
       Pull holdPull;                     ///< Previously held pull configuration for restoration.
       bool holdState;                    ///< Previously held state.
-      Mode mode;                         ///< Current mode of the pin.
-      Pull pull;                         ///< Current pull configuration of the pin.
+      mutable Mode mode;                 ///< Current mode of the pin.
+      mutable Pull pull;                 ///< Current pull configuration of the pin.
       std::shared_ptr<Converter> dac;    ///< Shared pointer to DAC converter, if applicable.
-      int drive;                         ///< Current drive strength.
+      mutable int drive;                 ///< Current drive strength.
       std::unique_ptr<GpioDev2> gpiodev; ///< Unique pointer to the GPIO device implementation.
 
       static const std::map<Pull, std::string> pulls;           ///< Mapping of Pull enum to string.

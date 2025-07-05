@@ -91,7 +91,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // Reads the current pull configuration from the hardware
   void
-  Pin::Private::readPull ()  {
+  Pin::Private::readPull() const  {
 
     if (isGpioDevOpen()) {
 
@@ -100,7 +100,7 @@ namespace Piduino {
     else  if (parent->device()) {
 
       if (parent->device()->flags() & GpioDevice::hasPullRead) {
-        PIMP_Q (Pin);
+        PIMP_Q (const Pin);
 
         pull = parent->device()->pull (q);
       }
@@ -110,14 +110,14 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // Reads the current mode from the hardware
   void
-  Pin::Private::readMode ()  {
+  Pin::Private::readMode() const {
 
     if (isGpioDevOpen()) {
 
       mode = gpiodev->mode ();
     }
     else if (parent->device()) {
-      PIMP_Q (Pin);
+      PIMP_Q (const Pin);
 
       mode = parent->device()->mode (q);
     }
@@ -162,12 +162,12 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // Reads the drive strength from the hardware, if supported
   void
-  Pin::Private::readDrive ()  {
+  Pin::Private::readDrive()  const {
 
     if (parent->device()) {
 
       if (parent->device()->flags() & GpioDevice::hasDrive) {
-        PIMP_Q (Pin);
+        PIMP_Q (const Pin);
 
         drive = parent->device()->drive (q);
       }
