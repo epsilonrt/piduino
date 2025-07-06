@@ -121,7 +121,7 @@ namespace Piduino {
       bool
       onlyWhitespace (const std::string &line) const {
 
-        return (line.find_first_not_of (' ') == line.npos);
+        return line.find_first_not_of (" \t\r\n") == std::string::npos;
       }
 
       // -----------------------------------------------------------------------
@@ -230,6 +230,7 @@ namespace Piduino {
 
         std::string line;
         size_t lineNo = 0;
+        
         while (std::getline (file, line)) {
             lineNo++;
             
@@ -237,17 +238,19 @@ namespace Piduino {
                 continue;
             }
 
-            // Copie sécurisée
-            std::string temp = line;
-            removeComment (temp);
+            // Copie une seule fois
+            std::string processedLine = line;
+            removeComment (processedLine);
             
-            if (onlyWhitespace (temp)) {
+            if (onlyWhitespace (processedLine)) {
                 continue;
             }
 
-            // Vérification supplémentaire
-            if (!temp.empty()) {
-                parseLine (temp, lineNo);
+            // Traitement direct sans passer par parseLine
+            if (processedLine.find(_keysep) != std::string::npos) {
+                if (validLine(processedLine)) {
+                    extractContents(processedLine);
+                }
             }
         }
         // file.close() automatique avec RAII
