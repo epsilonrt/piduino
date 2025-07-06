@@ -127,31 +127,42 @@ namespace Piduino {
       // -----------------------------------------------------------------------
       bool
       validLine (const std::string &line) const {
+        if (line.empty()) return false;
+        
         std::string temp = line;
-
-        temp.erase (0, temp.find_first_not_of ("\t "));
-
+        
+        // Supprimer les espaces au début
+        size_t start = temp.find_first_not_of ("\t ");
+        if (start == std::string::npos) return false;
+        
+        temp = temp.substr(start);
+        
+        // Vérifier que la ligne ne commence pas par le séparateur
         if (temp[0] == _keysep) {
-
-          return false;
+            return false;
         }
-
-        // for (size_t i = temp.find (_keysep) + 1; i < temp.length(); i++)
-
-        //   if (temp[i] != ' ') {
-
-        //     return true;
-        //   }
-
-        // return false;
-        return true;
+        
+        // Vérifier qu'il y a du contenu après le séparateur
+        size_t sepPos = temp.find(_keysep);
+        if (sepPos == std::string::npos) return false;
+        
+        return sepPos + 1 < temp.length();
       }
 
       // -----------------------------------------------------------------------
       static void trim (std::string &str) {
-
-        str.erase (0, str.find_first_not_of ("\t \""));
-        str.erase (str.find_last_not_of ("\t \"") + 1);
+        // Supprimer les espaces au début
+        size_t start = str.find_first_not_of ("\t \"");
+        if (start == std::string::npos) {
+            str.clear();
+            return;
+        }
+        
+        // Supprimer les espaces à la fin
+        size_t end = str.find_last_not_of ("\t \"");
+        if (end != std::string::npos) {
+            str = str.substr(start, end - start + 1);
+        }
       }
 
       // -----------------------------------------------------------------------
@@ -167,15 +178,13 @@ namespace Piduino {
       void
       extractValue (std::string &value, size_t const &sepPos,
                     const std::string &line) const {
-
-        if (sepPos < line.npos) {
-
-          value = line.substr (sepPos + 1);
-          trim (value);
+    
+        if (sepPos != std::string::npos && sepPos + 1 < line.length()) {
+            value = line.substr (sepPos + 1);
+            trim (value);
         }
         else {
-
-          value.clear();
+            value.clear();
         }
       }
 
@@ -214,32 +223,34 @@ namespace Piduino {
       // -----------------------------------------------------------------------
       void
       extractKeys (const std::string &filename) {
-        std::ifstream file;
-        file.open (filename.c_str());
-        if (!file) {
-
-          throw std::invalid_argument ("File " + filename + " couldn't be found!");
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            throw std::invalid_argument ("File " + filename + " couldn't be found!");
         }
 
         std::string line;
         size_t lineNo = 0;
         while (std::getline (file, line)) {
-          lineNo++;
-          std::string temp = line;
+            lineNo++;
+            
+            if (line.empty()) {
+                continue;
+            }
 
-          if (temp.empty()) {
-            continue;
-          }
+            // Copie sécurisée
+            std::string temp = line;
+            removeComment (temp);
+            
+            if (onlyWhitespace (temp)) {
+                continue;
+            }
 
-          removeComment (temp);
-          if (onlyWhitespace (temp)) {
-            continue;
-          }
-
-          parseLine (temp, lineNo);
+            // Vérification supplémentaire
+            if (!temp.empty()) {
+                parseLine (temp, lineNo);
+            }
         }
-
-        file.close();
+        // file.close() automatique avec RAII
       }
 
   };
