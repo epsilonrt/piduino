@@ -238,6 +238,18 @@ namespace Piduino {
 
     return d->descriptor->type;
   }
+  // ---------------------------------------------------------------------------
+  // Returns the flags of the pin
+  // These flags indicate the capabilities of the pin's device
+  unsigned int
+  Pin::flags() const {
+
+    if (type() == TypeGpio && device()) {
+
+      return device()->flags();
+    }
+    return 0;
+  }
 
   // ---------------------------------------------------------------------------
   // Returns the logical number of the pin

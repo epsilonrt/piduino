@@ -314,6 +314,19 @@ namespace Piduino {
       Type type() const;
 
       /**
+         @brief Gets the capability flags of the GPIO Pin.
+
+         If the type of pin is not Gpio, this function returns 0.
+         The capability flags indicate the features supported by the GPIO device,
+         such as toggling, pull resistor reading, alternate function reading,
+         drive strength setting, waiting for interrupts, active low configuration,
+         and debounce support.
+
+         @return The capability flags as a bitwise OR of the GpioDevice::Flags enum values.
+      */
+      unsigned int flags() const;
+
+      /**
          @brief Returns the name of the pin type.
          @return Reference to the type name.
       */
@@ -569,7 +582,7 @@ namespace Piduino {
          @return The output stream with pin information.
 
          The pin will print its details in the following format:
-         
+
          @code
          Pin iNo#1 (GPIO18) -----
             Database Id   : 10
