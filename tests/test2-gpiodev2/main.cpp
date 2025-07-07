@@ -16,6 +16,7 @@
 #include <piduino/clock.h>
 #include <piduino/tsqueue.h>
 #include <piduino/gpio.h>
+#include <piduino/gpiodevice.h>
 #include <UnitTest++/UnitTest++.h>
 
 using namespace std;
@@ -97,7 +98,9 @@ struct Line1Fixture : public GpioFixture {
     // Check if the pin and its config were correctly copied and the line is correctly configured
     CHECK_EQUAL (&pin, &line.pin());
     CHECK_EQUAL (pin.mode(), line.mode());
-    CHECK_EQUAL (pin.pull(), line.pull());
+    if (pin.flags() & GpioDevice::hasPullRead) {
+      CHECK_EQUAL (pin.pull(), line.pull());
+    }
     CHECK_EQUAL (pin.read(), line.read());
 
     line.close();
@@ -107,7 +110,9 @@ struct Line1Fixture : public GpioFixture {
   void ModePullTest() {
 
     CHECK_EQUAL (line.mode(), pin.mode());
-    CHECK_EQUAL (line.pull(), pin.pull());
+    if (pin.flags() & GpioDevice::hasPullRead) {
+      CHECK_EQUAL (line.pull(), pin.pull());
+    }
   }
 
   void WriteTest() {
@@ -163,18 +168,24 @@ TEST_FIXTURE (Line1Fixture, Test2) {
 
   line.setPull (Pin::PullUp);
   CHECK_EQUAL (Pin::PullUp, line.pull());
-  CHECK_EQUAL (Pin::PullUp, pin.pull());
+  if (pin.flags() & GpioDevice::hasPullRead) {
+    CHECK_EQUAL (Pin::PullUp, pin.pull());
+  }
 
   ModePullTest();
 
   line.setPull (Pin::PullDown);
   CHECK_EQUAL (Pin::PullDown, line.pull());
-  CHECK_EQUAL (Pin::PullDown, pin.pull());
+  if (pin.flags() & GpioDevice::hasPullRead) {
+    CHECK_EQUAL (Pin::PullDown, pin.pull());
+  }
   ModePullTest();
 
   line.setPull (Pin::PullOff);
   CHECK_EQUAL (Pin::PullOff, line.pull());
-  CHECK_EQUAL (Pin::PullOff, pin.pull());
+  if (pin.flags() & GpioDevice::hasPullRead) {
+    CHECK_EQUAL (Pin::PullOff, pin.pull());
+  }
   ModePullTest();
 
   line.setMode (Pin::ModeOutput);
@@ -184,12 +195,16 @@ TEST_FIXTURE (Line1Fixture, Test2) {
 
   line.setPull (Pin::PullUp);
   CHECK_EQUAL (Pin::PullUp, line.pull());
-  CHECK_EQUAL (Pin::PullUp, pin.pull());
+  if (pin.flags() & GpioDevice::hasPullRead) {
+    CHECK_EQUAL (Pin::PullUp, pin.pull());
+  }
   ModePullTest();
 
   line.setPull (Pin::PullDown);
   CHECK_EQUAL (Pin::PullDown, line.pull());
-  CHECK_EQUAL (Pin::PullDown, pin.pull());
+  if (pin.flags() & GpioDevice::hasPullRead) {
+    CHECK_EQUAL (Pin::PullDown, pin.pull());
+  }
   ModePullTest();
   end();
 }
