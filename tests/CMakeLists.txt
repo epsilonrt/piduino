@@ -22,15 +22,9 @@ SUBDIRLIST(TESTS ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CTEST_OUTPUT_ON_FAILURE OFF)
 find_program(SUDO_EXECUTABLE NAMES sudo)
-find_program(VALGRIND_EXECUTABLE NAMES valgrind)
 
 if(NOT SUDO_EXECUTABLE)
   message(FATAL_ERROR "sudo executable not found, please install sudo")
-endif()
-if(NOT VALGRIND_EXECUTABLE)
-  message(STATUS "valgrind executable not found, memory tests will not be run")
-else()
-  message(STATUS "valgrind executable found: ${VALGRIND_EXECUTABLE}")
 endif()
 
 if(PIDUINO_LIB_DIR)
@@ -46,10 +40,13 @@ else()
   list(APPEND LINK_OPTIONS ${PIDUINO_LIBRARIES})
 endif()
 
-# get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-# foreach(dir ${dirs})
-#   message(STATUS "dir='${dir}'")
-# endforeach()
+# Enable AddressSanitizer
+set(ASAN_FLAGS)
+list(APPEND ASAN_FLAGS -fsanitize=address)
+list(APPEND ASAN_FLAGS -fno-omit-frame-pointer)
+list(APPEND ASAN_FLAGS -g)  # Optionnel pour de meilleurs backtraces
+
+set(ASAN_LINK_FLAGS -fsanitize=address)
 
 function(add_test_incl_memcheck test)
   message(STATUS " add test ${test}")
@@ -59,70 +56,33 @@ function(add_test_incl_memcheck test)
 
   # depending on the framework, you need to link to it
   target_link_libraries(${test} ${LINK_OPTIONS} ${UNITTESTPP_LIBRARIES})
-  target_compile_options(${test} PUBLIC ${COMPILE_DEFINITIONS} ${UNITTESTPP_CFLAGS})
+  target_compile_options(${test} PUBLIC ${COMPILE_DEFINITIONS} ${UNITTESTPP_CFLAGS} ${ASAN_FLAGS})
+  target_link_options(${test} PUBLIC ${ASAN_LINK_FLAGS})
 
   # now register the executable with CTest
   if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${test}/run_as_root")
 
     add_test(NAME ${test} COMMAND ${test})
-    if(VALGRIND_EXECUTABLE)
-      message(STATUS " test ${test} will be run with valgrind")
-      # add a memory check test using valgrind
-      # this is useful to detect memory leaks and other issues
-      # see https://valgrind.org/docs/manual/manual.html
-      # --error-exitcode=1: exit with error code 1 if there are errors
-      # --tool=memcheck: use the memcheck tool
-      # --leak-check=full: perform a full leak check
-      # --errors-for-leak-kinds=definite: report definite leaks
-      # --show-leak-kinds=definite: show only definite leaks
-      # $<TARGET_FILE:${test}>: the executable to run
-      # WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}: set the working directory for the test
-      # this is useful if the test needs to access files in the current directory
-      # or if the test is run from a different directory
-      # --track-origins=yes: track the origins of uninitialized values
-      # --suppressions=${CMAKE_CURRENT_SOURCE_DIR}/valgrind.supp: suppress known issues
-      # --gen-suppressions=all: generate suppressions for all issues
-      # --error-exitcode=1: exit with error code 1 if there are errors
-      # --log-file=valgrind.log: write the log to a file
-      # --trace-children=yes: trace child processes
-      # --track-fds=yes: track file descriptors
-      # --track-fds=yes: track file descriptors
-      # --show-leak-kinds=definite: show only definite leaks
-      # --track-origins=yes: track the origins of uninitialized values
-      add_test(NAME ${test}_memchecked
-        COMMAND ${VALGRIND_EXECUTABLE}
-        --error-exitcode=1
-        --tool=memcheck
-        --leak-check=full
-        --errors-for-leak-kinds=definite
-        --show-leak-kinds=definite $<TARGET_FILE:${test}>
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-      set_tests_properties(${test}_memchecked PROPERTIES
-        LABELS "memcheck"
-        TIMEOUT 60
-      )
-    endif()
+    # AddressSanitizer is enabled by compiler flags, so just run the test
+    add_test(NAME ${test}_asan
+      COMMAND ${test}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+    set_tests_properties(${test}_asan PROPERTIES
+      LABELS "asan"
+      TIMEOUT 60
+    )
   else()
 
     message(STATUS " test ${test} requires root privileges, it will run with sudo")
     add_test(NAME ${test} COMMAND ${SUDO_EXECUTABLE} $<TARGET_FILE:${test}>
       WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-    if(VALGRIND_EXECUTABLE)
-
-      message(STATUS " test ${test} will be run with valgrind")
-      add_test(NAME ${test}_memchecked
-        COMMAND ${SUDO_EXECUTABLE} ${VALGRIND_EXECUTABLE}
-        --error-exitcode=1
-        --tool=memcheck
-        --leak-check=full
-        --errors-for-leak-kinds=definite
-        --show-leak-kinds=definite $<TARGET_FILE:${test}>
-        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-      set_tests_properties(${test}_memchecked PROPERTIES
-        LABELS "memcheck"
-        TIMEOUT 60
-      )
-    endif()
+    add_test(NAME ${test}_asan
+      COMMAND ${SUDO_EXECUTABLE} $<TARGET_FILE:${test}>
+      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+    set_tests_properties(${test}_asan PROPERTIES
+      LABELS "asan"
+      TIMEOUT 60
+    )
   endif()
 endfunction()
 
