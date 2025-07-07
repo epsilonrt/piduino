@@ -17,7 +17,7 @@
  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
  Modified 23 November 2006 by David A. Mellis
- Modified 2018 by Pascal JEAN (pascal.jean@piduino.org) for piduino library
+ Modified 2018 by Pascal JEAN (epsilonrt@gmail.com) for piduino library
  */
 
 #include <stdlib.h>
