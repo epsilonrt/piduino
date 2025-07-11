@@ -94,7 +94,12 @@
 */
 #define PIMP_DECLARE_PUBLIC(Class)
 #else
+
+#ifdef __FILE_NAME__
+#define EXCEPTION_MSG(m) std::string{} + __FILE_NAME__ + "(" + std::to_string(__LINE__) + "): [" + __func__ +"] " + m
+#else
 #define EXCEPTION_MSG(m) std::string{} + __FILE__ + "(" + std::to_string(__LINE__) + "): [" + __func__ +"] " + m
+#endif
 
 // ---------------------------------------------------------
 // PIMP_D
