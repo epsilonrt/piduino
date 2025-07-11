@@ -218,6 +218,10 @@ namespace Piduino {
               << id << cppdb::row;
         if (!res.empty()) {
           res >> num.logical >> num.mcu >> num.system >> num.chip >> num.offset;
+          if (db.board().soc().id() == SoC::H3) {
+            // Fixes temporary issue with H3 SoC: TODO modifiy database
+            num.chip = (num.chip == 0 ? 1 : 0); // swap chip 0 and 1
+          }
         }
       }
     }
