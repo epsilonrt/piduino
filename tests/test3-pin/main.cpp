@@ -28,7 +28,13 @@ namespace Bcm2835 {
 
 namespace AllWinnerHx {
 
-  const Pin::Number PinNumber1 (::Pin1, 2, 2, 7, 1, 1, 2); // AllWinner H3/H5 GPIO pin 2
+  namespace H5 {
+    const Pin::Number PinNumber1 (::Pin1, 2, 2, 7, 1, 1, 2); // AllWinner H5 GPIO pin 2
+  }
+
+  namespace H3 {
+    const Pin::Number PinNumber1 (::Pin1, 2, 2, 7, 1, 0, 2); // AllWinner H3 GPIO pin 2
+  }
   const int DriveMin = 0; // Minimum drive strength
   const int DriveMax = 3; // Maximum drive strength
   const int DriveDefault = 1; // Default drive strength
@@ -90,7 +96,18 @@ struct Line1Fixture : public GpioFixture {
         pinNumber = Bcm2835::PinNumber1;
         break;
       case SoC::Family::AllwinnerH:
-        pinNumber = AllWinnerHx::PinNumber1;
+        switch (db.board().soc().id()) {
+          case SoC::H5:
+            pinNumber = AllWinnerHx::H5::PinNumber1;
+            break;
+          case SoC::H3:
+            pinNumber = AllWinnerHx::H3::PinNumber1;
+            break;
+          default:
+            throw std::out_of_range ("Unsupported SoC: " + db.board().soc().name());
+            break;
+        }
+        // Set drive strength values for AllWinner Hx SoCs
         driveMin = AllWinnerHx::DriveMin;
         driveMax = AllWinnerHx::DriveMax;
         driveDefault = AllWinnerHx::DriveDefault;
