@@ -126,6 +126,27 @@ namespace Piduino {
     _id (-1), _gpio_id (-1), _revision (-1), _found (false), _ram (-1), _default_i2c_id (-1),
     _default_spi_id (-1), _default_uart_id (-1) {
 
+    cppdb::result res = Piduino::db <<
+                        "SELECT major,minor,revision"
+                        " FROM schema_version"
+                        " ORDER BY major DESC,minor DESC,revision DESC" << cppdb::row;
+    if (!res.empty()) {
+      int dbmajor, dbminor, dbrevision;
+
+      res >> dbmajor >> dbminor >> dbrevision;
+      if (dbmajor > PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR ||
+          (dbmajor == PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR && dbminor > PIDUINO_DATABASE_SCHEMA_VERSION_MINOR) ||
+          (dbmajor == PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR && dbminor == PIDUINO_DATABASE_SCHEMA_VERSION_MINOR && dbrevision > PIDUINO_DATABASE_SCHEMA_VERSION_REVISION)) {
+
+        throw std::runtime_error (EXCEPTION_MSG ("Database schema version is too old, please update the database."));
+      }
+    }
+    else {
+
+      throw std::runtime_error (EXCEPTION_MSG ("Database schema version not found, please update the database."));
+    }
+
+
     if (isSelectFromSystem) {
 
       // Select board from system information : revision or tag
@@ -173,8 +194,8 @@ namespace Piduino {
         int mid;
 
         res >> _id >> _name;
-        if (!res.fetch(_ram)) {
-          
+        if (!res.fetch (_ram)) {
+
           _ram = system.totalRam();
         }
 
@@ -205,8 +226,8 @@ namespace Piduino {
         int mid;
 
         res >> _id >> _name;
-        if (!res.fetch(_ram)) {
-          
+        if (!res.fetch (_ram)) {
+
           _ram = system.totalRam();
         }
 

@@ -36,5 +36,9 @@
 #define PIDUINO_VERSION_PATCH @PIDUINO_VERSION_PATCH@
 #define PIDUINO_VERSION_SHA1  @PIDUINO_VERSION_SHA1@
 
+#define PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR 0
+#define PIDUINO_DATABASE_SCHEMA_VERSION_MINOR 3
+#define PIDUINO_DATABASE_SCHEMA_VERSION_REVISION 3
+
 /* ========================================================================== */
 #endif /*PIDUINO_CONFIG_H_ defined */
