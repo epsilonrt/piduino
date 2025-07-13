@@ -33,18 +33,7 @@ repository from [piduino.org](http://apt.piduino.org), so you should do the foll
     sudo apt update
     sudo apt install libpiduino-dev piduino-utils
 
-This repository provides Piduino packages for `armhf` and `arm64` architectures.
-In the above commands, the repository is a Debian Buster distribution, but you 
-can also choose another distribution by replacing `buster` with 
-`bullseye`, `bookworm` (the stretch repository is no longer maintained)   
-For Raspbian you have to do a little different :
-
-    wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
-    echo "deb [signed-by=/usr/share/keyrings/piduino-archive-keyring.gpg] http://raspbian.piduino.org $(lsb_release -c -s) piduino" | sudo tee /etc/apt/sources.list.d/piduino.list
-    sudo apt update
-    sudo apt install libpiduino-dev piduino-utils
-
-The Raspbian repository provides Piduino packages for `armhf` and `arm64` architecture for Buster, Bullseye and Bookworm.
+This repository provides Piduino packages for `armhf` and `arm64` architectures for `buster`, `bullseye`, and `bookworm` distributions.  
 
 If you want to build from sources, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki/Build-from-source).
