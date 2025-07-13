@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <piduino/gpiopin.h>
 #include <piduino/database.h>
@@ -21,13 +21,13 @@
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                       Pin::Descriptor Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                       Pin::Descriptor Class
+  //
+  // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   bool
   Pin::Descriptor::insert () {
     cppdb::statement stat;
@@ -50,8 +50,13 @@ namespace Piduino {
       stat.exec();
       id = stat.last_insert_id();
       if (type == TypeGpio) {
-        stat = Piduino::db << "INSERT INTO pin_number(pin_id,logical_num,mcu_num,system_num,chip_num,chip_offset) "
-               "VALUES(?,?,?,?,?,?)" << id << num.logical << num.mcu << num.system << num.chip << num.offset;
+        
+        stat = Piduino::db << "INSERT INTO pin_number(pin_id,logical_num) "
+               "VALUES(?,?)" << id << num.logical;
+        if (stat.affected() > 0)  {
+          stat = Piduino::db << "INSERT INTO soc_has_pin(soc_id,pin_id,mcu_num,system_num,chip_num,chip_offset) "
+                 "VALUES(?,?,?,?,?,?)" << db.board().soc().id() << id << num.mcu << num.system << num.chip << num.offset;
+        }
       }
       for (auto n = name.begin(); n != name.end(); ++n) {
 
@@ -67,7 +72,7 @@ namespace Piduino {
     return false;
   }
 
-// ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   long long
   Pin::Descriptor::findId() const {
     cppdb::result res;
@@ -119,9 +124,9 @@ namespace Piduino {
     return -1;
   }
 
-// ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   long long
-  Pin::Descriptor::findName (const std::string & n) const {
+  Pin::Descriptor::findName (const std::string &n) const {
     cppdb::result res =
       Piduino::db << "SELECT id FROM pin_name WHERE name=?"
       << n << cppdb::row;
@@ -133,7 +138,7 @@ namespace Piduino {
     return -1;
   }
 
-// ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   bool
   Pin::Descriptor::hasModeName (Mode modeId, long long nameId) const {
     cppdb::result res =
@@ -147,9 +152,9 @@ namespace Piduino {
     return !res.empty();
   }
 
-// ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
   void
-  Pin::Descriptor::insertModeName (Mode m, const std::string & n) {
+  Pin::Descriptor::insertModeName (Mode m, const std::string &n) {
     cppdb::statement stat;
     long long name_id;
 
@@ -171,7 +176,7 @@ namespace Piduino {
     }
   }
 
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   Pin::Descriptor::Descriptor (long long pinId, int pinRow, int pinColumn) :
     type (Pin::TypeUnknown), id (pinId) {
 
@@ -190,7 +195,7 @@ namespace Piduino {
             << id << cppdb::row;
 
       if (!res.empty()) {
-        int tid;
+        int tid, sid;
 
         res >> tid;
         type = static_cast<Pin::Type> (tid);
@@ -210,12 +215,13 @@ namespace Piduino {
           res >> pin_name >> pin_mode;
           name[static_cast<Pin::Mode> (pin_mode)] = pin_name;
         }
+        sid = db.board().soc().id();
         res = Piduino::db <<
-              "SELECT logical_num,mcu_num,system_num,chip_num,chip_offset "
-              " FROM pin_number "
-              " WHERE "
-              "   pin_id=?"
-              << id << cppdb::row;
+              "SELECT pin_number.logical_num,soc_has_pin.mcu_num,soc_has_pin.system_num,soc_has_pin.chip_num,soc_has_pin.chip_offset "
+              " FROM soc_has_pin "
+              " INNER JOIN  pin_number ON pin_number.pin_id = soc_has_pin.pin_id "
+              " WHERE soc_has_pin.pin_id=? AND soc_has_pin.soc_id=?"
+              << id << sid << cppdb::row;
         if (!res.empty()) {
           res >> num.logical >> num.mcu >> num.system >> num.chip >> num.offset;
         }

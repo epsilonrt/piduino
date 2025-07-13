@@ -71,6 +71,13 @@ CREATE TABLE IF NOT EXISTS "gpio" (
 	CONSTRAINT "name_UNIQUE" UNIQUE("name"),
 	CONSTRAINT "fk_gpio_board_family1" FOREIGN KEY("board_family_id") REFERENCES "board_family"("id")
 );
+CREATE TABLE IF NOT EXISTS "gpio_chip" (
+	"id"	INTEGER NOT NULL,
+	"name"	VARCHAR(45),
+	"line_count"	INTEGER NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	CONSTRAINT "name_UNIQUE" UNIQUE("name")
+);
 CREATE TABLE IF NOT EXISTS "gpio_has_connector" (
 	"num"	INTEGER NOT NULL,
 	"gpio_id"	INTEGER NOT NULL,
@@ -113,10 +120,6 @@ CREATE TABLE IF NOT EXISTS "pin_name" (
 CREATE TABLE IF NOT EXISTS "pin_number" (
 	"pin_id"	INTEGER NOT NULL,
 	"logical_num"	INTEGER NOT NULL,
-	"mcu_num"	INTEGER NOT NULL,
-	"system_num"	INTEGER NOT NULL,
-	"chip_num"	INTEGER NOT NULL,
-	"chip_offset"	INTEGER NOT NULL,
 	PRIMARY KEY("pin_id"),
 	CONSTRAINT "fk_soc_pin_number_pin" FOREIGN KEY("pin_id") REFERENCES "pin"("id")
 );
@@ -157,6 +160,7 @@ CREATE TABLE IF NOT EXISTS "soc" (
 	"i2c_count"	INTEGER NOT NULL DEFAULT 0,
 	"spi_count"	INTEGER NOT NULL DEFAULT 0,
 	"uart_count"	INTEGER NOT NULL DEFAULT 0,
+	"chip_count"	INTEGER,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	CONSTRAINT "name_UNIQUE" UNIQUE("name"),
 	CONSTRAINT "fk_soc_manufacturer1" FOREIGN KEY("manufacturer_id") REFERENCES "manufacturer"("id"),
@@ -173,6 +177,10 @@ CREATE TABLE IF NOT EXISTS "soc_family" (
 CREATE TABLE IF NOT EXISTS "soc_has_pin" (
 	"soc_id"	INTEGER NOT NULL,
 	"pin_id"	INTEGER NOT NULL,
+	"mcu_num"	INTEGER NOT NULL,
+	"system_num"	INTEGER NOT NULL,
+	"chip_num"	INTEGER NOT NULL,
+	"chip_offset"	INTEGER NOT NULL,
 	CONSTRAINT "fk_soc_has_pin_pin" FOREIGN KEY("pin_id") REFERENCES "pin"("id"),
 	CONSTRAINT "fk_soc_has_pin_soc" FOREIGN KEY("soc_id") REFERENCES "soc"("id")
 );

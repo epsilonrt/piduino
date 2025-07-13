@@ -38,7 +38,7 @@
 
 #define PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR 0
 #define PIDUINO_DATABASE_SCHEMA_VERSION_MINOR 3
-#define PIDUINO_DATABASE_SCHEMA_VERSION_REVISION 3
+#define PIDUINO_DATABASE_SCHEMA_VERSION_REVISION 4
 
 /* ========================================================================== */
 #endif /*PIDUINO_CONFIG_H_ defined */
