@@ -134,9 +134,9 @@ namespace Piduino {
       int dbmajor, dbminor, dbrevision;
 
       res >> dbmajor >> dbminor >> dbrevision;
-      if (dbmajor > PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR ||
-          (dbmajor == PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR && dbminor > PIDUINO_DATABASE_SCHEMA_VERSION_MINOR) ||
-          (dbmajor == PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR && dbminor == PIDUINO_DATABASE_SCHEMA_VERSION_MINOR && dbrevision > PIDUINO_DATABASE_SCHEMA_VERSION_REVISION)) {
+      if (dbmajor != PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR ||
+          (dbmajor == PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR && dbminor != PIDUINO_DATABASE_SCHEMA_VERSION_MINOR) ||
+          (dbmajor == PIDUINO_DATABASE_SCHEMA_VERSION_MAJOR && dbminor == PIDUINO_DATABASE_SCHEMA_VERSION_MINOR && dbrevision != PIDUINO_DATABASE_SCHEMA_VERSION_REVISION)) {
 
         throw std::runtime_error (EXCEPTION_MSG ("Database schema version is too old, please update the database."));
       }

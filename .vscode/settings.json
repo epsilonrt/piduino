@@ -60,7 +60,8 @@
     "streambuf": "cpp",
     "thread": "cpp",
     "cinttypes": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "*.in": "cpp"
   },
   "cmake.ctestArgs": [
     "-V"
