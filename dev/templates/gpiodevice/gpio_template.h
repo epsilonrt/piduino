@@ -66,10 +66,6 @@ namespace Piduino {
       // timeout_ms = -1 for infinite wait
       int waitForInterrupt (const Pin *pin, Pin::Edge edge, int timeout_ms);
 
-      // may be redefined, in this case set the flag hasIrq
-      bool attachInterrupt (const Pin *pin, Pin::Isr isr, Pin::Edge edge, void *userData);
-      void detachInterrupt (const Pin *pin);
-
       // may be redefined, in this case set the flag hasDebounce
       void setDebounce (const Pin *pin, uint32_t debounce_ms);
       uint32_t debounce (const Pin *pin) const;

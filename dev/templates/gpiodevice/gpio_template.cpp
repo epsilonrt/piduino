@@ -48,7 +48,6 @@ namespace Piduino {
     PIMP_D (GpioTemplate);
 
     // place the code to initialize the device
-
   }
 
   // ---------------------------------------------------------------------------
@@ -59,7 +58,7 @@ namespace Piduino {
   GpioTemplate::preferedAccessLayer() const {
 
     // replace this with the prefered access layer for your platform
-    return Pin::AccessLayerUnk;
+    return AccessLayerUnk;
   }
 
 
@@ -229,30 +228,9 @@ namespace Piduino {
     PIMP_D (GpioTemplate);
 
     // place here the code to wait for an interrupt on the pin
-    if (d->setPinEdge (pin, edge)) {
-      return d->waitForInterrupt (pin, timeout_ms);
-    }
     return -1;
   }
 
-  // -----------------------------------------------------------------------------
-  bool GpioTemplate::attachInterrupt (const Pin *pin, Pin::Isr isr, Pin::Edge edge, void *userData) {
-    PIMP_D (GpioTemplate);
-
-    // place here the code to attach an interrupt to the pin
-    if (d->setPinEdge (pin, edge)) {
-      return d->attachInterrupt (pin, isr, userData);
-    }
-    return false;
-  }
-
-  // -----------------------------------------------------------------------------
-  void GpioTemplate::detachInterrupt (const Pin *pin) {
-    PIMP_D (GpioTemplate);
-
-    // place here the code to detach the interrupt from the pin
-    d->detachInterrupt (pin);
-  }
 
   // -----------------------------------------------------------------------------
   //
@@ -270,94 +248,18 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   GpioTemplate::Private::~Private() = default;
 
-
-  // -----------------------------------------------------------------------------
-  bool GpioTemplate::Private::attachInterrupt (const Pin *pin, Pin::Isr isr, void *userData) {
-    // place here the code to attach an interrupt to the pin
-    // this function should create a thread that waits for the interrupt
-    // and calls the isr function when the interrupt occurs
-    std::thread &thread = isrThreadOfPin (pin);
-
-    if (!thread.joinable()) {
-      std::promise<void> &kill = killThreadOfPin (pin);
-
-      // Fetch std::future object associated with promise
-      std::future<void> running = kill.get_future();
-      thread = std::thread (Private::isrFunc, std::move (running), pin, this, isr, userData);
-      return true;
-    }
-    return false;
-  }
-
-  // -----------------------------------------------------------------------------
-  void GpioTemplate::Private::detachInterrupt (const Pin *pin) {
-    // place here the code to detach the interrupt from the pin
-    // this function should stop the thread that waits for the interrupt
-
-    if (isrThread.find (irqLine (pin)) == isrThread.end()) {
-      std::thread &thread = isrThreadOfPin (pin);
-      std::promise<void> &kill = killThreadOfPin (pin);
-
-      if (thread.joinable()) {
-
-        // Set the value in promise
-        kill.set_value();
-        thread.join();
-        // is not needed anymore ?
-        // thread = std::thread();
-        // kill = std::promise<void>();
-      }
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // static
-  void *GpioTemplate::Private::isrFunc (std::future<void> run, const Pin *pin, GpioTemplate::Private *dev, Pin::Isr userIsr, void *userData) {
-    int ret;
-    int timeout = 10; // 10 ms
-
-    try {
-
-      while (run.wait_for (std::chrono::milliseconds (1)) == std::future_status::timeout) { // check if the thread is still running
-
-        ret = dev->waitForInterrupt (pin, timeout); // wait for an event, 10 ms timeout
-        if (ret > 0) {
-          // a new event is available
-          userIsr (userData);
-        }
-        else if (ret < 0) {
-          // error occurred
-          throw std::system_error (errno, std::system_category(), EXCEPTION_MSG ("waitForInterrupt() failed"));
-        }
-      }
-    }
-    catch (std::system_error &e) {
-
-      std::cerr << e.what() << "(code " << e.code() << ")" << std::endl;
-      std::terminate();
-    }
-    catch (...) {
-
-    }
-
-    #ifndef NDEBUG
-    std::cout << std::endl << __FUNCTION__ << " terminated" << std::endl;
-    #endif
-    return 0;
-  }
-
   // -------------------------------------------------------------------------
   // static
   // change this to match the modes with your device.
-  const std::map<Pin::Mode, unsigned int> GpioTemplate::Private::mode2int = {
-    {Pin::ModeInput, 0},
-    {Pin::ModeOutput, 1},
-    {Pin::ModeAlt0, 4},
-    {Pin::ModeAlt1, 5},
-    {Pin::ModeAlt2, 6},
-    {Pin::ModeAlt3, 7},
-    {Pin::ModeAlt4, 3},
-    {Pin::ModeAlt5, 2},
-  };
+  // const std::map<Pin::Mode, unsigned int> GpioTemplate::Private::mode2int = {
+  //   {Pin::ModeInput, 0},
+  //   {Pin::ModeOutput, 1},
+  //   {Pin::ModeAlt0, 4},
+  //   {Pin::ModeAlt1, 5},
+  //   {Pin::ModeAlt2, 6},
+  //   {Pin::ModeAlt3, 7},
+  //   {Pin::ModeAlt4, 3},
+  //   {Pin::ModeAlt5, 2},
+  // };
 }
 /* ========================================================================== */
