@@ -85,10 +85,10 @@ namespace Piduino {
       /**
          @brief Constructeur
          @param gpioDatabaseId identifiant du GPIO en base de données
-         @param socFamilyId famille du SoC de la carte
+         @param soc SoC de la carte
          @param layer choix de la couche d'accès
       */
-      Gpio (long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer);
+      Gpio (long long gpioDatabaseId, const SoC & soc, AccessLayer layer);
 
       /**
          @brief Destructeur

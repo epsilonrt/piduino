@@ -23,7 +23,7 @@ namespace Piduino {
   class Gpio::Private {
 
     public:
-      Private (Gpio *q, long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer);
+      Private (Gpio *q, long long gpioDatabaseId, const SoC & soc, AccessLayer layer);
       virtual ~Private();
 
       Gpio *const q_ptr;

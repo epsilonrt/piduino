@@ -32,26 +32,31 @@ namespace Piduino {
   // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  Gpio::Private::Private (Gpio *q, long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer) :
+  Gpio::Private::Private (Gpio *q, long long gpioDatabaseId, const SoC &soc, AccessLayer layer) :
     q_ptr (q), roc (true), isopen (false), accesslayer (layer), device (nullptr),
     numbering (Pin::NumberingUnknown) {
 
     descriptor = std::make_shared<Descriptor> (gpioDatabaseId);
 
-    switch (socFamilyId) {
+    switch (soc.id()) {
         #if PIDUINO_DRIVER_BCM2835 != 0
-      case SoC::Family::BroadcomBcm2835 :
+      case SoC::Bcm2708 :
+      case SoC::Bcm2709 :
+      case SoC::Bcm2710 :
+      case SoC::Bcm2711 :
         device = new Bcm2835Gpio();
         break;
         #endif /* PIDUINO_DRIVER_BCM2835 */
+
         #if PIDUINO_DRIVER_ALLWINNERH != 0
-      case SoC::Family::AllwinnerH :
+      case SoC::H3 :
+      case SoC::H5 :
         device = new AllWinnerHxGpio();
         break;
         #endif /* PIDUINO_DRIVER_ALLWINNERH */
+
       default:
-        throw std::system_error (ENOTSUP, std::system_category(),
-                                 "It seems that this system is not supported !");
+        throw std::system_error (ENOTSUP, std::system_category(), EXCEPTION_MSG("Unsupported SoC"));
         break;
     }
 
@@ -76,8 +81,8 @@ namespace Piduino {
   Gpio::Gpio (Gpio::Private &dd) : d_ptr (&dd) {}
 
   // ---------------------------------------------------------------------------
-  Gpio::Gpio (long long gpioDatabaseId, SoC::Family::Id socFamilyId, AccessLayer layer) :
-    d_ptr (new Private (this, gpioDatabaseId, socFamilyId, layer)) {
+  Gpio::Gpio (long long gpioDatabaseId, const SoC &soc, AccessLayer layer) :
+    d_ptr (new Private (this, gpioDatabaseId, soc, layer)) {
     PIMP_D (Gpio);
 
     // Création des connecteurs à partir des descripteurs
@@ -96,7 +101,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Gpio::Gpio (AccessLayer layer) :
-    Gpio (db.board().gpioId(), db.board().soc().family().id(), layer) {}
+    Gpio (db.board().gpioId(), db.board().soc(), layer) {}
 
   // ---------------------------------------------------------------------------
   Gpio::~Gpio() {
