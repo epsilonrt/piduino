@@ -328,7 +328,7 @@ namespace Piduino {
       if (cfg.keyExists ("Serial")) {
 
         str = cfg.value ("Serial");
-        _sn = std::stoll (str, nullptr, 16);
+        _sn = std::stoull (str, nullptr, 16);
       }
 
       if (cfg.keyExists ("Features")) {
