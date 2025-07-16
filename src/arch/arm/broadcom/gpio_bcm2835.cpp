@@ -95,7 +95,7 @@ namespace Piduino {
     unsigned int r;
 
     g = pin->mcuNumber();
-    r = d->readReg (GFPSEL0 + g / 10) >> ( (g % 10) * 3) & 7;
+    r = d->iomap.atomicRead (GFPSEL0 + g / 10) >> ( (g % 10) * 3) & 7;
     m = Private::int2mode.at (r);
     /*
         - BCM12 ALT0 -> PWM0
@@ -139,11 +139,11 @@ namespace Piduino {
     offset = GFPSEL0 + g / 10;
     lsr = (g % 10) * 3;
 
-    rval = d->readReg (offset);
+    rval = d->iomap.atomicRead (offset);
     rval &= ~ (7 << lsr); // clear
     mval = Private::mode2int.at (m);
     rval |= mval << lsr;
-    d->writeReg (offset, rval);
+    d->iomap.atomicWrite (offset, rval);
   }
 
   // -------------------------------------------------------------------------
@@ -153,7 +153,7 @@ namespace Piduino {
     if (Private::is2711) {
       PIMP_D (const Bcm2835Gpio);
       int g = pin->mcuNumber();
-      uint32_t v = (d->readReg (GPPUPPDN0 + (g >> 4)) >> ( (g & 0xf) << 1)) & 0x3;
+      uint32_t v = (d->iomap.atomicRead (GPPUPPDN0 + (g >> 4)) >> ( (g & 0xf) << 1)) & 0x3;
 
       /*
         00: Pull-up/down disable
@@ -201,10 +201,10 @@ namespace Piduino {
           return; // illegal
       }
 
-      pullbits = d->readReg (r);
+      pullbits = d->iomap.atomicRead (r);
       pullbits &= ~ (3 << pullshift);
       pullbits |= (pval << pullshift);
-      d->writeReg (r, pullbits);
+      d->iomap.atomicWrite (r, pullbits);
     }
     else {
       size_t pclk = GPPUDCLK0;
@@ -247,12 +247,12 @@ namespace Piduino {
         5. Write to GPPUD to remove the control signal
         6. Write to GPPUDCLK0/1 to remove the clock
       */
-      d->writeReg (GPPUD, pval);
+      d->iomap.atomicWrite (GPPUD, pval);
       Clock::delayMicroseconds (10);
-      d->writeReg (pclk, 1 << g);
+      d->iomap.atomicWrite (pclk, 1 << g);
       Clock::delayMicroseconds (10);
-      d->writeReg (GPPUD, 0);
-      d->writeReg (pclk, 0);
+      d->iomap.atomicWrite (GPPUD, 0);
+      d->iomap.atomicWrite (pclk, 0);
     }
   }
 
@@ -268,7 +268,7 @@ namespace Piduino {
       offset++;
       g -= 32;
     }
-    d->writeReg (offset, 1 << g);
+    d->iomap.atomicWrite (offset, 1 << g);
   }
 
   // -------------------------------------------------------------------------
@@ -284,7 +284,7 @@ namespace Piduino {
       g -= 32;
     }
 
-    return (d->readReg (offset) & (1 << g)) != 0;
+    return (d->iomap.atomicRead (offset) & (1 << g)) != 0;
   }
 
   // -------------------------------------------------------------------------

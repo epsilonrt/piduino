@@ -51,7 +51,6 @@ namespace Piduino {
         uint32_t DRV[2];
         uint32_t PUL[2];
       };
-      typedef struct PioBank PioBank;
 
       void debugPrintBank (const PioBank *b) const;
       void debugPrintAllBanks () const;

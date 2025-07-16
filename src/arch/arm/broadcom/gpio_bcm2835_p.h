@@ -32,14 +32,6 @@ namespace Piduino {
       off_t piobase;
       IoMap  iomap;
 
-      inline uint32_t readReg (size_t offset) const {
-        return *iomap.io (offset);
-      }
-
-      inline void writeReg (size_t offset, uint32_t value) {
-        *iomap.io (offset) = value;
-      }
-
       static const std::map<unsigned int, Pin::Mode> int2mode;
       static const std::map<Pin::Mode, unsigned int> mode2int;
       static const std::map<Pin::Mode, std::string> modes;
