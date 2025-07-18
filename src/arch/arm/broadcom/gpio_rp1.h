@@ -17,42 +17,57 @@
 #pragma once
 
 #include <piduino/gpiodevice.h>
-#include "gpio_rp1.h"
 
 namespace Piduino {
 
   // -------------------------------------------------------------------------
   //
-  //                        Bcm2835Gpio Class
+  //                        Rp1Gpio Class
   //
   // -------------------------------------------------------------------------
-  class Bcm2835Gpio : public GpioDevice {
+  class Rp1Gpio : public GpioDevice {
 
     public:
-      Bcm2835Gpio();
-      virtual ~Bcm2835Gpio();
+      Rp1Gpio();
+      virtual ~Rp1Gpio();
 
+      // Mandatory API
+      // ----------------------------------------------------------------
       bool open();
       void close();
       AccessLayer preferedAccessLayer() const;
       unsigned int flags() const;
 
       void setMode (const Pin *pin, Pin::Mode m);
-      void setPull (const Pin *pin, Pin::Pull p);
-      void write (const Pin *pin, bool v);
-
-      bool read (const Pin *pin) const;
       Pin::Mode mode (const Pin *pin) const;
-      Pin::Pull pull (const Pin *pin) const;
+
+      void write (const Pin *pin, bool v);
+      bool read (const Pin *pin) const;
+
+      void setPull (const Pin *pin, Pin::Pull p);
 
       const std::map<Pin::Mode, std::string> &modes() const;
 
+      // Optional API
+      // ----------------------------------------------------------------
+
+      // may be redefined, in this case set the flag hasPullRead
+      Pin::Pull pull (const Pin *pin) const;
+
+      // may be redefined, in this case set the flag hasDrive
+      void setDrive (const Pin *pin, int d);
+      int drive (const Pin *pin) const;
+
     protected:
+      // do not remove the following lines
+      // they are used for the private implementation idiom
+      // all private data and methods are declared in the Private class in the _p.h file
+      // see https://github.com/epsilonrt/pImpl
       class Private;
-      Bcm2835Gpio (Private &dd);
+      Rp1Gpio (Private &dd);
 
     private:
-      PIMP_DECLARE_PRIVATE (Bcm2835Gpio)
+      PIMP_DECLARE_PRIVATE (Rp1Gpio)
   };
 }
 /* ========================================================================== */

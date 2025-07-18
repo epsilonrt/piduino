@@ -86,6 +86,7 @@ namespace Piduino {
         H3,
         H5,
         Bcm2711,
+        Bcm2712,
         // Add New item here and update soc table in database !
 
         //---

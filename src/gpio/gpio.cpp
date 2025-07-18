@@ -46,6 +46,10 @@ namespace Piduino {
       case SoC::Bcm2711 :
         device = new Bcm2835Gpio();
         break;
+        
+      case SoC::Bcm2712 :
+        device = new Rp1Gpio();
+        break;
         #endif /* PIDUINO_DRIVER_BCM2835 */
 
         #if PIDUINO_DRIVER_ALLWINNERH != 0
