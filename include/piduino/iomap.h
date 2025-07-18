@@ -21,57 +21,71 @@
 #include <piduino/global.h>
 
 /**
-    @defgroup piduino_iomap Accès mémoire IO
+  @defgroup piduino_iomap IO Memory Access
 
-    Ce module fournit les fonctions pour accéder à la mémoire où sont implantés
-    les coupleurs d'entrée-sortie
-    @{
+  This module provides functions to access the memory where the input-output couplers are implemented
+  @{
 */
 
 namespace Piduino {
 
   /**
-     @class IoMap
-     @brief Projection mémoire
+    @class IoMap
+    @brief Memory mapping
   */
   class IoMap {
     public:
       /**
-         @brief Constructeur
+        @brief Constructor
       */
       IoMap ();
 
       /**
-         @brief Destructeur
+        @brief Destructor
       */
       virtual ~IoMap();
 
-      /**
-         @brief Ouverture d'une projection mémoire
+      bool open (const char *device, size_t size, off_t base = 0);
 
-         @param base adresse de base de la zone à projeter, doit être un multiple
-         de pageSize().
-         @param size taille de la zone à projeter en octets
-         @return true si ouverte, false si erreur
+      /**
+        @brief Open a memory mapping on /dev/mem
+
+        @param base base address of the area to be mapped, must be a multiple of pageSize().
+        @param size size of the area to be mapped in bytes
+        @return true if opened, false if error
       */
       bool open (off_t base, size_t size);
 
       /**
-         @brief Fermeture d'une projection mémoire
+        @brief Open a GPIO memory mapping for RP1
+
+        @param gpio_bank GPIO bank (0-4 for /dev/gpiomem0 to /dev/gpiomem4)
+        @param size size of the area to be mapped in bytes
+        @return true if opened, false if error
+
+        @exception std::system_error if the open the device or memory mapping fails.
+      */
+      bool openGpioMem (int gpio_bank, size_t size);
+
+      /**
+        @brief Close a memory mapping
       */
       void close();
 
       /**
-         @brief Pointeur d'accès aux registres
-         @param offset offset à l'intérieur de la zone en sizeof(int)
-         @return le pointeur sur le registre, NULL si erreur
+        @brief Pointer to access registers
+        @param offset offset inside the area in sizeof(int)
+        @return pointer to the register, NULL if error
       */
-      volatile uint32_t *io (size_t offset = 0) const;
+      volatile uint32_t *io (size_t offset = 0) const {
+
+        return static_cast<volatile uint32_t *> (_map) + offset;
+      }
 
       /**
-         @brief Pointeur d'accès aux registres
-         @param offset offset à l'intérieur de la zone en sizeof(int)
-         @return le pointeur sur le registre, NULL si erreur
+        @brief Pointer to access registers
+        @param offset offset inside the area in sizeof(int)
+        @return pointer to the register, NULL if error
       */
       volatile uint32_t *operator [] (size_t offset) const {
 
@@ -79,12 +93,33 @@ namespace Piduino {
       }
 
       /**
-         @brief Lecture atomique d'un registre
-         @param offset offset à l'intérieur de la zone en sizeof(int)
-         @return la valeur lue
+       * @brief Read a register
+       * @param offset offset inside the area in sizeof(int)
+       * @return the value read
+       *
+       * This function reads a register at the specified offset and returns its value.
+       * It is a convenience method that allows direct access to the memory-mapped registers.
+       */
+      inline uint32_t read (size_t offset) const {
+        return *io (offset);
+      }
 
-         This function reads a register atomically, ensuring that the read operation
-         is not interrupted by other threads or processes.
+      /**
+        @brief Write a value to a register
+        @param offset offset inside the area in sizeof(int)
+        @param value value to write
+      */
+      inline void write (size_t offset, uint32_t value) {
+        *io (offset) = value;
+      }
+
+      /**
+        @brief Atomic read of a register
+        @param offset offset inside the area in sizeof(int)
+        @return the value read
+
+        This function reads a register atomically, ensuring that the read operation
+        is not interrupted by other threads or processes.
       */
       inline uint32_t atomicRead (size_t offset) const {
         volatile uint32_t *reg = io (offset);
@@ -92,14 +127,14 @@ namespace Piduino {
       }
 
       /**
-         @brief Écriture atomique d'un registre
-         @param offset offset à l'intérieur de la zone en sizeof(int)
-         @param value valeur à écrire
+        @brief Atomic write to a register
+        @param offset offset inside the area in sizeof(int)
+        @param value value to write
 
-         This function writes a value to a register atomically, ensuring that the write operation
-         is not interrupted by other threads or processes.
-         It uses the C11 atomic operations to ensure memory consistency.
-         @note This function is useful for ensuring that hardware registers are updated safely in a multi-threaded environment.
+        This function writes a value to a register atomically, ensuring that the write operation
+        is not interrupted by other threads or processes.
+        It uses C11 atomic operations to ensure memory consistency.
+        @note This function is useful for ensuring that hardware registers are updated safely in a multi-threaded environment.
       */
       inline void atomicWrite (size_t offset, uint32_t value) {
         volatile uint32_t *reg = io (offset);
@@ -107,37 +142,37 @@ namespace Piduino {
       }
 
       /**
-         @brief Indique si une projection mémoire est ouverte
+        @brief Indicates if a memory mapping is open
       */
-      bool isOpen() const {
+      inline bool isOpen() const {
 
         return _fd >= 0;
       }
 
       /**
-         @brief Adresse de base de la zone projetée
+        @brief Base address of the mapped area
       */
       inline off_t base() const {
         return _base;
       }
 
       /**
-         @brief Taille de la zone projetée
+        @brief Size of the mapped area
       */
       inline size_t size() const {
         return _size;
       }
 
       /**
-         @brief Taille d'une page de projection
+        @brief Size of a mapping page
       */
       static size_t pageSize();
 
     private:
-      off_t _base;  /*< adresse de base de la zone */
-      size_t _size; /*< Taille de la zone */
-      int _fd;      /*< descripteur d'accès à la zone mémoire */
-      void *_map;   /*< pointeur de la zone */
+      off_t _base;  /*< base address of the area */
+      size_t _size; /*< size of the area */
+      int _fd;      /*< file descriptor for memory area */
+      void *_map;   /*< pointer to the area */
   };
 }
 /**
