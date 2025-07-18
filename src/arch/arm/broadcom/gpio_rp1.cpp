@@ -48,11 +48,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Rp1Gpio::Rp1Gpio () :
-    GpioDevice (*new Private (this)) {
-    PIMP_D (Rp1Gpio);
-
-    // place the code to initialize the device
-  }
+    GpioDevice (*new Private (this)) {}
 
   // ---------------------------------------------------------------------------
   Rp1Gpio::~Rp1Gpio() = default;
@@ -61,16 +57,15 @@ namespace Piduino {
   AccessLayer
   Rp1Gpio::preferedAccessLayer() const {
 
-    // replace this with the prefered access layer for your platform
     return AccessLayerAll;
   }
 
   // -------------------------------------------------------------------------
   unsigned int
   Rp1Gpio::flags() const {
+    PIMP_D (const Rp1Gpio);
 
-    return  hasAltRead | hasPullRead;
-    // return  hasAltRead;
+    return  d->flags; // return the flags for the GPIO device
   }
 
   // -------------------------------------------------------------------------
@@ -81,17 +76,19 @@ namespace Piduino {
       PIMP_D (Rp1Gpio);
 
       std::string pcieDevice = d->findPCIeDevice();
-      if (pcieDevice.empty()) {
+      if (pcieDevice.empty() || (d->flags & useGpioMem)) {
 
         // No PCIe device found, use /dev/gpiomem
         d->iomap.openGpioMem (0, GpioMemBlockSize); // throw std::system_error if error
         d->gpio = d->iomap.io(); // pointer to the GPIO registers
+        d->flags |= useGpioMem; // set the flag to use /dev/gpiomem
       }
       else {
 
         // PCIe access
         d->iomap.open (pcieDevice.c_str(), PCIeBlockSize); // throw std::system_error if error
         d->gpio = d->iomap[PCIeGpioOffset]; // pointer to the GPIO registers
+        d->flags &= ~useGpioMem; // clear the flag to use /dev/gpiomem
       }
       d->pad = &d->gpio[PadsOffset]; // RP1 start adress of map memory for pad
       d->rio  = &d->gpio[RioOffset]; // RP1 start adress of map memory for rio
@@ -128,8 +125,8 @@ namespace Piduino {
 
     if (fsel == FselGpio) {
 
-      uint32_t oe = d->statusReg (pin->mcuNumber()) & RP1_GPIO_STATUS_OE;
-      m = (oe == RP1_GPIO_STATUS_OE) ? Pin::ModeOutput : Pin::ModeInput;
+      uint32_t oe = d->statusReg (pin->mcuNumber()) & GPIO_STATUS_OE;
+      m = (oe == GPIO_STATUS_OE) ? Pin::ModeOutput : Pin::ModeInput;
     }
     return m;
   }
@@ -140,7 +137,46 @@ namespace Piduino {
     PIMP_D (Rp1Gpio);
 
     int p = pin->mcuNumber();
-    uint32_t fsel = Private::mode2fsel.at (m);
+
+    switch (m) {
+      case Pin::ModeInput:
+        d->setPadReg (p, (p <= 8) ? GPIO_PAD_DEFAULT_0TO8 : GPIO_PAD_DEFAULT_FROM9);
+        d->setCtrlReg (p, FselGpio | RP1_GPIO_CTRL_DEBOUNCE_DEFAULT);
+        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p;
+        break;
+      case Pin::ModeOutput:
+        d->setPadReg (p, (p <= 8) ? GPIO_PAD_DEFAULT_0TO8 : GPIO_PAD_DEFAULT_FROM9);
+        d->setCtrlReg (p, FselGpio | RP1_GPIO_CTRL_DEBOUNCE_DEFAULT);
+        d->rio[GPIO_RIO_OE + GPIO_RIO_SET_OFFSET] = 1 << p;
+        break;
+      case Pin::ModeDisabled:
+        d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9);
+        d->setCtrlReg (p, RP1_GPIO_CTRL_IRQRESET | FselNoneHw | RP1_GPIO_CTRL_DEBOUNCE_DEFAULT);
+        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p;
+        break;
+      case Pin::ModeAlt0:
+      case Pin::ModeAlt1:
+      case Pin::ModeAlt2:
+      case Pin::ModeAlt3:
+      case Pin::ModeAlt4:
+      // case Pin::ModeAlt5: // GPIO alternate functions, using ModeInput or ModeOutput ?
+      case Pin::ModeAlt6:
+      case Pin::ModeAlt7:
+      case Pin::ModeAlt8: {
+        // Alternate functions, set the function select bits
+        // and set the pad register to hardware mode
+        d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9);
+        uint32_t fsel = Private::mode2fsel.at (m); // Get the function select value for the mode
+        uint32_t ctrl = d->ctrlReg (p) & ~RP1_GPIO_CTRL_FUNCSEL_MASK; // Clear the function select bits
+        ctrl |= fsel; // Set the new function select value
+        d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9); // Set the pad register to hardware mode
+        d->setCtrlReg (p, ctrl); // Write back the modified control register
+        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p; // Clear the output enable bit for the pin
+      }
+      break;
+      default:
+        break;
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -148,22 +184,21 @@ namespace Piduino {
   Rp1Gpio::setPull (const Pin *pin, Pin::Pull p) {
     PIMP_D (Rp1Gpio);
 
-    // int p = pin->mcuNumber();
-    // unsigned int pullbits = pads[1 + pin] & RP1_INV_PUD_MASK; // remove bits
-    // switch (pud) {
-    //   case PUD_OFF:
-    //     pads[1 + pin] = pullbits;
-    //     break;
-    //   case PUD_UP:
-    //     pads[1 + pin] = pullbits | RP1_PUD_UP;
-    //     break;
-    //   case PUD_DOWN:
-    //     pads[1 + pin] = pullbits | RP1_PUD_DOWN;
-    //     break;
-    //   default:
-    //     return ; /* An illegal value */
-    // }
-
+    uint32_t pull = d->padReg (pin->mcuNumber()) & ~GPIO_PAD_PULL_MASK; // remove bits
+    switch (p) {
+      case Pin::PullOff:
+        pull |= GPIO_PAD_PULL_OFF;
+        break;
+      case Pin::PullDown:
+        pull |= GPIO_PAD_PULL_DOWN;
+        break;
+      case Pin::PullUp:
+        pull |= GPIO_PAD_PULL_UP;
+        break;
+      default:
+        return; // An illegal value or unknown pull configuration
+    }
+    d->setPadReg (pin->mcuNumber(), pull); // write back the modified pad register
   }
 
   // -------------------------------------------------------------------------
@@ -172,7 +207,7 @@ namespace Piduino {
     PIMP_D (Rp1Gpio);
 
     /* Assume the pin is already an output */
-    d->rio[RP1_RIO_OUT + (v ? RP1_SET_OFFSET : RP1_CLR_OFFSET)] = (1 << pin->mcuNumber());
+    d->rio[GPIO_RIO_OUT + (v ? GPIO_RIO_SET_OFFSET : GPIO_RIO_CLR_OFFSET)] = (1 << pin->mcuNumber());
   }
 
   // -------------------------------------------------------------------------
@@ -180,7 +215,7 @@ namespace Piduino {
   Rp1Gpio::read (const Pin *pin) const {
     PIMP_D (const Rp1Gpio);
 
-    return !! (d->rio[RP1_RIO_IN] & (1 << pin->mcuNumber()));
+    return !! (d->rio[GPIO_RIO_IN] & (1 << pin->mcuNumber()));
   }
 
   // -------------------------------------------------------------------------
@@ -202,12 +237,12 @@ namespace Piduino {
     PIMP_D (const Rp1Gpio);
 
     uint32_t pull = d->padReg (pin->mcuNumber());
-    switch (pull & RP1_PAD_PULL_MASK) {
-      case RP1_PAD_PULL_OFF:
+    switch (pull & GPIO_PAD_PULL_MASK) {
+      case GPIO_PAD_PULL_OFF:
         return Pin::PullOff;
-      case RP1_PAD_PULL_DOWN:
+      case GPIO_PAD_PULL_DOWN:
         return Pin::PullDown;
-      case RP1_PAD_PULL_UP:
+      case GPIO_PAD_PULL_UP:
         return Pin::PullUp;
       default:
         break;
@@ -221,8 +256,8 @@ namespace Piduino {
     PIMP_D (Rp1Gpio);
     uint32_t pad = d->padReg (pin->mcuNumber());
 
-    pad &= ~RP1_PAD_DRIVE_MASK; // Clear the drive bits
-    pad |= (drive << RP1_PAD_DRIVE_LSB) & RP1_PAD_DRIVE_MASK; // Set the new drive value
+    pad &= ~GPIO_PAD_DRIVE_MASK; // Clear the drive bits
+    pad |= (drive << GPIO_PAD_DRIVE_LSB) & GPIO_PAD_DRIVE_MASK; // Set the new drive value
     d->setPadReg (pin->mcuNumber(), pad); // Write back the modified pad register
   }
 
@@ -232,7 +267,7 @@ namespace Piduino {
     PIMP_D (const Rp1Gpio);
 
     uint32_t drive = d->padReg (pin->mcuNumber());
-    drive = (drive & RP1_PAD_DRIVE_MASK) >> RP1_PAD_DRIVE_LSB;
+    drive = (drive & GPIO_PAD_DRIVE_MASK) >> GPIO_PAD_DRIVE_LSB;
     return drive;
   }
 
@@ -253,12 +288,12 @@ namespace Piduino {
     {Pin::ModeAlt2, "alt2"},
     {Pin::ModeAlt3, "alt3"},
     {Pin::ModeAlt4, "alt4"},
-    {Pin::ModeAlt5, "alt5"},
+    // {Pin::ModeAlt5, "alt5"},
     {Pin::ModeAlt6, "alt6"},
     {Pin::ModeAlt7, "alt7"},
     {Pin::ModeAlt8, "alt8"},
     {Pin::ModeDisabled, "off"},
-    {Pin::ModePwm, "pwm"}
+    // {Pin::ModePwm, "pwm"}
   };
 
   // -------------------------------------------------------------------------
@@ -299,9 +334,8 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Rp1Gpio::Private::Private (Rp1Gpio *q) :
-    GpioDevice::Private (q) {
+    GpioDevice::Private (q), flags (hasAltRead | hasPullRead | hasDrive) {
 
-    // place here the code to initialize the private data
   }
 
   // ---------------------------------------------------------------------------

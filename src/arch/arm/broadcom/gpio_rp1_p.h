@@ -18,7 +18,7 @@
 
 #include <vector>
 #include <string>
-#include <piduino/iomap.h> // only if /dev/mem will be necessary
+#include <piduino/iomap.h>
 #include "gpio_rp1.h"
 #include "../../../gpio/gpiodevice_p.h"
 
@@ -34,14 +34,16 @@ namespace Piduino {
       Private (Rp1Gpio *q);
       virtual ~Private();
 
-      // place here the code to declare the private data
+      // the private data
       IoMap  iomap;
       volatile uint32_t *gpio;  ///< Pointer to the GPIO registers.
       volatile uint32_t *pad;  ///< Pointer to the pad registers.
       volatile uint32_t *rio; ///< Pointer to the RIO registers.
+      unsigned int flags; ///< Flags for the GPIO device.
 
-      // place here the code to declare the private methods
+      // the private methods
       std::string findPCIeDevice();
+
       inline void setCtrlReg (int p, uint32_t v) {
         gpio[p * 2 + 1] = v;
       }
@@ -58,14 +60,10 @@ namespace Piduino {
         return pad[p + 1]; // 1 offset due to the voltage select register
       }
 
-
-      // place here the code to declare the private static methods
+      // the private static methods
       static bool isPCIeFileContain (const char *dirname, const char *filename, const char *content);
 
-
-      // ----------------------------------------------------------------
-
-      // do not remove the following lines
+      // the private static data
       static const std::map<Pin::Mode, std::string> modes;
       static const std::map<uint32_t, Pin::Mode> fsel2mode;
       static const std::map<Pin::Mode, uint32_t> mode2fsel;

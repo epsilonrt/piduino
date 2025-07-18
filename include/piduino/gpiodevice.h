@@ -247,15 +247,17 @@ namespace Piduino {
          - hasWfi: The device supports waiting for interrupts.
          - hasActiveLow: The device supports active low configuration.
          - hasDebounce: The device supports debounce configuration.
+         - useGpioMem: The device uses /dev/gpiomem for GPIO access.
       */
       enum {
-        hasToggle     = 0x0001,
-        hasPullRead   = 0x0002,
-        hasAltRead    = 0x0004,
-        hasDrive      = 0x0008,
-        hasWfi        = 0x0010,
-        hasActiveLow  = 0x0020,
-        hasDebounce   = 0x0040
+        hasToggle     = 0x00000001,
+        hasPullRead   = 0x00000002,
+        hasAltRead    = 0x00000004,
+        hasDrive      = 0x00000008,
+        hasWfi        = 0x00000010,
+        hasActiveLow  = 0x00000020,
+        hasDebounce   = 0x00000040,
+        useGpioMem    = 0x00010000, ///< Use /dev/gpiomem for GPIO access.
       };
 
       /**
