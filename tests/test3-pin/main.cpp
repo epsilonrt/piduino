@@ -24,6 +24,9 @@ const int Pin3 = 1; // iNo number for input pin connected to the output pin, use
 namespace Bcm2835 {
 
   const Pin::Number PinNumber1 (::Pin1, 27, 27, 7, 1, 0, 27); // BCM2835 GPIO pin 2
+  const int DriveMin = 0; // Minimum drive strength
+  const int DriveMax = 3; // Maximum drive strength
+  const int DriveDefault = 1; // Default drive strength
 }
 
 namespace AllWinnerHx {
@@ -94,6 +97,10 @@ struct Line1Fixture : public GpioFixture {
     switch (db.board().soc().family().id()) {
       case SoC::Family::BroadcomBcm2835:
         pinNumber = Bcm2835::PinNumber1;
+        // Set drive strength values for Broadcom BCM2835 SoC
+        driveMin = Bcm2835::DriveMin;
+        driveMax = Bcm2835::DriveMax;
+        driveDefault = Bcm2835::DriveDefault;
         break;
       case SoC::Family::AllwinnerH:
         switch (db.board().soc().id()) {
