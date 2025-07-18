@@ -50,7 +50,7 @@ namespace Piduino {
     AccessLayerIoMap = 0x0001,
     AccessLayerSysFs = 0x0002,
     AccessLayerGpioDev = 0x0004,
-    AccessLayerAll = AccessLayerIoMap + AccessLayerSysFs,
+    AccessLayerAll = AccessLayerIoMap + AccessLayerGpioDev,
     AccessLayerUnk = -1
   };
 
