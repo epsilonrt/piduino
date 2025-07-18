@@ -20,6 +20,7 @@
 
 #include <string>
 #include <chrono>
+#include <thread>
 #include <stdexcept>
 #include <system_error>
 #include <iostream>
@@ -992,7 +993,8 @@ namespace Gpio2 {
             m_last_error = errno;
           }
           else {
-
+            
+            std::this_thread::sleep_for (std::chrono::microseconds (1)); // Allow time for the configuration to take effect
             m_last_error = 0;
           }
           return (m_last_result >= 0);
