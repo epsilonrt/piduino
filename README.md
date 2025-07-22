@@ -12,8 +12,8 @@ allows to add new models of boards easily.
 This approach allows you to compile libraries normally intended for Arduino, for example, [Radiohead](https://github.com/epsilonrt/RadioHead). Normally, all libraries that do not use the specificities of a target microcontroller should be able to compile. There is a [tutorial](https://epsilonrt.fr/2019/02/arduino-lib-on-pi/) explaining how to do this, in French, but Google will translate it into your language...
 
 At this time, the SoC models supported are AllWinner H-Series and Broadcom 
-BCM2708 through 2711 which allows it to be used on Raspberry Pi and most Nano Pi, 
-Orange Pi and Banana Pi. Work has started on BCM2712 support, and Raspberry Pi 5 boards will be supported soon.
+BCM2708 through 2712 which allows it to be used on Raspberry Pi and most Nano Pi, 
+Orange Pi and Banana Pi. 
 
 The updated list of all the boards in the database is available in the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki/List-of-all-the-boards-currently-in-the-Piduino-database).  
