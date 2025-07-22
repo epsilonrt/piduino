@@ -21,22 +21,32 @@
 namespace Piduino {
 
   namespace Rp1 {
+
+    // RP1 is connected to the PCIe bus, so we need to find the PCIe device
+    std::string findPCIeDevice();
+    bool isPCIeFileContain (const char *dirname, const char *filename, const char *content);
+
+    // Constants for the RP1 SoC
+    const uint32_t RegisterSize = sizeof (uint32_t); // Size of a register in bytes
+
+    const size_t IoBaseAddr       = 0x40000000; // RP1 base address of the memory mapped I/O
+
     const size_t IoBankAddr       = 0x400d0000; // RP1 start address of the GPIO registers
     const size_t SysRio0BankAddr  = 0x400e0000; // RP1 start address of the RIO registers
     const size_t PadsBankAddr     = 0x400f0000; // RP1 start address of the pads registers
-    const size_t IoBaseAddr       = 0x40000000; // RP1 base address of the memory mapped I/O
+    const size_t EthBankAddr      = 0x40100000; // RP1 start address of the Ethernet registers
+    const size_t GpioBlockSize   = (EthBankAddr - IoBankAddr); // Size of the GPIO block in bytes
 
-    const off_t PCIeGpioOffset    = (IoBankAddr - IoBaseAddr) / sizeof (uint32_t); // only for PCIe access, for gpiomem access, base address is 0
-    const off_t PadsOffset        = (PadsBankAddr - IoBankAddr) / sizeof (uint32_t);
-    const off_t RioOffset         = (SysRio0BankAddr - IoBankAddr) / sizeof (uint32_t);
+    const off_t GpioOffset = (IoBankAddr - IoBaseAddr) / RegisterSize; // only for PCIe access, for gpiomem access, base address is 0
+    const off_t PadsOffset = (PadsBankAddr - IoBankAddr) / RegisterSize;
+    const off_t RioOffset  = (SysRio0BankAddr - IoBankAddr) / RegisterSize;
 
-    const size_t GpioMemBlockSize  = 0x00030000;
-
+    // PCIe constants
+    const size_t PCIeBlockSize  = 0x00400000;
     const char PCIeDevPath[]      = "/sys/bus/pci/devices";
     const char PCIeRp1VendorId[]  = "0x1de4";
     const char PCIeRp1DeviceId[]  = "0x0001";
     const char PCIeRp1File[]      = "resource1";
-    const size_t PCIeBlockSize  = 0x00400000;
 
     // Function Select Register (FUNCSEL) values in GPIO_CTRL register
     enum {
@@ -55,11 +65,11 @@ namespace Piduino {
     };
 
     const uint32_t GPIO_RIO_OUT = 0x0000;
-    const uint32_t GPIO_RIO_OE  = (0x0004 / sizeof (uint32_t));
-    const uint32_t GPIO_RIO_IN  = (0x0008 / sizeof (uint32_t));
+    const uint32_t GPIO_RIO_OE  = (0x0004 / RegisterSize);
+    const uint32_t GPIO_RIO_IN  = (0x0008 / RegisterSize);
 
-    const uint32_t GPIO_RIO_SET_OFFSET = (0x2000 / sizeof (uint32_t));
-    const uint32_t GPIO_RIO_CLR_OFFSET = (0x3000 / sizeof (uint32_t));
+    const uint32_t GPIO_RIO_SET_OFFSET = (0x2000 / RegisterSize);
+    const uint32_t GPIO_RIO_CLR_OFFSET = (0x3000 / RegisterSize);
 
     const uint32_t GPIO_PAD_PULL_LSB     = 2;
     const uint32_t GPIO_PAD_DRIVE_LSB    = 4;
@@ -88,14 +98,75 @@ namespace Piduino {
     const uint32_t GPIO_STATUS_OETOPAD = BIT (13);
     const uint32_t GPIO_STATUS_OE = (GPIO_STATUS_OEFROMPERI | GPIO_STATUS_OETOPAD);
 
-    const uint32_t RP1_GPIO_CTRL_FUNCSEL_MASK = 0x0000001f; // Masque pour la sélection de fonction
+    const uint32_t GPIO_CTRL_FUNCSEL_MASK = 0x0000001f; // Masque pour la sélection de fonction
 
-    const uint32_t RP1_GPIO_CTRL_DEBOUNCE_LSB = 5; // Filter Debounce LSB
-    const uint32_t RP1_GPIO_CTRL_DEBOUNCE_MASK = 0x0000007F << RP1_GPIO_CTRL_DEBOUNCE_LSB; // Masque pour le filtre de rebond
-    const uint32_t RP1_GPIO_CTRL_DEBOUNCE_DEFAULT = (4 << RP1_GPIO_CTRL_DEBOUNCE_LSB); // Valeur par défaut du filtre de rebond
+    const uint32_t GPIO_CTRL_DEBOUNCE_LSB = 5; // Filter Debounce LSB
+    const uint32_t GPIO_CTRL_DEBOUNCE_MASK = 0x0000007F << GPIO_CTRL_DEBOUNCE_LSB; // Masque pour le filtre de rebond
+    const uint32_t GPIO_CTRL_DEBOUNCE_DEFAULT = (4 << GPIO_CTRL_DEBOUNCE_LSB); // Valeur par défaut du filtre de rebond
 
+    const uint32_t GPIO_CTRL_IRQRESET = BIT (28); // Bit 28: Reset IRQ
 
-    const uint32_t RP1_GPIO_CTRL_IRQRESET = BIT(28); // Bit 28: Reset IRQ
+    // PWM & Clock
+    const size_t ClockBankAddr    = 0x40018000;
+    const size_t Pwm0BankAddr     = 0x40098000; // Only PWM0 is implemented in this version
+    const size_t Pwm1BankAddr     = 0x4009C000; // Not used in this implementation
+
+    const off_t ClockOffset = (ClockBankAddr - IoBaseAddr) / RegisterSize; // GPIO_CLOCK_ADR
+    const off_t Pwm0Offset  = (Pwm0BankAddr - IoBaseAddr) / RegisterSize; // GPIO_PWM
+
+    // PWM registers
+    const off_t PwmGlobalCtrlReg   = 0x00 / RegisterSize;
+    const off_t PwmFifoCtrlReg     = 0x04 / RegisterSize;
+    const off_t PwmCommonRangeReg  = 0x08 / RegisterSize;
+    const off_t PwmCommonDutyReg   = 0x0C / RegisterSize;
+    const off_t PwmDutyFifoReg     = 0x10 / RegisterSize;
+    const off_t PwmChanBlockBase   = 0x14 / RegisterSize;
+    const size_t PwmChanBlockSize  = 0x10 / RegisterSize; // Size of one PWM channel block
+
+    // Channel registers, offsets in the PWM channel block
+    const off_t PwmChanCtrlReg   = 0;
+    const off_t PwmChanRangeReg  = 1;
+    const off_t PwmChanPhaseReg  = 2;
+    const off_t PwmChanDutyReg   = 3;
+
+    // PWM0 GLOBAL_CTRL bits
+    const uint32_t PwmGlobalCtrlSetUpdate     = BIT (31); // Bit 31: Set update
+    const uint32_t PwmGlobalCtrlChan3En  = BIT (3); // Bit 3: Channel 3 enable
+    const uint32_t PwmGlobalCtrlChan2En  = BIT (2); // Bit 2: Channel 2 enable
+    const uint32_t PwmGlobalCtrlChan1En  = BIT (1); // Bit 1: Channel 1 enable
+    const uint32_t PwmGlobalCtrlChan0En  = BIT (0); // Bit 0: Channel 0 enable
+    const uint32_t PwmGlobalCtrlChanMask = (PwmGlobalCtrlChan3En | PwmGlobalCtrlChan2En | PwmGlobalCtrlChan1En | PwmGlobalCtrlChan0En); // Channel enable mask
+
+    const uint32_t PwmChanCtrlModeTraillingEdgeMs = 0x01; // Mode Trail Edge Mark-Space Modulation (MS)
+    const uint32_t PwmChanCtrlFifoPopMask = BIT (8); // Bit 8
+
+    const int PWM_RESOLUTION_MIN = 2;
+    const int PWM_RESOLUTION_MAX = 31;
+
+    // CLK
+    const uint32_t PwmClkOscFreq = 50000000; // 50 MHz, default oscillator frequency
+
+    // PWM0 Clock registers (reverse engineered, official documentation not available)
+    // These registers control the clock source and divisor for PWM0.
+    // Addresses and usage are based on RP1 Linux kernel sources and community findings:
+    //   - Pwm0ClkCtrlReg: Clock control register (enable/disable, magic values)
+    //   - Pwm0ClkDivIntReg: Integer part of the clock divisor
+    //   - Pwm0ClkDivFracReg: Fractional part of the clock divisor
+    //   - Pwm0SelReg: Clock source selection register
+    // References:
+    //   - https://github.com/raspberrypi/linux/blob/rpi-6.1.y/drivers/pwm/pwm-rp1.c
+    //   - https://github.com/raspberrypi/linux/blob/rpi-6.1.y/drivers/clk/bcm/clk-rp1.c
+    const off_t Pwm0ClkCtrlReg    = 0x00074 / RegisterSize; // Clock control register
+    const off_t Pwm0ClkDivIntReg  = 0x00078 / RegisterSize; // Integer part of the clock divisor
+    const off_t Pwm0ClkDivFracReg = 0x0007C / RegisterSize; // Fractional part of the clock divisor
+    const off_t Pwm0SelReg        = 0x00080 / RegisterSize; // Clock source selection register
+
+    const uint32_t PwmClkCtrlMagicDisable = 0x10000000;  // Default after boot
+    const uint32_t PwmClkCtrlMagicEnable  = 0x11000840;  // Reverse engineered, because of missing documentation, don't known meaning of of bits
+
+    const uint32_t PwmClkDivIntMin    = 1; // Minimum integer divisor, TODO check if this is correct
+    const uint32_t PwmClkDivIntMax    = 4095;
+
   }
 }
 

@@ -42,8 +42,6 @@ namespace Piduino {
       unsigned int flags; ///< Flags for the GPIO device.
 
       // the private methods
-      std::string findPCIeDevice();
-
       inline void setCtrlReg (int p, uint32_t v) {
         gpio[p * 2 + 1] = v;
       }
@@ -59,9 +57,6 @@ namespace Piduino {
       inline uint32_t padReg (int p) const {
         return pad[p + 1]; // 1 offset due to the voltage select register
       }
-
-      // the private static methods
-      static bool isPCIeFileContain (const char *dirname, const char *filename, const char *content);
 
       // the private static data
       static const std::map<Pin::Mode, std::string> modes;

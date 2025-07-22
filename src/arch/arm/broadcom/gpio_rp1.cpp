@@ -14,12 +14,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
 */
-#include <dirent.h>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <exception>
-
 #include <piduino/clock.h>
 #include <piduino/database.h>
 
@@ -75,11 +70,11 @@ namespace Piduino {
     if (!isOpen()) {
       PIMP_D (Rp1Gpio);
 
-      std::string pcieDevice = d->findPCIeDevice();
+      std::string pcieDevice = findPCIeDevice();
       if (pcieDevice.empty() || (d->flags & useGpioMem)) {
 
         // No PCIe device found, use /dev/gpiomem
-        d->iomap.openGpioMem (0, GpioMemBlockSize); // throw std::system_error if error
+        d->iomap.openGpioMem (0, GpioBlockSize); // throw std::system_error if error
         d->gpio = d->iomap.io(); // pointer to the GPIO registers
         d->flags |= useGpioMem; // set the flag to use /dev/gpiomem
       }
@@ -87,7 +82,7 @@ namespace Piduino {
 
         // PCIe access
         d->iomap.open (pcieDevice.c_str(), PCIeBlockSize); // throw std::system_error if error
-        d->gpio = d->iomap[PCIeGpioOffset]; // pointer to the GPIO registers
+        d->gpio = d->iomap[GpioOffset]; // pointer to the GPIO registers
         d->flags &= ~useGpioMem; // clear the flag to use /dev/gpiomem
       }
       d->pad = &d->gpio[PadsOffset]; // RP1 start adress of map memory for pad
@@ -120,13 +115,18 @@ namespace Piduino {
     Pin::Mode m;
     uint32_t fsel;
 
-    fsel = d->ctrlReg (pin->mcuNumber()) & RP1_GPIO_CTRL_FUNCSEL_MASK;
+    int p = pin->mcuNumber(); // Get the GPIO number from the Pin object
+    fsel = d->ctrlReg (p) & GPIO_CTRL_FUNCSEL_MASK;
     m = Private::fsel2mode.at (fsel);
 
     if (fsel == FselGpio) {
 
       uint32_t oe = d->statusReg (pin->mcuNumber()) & GPIO_STATUS_OE;
       m = (oe == GPIO_STATUS_OE) ? Pin::ModeOutput : Pin::ModeInput;
+    }
+    else if ( ( (m == Pin::ModeAlt0) && ( (p == 12) || (p == 13))) ||
+              ( (m == Pin::ModeAlt3) && ( (p == 18) || (p == 19)))) {
+      m = Pin::ModePwm;
     }
     return m;
   }
@@ -137,37 +137,62 @@ namespace Piduino {
     PIMP_D (Rp1Gpio);
 
     int p = pin->mcuNumber();
+    bool isPwm = (m == Pin::ModePwm);
+
+    if (m == Pin::ModePwm) { // TODO: replace with a database pin_has_pwm table lookup
+
+      if ( (p == 12) || (p == 13)) { // Ino26 and Ino23
+
+        m = Pin::ModeAlt0;
+      }
+      else if ( (p == 18) || (p == 19)) { // Ino1 and Ino24
+
+        m = Pin::ModeAlt3;
+      }
+      else {
+
+        throw std::invalid_argument (EXCEPTION_MSG ("ModePwm can only be set for GPIO12, GPIO13, GPIO18 or GPIO19"));
+      }
+    }
+
+    uint32_t fsel = Private::mode2fsel.at (m); // Get the function select value for the mode
 
     switch (m) {
       case Pin::ModeInput:
+      // case Pin::ModeAlt5:
         d->setPadReg (p, (p <= 8) ? GPIO_PAD_DEFAULT_0TO8 : GPIO_PAD_DEFAULT_FROM9);
-        d->setCtrlReg (p, FselGpio | RP1_GPIO_CTRL_DEBOUNCE_DEFAULT);
+        d->setCtrlReg (p, FselGpio | GPIO_CTRL_DEBOUNCE_DEFAULT);
         d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p;
         break;
       case Pin::ModeOutput:
         d->setPadReg (p, (p <= 8) ? GPIO_PAD_DEFAULT_0TO8 : GPIO_PAD_DEFAULT_FROM9);
-        d->setCtrlReg (p, FselGpio | RP1_GPIO_CTRL_DEBOUNCE_DEFAULT);
+        d->setCtrlReg (p, FselGpio | GPIO_CTRL_DEBOUNCE_DEFAULT);
         d->rio[GPIO_RIO_OE + GPIO_RIO_SET_OFFSET] = 1 << p;
         break;
       case Pin::ModeDisabled:
         d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9);
-        d->setCtrlReg (p, RP1_GPIO_CTRL_IRQRESET | FselNoneHw | RP1_GPIO_CTRL_DEBOUNCE_DEFAULT);
+        d->setCtrlReg (p, GPIO_CTRL_IRQRESET | FselNoneHw | GPIO_CTRL_DEBOUNCE_DEFAULT);
         d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p;
         break;
       case Pin::ModeAlt0:
+      case Pin::ModeAlt3:
+        if (isPwm) {
+          // For PWM mode, set the function select bits and set the pad register to hardware mode
+          d->setPadReg (p, (p <= 8) ? GPIO_PAD_DEFAULT_0TO8 : GPIO_PAD_DEFAULT_FROM9); // enable output
+          // Set the control register to the function select value and enable debounce
+          d->setCtrlReg (p, fsel | GPIO_CTRL_DEBOUNCE_DEFAULT);
+          break;
+        }
       case Pin::ModeAlt1:
       case Pin::ModeAlt2:
-      case Pin::ModeAlt3:
       case Pin::ModeAlt4:
-      // case Pin::ModeAlt5: // GPIO alternate functions, using ModeInput or ModeOutput ?
       case Pin::ModeAlt6:
       case Pin::ModeAlt7:
       case Pin::ModeAlt8: {
         // Alternate functions, set the function select bits
         // and set the pad register to hardware mode
         d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9);
-        uint32_t fsel = Private::mode2fsel.at (m); // Get the function select value for the mode
-        uint32_t ctrl = d->ctrlReg (p) & ~RP1_GPIO_CTRL_FUNCSEL_MASK; // Clear the function select bits
+        uint32_t ctrl = d->ctrlReg (p) & ~GPIO_CTRL_FUNCSEL_MASK; // Clear the function select bits
         ctrl |= fsel; // Set the new function select value
         d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9); // Set the pad register to hardware mode
         d->setCtrlReg (p, ctrl); // Write back the modified control register
@@ -293,7 +318,7 @@ namespace Piduino {
     {Pin::ModeAlt7, "alt7"},
     {Pin::ModeAlt8, "alt8"},
     {Pin::ModeDisabled, "off"},
-    // {Pin::ModePwm, "pwm"}
+    {Pin::ModePwm, "pwm"}
   };
 
   // -------------------------------------------------------------------------
@@ -340,58 +365,6 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Rp1Gpio::Private::~Private() = default;
-
-  // -------------------------------------------------------------------------
-  bool Rp1Gpio::Private::isPCIeFileContain (const char *dirname, const char *filename, const char *content) {
-    std::ostringstream fpath;
-
-    fpath << PCIeDevPath << "/" << dirname << "/" << filename;
-    std::ifstream f (fpath.str());
-
-    if (f.is_open()) {
-      std::string line;
-
-      while (std::getline (f, line)) {
-
-        if (line.find (content) != std::string::npos) {
-
-          return true;
-        }
-      }
-      f.close();
-    }
-    return false;
-  }
-
-  // -------------------------------------------------------------------------
-  std::string Rp1Gpio::Private::findPCIeDevice() {
-    DIR *dir;
-    std::ostringstream res;
-
-    dir = opendir (PCIeDevPath);
-
-    if (dir != NULL) {
-      struct dirent *entry;
-
-      while ( (entry = readdir (dir)) != NULL) {
-
-        if (entry->d_type == DT_LNK) {
-
-          if (isPCIeFileContain (entry->d_name, "device", PCIeRp1DeviceId) &&
-              isPCIeFileContain (entry->d_name, "vendor", PCIeRp1VendorId)) {
-
-            res.clear();
-            res << PCIeDevPath << "/" << entry->d_name << "/" << PCIeRp1File;
-            break;
-          }
-        }
-      }
-
-      closedir (dir);
-    }
-
-    return res.str();
-  }
 
 }
 /* ========================================================================== */
