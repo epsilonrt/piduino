@@ -27,10 +27,16 @@ find_program(VALGRIND_EXECUTABLE NAMES valgrind)
 if(NOT SUDO_EXECUTABLE)
   message(FATAL_ERROR "sudo executable not found, please install sudo")
 endif()
-if(NOT VALGRIND_EXECUTABLE)
-  message(STATUS "valgrind executable not found, memory tests will not be run")
-else()
+
+# valgrind memcheck is buggy on armv7l and armhf architectures
+# unable to run tests with valgrind on these architectures
+# MESSAGE("CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
+if(VALGRIND_EXECUTABLE AND CMAKE_SYSTEM_PROCESSOR AND NOT CMAKE_HOST_SYSTEM_PROCESSOR  MATCHES "armv7l|armhf")
   message(STATUS "valgrind executable found: ${VALGRIND_EXECUTABLE}")
+  set (MEMORY_TESTS ON)
+else()
+  message(STATUS "valgrind executable not found or not supported on this architecture, memory tests will not be run")
+  set (MEMORY_TESTS OFF)
 endif()
 
 if(PIDUINO_LIB_DIR)
@@ -52,7 +58,7 @@ endif()
 # endforeach()
 
 function(add_test_incl_memcheck test)
-  message(STATUS " add test ${test}")
+  message(STATUS "Add test ${test}")
   # create an executable, which instantiates a runner from UnitTest++
   add_executable(${test} ${test}/main.cpp)
   add_dependencies(${test} piduino-shared)
@@ -65,8 +71,8 @@ function(add_test_incl_memcheck test)
   if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${test}/run_as_root")
 
     add_test(NAME ${test} COMMAND ${test})
-    if(VALGRIND_EXECUTABLE)
-      message(STATUS " test ${test} will be run with valgrind")
+    if(MEMORY_TESTS)
+      message(STATUS "  test ${test} will be run with valgrind")
       # add a memory check test using valgrind
       # this is useful to detect memory leaks and other issues
       # see https://valgrind.org/docs/manual/manual.html
@@ -104,12 +110,12 @@ function(add_test_incl_memcheck test)
     endif()
   else()
 
-    message(STATUS " test ${test} requires root privileges, it will run with sudo")
+    message(STATUS "  test ${test} requires root privileges, it will run with sudo")
     add_test(NAME ${test} COMMAND ${SUDO_EXECUTABLE} $<TARGET_FILE:${test}>
       WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-    if(VALGRIND_EXECUTABLE)
 
-      message(STATUS " test ${test} will be run with valgrind")
+    if(MEMORY_TESTS)
+      message(STATUS "  test ${test} will be run with valgrind")
       add_test(NAME ${test}_memchecked
         COMMAND ${SUDO_EXECUTABLE} ${VALGRIND_EXECUTABLE}
         --error-exitcode=1
