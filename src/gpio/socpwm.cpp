@@ -1,19 +1,20 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
+#include <iostream>
 #include <cmath>
 #include <piduino/database.h>
 #include "socpwm_p.h"
@@ -24,17 +25,17 @@
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                             SocPwm Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                             SocPwm Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
   SocPwm::SocPwm (SocPwm::Private &dd) : Pwm (dd) {}
 
   // ---------------------------------------------------------------------------
-  SocPwm::SocPwm (Pin * p) :
+  SocPwm::SocPwm (Pin *p) :
     Pwm (*new Private (this, p)) {}
 
   // ---------------------------------------------------------------------------
@@ -76,7 +77,11 @@ namespace Piduino {
     if (isOpen() && hasPin()) {
       PIMP_D (SocPwm);
 
-      return d->engine->setEnable (enable);
+      d->engine->setEnable (enable);
+      if (d->isDebug) {
+        std::cout << "SocPwm::setEnable(" << enable << ") on pin "
+                  << d->engine->pin->logicalNumber() << std::endl;
+      }
     }
   }
 
@@ -84,11 +89,15 @@ namespace Piduino {
   // hasPin() must be checked !
   bool
   SocPwm::isEnabled () const {
+    PIMP_D (const SocPwm);
 
     if (isOpen() && hasPin()) {
-      PIMP_D (const SocPwm);
 
       return d->engine->isEnabled();
+    }
+
+    if (d->isDebug) {
+      std::cerr << "SocPwm::isEnabled() called without an open engine or pin." << std::endl;
     }
     return false;
   }
@@ -102,6 +111,9 @@ namespace Piduino {
 
       return d->engine->frequency();
     }
+    if (d->isDebug) {
+      std::cerr << "SocPwm::frequency() called without an open engine." << std::endl;
+    }
     return -1;
   }
 
@@ -114,11 +126,15 @@ namespace Piduino {
 
       if (d->engine->setFrequency (freq)) {
 
-        if (hasPin()) {
-          // TODO, modify value ?
+        if (d->isDebug) {
+          std::cout << "SocPwm::setFrequency(" << freq << ") called, new frequency: " << d->engine->frequency() << "Hz" << std::endl;
+          std::cout << " Note: modification of frequency implicitly affects all PWM outputs, set range on each output if necessary!" << std::endl;
         }
         return frequency();
       }
+    }
+    if (d->isDebug) {
+      std::cerr << "SocPwm::setFrequency(" << freq << ") called without an open engine." << std::endl;
     }
     return -1;
   }
@@ -133,6 +149,9 @@ namespace Piduino {
 
       return d->engine->range();
     }
+    if (d->isDebug) {
+      std::cerr << "SocPwm::range() called without an open engine." << std::endl;
+    }
     return -1;
   }
 
@@ -142,14 +161,34 @@ namespace Piduino {
     PIMP_D (SocPwm);
 
     if (isOpen()) {
+      long r = d->engine->range();
+      // long f = d->engine->frequency();
+      long v = d->engine->read();
 
       if (d->engine->setRange (rg)) {
+        long nr = d->engine->range();
+        long nv = (v * nr) / r; // scale value to new range
 
-        if (hasPin()) {
-          // TODO, modify value ?
+        if (nv > nr || v > r) {
+          nv = nr + 1; // ensure value does not exceed new range
         }
-        return range();
+        // d->engine->setFrequency (f);
+        if (!d->engine->write (nv)) {
+          if (d->isDebug) {
+            std::cerr << "SocPwm::setRange(" << rg << ") failed to write value: " << nv << std::endl;
+          }
+          return -1; // return error if write fails
+        }
+        if (d->isDebug) {
+          std::cout << "SocPwm::setRange(" << rg << ") called, new range: " << nr
+                    << ", scaled value: " << nv << std::endl;
+          std::cout << " Note: modification of range implicitly affects the frequency, new frequency: " << d->engine->frequency() << "Hz, may be modified if necessary!" << std::endl;
+        }
+        return nr;
       }
+    }
+    if (d->isDebug) {
+      std::cerr << "SocPwm::setRange(" << rg << ") called without an open engine." << std::endl;
     }
     return -1;
   }
@@ -163,6 +202,9 @@ namespace Piduino {
 
       return d->engine->resolution();
     }
+    if (d->isDebug) {
+      std::cerr << "SocPwm::resolution() called without an open engine." << std::endl;
+    }
     return -1;
   }
 
@@ -175,11 +217,14 @@ namespace Piduino {
 
       if (d->engine->setResolution (r)) {
 
-        if (hasPin()) {
-          // TODO, modify value ?
-        }
         return resolution();
       }
+      if (d->isDebug) {
+        std::cerr << "SocPwm::setResolution(" << r << ") failed to set resolution." << std::endl;
+      }
+    }
+    if (d->isDebug) {
+      std::cerr << "SocPwm::setResolution(" << r << ") called without an open engine." << std::endl;
     }
     return -1;
   }
@@ -204,7 +249,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  SocPwm::Private::Private (SocPwm * q, Pin * p) :
+  SocPwm::Private::Private (SocPwm *q, Pin *p) :
     Pwm::Private (q) {
 
     switch (db.board().soc().id()) {
@@ -215,7 +260,7 @@ namespace Piduino {
       case SoC::Bcm2711 :
         engine = std::make_unique<Bcm2835::PwmEngine> (this, p);
         break;
-        
+
       case SoC::Bcm2712 :
         engine = std::make_unique<Rp1::PwmEngine> (this, p);
         break;
@@ -273,6 +318,9 @@ namespace Piduino {
         return Pwm::Private::open (m);
       }
     }
+    if (isDebug) {
+      std::cerr << "SocPwm::open() called without an engine or failed to open engine." << std::endl;
+    }
     return false;
   }
 
@@ -298,6 +346,9 @@ namespace Piduino {
 
       return engine->read();
     }
+    if (isDebug) {
+      std::cerr << "SocPwm::read() called without an open engine or pin." << std::endl;
+    }
     return -1;
   }
 
@@ -309,7 +360,20 @@ namespace Piduino {
 
     if (hasPin()) {
 
-      return engine->write (value);
+      bool ret = engine->write (value);
+      if (isDebug) {
+        if (ret) {
+          std::cout << "SocPwm::write(" << value << ") called on pin "
+                    << engine->pin->logicalNumber() << std::endl;
+        } else {
+          std::cerr << "SocPwm::write(" << value << ") failed on pin "
+                    << engine->pin->logicalNumber() << std::endl;
+        }
+      }
+      return ret;
+    }
+    if (isDebug) {
+      std::cerr << "SocPwm::write(" << value << ") called without an open engine or pin." << std::endl;
     }
     return false;
   }
@@ -322,6 +386,9 @@ namespace Piduino {
 
       return engine->max();
     }
+    if (isDebug) {
+      std::cerr << "SocPwm::max() called without an open engine." << std::endl;
+    }
     return LONG_MIN;
   }
 
@@ -332,6 +399,9 @@ namespace Piduino {
     if (isOpen()) {
 
       return engine->min();
+    }
+    if (isDebug) {
+      std::cerr << "SocPwm::min() called without an open engine." << std::endl;
     }
     return LONG_MAX;
   }
