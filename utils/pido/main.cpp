@@ -525,6 +525,8 @@ pwm (int argc, char *argv[]) {
   }
 
   SocPwm socpwm (pin);
+  socpwm.setDebug (debug);
+
   if (!socpwm.open()) {
 
     throw Exception (Exception::PwmOpenError, pin->logicalNumber());
@@ -582,6 +584,8 @@ pwmr (int argc, char *argv[]) {
   }
 
   SocPwm socpwm (pin);
+  socpwm.setDebug (debug);
+
   if (!socpwm.open()) {
 
     throw Exception (Exception::PwmOpenError, pin->logicalNumber());
@@ -621,6 +625,8 @@ pwmf (int argc, char *argv[]) {
   }
 
   SocPwm socpwm (pin);
+  socpwm.setDebug (debug);
+
   if (!socpwm.open()) {
 
     throw Exception (Exception::PwmOpenError, pin->logicalNumber());
