@@ -83,6 +83,8 @@ namespace Piduino {
 
       void setTextModeEnabled (bool enabled);
       bool isTextModeEnabled() const;
+      void setDebug (bool enabled);
+      bool isDebug() const;
 
       virtual bool open (OpenMode mode);
       virtual void close();

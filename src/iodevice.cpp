@@ -1,19 +1,19 @@
 /* Copyright © 2018 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <fcntl.h>
 #include <cstring>
 #include "iodevice_p.h"
@@ -21,11 +21,11 @@
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                             IoDevice Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                             IoDevice Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
   IoDevice::IoDevice (IoDevice::Private &dd) : d_ptr (&dd) {
@@ -136,15 +136,29 @@ namespace Piduino {
     return ! (openMode() & Binary);
   }
 
-// -----------------------------------------------------------------------------
-//
-//                         IoDevice::Private Class
-//
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  void IoDevice::setDebug (bool enabled) {
+    PIMP_D (IoDevice);
+
+    d->isDebug = enabled;
+  }
 
   // ---------------------------------------------------------------------------
-  IoDevice::Private::Private (IoDevice * q) :
-    q_ptr (q), openMode (NotOpen), isSequential (false), error (0) {}
+  bool IoDevice::isDebug() const {
+    PIMP_D (const IoDevice);
+
+    return d->isDebug;
+  }
+
+  // -----------------------------------------------------------------------------
+  //
+  //                         IoDevice::Private Class
+  //
+  // -----------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  IoDevice::Private::Private (IoDevice *q) :
+    q_ptr (q), openMode (NotOpen), isSequential (false), error (0), isDebug (false) {}
 
   // ---------------------------------------------------------------------------
   IoDevice::Private::~Private()  {}
@@ -182,7 +196,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  IoDevice::Private::setError (int error, const std::string & str) const {
+  IoDevice::Private::setError (int error, const std::string &str) const {
 
     error = error;
     errorString = str;

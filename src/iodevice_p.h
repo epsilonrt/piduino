@@ -46,6 +46,7 @@ namespace Piduino {
       bool isSequential;
       mutable int error;
       mutable std::string errorString;
+      bool isDebug;
 
       PIMP_DECLARE_PUBLIC (IoDevice)
   };
