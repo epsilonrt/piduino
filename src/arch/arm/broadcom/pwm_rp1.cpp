@@ -40,7 +40,7 @@ namespace Piduino {
     // -------------------------------------------------------------------------
     // public
     PwmEngine::PwmEngine (SocPwm::Private *d, Pin *p) :
-      SocPwm::Engine (d, p), pwm (nullptr), channel (0), base (Pwm0Offset), clkFreq (PwmClkOscFreq) {
+      SocPwm::Engine (d, p), pwm (nullptr), channel (0), base (Pwm0Offset), clkFreq (PwmClkOscFreq), mode (TrailingEdgeMsMode) {
 
       ++instanceCount; // Increment instance counter
 
@@ -151,7 +151,7 @@ namespace Piduino {
       if (enable) {
 
         ctl |= BIT (channel) | PwmGlobalCtrlSetUpdate;
-        writePwm (ctlReg, PwmChanCtrlModeTraillingEdgeMs | PwmChanCtrlFifoPopMask);
+        writePwm (ctlReg, mode | PwmChanCtrlFifoPopMask);
       }
       else {
         writePwm (ctlReg, 0); // Disable channel
@@ -166,7 +166,7 @@ namespace Piduino {
     bool
     PwmEngine::isEnabled () const {
 
-      return (readPwm (ctlReg) == (PwmChanCtrlModeTraillingEdgeMs | PwmChanCtrlFifoPopMask)) &&
+      return (readPwm (ctlReg) == (mode | PwmChanCtrlFifoPopMask)) &&
              (readPwm (PwmGlobalCtrlReg) & BIT (channel)) == BIT (channel);
     }
 
@@ -193,7 +193,7 @@ namespace Piduino {
     PwmEngine::max() const {
 
       if (hasPin()) {
-        return range();
+        return range() + 1;
       }
       return -1;
     }

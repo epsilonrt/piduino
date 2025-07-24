@@ -66,6 +66,7 @@ namespace Piduino {
         off_t dataReg;
         off_t ctlReg; // Control register for the PWM channel.
         uint32_t clkFreq;
+        PwmChanCtrlMode mode;
 
         // the private static functions
         uint32_t clockDivisor() const;

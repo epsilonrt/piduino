@@ -137,7 +137,17 @@ namespace Piduino {
     const uint32_t PwmGlobalCtrlChan0En  = BIT (0); // Bit 0: Channel 0 enable
     const uint32_t PwmGlobalCtrlChanMask = (PwmGlobalCtrlChan3En | PwmGlobalCtrlChan2En | PwmGlobalCtrlChan1En | PwmGlobalCtrlChan0En); // Channel enable mask
 
-    const uint32_t PwmChanCtrlModeTraillingEdgeMs = 0x01; // Mode Trail Edge Mark-Space Modulation (MS)
+    enum PwmChanCtrlMode {
+
+      GeneratesZero = 0x00,             // Generates 0
+      TrailingEdgeMsMode = 0x01,        // Trailing-edge mark-space PWM modulation
+      PhaseCorrectMsMode = 0x02,        // Phase-correct mark-space PWM modulation
+      PulseDensityMode = 0x03,          // Pulse-density encoded output
+      MsbSerialiserMode = 0x04,         // MSB Serialiser output
+      PulsePositionMode = 0x05,         // Pulse position modulated output - single high pulse per cycle
+      LeadingEdgeMsMode = 0x06,         // Leading-edge mark-space PWM modulation
+      LsbSerialiserMode = 0x07          // LSB Serialiser output
+    };
     const uint32_t PwmChanCtrlFifoPopMask = BIT (8); // Bit 8
 
     const int PWM_RESOLUTION_MIN = 2;
@@ -162,7 +172,7 @@ namespace Piduino {
     const off_t Pwm0SelReg        = 0x00080 / RegisterSize; // Clock source selection register
 
     const uint32_t PwmClkCtrlMagicDisable = 0x10000000;  // Default after boot
-    const uint32_t PwmClkCtrlMagicEnable  = 0x11000840;  // Reverse engineered, because of missing documentation, don't known meaning of of bits
+    const uint32_t PwmClkCtrlMagicEnable  = 0x11000840;  // Reverse engineered, because of missing documentation, don't known meaning of bits
 
     const uint32_t PwmClkDivIntMin    = 1; // Minimum integer divisor, TODO check if this is correct
     const uint32_t PwmClkDivIntMax    = 4095;
