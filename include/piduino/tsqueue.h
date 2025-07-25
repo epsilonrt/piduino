@@ -100,5 +100,35 @@ namespace Piduino {
         // return if queue is empty
         return m_queue.empty();
       }
+
+      /**
+         @brief Gets the size of the queue.
+
+         Acquires the lock and returns the number of items in the queue.
+
+         @return The size of the queue.
+      */
+      size_t size() const {
+
+        // acquire lock
+        std::lock_guard<std::mutex> lock (m_mutex);
+
+        // return the size of the queue
+        return m_queue.size();
+      }
+
+      /**
+         @brief Clears the queue.
+
+         Acquires the lock and clears the queue, removing all items.
+      */
+      void clear() {
+
+        // acquire lock
+        std::lock_guard<std::mutex> lock (m_mutex);
+
+        // clear the queue
+        m_queue = std::queue<T>();
+      }
   };
 }
