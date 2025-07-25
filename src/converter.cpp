@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
+#include <iostream>
 #include <climits>
 #include <piduino/converter.h>
 #include "converter_p.h"
@@ -87,10 +88,16 @@ namespace Piduino {
       if (value < min()) {
 
         value = min();
+        if (d->isDebug) {
+          std::cerr << "Converter::write(" << value << ") below minimum, setting to " << min() << std::endl;
+        }
       }
       if (value > max()) {
 
         value = max();
+        if (d->isDebug) {
+          std::cerr << "Converter::write(" << value << ") above maximum, setting to " << max() << std::endl;
+        }
       }
       return d->write (value);
     }

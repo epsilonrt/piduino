@@ -355,6 +355,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // isOpen() == true
   // hasPin() must be checked !
+  // called by Converter::write(), value is modified to fit the range
   bool
   SocPwm::Private::write (long value) {
 
