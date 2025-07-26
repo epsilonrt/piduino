@@ -14,7 +14,7 @@
 // | board                   | pulse width | frequency | cpu clock freq | cpu load avg |
 // |-------------------------|-------------|-----------|----------------|--------------|
 // | Compute Module 5 (RPi5) | 200ns       | 2,45MHz   | 2,4GHz         | 0,03         |
-// | Compute Module 4 (RPi4) |             |           |                |              |
+// | Compute Module 4 (RPi4) | 500ns       | 1MHz      | 1,5GHz         | 0,23         |
 
 #include <iostream>
 #include <piduino/clock.h>
