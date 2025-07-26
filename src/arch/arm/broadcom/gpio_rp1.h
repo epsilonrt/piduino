@@ -43,6 +43,7 @@ namespace Piduino {
 
       void write (const Pin *pin, bool v);
       bool read (const Pin *pin) const;
+      void toggle (const Pin *pin);
 
       void setPull (const Pin *pin, Pin::Pull p);
 

@@ -333,6 +333,10 @@ TEST_FIXTURE (Line1Fixture, Test7) {
   CHECK_EQUAL (true, pin.read()); // Read should return true
   pin.write (false); // Write false to the pin
   CHECK_EQUAL (false, pin.read()); // Read should return false
+  pin.toggle(); // Toggle the pin state
+  CHECK_EQUAL (true, pin.read()); // Read should return true after toggle
+  pin.toggle(); // Toggle the pin state again
+  CHECK_EQUAL (false, pin.read()); // Read should return false after toggle
 
   pin.setMode (Pin::ModeInput);
   CHECK_EQUAL (Pin::ModeInput, pin.mode());

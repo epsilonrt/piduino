@@ -235,6 +235,14 @@ namespace Piduino {
     d->rio[GPIO_RIO_OUT + (v ? GPIO_RIO_SET_OFFSET : GPIO_RIO_CLR_OFFSET)] = (1 << pin->mcuNumber());
   }
 
+    // -------------------------------------------------------------------------
+  void
+  Rp1Gpio::toggle (const Pin *pin) {
+    PIMP_D (Rp1Gpio);
+
+    /* Assume the pin is already an output */
+    d->rio[GPIO_RIO_OUT + GPIO_RIO_XOR_OFFSET] = (1 << pin->mcuNumber());
+  }
   // -------------------------------------------------------------------------
   bool
   Rp1Gpio::read (const Pin *pin) const {
@@ -359,7 +367,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Rp1Gpio::Private::Private (Rp1Gpio *q) :
-    GpioDevice::Private (q), flags (hasAltRead | hasPullRead | hasDrive) {
+    GpioDevice::Private (q), flags (hasAltRead | hasPullRead | hasDrive | hasToggle) {
 
   }
 

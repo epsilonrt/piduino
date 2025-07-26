@@ -68,8 +68,9 @@ namespace Piduino {
     const uint32_t GPIO_RIO_OE  = (0x0004 / RegisterSize);
     const uint32_t GPIO_RIO_IN  = (0x0008 / RegisterSize);
 
-    const uint32_t GPIO_RIO_SET_OFFSET = (0x2000 / RegisterSize);
-    const uint32_t GPIO_RIO_CLR_OFFSET = (0x3000 / RegisterSize);
+    const uint32_t GPIO_RIO_SET_OFFSET = (0x2000 / RegisterSize); // Atomic set operation
+    const uint32_t GPIO_RIO_CLR_OFFSET = (0x3000 / RegisterSize); // Atomic clear operation
+    const uint32_t GPIO_RIO_XOR_OFFSET = (0x1000 / RegisterSize); // Atomic toggle operation
 
     const uint32_t GPIO_PAD_PULL_LSB     = 2;
     const uint32_t GPIO_PAD_DRIVE_LSB    = 4;
