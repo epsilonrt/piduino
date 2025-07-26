@@ -86,7 +86,7 @@ namespace Piduino {
         d->flags &= ~useGpioMem; // clear the flag to use /dev/gpiomem
       }
       d->pad = &d->gpio[PadsOffset]; // RP1 start address of map memory for pad
-      d->rio  = &d->gpio[RioOffset]; // RP1 start adress of map memory for rio
+      d->rio  = &d->gpio[RioOffset]; // RP1 start address of map memory for rio
       d->isopen = true;
     }
     return isOpen();
