@@ -1,5 +1,5 @@
 // GPIO Pin benchmark
-// This programm changes the state of a GPIO pin 100 times as fast as possible to measure
+// This program changes the state of a GPIO pin 100 times as fast as possible to measure
 // the processing time that can be measured with an oscilloscope.
 // Generates a frame of 100 pulses then waits 10 ms before repeating.
 // This program is used to benchmark the GPIO performance.

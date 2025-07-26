@@ -52,7 +52,7 @@ void setup() {
   // start the SPI library:
   SPI.begin();
 
-  // initalize the chip select pin
+  // initialize the chip select pin
   pinMode (chipSelectPin, OUTPUT);
   digitalWrite (chipSelectPin, HIGH);
 }

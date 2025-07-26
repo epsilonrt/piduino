@@ -88,7 +88,7 @@ Options have an `Attribute`: they can be hidden in the auto-created help message
 ```C++
 auto string_option = op.add<Value<std::string>>("s", "string", "some string value");
 auto advanced_int  = op.add<Value<int>, Attribute::advanced>("i", "integer", "advanced integer value");
-auto hidden_bool   = op.add<Swtich, Attribute::hidden>("", "hidden", "hidden flag");
+auto hidden_bool   = op.add<Switch, Attribute::hidden>("", "hidden", "hidden flag");
 ```
 
 Now `cout << op.help()` (same as `cout << op`) will not show the hidden or advanced option, while `cout << op.help(Visibility::advanced)` will show the advanced option. The hidden one is never shown to the user.  

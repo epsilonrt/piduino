@@ -46,7 +46,7 @@ namespace Piduino {
   String::toString (unsigned long num, unsigned char base) {
     String str;
 
-    /* Handle 0 explicitely, otherwise empty string is printed for 0 */
+    /* Handle 0 explicitly, otherwise empty string is printed for 0 */
     if (num == 0) {
 
       str.push_back ('0');

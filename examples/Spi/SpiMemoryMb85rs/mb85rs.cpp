@@ -21,7 +21,7 @@ Mb85rs::Mb85rs (int csPin, size_t size) : _cspin (csPin), _size (size),
 void Mb85rs::begin (uint32_t fclk) {
 
   _settings.speedHz = fclk;
-  // initalize the chip select pin
+  // initialize the chip select pin
   pinMode (_cspin, OUTPUT);
   digitalWrite (_cspin, HIGH);
 }

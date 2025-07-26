@@ -434,7 +434,7 @@ TEST_FIXTURE (LineIn12Fixture, Test4) {
 
   begin (4, "Multiple Line tests");
 
-  // Chech getters
+  // Check getters
   CHECK (line.isOpen() == false);
   for (unsigned int i = 0; i < line.numLines(); ++i) {
     CHECK (line.offset (i) == offsets[i]);
