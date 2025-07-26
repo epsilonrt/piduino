@@ -840,5 +840,5 @@ namespace Piduino {
     return os;
   }
 
-} // namesapce Piduino
+} // namespace Piduino
 /* ========================================================================== */
