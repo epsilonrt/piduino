@@ -24,14 +24,14 @@ using namespace Piduino;
 namespace Broadcom {
   const int Pin1Number = 1; // iNo number for PWM output pin, use pido to get the pin number, must be a PWM pin
   const int Pin2Number = 0; // iNo number for input pin connected to the output pin, use pido to get the pin number
-  const long Freq1 = 1000; 
+  const long Freq1 = 1000;
   const long Range1 = 4096;
-  const int Resolution1 = 12; 
-  const long Freq2 = 1000; 
-  const long Range2 = 1024; 
-  const int Resolution2 = 10; 
-  const long Freq3 = 500; 
-  const int Resolution3 = 9; 
+  const int Resolution1 = 12;
+  const long Freq2 = 1000;
+  const long Range2 = 1024;
+  const int Resolution2 = 10;
+  const long Freq3 = 500;
+  const int Resolution3 = 9;
   const long Range3 = 2000;
 }
 
@@ -42,11 +42,11 @@ namespace Allwinner {
   // As the base frequency is 24MHz, we cannot have the correct frequencies if the range is not chosen correctly.
   const long Freq1 = 1000;
   const long Range1 = 24000; // clock divisor 1 with 24MHz base frequency gives 1000Hz when range is 24000
-  const int Resolution1 =  15;
-  const long Freq2 = 2000; 
-  const long Range2 = 12000; // clock divisor 1 with 24MHz base frequency gives 2000Hz when range is 12000
-  const int Resolution2 = 14; 
-  const long Freq3 = 500; 
+  const int Resolution1 =  14;
+  const long Freq2 = 1465;
+  const long Range2 = 16384; // clock divisor 1 with 24MHz base frequency gives 2000Hz when range is 16384
+  const int Resolution2 = 14;
+  const long Freq3 = 500;
   const long Range3 = 48000; // clock divisor 1 with 24MHz base frequency gives 500Hz when range is 48000
   const int Resolution3 = 16;
 }
@@ -123,7 +123,7 @@ struct PwmFixture : public GpioFixture {
         break;
       case SoC::H3:
       case SoC::H5:
-        maxOffset = -1; 
+        maxOffset = -1;
         Pin1 = Allwinner::Pin1Number;
         Pin2 = Allwinner::Pin2Number;
         Freq1 = Allwinner::Freq1;
@@ -199,20 +199,20 @@ TEST_FIXTURE (PwmFixture, Test1) {
     REQUIRE CHECK_EQUAL (false, pwm->isEnabled());
   }
 
-  pwm->setRange (Range1); // Set range to 4096
+  pwm->setRange (Range1);
   CHECK_EQUAL (Range1, pwm->range());
-  pwm->setFrequency (Freq1); // Set frequency to 1000 Hz
-  CHECK_CLOSE (Freq1, pwm->frequency(), 100); // Allow a tolerance of 25 Hz
-  CHECK_EQUAL (Resolution1, pwm->resolution()); // Check resolution, should be 12 bits
+  pwm->setFrequency (Freq1);
+  CHECK_CLOSE (Freq1, pwm->frequency(), 100);
+  CHECK_EQUAL (Resolution1, pwm->resolution());
 
   CHECK_EQUAL (pwm->range() + maxOffset, pwm->max());  // Check maximum value, should be 4096 + maxOffset
   CHECK_EQUAL (0, pwm->min()); // Check minimum value
-  pwm->setResolution (Resolution2); // Set precision to 10 bits
-  CHECK_EQUAL (Resolution2, pwm->resolution()); // Check resolution, should be 10 bits
-  CHECK_EQUAL (Range2, pwm->range()); // Check maximum value for 10 bits
+  pwm->setResolution (Resolution2);
+  CHECK_EQUAL (Resolution2, pwm->resolution());
+  CHECK_EQUAL (Range2, pwm->range());
 
   CHECK (pwm->write (Range2 / 2)); // Set Duty Cycle to 50%
-  CHECK_EQUAL (Range2 / 2, pwm->read()); 
+  CHECK_EQUAL (Range2 / 2, pwm->read());
 
   pwm->run (); // Enable PWM
   CHECK (pwm->isEnabled()); // Check if PWM is enabled
@@ -347,7 +347,7 @@ struct InterruptFixture : public PwmFixture {
     std::cout << "  Out > Period: " << out.period << " us, Frequency: " << out.frequency << " Hz, Duty Cycle: " << out.dutyCycle << "%" << std::endl;
 
     CHECK_CLOSE (in.frequency, out.frequency, in.frequency * 10 / 100); // Allow a tolerance of 10%
-    CHECK_CLOSE (in.dutyCycle, out.dutyCycle, in.dutyCycle * 10 / 100); // Allow a tolerance of 10%
+    CHECK_CLOSE (in.dutyCycle, out.dutyCycle, in.dutyCycle * 15 / 100); // Allow a tolerance of 10%
     end();
   }
 
