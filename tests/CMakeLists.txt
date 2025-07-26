@@ -134,9 +134,12 @@ endfunction()
 
 add_custom_target(build_and_test ${CMAKE_CTEST_COMMAND} -V)
 
+list(REMOVE_ITEM TESTS "benchmarks")
+
 foreach(test ${TESTS})
   add_test_incl_memcheck(${test})
 endforeach()
 
 add_dependencies(build_and_test piduino-shared)
+add_subdirectory(benchmarks)
 
