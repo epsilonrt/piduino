@@ -20,8 +20,36 @@ using namespace Piduino;
 
 // Configuration settings -----------------------------------
 #warning "Check this pin numbers and chip numbers, they must match your hardware setup! then comment this line"
-const int Pin1 = 1; // iNo number for PWM output pin, use pido to get the pin number, must be a PWM pin
-const int Pin2 = 0; // iNo number for input pin connected to the output pin, use pido to get the pin number
+
+namespace Broadcom {
+  const int Pin1Number = 1; // iNo number for PWM output pin, use pido to get the pin number, must be a PWM pin
+  const int Pin2Number = 0; // iNo number for input pin connected to the output pin, use pido to get the pin number
+  const long Freq1 = 1000; 
+  const long Range1 = 4096;
+  const int Resolution1 = 12; 
+  const long Freq2 = 1000; 
+  const long Range2 = 1024; 
+  const int Resolution2 = 10; 
+  const long Freq3 = 500; 
+  const int Resolution3 = 9; 
+  const long Range3 = 2000;
+}
+
+namespace Allwinner {
+  const int Pin1Number = 18; // iNo number for PWM output pin, use pido to get the pin number, must be a PWM pin
+  const int Pin2Number = 0; // iNo number for input pin connected to the output pin, use pido to get the pin number
+  // The clock divisor list on Allwinner H3/H5 is  1,120,240,360,480,12000,24000,36000,48000 and 72000.
+  // As the base frequency is 24MHz, we cannot have the correct frequencies if the range is not chosen correctly.
+  const long Freq1 = 1000;
+  const long Range1 = 24000; // clock divisor 1 with 24MHz base frequency gives 1000Hz when range is 24000
+  const int Resolution1 =  15;
+  const long Freq2 = 2000; 
+  const long Range2 = 12000; // clock divisor 1 with 24MHz base frequency gives 2000Hz when range is 12000
+  const int Resolution2 = 14; 
+  const long Freq3 = 500; 
+  const long Range3 = 48000; // clock divisor 1 with 24MHz base frequency gives 500Hz when range is 48000
+  const int Resolution3 = 16;
+}
 
 // -----------------------------------------------------------------------------
 struct TestFixture {
@@ -55,29 +83,78 @@ struct GpioFixture: public TestFixture {
 
 // -----------------------------------------------------------------------------
 struct PwmFixture : public GpioFixture {
-  Pin &output;
-  Pin &input;
+  int Pin1;
+  int Pin2;
+  Pin *output;
+  Pin *input;
   SocPwm *pwm;
   long maxOffset;
+  long Freq1;
+  long Range1;
+  int Resolution1;
+  long Freq2;
+  long Range2;
+  int Resolution2;
+  long Freq3;
+  long Range3;
+  int Resolution3;
 
   PwmFixture() :
-    output (gpio.pin (Pin1)), input (gpio.pin (Pin2)), pwm (nullptr), maxOffset (0) {
+    output (nullptr), input (nullptr), pwm (nullptr), maxOffset (0) {
 
-    if (db.board().soc().id() == SoC::Bcm2712) {
-      maxOffset = 1; // For Bcm2712, max() is 1 more than range()
+    switch (db.board().soc().id()) {
+      case SoC::Bcm2712:
+        maxOffset = 1; // For Bcm2712, max() is 1 more than range()
+      case SoC::Bcm2708:
+      case SoC::Bcm2709:
+      case SoC::Bcm2710:
+      case SoC::Bcm2711:
+        Pin1 = Broadcom::Pin1Number;
+        Pin2 = Broadcom::Pin2Number;
+        Freq1 = Broadcom::Freq1;
+        Range1 = Broadcom::Range1;
+        Resolution1 = Broadcom::Resolution1;
+        Freq2 = Broadcom::Freq2;
+        Range2 = Broadcom::Range2;
+        Resolution2 = Broadcom::Resolution2;
+        Freq3 = Broadcom::Freq3;
+        Range3 = Broadcom::Range3;
+        Resolution3 = Broadcom::Resolution3;
+        break;
+      case SoC::H3:
+      case SoC::H5:
+        maxOffset = -1; 
+        Pin1 = Allwinner::Pin1Number;
+        Pin2 = Allwinner::Pin2Number;
+        Freq1 = Allwinner::Freq1;
+        Range1 = Allwinner::Range1;
+        Resolution1 = Allwinner::Resolution1;
+        Freq2 = Allwinner::Freq2;
+        Range2 = Allwinner::Range2;
+        Resolution2 = Allwinner::Resolution2;
+        Freq3 = Allwinner::Freq3;
+        Range3 = Allwinner::Range3;
+        Resolution3 = Allwinner::Resolution3;
+        break;
+      default:
+        std::cerr << "Unsupported SoC for PWM tests." << std::endl;
+        return; // Exit if unsupported SoC
     }
+    output = &gpio.pin (Pin1);
+    input = &gpio.pin (Pin2);
 
-    REQUIRE CHECK (input.isOpen() == true);
-    REQUIRE CHECK (output.isOpen() == true);
 
-    input.setPull (Pin::PullDown);
-    input.setMode (Pin::ModeInput);
-    output.setMode (Pin::ModePwm); // Set output pin to PWM mode
+    REQUIRE CHECK (input->isOpen() == true);
+    REQUIRE CHECK (output->isOpen() == true);
 
-    REQUIRE CHECK_EQUAL (Pin::ModePwm, output.mode());
-    REQUIRE CHECK_EQUAL (Pin::ModeInput, input.mode());
+    input->setPull (Pin::PullDown);
+    input->setMode (Pin::ModeInput);
+    output->setMode (Pin::ModePwm); // Set output pin to PWM mode
 
-    pwm = new SocPwm (&output); // Create SocPwm instance with the output pin
+    REQUIRE CHECK_EQUAL (Pin::ModePwm, output->mode());
+    REQUIRE CHECK_EQUAL (Pin::ModeInput, input->mode());
+
+    pwm = new SocPwm (output); // Create SocPwm instance with the output pin
     REQUIRE CHECK (pwm);
   }
 
@@ -107,7 +184,7 @@ TEST_FIXTURE (PwmFixture, Test1) {
 
   REQUIRE CHECK (pwm->hasPin());
   REQUIRE CHECK (pwm->hasEngine());
-  REQUIRE CHECK (pwm->pin() == &output);
+  REQUIRE CHECK (pwm->pin() == output);
   std::cout << "PwmEngine: " << pwm->deviceName() << std::endl;
   CHECK_EQUAL (pwm->type(), Converter::DigitalToAnalog);
   CHECK_EQUAL (pwm->bipolar(), false);
@@ -122,20 +199,20 @@ TEST_FIXTURE (PwmFixture, Test1) {
     REQUIRE CHECK_EQUAL (false, pwm->isEnabled());
   }
 
-  pwm->setRange (4096); // Set range to 4096
-  CHECK_EQUAL (4096, pwm->range());
-  pwm->setFrequency (1000); // Set frequency to 1000 Hz
-  CHECK_CLOSE (1000, pwm->frequency(), 100); // Allow a tolerance of 25 Hz
-  CHECK_EQUAL (12, pwm->resolution()); // Check resolution, should be 12 bits
+  pwm->setRange (Range1); // Set range to 4096
+  CHECK_EQUAL (Range1, pwm->range());
+  pwm->setFrequency (Freq1); // Set frequency to 1000 Hz
+  CHECK_CLOSE (Freq1, pwm->frequency(), 100); // Allow a tolerance of 25 Hz
+  CHECK_EQUAL (Resolution1, pwm->resolution()); // Check resolution, should be 12 bits
 
   CHECK_EQUAL (pwm->range() + maxOffset, pwm->max());  // Check maximum value, should be 4096 + maxOffset
   CHECK_EQUAL (0, pwm->min()); // Check minimum value
-  pwm->setResolution (10); // Set precision to 10 bits
-  CHECK_EQUAL (10, pwm->resolution()); // Check resolution, should be 10 bits
-  CHECK_EQUAL (1024, pwm->range()); // Check maximum value for 10 bits
+  pwm->setResolution (Resolution2); // Set precision to 10 bits
+  CHECK_EQUAL (Resolution2, pwm->resolution()); // Check resolution, should be 10 bits
+  CHECK_EQUAL (Range2, pwm->range()); // Check maximum value for 10 bits
 
-  CHECK (pwm->write (512)); // Write a value of 512
-  CHECK_EQUAL (512, pwm->read()); // Read back the value, should be 512
+  CHECK (pwm->write (Range2 / 2)); // Set Duty Cycle to 50%
+  CHECK_EQUAL (Range2 / 2, pwm->read()); 
 
   pwm->run (); // Enable PWM
   CHECK (pwm->isEnabled()); // Check if PWM is enabled
@@ -185,14 +262,14 @@ struct InterruptFixture : public PwmFixture {
 
     CHECK_EQUAL (true, pwm->open());
     REQUIRE CHECK (pwm->isOpen() == true);
-    input.attachInterrupt (isr, Pin::EdgeBoth, this);
-    REQUIRE CHECK (input.isGpioDevEnabled());
+    input->attachInterrupt (isr, Pin::EdgeBoth, this);
+    REQUIRE CHECK (input->isGpioDevEnabled());
   }
 
   ~InterruptFixture() {
     // Detach the interrupt handler
-    input.detachInterrupt();
-    CHECK_EQUAL (false, input.enableGpioDev (false));
+    input->detachInterrupt();
+    CHECK_EQUAL (false, input->enableGpioDev (false));
   }
 
   void begin (TestPoint tp) {
@@ -288,26 +365,26 @@ void InterruptFixture::isr (Pin::Event event, void *userData) {
 TEST_FIXTURE (InterruptFixture, Test2) {
 
   std::array <const TestPoint, 20> testPoints = {
-    TestPoint (500, 2000, 1000),
-    TestPoint (500, 2000, 100),
-    TestPoint (500, 2000, 200),
-    TestPoint (500, 2000, 300),
-    TestPoint (500, 2000, 400),
-    TestPoint (500, 2000, 500),
-    TestPoint (500, 2000, 600),
-    TestPoint (500, 2000, 700),
-    TestPoint (500, 2000, 800),
-    TestPoint (500, 2000, 900),
-    TestPoint (500, 2000, 1000),
-    TestPoint (500, 2000, 1100),
-    TestPoint (500, 2000, 1200),
-    TestPoint (500, 2000, 1300),
-    TestPoint (500, 2000, 1400),
-    TestPoint (500, 2000, 1500),
-    TestPoint (500, 2000, 1600),
-    TestPoint (500, 2000, 1700),
-    TestPoint (500, 2000, 1800),
-    TestPoint (500, 2000, 1900)
+    TestPoint (Freq3, Range3, (Range3 * 50) / 100), // Test with 50% duty cycle
+    TestPoint (Freq3, Range3, (Range3 * 5) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 10) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 15) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 20) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 25) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 30) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 35) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 40) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 45) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 50) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 55) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 60) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 65) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 70) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 75) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 80) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 85) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 90) / 100),
+    TestPoint (Freq3, Range3, (Range3 * 95) / 100),
   };
 
   for (const auto &tp : testPoints) {
@@ -318,10 +395,6 @@ TEST_FIXTURE (InterruptFixture, Test2) {
 // run all tests
 int main (int argc, char **argv) {
 
-  std::cout << std::endl << std::endl
-  << "---------------------------------------------------------------------------" << std::endl
-  << "<WARNING> Pin iNo#" << Pin1 << " must be connected to Pin iNo#" << Pin2 << " with a wire!" << std::endl
-  << "---------------------------------------------------------------------------" << std::endl << std::endl;
   return UnitTest::RunAllTests();
 }
 
