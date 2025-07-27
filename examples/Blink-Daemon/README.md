@@ -10,7 +10,7 @@ We start by building the Blinkd project with Codelite, we will take care to
 choose the Release configuration.
 
 Once the compilation is done, copy the program to `/usr/local/bin` and the 
-ervice script in `/etc/init.d` :
+service script in `/etc/init.d` :
 
     $ sudo install -m0755 Release/Blinkd /usr/local/bin
     $ sudo install -m0755 blinkd /etc/init.d

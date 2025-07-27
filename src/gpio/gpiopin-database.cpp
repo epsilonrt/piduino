@@ -79,7 +79,7 @@ namespace Piduino {
 
     for (auto it = name.begin(); it != name.end(); ++it) {
 
-      // Recherche tous les pin_id correspondants au nom et au mode courant
+      // Recherche tous les pin_id correspondents au nom et au mode courant
       res = Piduino::db <<
             "SELECT pin_has_name.pin_id "
             " FROM pin_has_name "
