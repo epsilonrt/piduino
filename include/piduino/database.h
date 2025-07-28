@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
    This file is part of the Piduino Library.
 
    The Piduino Library is free software; you can redistribute it and/or
@@ -14,8 +14,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef PIDUINO_DATABASE_H
-#define PIDUINO_DATABASE_H
+#pragma once
 
 #include <string>
 #include <memory>
@@ -328,4 +327,3 @@ namespace Piduino {
 */
 
 /* ========================================================================== */
-#endif /*PIDUINO_DATABASE_H defined */

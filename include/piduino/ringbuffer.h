@@ -1,6 +1,6 @@
 /* Copyright © 2002-2012 Pete Goodliffe, All rights reserved.
  *
- * Copyright © 2018 Pascal JEAN, All rights reserved.
+ * Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * The Piduino Library is free software; you can redistribute it and/or
@@ -51,9 +51,7 @@
  *  12 September 2012 - fixed computation of offset in reserve().
  *  17 December  2011 - created.
  */
-
-#ifndef PIDUINO_RING_BUFFER_H
-#define PIDUINO_RING_BUFFER_H
+#pragma once
 
 #include <piduino/memory.h>
 #include <iterator>
@@ -859,4 +857,3 @@ namespace Piduino {
 
 }
 /* ========================================================================== */
-#endif // PIDUINO_RING_BUFFER_H

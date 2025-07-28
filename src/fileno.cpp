@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * Copyright © 2010-2016 Stephen Kell, https://github.com/stephenrkell
  * Copyright © 2005 Richard Kreckel, https://www.ginac.de/~kreckel
  * This file is part of the Piduino Library.

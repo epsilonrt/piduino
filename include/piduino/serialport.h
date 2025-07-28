@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * SerialPort is a modified and simplified version of SerialPort,
@@ -14,8 +14,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-#ifndef PIDUINO_SERIALPORT_H
-#define PIDUINO_SERIALPORT_H
+#pragma once
 
 #include <deque>
 #include <string>
@@ -831,4 +830,3 @@ namespace Piduino {
  */
 
 /* ========================================================================== */
-#endif /* PIDUINO_SERIALPORT_H defined */

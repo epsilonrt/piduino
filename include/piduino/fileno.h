@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * Copyright © 2010-2016 Stephen Kell, https://github.com/stephenrkell
  * Copyright © 2005 Richard Kreckel, https://www.ginac.de/~kreckel
  * This file is part of the Piduino Library.
@@ -19,8 +19,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PIDUINO_FILENO_H
-#define PIDUINO_FILENO_H
+#pragma once
 
 #include <iosfwd>
 
@@ -36,4 +35,3 @@ namespace Piduino {
 }
 
 /* ========================================================================== */
-#endif /*PIDUINO_FILENO_H defined */

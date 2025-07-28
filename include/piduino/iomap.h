@@ -14,9 +14,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef PIDUINO_IOMAP_H
-#define PIDUINO_IOMAP_H
+#pragma once
 
 #include <piduino/global.h>
 
@@ -180,4 +178,3 @@ namespace Piduino {
 */
 
 /* ========================================================================== */
-#endif /* PIDUINO_IOMAP_H defined */

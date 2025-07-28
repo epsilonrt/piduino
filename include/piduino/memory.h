@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * The Piduino Library is free software; you can redistribute it and/or
@@ -14,9 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef PIDUINO_MEMORY_H
-#define PIDUINO_MEMORY_H
+#pragma once
 
 #include <memory>
 
@@ -59,4 +57,3 @@ namespace std {
 #endif /* __cpp_lib_make_unique not defined */
 
 /* ========================================================================== */
-#endif /* PIDUINO_MEMORY_H defined */

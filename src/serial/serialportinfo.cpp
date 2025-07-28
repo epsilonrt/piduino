@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * SerialPort is a modified and simplified version of QSerialPort,

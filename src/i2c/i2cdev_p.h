@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino Library.
  *
  * I2cDev is a modified and simplified version of QIODevice,
@@ -17,9 +17,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef PIDUINO_I2CDEV_PRIVATE_H
-#define PIDUINO_I2CDEV_PRIVATE_H
+#pragma once
 
 #include <linux/i2c.h>
 #include <piduino/i2cdev.h>
@@ -57,4 +55,3 @@ namespace Piduino {
   };
 }
 /* ========================================================================== */
-#endif /* PIDUINO_I2CDEV_PRIVATE_H defined */

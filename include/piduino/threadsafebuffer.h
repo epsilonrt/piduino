@@ -1,5 +1,5 @@
 /* Copyright © 2014  Chris Desjardins, http://blog.chrisd.info cjd@chrisd.info
- * Copyright © 2018 Pascal JEAN, https://github.com/epsilonrt
+ * Copyright © 2018-2025 Pascal JEAN, https://github.com/epsilonrt
  * This file is part of the Piduino Library.
  *
  * The Piduino Library is free software; you can redistribute it and/or
@@ -15,8 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef PIDUINO_THREADSAFEBUFFER_H
-#define PIDUINO_THREADSAFEBUFFER_H
+#pragma once
 
 #include <list>
 #include <vector>
@@ -28,7 +27,7 @@ namespace Piduino {
   /**
    * @class ThreadSafeBuffer
    * @author Copyright © 2014 Chris Desjardins
-   * @author Copyright © 2018 Pascal JEAN
+   * @author Copyright © 2018-2025 Pascal JEAN
    * @brief This provides a thread safe buffer
    */
   template <class T> class ThreadSafeBuffer {
@@ -276,4 +275,3 @@ namespace Piduino {
   };
 }
 /* ========================================================================== */
-#endif /* PIDUINO_THREADSAFEBUFFER_H defined */

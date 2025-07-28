@@ -1,4 +1,4 @@
-/* Copyright © 2018 Pascal JEAN, All rights reserved.
+/* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
  * This file is part of the Piduino pido tool.
  * Piduino pido tool is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
