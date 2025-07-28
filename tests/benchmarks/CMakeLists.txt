@@ -20,11 +20,6 @@ cmake_minimum_required(VERSION 3.0)
 include(SubDirList)
 SUBDIRLIST(BENCHMARKS ${CMAKE_CURRENT_SOURCE_DIR})
 
-find_program(SUDO_EXECUTABLE NAMES sudo)
-
-if(NOT SUDO_EXECUTABLE)
-  message(FATAL_ERROR "sudo executable not found, please install sudo")
-endif()
 
 if(PIDUINO_LIB_DIR)
   link_directories(${PIDUINO_LIB_DIR})
@@ -49,24 +44,9 @@ function(add_benchmark benchmark)
   # depending on the framework, you need to link to it
   target_link_libraries(${benchmark} ${LINK_OPTIONS})
   target_compile_options(${benchmark} PUBLIC ${COMPILE_DEFINITIONS})
-
-  # now register the executable with CTest
-  if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${benchmark}/run_as_root")
-
-    add_test(NAME ${benchmark} COMMAND ${benchmark})
-  else()
-
-    message(STATUS "  benchmark ${benchmark} requires root privileges, it will run with sudo")
-    add_test(NAME ${benchmark} COMMAND ${SUDO_EXECUTABLE} $<TARGET_FILE:${benchmark}>
-      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-  endif()
 endfunction()
-
-add_custom_target(build_and_benchmarks ${CMAKE_CTEST_COMMAND} -V)
 
 foreach(benchmark ${BENCHMARKS})
   add_benchmark(${benchmark})
 endforeach()
-
-add_dependencies(build_and_benchmarks piduino-shared)
 
