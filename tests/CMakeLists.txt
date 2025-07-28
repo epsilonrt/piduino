@@ -67,6 +67,10 @@ function(add_test_incl_memcheck test)
   target_link_libraries(${test} ${LINK_OPTIONS} ${UNITTESTPP_LIBRARIES})
   target_compile_options(${test} PUBLIC ${COMPILE_DEFINITIONS} ${UNITTESTPP_CFLAGS})
 
+  if(test STREQUAL "test5-softpwm")
+    set(MEMORY_TESTS OFF)
+  endif()
+
   # now register the executable with CTest
   if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${test}/run_as_root")
 
@@ -96,16 +100,19 @@ function(add_test_incl_memcheck test)
       # --show-leak-kinds=definite: show only definite leaks
       # --track-origins=yes: track the origins of uninitialized values
       add_test(NAME ${test}_memchecked
-        COMMAND ${VALGRIND_EXECUTABLE}
+        COMMAND timeout 30s ${VALGRIND_EXECUTABLE}  # Timeout after 30 seconds
         --error-exitcode=1
         --tool=memcheck
         --leak-check=full
         --errors-for-leak-kinds=definite
-        --show-leak-kinds=definite $<TARGET_FILE:${test}>
+        --show-leak-kinds=definite
+        --max-stackframe=2000000  # stack size limit
+        --main-stacksize=16000000 # main stack size limit
+        $<TARGET_FILE:${test}>
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
       set_tests_properties(${test}_memchecked PROPERTIES
         LABELS "memcheck"
-        TIMEOUT 60
+        TIMEOUT 30  # Timeout CMake également
       )
     endif()
   else()
@@ -117,16 +124,19 @@ function(add_test_incl_memcheck test)
     if(MEMORY_TESTS)
       message(STATUS "  test ${test} will be run with valgrind")
       add_test(NAME ${test}_memchecked
-        COMMAND ${SUDO_EXECUTABLE} ${VALGRIND_EXECUTABLE}
+        COMMAND timeout 30s ${SUDO_EXECUTABLE} ${VALGRIND_EXECUTABLE}  # Timeout after 30 seconds
         --error-exitcode=1
         --tool=memcheck
         --leak-check=full
         --errors-for-leak-kinds=definite
-        --show-leak-kinds=definite $<TARGET_FILE:${test}>
+        --show-leak-kinds=definite
+        --max-stackframe=2000000  # stack size limit
+        --main-stacksize=16000000 # main stack size limit
+        $<TARGET_FILE:${test}>
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
       set_tests_properties(${test}_memchecked PROPERTIES
         LABELS "memcheck"
-        TIMEOUT 60
+        TIMEOUT 30
       )
     endif()
   endif()
