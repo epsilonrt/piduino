@@ -17,6 +17,9 @@
 #pragma once
 
 #include <memory>
+#include <string>
+#include <iostream>
+#include <stdlib.h>
 #include <cstdint>
 #include <cstddef>
 #include <sys/types.h>
@@ -105,6 +108,27 @@
 #define EXCEPTION_MSG(m) std::string{} + __FILE__ + "(" + std::to_string(__LINE__) + "): [" + __func__ +"] " + m
 #endif
 
+namespace Piduino {
+  static inline void Assert (const char *expr_str, bool expr, const char *file, int line, const std::string msg) {
+    if (!expr) {
+      std::cerr << std::endl
+                << "---------->>>" << std::endl
+                << "Assert failed:\t" << msg << std::endl
+                << "Expected:\t" << expr_str << std::endl
+                << "Source:\t\t" << file << ":" << line << std::endl
+                << "----------<<<" << std::endl;
+      abort();
+    }
+  }
+} // namespace Piduino
+
+#ifndef NDEBUG
+#   define M_Assert(Expr, Msg) \
+  Piduino::Assert(#Expr, Expr, __FILE__, __LINE__, Msg)
+#else
+#   define M_Assert(Expr, Msg) ;
+#endif
+
 // ---------------------------------------------------------
 // PIMP_D
 #define PIMP_D(Class) Class::Private * const d = d_func()
@@ -125,8 +149,8 @@
 #endif
 
 /**
- * @brief Global namespace for Piduino
- */
+   @brief Global namespace for Piduino
+*/
 namespace Piduino {
 }
 
