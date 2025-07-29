@@ -241,10 +241,13 @@ struct LinInOutFixture : public GpioFixture {
   Pin &ipin;
   GpioDev2 input;
   GpioDev2 output;
+  std::string errorMessage;
 
   LinInOutFixture() :
     opin (gpio.pin (Pin2)), ipin (gpio.pin (Pin3)),
     input (ipin), output (opin) {
+
+    errorMessage = "<ERROR> Pin iNo#" + std::to_string (opin.logicalNumber()) + " must be connected to Pin iNo#" + std::to_string (ipin.logicalNumber()) + " with a wire!";
 
     REQUIRE CHECK (input.chip().isOpen());
     REQUIRE CHECK (output.chip().isOpen());
@@ -269,21 +272,27 @@ struct LinInOutFixture : public GpioFixture {
     TestFixture::begin (n, title);
     std::cout << "Pin2 (output): " << opin << std::endl;
     std::cout << "Pin3  (input): " << ipin << std::endl;
-    std::cout << "<WARNING> Pin iNo#" << opin.logicalNumber() << " must be connected to Pin iNo#" << ipin.logicalNumber() << " with a wire!" << std::endl << std::endl;
   }
 
   void WriteTest() {
+    bool inState, outState;
 
     output.write (true);
-    CHECK_EQUAL (true, output.read());
+    outState = output.read();
+    inState = input.read();
+    CHECK_EQUAL (true, outState);
+    CHECK_EQUAL (true, inState);
+    M_Assert (inState == outState, errorMessage);
     CHECK_EQUAL (true, opin.read());
-    CHECK_EQUAL (true, input.read());
     CHECK_EQUAL (true, ipin.read());
 
     output.write (false);
-    CHECK_EQUAL (false, output.read());
+    outState = output.read();
+    inState = input.read();
+    CHECK_EQUAL (false, outState);
+    CHECK_EQUAL (false, inState);
+    M_Assert (inState == outState, errorMessage);
     CHECK_EQUAL (false, opin.read());
-    CHECK_EQUAL (false, input.read());
     CHECK_EQUAL (false, ipin.read());
   }
 

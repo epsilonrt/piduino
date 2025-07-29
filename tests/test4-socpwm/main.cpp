@@ -146,13 +146,42 @@ struct PwmFixture : public GpioFixture {
 
     REQUIRE CHECK (input->isOpen() == true);
     REQUIRE CHECK (output->isOpen() == true);
-
-    input->setPull (Pin::PullDown);
+    
+    input->setPull (Pin::PullUp);
     input->setMode (Pin::ModeInput);
-    output->setMode (Pin::ModePwm); // Set output pin to PWM mode
-
-    REQUIRE CHECK_EQUAL (Pin::ModePwm, output->mode());
     REQUIRE CHECK_EQUAL (Pin::ModeInput, input->mode());
+    REQUIRE CHECK_EQUAL (Pin::PullUp, input->pull());
+
+    {
+      // Check if input is connected to output
+      bool inState, outState;
+      std::string errorMessage = "<ERROR> Pin iNo#" + std::to_string (output->logicalNumber()) + " must be connected to Pin iNo#" + std::to_string (input->logicalNumber()) + " with a wire!";
+
+      output->setPull (Pin::PullUp);
+      output->setMode (Pin::ModeInput); // Set output pin to input mode to release the input
+
+      inState = input->read();
+      CHECK_EQUAL (true, inState);
+
+      output->setMode (Pin::ModeOutput); // Set output pin to output mode
+
+      output->write (true);
+      outState = output->read();
+      inState = input->read();
+      CHECK_EQUAL (true, outState);
+      CHECK_EQUAL (true, inState);
+      M_Assert (inState == outState, errorMessage);
+
+      output->write (false); // Initialize output pin to low
+      outState = output->read();
+      inState = input->read();
+      CHECK_EQUAL (false, inState);
+      CHECK_EQUAL (false, inState);
+      M_Assert (inState == outState, errorMessage);
+    }
+
+    output->setMode (Pin::ModePwm); // Set output pin to PWM mode
+    REQUIRE CHECK_EQUAL (Pin::ModePwm, output->mode());
 
     pwm = new SocPwm (output); // Create SocPwm instance with the output pin
     REQUIRE CHECK (pwm);

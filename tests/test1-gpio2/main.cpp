@@ -519,14 +519,17 @@ struct LineOutFixture {
 
 // -----------------------------------------------------------------------------
 struct LineInOutFixture : public TestFixture, public LineInFixture, public LineOutFixture {
+  std::string errorMessage;
 
-  LineInOutFixture() :  LineInFixture(), LineOutFixture() {}
+  LineInOutFixture() :  LineInFixture(), LineOutFixture() {
+
+    errorMessage = "<ERROR> Pin iNo#" + std::to_string (testPin3.iNo()) + " must be connected to Pin iNo#" + std::to_string (testPin4.iNo()) + " with a wire!";
+  }
 
   void begin (int n, const char title[]) {
     TestFixture::begin (n, title);
     std::cout << "Pin3 (output): " << testPin3.pin() << std::endl;
     std::cout << "Pin4  (input): " << testPin4.pin() << std::endl;
-    std::cout << "<WARNING> Pin iNo#" << testPin3.iNo() << " must be connected to Pin iNo#" << testPin4.iNo() << " with a wire!" << std::endl << std::endl;
   }
 };
 
@@ -571,11 +574,14 @@ TEST_FIXTURE (LineInOutFixture, Test5) {
   CHECK_EQUAL (true, state); // Check if input reads high
 
   for (int i = 0; i < 100; ++i) {
-
+    bool inState, outState;
     state = !state; // Toggle state
     CHECK (output.setValue (state)); // Set output to high or low
-    CHECK_EQUAL (state, output.getValue()); // Check if output reads the same value
-    CHECK_EQUAL (state, input.getValue()); // Check if input reads the same value as output
+    inState = input.getValue(); // Read input value
+    outState = output.getValue(); // Read output value
+    CHECK_EQUAL (state, outState); // Check if output reads the same value
+    CHECK_EQUAL (state, inState); // Check if input reads the same value as output
+    M_Assert (inState == outState, errorMessage);
   }
   end();
 }

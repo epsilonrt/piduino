@@ -379,10 +379,12 @@ TEST_FIXTURE (Line1Fixture, Test8) {
 struct LinInOutFixture : public GpioFixture {
   Pin &output;
   Pin &input;
-
+  std::string errorMessage;
 
   LinInOutFixture() :
     output (gpio.pin (Pin2)), input (gpio.pin (Pin3)) {
+
+    errorMessage = "<ERROR> Pin iNo#" + std::to_string (output.logicalNumber()) + " must be connected to Pin iNo#" + std::to_string (input.logicalNumber()) + " with a wire!";
 
     REQUIRE CHECK (input.isOpen() == true);
     REQUIRE CHECK (output.isOpen() == true);
@@ -393,14 +395,21 @@ struct LinInOutFixture : public GpioFixture {
   }
 
   void WriteTest() {
+    bool inState, outState;
 
     output.write (true);
-    CHECK_EQUAL (true, output.read());
-    CHECK_EQUAL (true, input.read());
+    outState = output.read();
+    inState = input.read();
+    CHECK_EQUAL (true, outState);
+    CHECK_EQUAL (true, inState);
+    M_Assert (inState == outState, errorMessage);
 
     output.write (false);
-    CHECK_EQUAL (false, output.read());
-    CHECK_EQUAL (false, input.read());
+    outState = output.read();
+    inState = input.read();
+    CHECK_EQUAL (false, outState);
+    CHECK_EQUAL (false, inState);
+    M_Assert (inState == outState, errorMessage);
   }
 
   ~LinInOutFixture() {

@@ -34,7 +34,7 @@ const long Range1 = 200;
 const long Freq2 = 100;
 const long Range2 = 100;
 
-const long Freq3 = 200;
+const long Freq3 = 100;
 const long Range3 = 200;
 
 // -----------------------------------------------------------------------------
@@ -81,10 +81,42 @@ struct PwmFixture : public GpioFixture {
     REQUIRE CHECK (input.isOpen() == true);
     REQUIRE CHECK (output.isOpen() == true);
 
-    input.setPull (Pin::PullDown);
+    // checks input and output pin before proceeding
+    input.setPull (Pin::PullUp);
     input.setMode (Pin::ModeInput);
-
     REQUIRE CHECK_EQUAL (Pin::ModeInput, input.mode());
+    REQUIRE CHECK_EQUAL (Pin::PullUp, input.pull());
+
+    {
+      // Check if input is connected to output
+      bool inState, outState;
+      std::string errorMessage = "<ERROR> Pin iNo#" + std::to_string (output.logicalNumber()) + " must be connected to Pin iNo#" + std::to_string (input.logicalNumber()) + " with a wire!";
+
+      output.setPull (Pin::PullUp);
+      output.setMode (Pin::ModeInput); // Set output pin to input mode to release the input
+
+      inState = input.read();
+      CHECK_EQUAL (true, inState);
+
+      output.setMode (Pin::ModeOutput); // Set output pin to output mode
+
+      output.write (true);
+      outState = output.read();
+      inState = input.read();
+      CHECK_EQUAL (true, outState);
+      CHECK_EQUAL (true, inState);
+      M_Assert (inState == outState, errorMessage);
+
+      output.write (false); // Initialize output pin to low
+      outState = output.read();
+      inState = input.read();
+      CHECK_EQUAL (false, inState);
+      CHECK_EQUAL (false, inState);
+      M_Assert (inState == outState, errorMessage);
+    }
+
+    output.setMode (Pin::ModeInput);
+
     pwm = new SoftPwm (&output, Range1, Freq1);
   }
 
@@ -116,17 +148,17 @@ TEST_FIXTURE (PwmFixture, Test1) {
   pwm->setFrequency (Freq2);
   CHECK_CLOSE (Freq2, pwm->frequency(), 10);
 
-  CHECK_EQUAL (pwm->range(), pwm->max());   
+  CHECK_EQUAL (pwm->range(), pwm->max());
   CHECK_EQUAL (0, pwm->min());
 
-  CHECK (pwm->write ((Range2 * 50) / 100));
-  CHECK_EQUAL ((Range2 * 50) / 100, pwm->read());
+  CHECK (pwm->write ( (Range2 * 50) / 100));
+  CHECK_EQUAL ( (Range2 * 50) / 100, pwm->read());
   std::cout << "PWM value: " << pwm->read() << std::endl;
 
   pwm->run ();
   CHECK (pwm->isEnabled());
-  clk.delay (2000); 
-  
+  clk.delay (2000);
+
   for (int i = FreqMin; i <= FreqMax; i += FreqMin) {
 
     CHECK_CLOSE (i, pwm->setFrequency (i), i / 10);
