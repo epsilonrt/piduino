@@ -156,29 +156,31 @@ namespace Piduino {
     }
 
     uint32_t fsel = Private::mode2fsel.at (m); // Get the function select value for the mode
+    uint32_t pad = d->padReg (p) & (GPIO_PAD_PULL_MASK | GPIO_PAD_DRIVE_MASK); // do not change pull or drive bits
+    pad |= (GPIO_PAD_IN_ENABLE | GPIO_PAD_SCHMITT | GPIO_PAD_SLEWFAST);  // Set the pad register to enable input, Schmitt trigger and fast slew rate
 
     switch (m) {
       case Pin::ModeInput:
-      // case Pin::ModeAlt5:
-        d->setPadReg (p, (p <= 8) ? GPIO_PAD_DEFAULT_0TO8 : GPIO_PAD_DEFAULT_FROM9);
+        // case Pin::ModeAlt5:
+        d->setPadReg (p, pad);
         d->setCtrlReg (p, FselGpio | GPIO_CTRL_DEBOUNCE_DEFAULT);
-        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p;
+        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p; // disable output for the pin
         break;
       case Pin::ModeOutput:
-        d->setPadReg (p, (p <= 8) ? GPIO_PAD_DEFAULT_0TO8 : GPIO_PAD_DEFAULT_FROM9);
+        d->setPadReg (p, pad);
         d->setCtrlReg (p, FselGpio | GPIO_CTRL_DEBOUNCE_DEFAULT);
-        d->rio[GPIO_RIO_OE + GPIO_RIO_SET_OFFSET] = 1 << p;
+        d->rio[GPIO_RIO_OE + GPIO_RIO_SET_OFFSET] = 1 << p; // enable output for the pin
         break;
       case Pin::ModeDisabled:
         d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9);
         d->setCtrlReg (p, GPIO_CTRL_IRQRESET | FselNoneHw | GPIO_CTRL_DEBOUNCE_DEFAULT);
-        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p;
+        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p; // disable output for the pin
         break;
       case Pin::ModeAlt0:
       case Pin::ModeAlt3:
         if (isPwm) {
           // For PWM mode, set the function select bits and set the pad register to hardware mode
-          d->setPadReg (p, (p <= 8) ? GPIO_PAD_DEFAULT_0TO8 : GPIO_PAD_DEFAULT_FROM9); // enable output
+          d->setPadReg (p, pad); // enable output
           // Set the control register to the function select value and enable debounce
           d->setCtrlReg (p, fsel | GPIO_CTRL_DEBOUNCE_DEFAULT);
           break;
@@ -191,12 +193,11 @@ namespace Piduino {
       case Pin::ModeAlt8: {
         // Alternate functions, set the function select bits
         // and set the pad register to hardware mode
-        d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9);
         uint32_t ctrl = d->ctrlReg (p) & ~GPIO_CTRL_FUNCSEL_MASK; // Clear the function select bits
         ctrl |= fsel; // Set the new function select value
         d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9); // Set the pad register to hardware mode
         d->setCtrlReg (p, ctrl); // Write back the modified control register
-        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p; // Clear the output enable bit for the pin
+        d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p; // disable output for the pin
       }
       break;
       default:
@@ -235,7 +236,7 @@ namespace Piduino {
     d->rio[GPIO_RIO_OUT + (v ? GPIO_RIO_SET_OFFSET : GPIO_RIO_CLR_OFFSET)] = (1 << pin->mcuNumber());
   }
 
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   void
   Rp1Gpio::toggle (const Pin *pin) {
     PIMP_D (Rp1Gpio);
