@@ -19,332 +19,262 @@
 #include <climits>
 #include <cmath>
 #include "pwm_rp1.h"
-#include "gpio/socpwm_p.h"
 #include <piduino/clock.h>
 #include <piduino/database.h>
 #include "config.h"
 
 namespace Piduino {
 
-  namespace Rp1 {
+  using namespace Rp1;
 
-    // -------------------------------------------------------------------------
-    //
-    //                     Rp1::PwmEngine Class
-    //
-    // -------------------------------------------------------------------------
-    IoMap PwmEngine::iomap; // Shared IoMap instance for memory mapping.
-    volatile uint32_t *PwmEngine::clock = nullptr; // Pointer to clock registers.
-    std::atomic<int> PwmEngine::instanceCount{0}; // Counter for active instances
+  // -------------------------------------------------------------------------
+  //
+  //                     Pwm::Rp1Engine Class
+  //
+  // -------------------------------------------------------------------------
+  IoMap SocPwm::Rp1Engine::iomap; // Shared IoMap instance for memory mapping.
+  volatile uint32_t *SocPwm::Rp1Engine::clock = nullptr; // Pointer to clock registers.
+  std::atomic<int> SocPwm::Rp1Engine::instanceCount{0}; // Counter for active instances
 
-    // -------------------------------------------------------------------------
-    // public
-    PwmEngine::PwmEngine (SocPwm::Private *d, Pin *p) :
-      SocPwm::Engine (d, p), pwm (nullptr), channel (0), base (Pwm0Offset), clkFreq (PwmClkOscFreq), mode (TrailingEdgeMsMode) {
+  // -------------------------------------------------------------------------
+  SocPwm::Rp1Engine::Rp1Engine (SocPwm *q, Pin *p) :
+    SocPwm::Private (q, p, hasFrequency | hasSetFrequency | hasResolution | hasSetResolution | hasRange | hasSetRange),
+    pwm (nullptr), channel (0), base (Pwm0Offset), clkFreq (PwmClkOscFreq), mode (TrailingEdgeMsMode) {
 
-      ++instanceCount; // Increment instance counter
+    ++instanceCount; // Increment instance counter
 
-      if (p) {
-
-        if (p->mode() == Pin::ModePwm) {
-
-          switch (p->mcuNumber()) {
-            case 12: // PWM00
-              channel = 0;
-              break;
-            case 13: // PWM01
-              channel = 1;
-              break;
-            case 18: // PWM02
-              channel = 2;
-              break;
-            case 19: // PWM03
-              channel = 3;
-              break;
-            default:
-              throw std::invalid_argument ("Invalid PWM pin number: " + std::to_string (p->mcuNumber()));
-          }
-
-          dataReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanDutyReg;
-          rngReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanRangeReg;
-          ctlReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanCtrlReg;
-          #ifndef NDEBUG
-          // Debugging information
-          std::cout << "PwmEngine initialized on pin iNo" << p->logicalNumber() << std::endl
-                    << "Channel Number   : " << channel << std::endl
-                    << "Clock Frequency  : " << clkFreq << " Hz" << std::endl
-                    << "PWM Base Offset  : 0x" << std::hex << base << std::endl
-                    << "Control Register Offset: 0x" << ctlReg << std::endl
-                    << "Range Register Offset  : 0x" << rngReg  << std::endl
-                    << "Data Register Offset   : 0x" << dataReg << std::dec << std::endl;
-          #endif
-        }
-        else {
-
-          // Default construction for non-PWM pins
-          pin = nullptr;
-        }
-      }
+    switch (p->mcuNumber()) {
+      case 12: // PWM00
+        channel = 0;
+        break;
+      case 13: // PWM01
+        channel = 1;
+        break;
+      case 18: // PWM02
+        channel = 2;
+        break;
+      case 19: // PWM03
+        channel = 3;
+        break;
+      default:
+        throw std::runtime_error (EXCEPTION_MSG ("Hardware PWM not supported on this pin"));
     }
 
-    // -------------------------------------------------------------------------
-    PwmEngine::~PwmEngine() {
+    p->setMode (Pin::ModePwm); // Set pin mode to PWM
 
-      --instanceCount; // Decrement instance counter
+    dataReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanDutyReg;
+    rngReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanRangeReg;
+    ctlReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanCtrlReg;
+    #ifndef NDEBUG
+    // Debugging information
+    std::cout << "Rp1Engine initialized on pin iNo" << p->logicalNumber() << std::endl
+              << "Channel Number   : " << channel << std::endl
+              << "Clock Frequency  : " << clkFreq << " Hz" << std::endl
+              << "PWM Base Offset  : 0x" << std::hex << base << std::endl
+              << "Control Register Offset: 0x" << ctlReg << std::endl
+              << "Range Register Offset  : 0x" << rngReg  << std::endl
+              << "Data Register Offset   : 0x" << dataReg << std::dec << std::endl;
+    #endif
+  }
 
-      // Close iomap when last instance is destroyed
-      if (instanceCount == 0 && iomap.isOpen()) {
-        iomap.close();
-        clock = nullptr;
-      }
+  // -------------------------------------------------------------------------
+  SocPwm::Rp1Engine::~Rp1Engine() {
+
+    --instanceCount; // Decrement instance counter
+
+    // Close iomap when last instance is destroyed
+    if (instanceCount == 0 && iomap.isOpen()) {
+      iomap.close();
+      clock = nullptr;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    bool
-    PwmEngine::open (IoDevice::OpenMode m) {
+  // -------------------------------------------------------------------------
+  // override
+  const std::string &
+  SocPwm::Rp1Engine::deviceName() const {
+    static std::string dn ("Rp1Pwm");
 
-      if (!iomap.isOpen()) {
-        std::string pcieDevice = findPCIeDevice();
-        if (pcieDevice.empty()) {
-          throw std::system_error (std::make_error_code (std::errc::no_such_device),
-                                   "No PCIe device found for PWM access");
-        }
+    return dn;
+  }
 
-        iomap.open (pcieDevice.c_str(), PCIeBlockSize);
-        clock = iomap.io (ClockOffset);
+  // -------------------------------------------------------------------------
+  // override
+  bool
+  SocPwm::Rp1Engine::open (IoDevice::OpenMode m) {
+
+    if (!iomap.isOpen()) {
+      std::string pcieDevice = findPCIeDevice();
+
+      if (pcieDevice.empty()) {
+        throw std::system_error (std::make_error_code (std::errc::no_such_device),
+                                 "No PCIe device found for PWM access");
       }
 
-      pwm = iomap.io (base); // RP1 start address of map memory for pwm
-      return true;
-    }
-
-    // -------------------------------------------------------------------------
-    void
-    PwmEngine::close() {
-
-      pwm = nullptr; // reset the pointer to the PWM registers
-    }
-
-    // -------------------------------------------------------------------------
-    // hasPin() checked before calling this function
-    long
-    PwmEngine::read() {
-
-      return readPwm (dataReg);
-    }
-
-    // -------------------------------------------------------------------------
-    // hasPin() checked before calling this function
-    bool
-    PwmEngine::write (long value) {
-
-      writePwm (dataReg, value);
-      return true;
-    }
-
-    // -------------------------------------------------------------------------
-    // hasPin() checked before calling this function
-    void
-    PwmEngine::setEnable (bool enable) {
-      uint32_t ctl = readPwm (PwmGlobalCtrlReg);
-
-      if (enable) {
-
-        ctl |= BIT (channel) | PwmGlobalCtrlSetUpdate;
-        writePwm (ctlReg, mode | PwmChanCtrlFifoPopMask);
+      if (!iomap.open (pcieDevice.c_str(), PCIeBlockSize)) {
+        return false; // Failed to open IoMap
       }
-      else {
-        writePwm (ctlReg, 0); // Disable channel
-        ctl = (ctl & ~BIT (channel)) | PwmGlobalCtrlSetUpdate;
-      }
-      writePwm (PwmGlobalCtrlReg, ctl);
-      clk.delayMicroseconds (10);
+      clock = iomap.io (ClockOffset);
     }
 
-    // -------------------------------------------------------------------------
-    // hasPin() checked before calling this function
-    bool
-    PwmEngine::isEnabled () const {
+    pwm = iomap.io (base); // RP1 start address of map memory for pwm
+    return SocPwm::Private::open (m);
+  }
 
-      return (readPwm (ctlReg) == (mode | PwmChanCtrlFifoPopMask)) &&
-             (readPwm (PwmGlobalCtrlReg) & BIT (channel)) == BIT (channel);
+  // -------------------------------------------------------------------------
+  // override
+  void
+  SocPwm::Rp1Engine::close() {
+
+    pwm = nullptr; // reset the pointer to the PWM registers
+    SocPwm::Private::close();
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Rp1Engine::read() {
+
+    return readPwm (dataReg);
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  bool
+  SocPwm::Rp1Engine::write (long value) {
+
+    writePwm (dataReg, value);
+    return true;
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  void
+  SocPwm::Rp1Engine::setEnable (bool enable) {
+    uint32_t ctl = readPwm (PwmGlobalCtrlReg);
+
+    if (enable) {
+
+      ctl |= BIT (channel) | PwmGlobalCtrlSetUpdate;
+      writePwm (ctlReg, mode | PwmChanCtrlFifoPopMask);
+    }
+    else {
+      writePwm (ctlReg, 0); // Disable channel
+      ctl = (ctl & ~BIT (channel)) | PwmGlobalCtrlSetUpdate;
+    }
+    writePwm (PwmGlobalCtrlReg, ctl);
+    clk.delayMicroseconds (10);
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  bool
+  SocPwm::Rp1Engine::isEnabled () const {
+
+    return (readPwm (ctlReg) == (mode | PwmChanCtrlFifoPopMask)) &&
+           (readPwm (PwmGlobalCtrlReg) & BIT (channel)) == BIT (channel);
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Rp1Engine::max() const {
+
+    return range() + 1;
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Rp1Engine::range() const {
+
+    return readPwm (rngReg);
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Rp1Engine::setRange (long r) {
+
+    writePwm (rngReg,  r);
+    return range();
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Rp1Engine::frequency() const {
+    uint32_t div = clockDivisor();
+
+    if (div != 0) {
+      return clkFreq / div / range();
+    }
+    return 0;
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Rp1Engine::setFrequency (long f) {
+
+    if (f > 0) {
+
+      setClockDivisor (frequencyDivisor (f));
+      return frequency(); // Return the new frequency
+    }
+    return 0; // Invalid frequency, return 0
+  }
+
+  // -------------------------------------------------------------------------
+  // internal
+  uint32_t
+  SocPwm::Rp1Engine::clockDivisor() const {
+
+    uint32_t div = readClock (Pwm0ClkDivIntReg);
+    return div;
+  }
+
+  // -------------------------------------------------------------------------
+  // internal
+  void
+  SocPwm::Rp1Engine::setClockDivisor (uint32_t div) {
+
+    if (div > PwmClkDivIntMax) {
+
+      div = PwmClkDivIntMax;
     }
 
-    // -------------------------------------------------------------------------
-    // isOpen() checked before calling this function
-    // hasPin() NOT checked before calling this function
-    int
-    PwmEngine::resolution() const {
+    uint32_t backupctl = readPwm (PwmChanCtrlReg);
 
-      if (hasPin()) {
-        long r = range();
+    writePwm (PwmChanCtrlReg, 0); // Turn off PWM before changing
+    clk.delayMicroseconds (10);
 
-        if (r > 0) {
-          return log2 (r);
-        }
-      }
-      return -1;
+    // Disable clock
+    writeClock (Pwm0ClkCtrlReg, PwmClkCtrlMagicDisable);
+    clk.delayMicroseconds (110);
+
+    if (div >= PwmClkDivIntMin) {
+
+      // Wait for generator to stop ?
+
+      writeClock (Pwm0ClkDivIntReg, div); // Set integer part of clock divisor
+      writeClock (Pwm0ClkDivFracReg, 0); // Set fractional part of clock divisor
+      writeClock (Pwm0SelReg, 1); // Select the PWM clock source
+      writeClock (Pwm0ClkCtrlReg, PwmClkCtrlMagicEnable); // Enable clock
+      writePwm (PwmChanCtrlReg, backupctl); // Restore channel control register
+      clk.delayMicroseconds (10); // Wait for clock to stabilize
     }
 
-    // -------------------------------------------------------------------------
-    // isOpen() checked before calling this function
-    // hasPin() NOT checked before calling this function
-    long
-    PwmEngine::max() const {
+  }
 
-      if (hasPin()) {
-        return range() + 1;
-      }
-      return -1;
-    }
+  // -------------------------------------------------------------------------
+  // internal
+  uint32_t SocPwm::Rp1Engine::frequencyDivisor (long freq) {
+    double value = ceil (static_cast<double> (clkFreq) / freq /
+                         range());
 
-    // -------------------------------------------------------------------------
-    // isOpen() checked before calling this function
-    // hasPin() NOT checked before calling this function
-    long
-    PwmEngine::min() const {
-
-      return 0;
-    }
-
-    // -------------------------------------------------------------------------
-    // isOpen() checked before calling this function
-    // hasPin() NOT checked before calling this function
-    bool
-    PwmEngine::setResolution (int resolution) {
-
-      if (hasPin()) {
-        if (resolution < PWM_RESOLUTION_MIN) {
-
-          resolution = PWM_RESOLUTION_MIN;
-        }
-        else if (resolution > PWM_RESOLUTION_MAX) {
-
-          resolution = PWM_RESOLUTION_MAX;
-        }
-        return setRange (1L << resolution);
-      }
-      return false;
-    }
-
-    // -------------------------------------------------------------------------
-    // isOpen() checked before calling this function
-    // hasPin() NOT checked before calling this function
-    long
-    PwmEngine::range() const {
-
-      if (hasPin()) {
-
-        return readPwm (rngReg);
-      }
-      return -1;
-    }
-
-    // -------------------------------------------------------------------------
-    // isOpen() checked before calling this function
-    // hasPin() NOT checked before calling this function
-    bool
-    PwmEngine::setRange (long r) {
-
-      if (hasPin()) {
-
-        writePwm (rngReg,  r);
-        return true;
-      }
-      return false;
-    }
-
-    // -------------------------------------------------------------------------
-    // isOpen() checked before calling this function
-    // hasPin() NOT checked before calling this function
-    long
-    PwmEngine::frequency() const {
-
-      if (hasPin()) {
-        uint32_t div = clockDivisor();
-
-        if (div != 0) {
-          return clkFreq / div / range();
-        }
-      }
-      return 0;
-    }
-
-    // -------------------------------------------------------------------------
-    // isOpen() checked before calling this function
-    // hasPin() NOT checked before calling this function
-    bool
-    PwmEngine::setFrequency (long frequency) {
-
-      if ( (frequency > 0) && hasPin()) {
-
-        setClockDivisor (frequencyDivisor (frequency));
-        return true;
-      }
-
-      return false;
-    }
-
-    // -------------------------------------------------------------------------
-    // private
-    uint32_t
-    PwmEngine::clockDivisor() const {
-
-      uint32_t div = readClock (Pwm0ClkDivIntReg);
-      return div;
-    }
-
-    // -------------------------------------------------------------------------
-    // private
-    void
-    PwmEngine::setClockDivisor (uint32_t div) {
-
-      if (div > PwmClkDivIntMax) {
-
-        div = PwmClkDivIntMax;
-      }
-
-      uint32_t backupctl = readPwm (PwmChanCtrlReg);
-
-      writePwm (PwmChanCtrlReg, 0); // Turn off PWM before changing
-      clk.delayMicroseconds (10);
-
-      // Disable clock
-      writeClock (Pwm0ClkCtrlReg, PwmClkCtrlMagicDisable);
-      clk.delayMicroseconds (110);
-
-      if (div >= PwmClkDivIntMin) {
-
-        // Wait for generator to stop ?
-
-        writeClock (Pwm0ClkDivIntReg, div); // Set integer part of clock divisor
-        writeClock (Pwm0ClkDivFracReg, 0); // Set fractional part of clock divisor
-        writeClock (Pwm0SelReg, 1); // Select the PWM clock source
-        writeClock (Pwm0ClkCtrlReg, PwmClkCtrlMagicEnable); // Enable clock
-        writePwm (PwmChanCtrlReg, backupctl); // Restore channel control register
-        clk.delayMicroseconds (10); // Wait for clock to stabilize
-      }
-
-    }
-
-    // -------------------------------------------------------------------------
-    // private
-    uint32_t PwmEngine::frequencyDivisor (long freq) {
-      double value = ceil (static_cast<double> (clkFreq) / freq /
-                           range());
-
-      return value;
-    }
-
-    // -------------------------------------------------------------------------
-    const std::string &
-    PwmEngine::deviceName() const {
-      static std::string dn ("Rp1Pwm");
-
-      return dn;
-    }
-
-  } // namespace Rp1
+    return value;
+  }
 
 } // namespace Piduino
 /* ========================================================================== */

@@ -17,85 +17,71 @@
 #pragma once
 
 #include <atomic>
-#include <piduino/socpwm.h>
 #include <piduino/iomap.h>
+#include "gpio/socpwm_p.h"
 #include "rp1.h"
 
 namespace Piduino {
 
-  namespace Rp1 {
+  class SocPwm::Rp1Engine  : public SocPwm::Private {
 
-    /**
-       @class Rp1::PwmEngine
-       @brief
-    */
-    class PwmEngine  : public SocPwm::Engine {
+    public:
+      Rp1Engine (SocPwm *q, Pin *p);
+      ~Rp1Engine();
 
-      public:
-        PwmEngine (SocPwm::Private *d, Pin *p);
-        ~PwmEngine();
+      bool open (IoDevice::OpenMode mode) override;
+      void close() override;
+      const std::string &deviceName() const override;
 
-        bool open (IoDevice::OpenMode mode);
-        void close();
-        const std::string &deviceName() const;
+      long read() override;
+      bool write (long value) override;
+      void setEnable (bool enable) override;
+      bool isEnabled () const override;
+      long max() const override;
+      virtual long range() const override;
+      long setRange (long range) override;
+      long frequency() const override;
+      long setFrequency (long freq) override;
 
-        // isOpen() checked before calling this functions
-        long frequency() const;
-        int  resolution() const;
-        long range() const;
-        long max() const;
-        long min() const;
-        bool setFrequency (long freq);
-        bool setResolution (int resolution);
-        bool setRange (long range);
+      // ----------- internal methods -----------
+      uint32_t clockDivisor() const;
+      void setClockDivisor (uint32_t div);
+      uint32_t frequencyDivisor (long freq);
 
-        // hasPin() checked before calling this functions
-        long read();
-        bool write (long value);
-        void setEnable (bool enable);
-        bool isEnabled () const;
+      inline uint32_t readPwm (size_t offset) const {
+        return pwm[offset];
+      }
+      inline void writePwm (size_t offset, uint32_t value) {
+        pwm[offset] = value;
+      }
+      inline uint32_t readClock (size_t offset) const {
+        return clock[offset];
+      }
+      inline void writeClock (size_t offset, uint32_t value) {
+        clock[offset] = value;
+      }
 
-      private:
-        // the private data members
-        volatile uint32_t *pwm;  // Pointer to the PWM registers.
+      //----------- data members -----------
+      // the private data members
+      volatile uint32_t *pwm;  // Pointer to the PWM registers.
 
-        uint32_t channel; // PWM channel number (0 to 3).
-        off_t base; // Base address for the PWM registers.
-        
-        off_t rngReg;
-        off_t dataReg;
-        off_t ctlReg; // Control register for the PWM channel.
-        uint32_t clkFreq;
-        PwmChanCtrlMode mode;
+      uint32_t channel; // PWM channel number (0 to 3).
+      off_t base; // Base address for the PWM registers.
 
-        // the private static functions
-        uint32_t clockDivisor() const;
-        void setClockDivisor (uint32_t div);
-        uint32_t frequencyDivisor (long freq);
+      off_t rngReg;
+      off_t dataReg;
+      off_t ctlReg; // Control register for the PWM channel.
+      uint32_t clkFreq;
+      Rp1::PwmChanCtrlMode mode;
 
-        inline uint32_t readPwm (size_t offset) const {
-          return pwm[offset];
-        }
-        inline void writePwm (size_t offset, uint32_t value) {
-          pwm[offset] = value;
-        }
-        inline uint32_t readClock (size_t offset) const {
-          return clock[offset];
-        }
-        inline void writeClock (size_t offset, uint32_t value) {
-          clock[offset] = value;
-        }
+      // --------------------------------------------------------------------
+      // the private static data members
+      static IoMap iomap; // Shared IoMap instance for memory mapping.
+      static volatile uint32_t *clock;  // Pointer to the clock registers.
+      static std::atomic<int> instanceCount; // Counter for active instances
 
-        // --------------------------------------------------------------------
-        // the private static data members
-        static IoMap iomap; // Shared IoMap instance for memory mapping.
-        static volatile uint32_t* clock;  // Pointer to the clock registers.
-        static std::atomic<int> instanceCount; // Counter for active instances
-
-        // --------------------------------------------------------------------
-        // the private static functions
-    };
-  }
+      PIMP_DECLARE_PUBLIC (SocPwm)
+  };
 }
 
 /* ========================================================================== */

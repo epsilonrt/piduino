@@ -146,7 +146,7 @@ struct PwmFixture : public GpioFixture {
 
     REQUIRE CHECK (input->isOpen() == true);
     REQUIRE CHECK (output->isOpen() == true);
-    
+
     input->setPull (Pin::PullUp);
     input->setMode (Pin::ModeInput);
     REQUIRE CHECK_EQUAL (Pin::ModeInput, input->mode());
@@ -211,8 +211,6 @@ struct PwmFixture : public GpioFixture {
 TEST_FIXTURE (PwmFixture, Test1) {
   begin (1, "SocPwm basic tests");
 
-  REQUIRE CHECK (pwm->hasPin());
-  REQUIRE CHECK (pwm->hasEngine());
   REQUIRE CHECK (pwm->pin() == output);
   std::cout << "PwmEngine: " << pwm->deviceName() << std::endl;
   CHECK_EQUAL (pwm->type(), Converter::DigitalToAnalog);
@@ -239,6 +237,8 @@ TEST_FIXTURE (PwmFixture, Test1) {
   pwm->setResolution (Resolution2);
   CHECK_EQUAL (Resolution2, pwm->resolution());
   CHECK_EQUAL (Range2, pwm->range());
+  pwm->setFrequency (Freq2);
+  CHECK_CLOSE (Freq2, pwm->frequency(), 100);
 
   CHECK (pwm->write (Range2 / 2)); // Set Duty Cycle to 50%
   CHECK_EQUAL (Range2 / 2, pwm->read());
@@ -349,9 +349,9 @@ struct InterruptFixture : public PwmFixture {
 
     begin (tp);
 
-    pwm->setRange (tp.range); // Set range to 4096
+    pwm->setRange (tp.range);
 
-    in.frequency = pwm->setFrequency (tp.frequency); // Set frequency to 1000 Hz
+    in.frequency = pwm->setFrequency (tp.frequency);
     d = (static_cast<double> (102) / in.frequency) * 1000; // Calculate delay in milliseconds
     in.dutyCycle = static_cast<double> (tp.value) / tp.range * 100; // Calculate duty cycle
     in.period = 1000000.0 / in.frequency; // Calculate period in microseconds

@@ -1,55 +1,37 @@
 /* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #pragma once
 
 #include <piduino/socpwm.h>
-#include "pwm_p.h"
+#include "converter_p.h"
 
 namespace Piduino {
 
-  /**
-   * @class SocPwm::Private
-   * @brief
-   */
-  class SocPwm::Private  : public Pwm::Private {
+  class SocPwm::Private  : public Converter::Private {
 
     public:
-      // SocPwm::Private
-      Private (SocPwm * q, Pin * pin);
+      Private (SocPwm *q, Pin *pin, unsigned int flags = 0);
       virtual ~Private();
-      bool hasEngine() const;
-      bool hasPin() const;
+      static SocPwm::Private *engineFactory (SocPwm *q, Pin *pin);
 
-      // IoDevice::Private
-      virtual bool isOpen() const;
-
-      // Converter::Private
-      virtual bool open (OpenMode mode);
-      virtual void close();
-      virtual long read();
-      virtual bool write (long value);
-      virtual long max() const;
-      virtual long min() const;
-
-      // SocPwm::Private
-      std::unique_ptr<Engine> engine;
-
+      Pin *pin; ///< Pointer to the associated pin.
       PIMP_DECLARE_PUBLIC (SocPwm)
   };
+
 }
 
 /* ========================================================================== */

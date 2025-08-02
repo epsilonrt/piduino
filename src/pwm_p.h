@@ -22,15 +22,28 @@
 namespace Piduino {
 
   /**
-   * @class Pwm::Private
-   * @brief
+   * @brief Private implementation class for Pwm.
+   *
+   * This class encapsulates the private data and implementation details for the Pwm class,
+   * following the PIMPL (Pointer to IMPLementation) idiom. It inherits from Converter::Private.
    */
   class Pwm::Private  : public Converter::Private {
 
     public:
+      /**
+       * @brief Constructs the private implementation for Pwm.
+       * @param q Pointer to the associated Pwm object.
+       */
       Private (Pwm * q);
+
+      /**
+       * @brief Destructor for the private implementation.
+       */
       virtual ~Private();
 
+      /**
+       * @brief Macro to declare public interface access for Pwm.
+       */
       PIMP_DECLARE_PUBLIC (Pwm)
   };
 }

@@ -1,87 +1,78 @@
 /* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #pragma once
 
 #include <piduino/socpwm.h>
 #include <piduino/iomap.h>
 #include "bcm2835.h"
+#include "gpio/socpwm_p.h"
 
 namespace Piduino {
 
-  namespace Bcm2835 {
+  class SocPwm::Bcm2835Engine  : public SocPwm::Private {
 
-    /**
-     * @class Bcm2835::PwmEngine
-     * @brief
-     */
-    class PwmEngine  : public SocPwm::Engine {
+    public:
+      Bcm2835Engine (SocPwm *q, Pin *p);
+      ~Bcm2835Engine();
 
-      public:
-        PwmEngine (SocPwm::Private * d, Pin * p);
-        ~PwmEngine();
+      bool open (IoDevice::OpenMode mode) override;
+      void close() override;
+      const std::string &deviceName() const override;
 
-        bool open (IoDevice::OpenMode mode);
-        void close();
-        const std::string & deviceName() const;
+      long read() override;
+      bool write (long value) override;
+      void setEnable (bool enable) override;
+      bool isEnabled () const override;
 
-        // isOpen() checked before calling this functions
-        long frequency() const;
-        int  resolution() const;
-        long range() const;
-        long max() const;
-        long min() const;
-        bool setFrequency (long freq);
-        bool setResolution (int resolution);
-        bool setRange (long range);
+      long max() const override;
+      long setRange (long range) override;
+      long frequency() const override;
+      long setFrequency (long freq) override;
 
-        // hasPin() checked before calling this functions
-        long read();
-        bool write (long value);
-        void setEnable (bool enable);
-        bool isEnabled () const;
+      // ----------- internal methods -----------
+      uint32_t clockDivisor() const;
+      void setClockDivisor (uint32_t div);
+      uint32_t frequencyDivisor (long freq);
 
-      private:
-        IoMap pwm;
-        IoMap clock;
-        size_t rngReg;
-        size_t dataReg;
-        uint32_t ctlMasqInit;
-        uint32_t ctlMasqStartStop;
-        bool is2711;
-        uint32_t clkFreq;
+      inline uint32_t readPwm (size_t offset) const {
+        return *pwm.io (offset);
+      }
+      inline void writePwm (size_t offset, uint32_t value) {
+        *pwm.io (offset) = value;
+      }
+      inline uint32_t readClock (size_t offset) const {
+        return *clock.io (offset);
+      }
+      inline void writeClock (size_t offset, uint32_t value) {
+        *clock.io (offset) = value;
+      }
 
-        uint32_t clockDivisor() const;
-        void setClockDivisor (uint32_t div);
-        uint32_t frequencyDivisor (long freq);
+      //----------- data members -----------
+      IoMap pwm;
+      IoMap clock;
+      size_t rngReg;
+      size_t dataReg;
+      uint32_t ctlMasqInit;
+      uint32_t ctlMasqStartStop;
+      bool is2711;
+      uint32_t clkFreq;
 
-        inline uint32_t readPwm (size_t offset) const {
-          return *pwm.io (offset);
-        }
-        inline void writePwm (size_t offset, uint32_t value) {
-          *pwm.io (offset) = value;
-        }
-        inline uint32_t readClock (size_t offset) const {
-          return *clock.io (offset);
-        }
-        inline void writeClock (size_t offset, uint32_t value) {
-          *clock.io (offset) = value;
-        }
-    };
-  }
+      PIMP_DECLARE_PUBLIC (SocPwm)
+  };
 }
 
 /* ========================================================================== */

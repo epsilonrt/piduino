@@ -16,7 +16,7 @@
 */
 #pragma once
 
-#include <piduino/pwm.h>
+#include <piduino/converter.h>
 #include <piduino/gpiopin.h>
 
 
@@ -35,9 +35,9 @@ namespace Piduino {
     @note The minimum tick value is set to 10 microseconds, which determines the smallest
     time unit for PWM period calculation (range * tick = period in microseconds).
 
-    @see Pwm
+    @see Converter
   */
-  class SoftPwm : public Pwm {
+  class SoftPwm : public Converter {
 
     public:
       /**
@@ -54,54 +54,6 @@ namespace Piduino {
       */
       virtual ~SoftPwm();
 
-      /**
-         @brief Sets the PWM signal to be enabled or disabled.
-         @param enable True to enable the PWM signal, false to disable it.
-      */
-      virtual void setEnable (bool enable);
-
-      /**
-         @brief Checks if the PWM signal is enabled.
-         @return True if the PWM signal is enabled, false otherwise.
-      */
-      virtual bool isEnabled () const;
-
-      /**
-         @brief Returns the device name for the SoftPwm instance.
-         @return A string representing the device name.
-      */
-      virtual const std::string &deviceName() const;
-
-      // not supported, return -1
-      // virtual int resolution() const;
-      // virtual int setResolution (int resolution);
-
-      /**
-         @brief Returns the current frequency of the PWM signal.
-         @return The frequency in Hz.
-      */
-      virtual long frequency() const;
-
-      /**
-         @brief Sets the frequency of the PWM signal.
-         @param freq The desired frequency in Hz.
-         @return The actual frequency set, or -1 if not supported.
-      */
-      virtual long setFrequency (long freq);
-
-      /**
-         @brief Returns the range of the PWM signal.
-         @return The range value.
-      */
-      virtual long range() const;
-
-      /**
-         @brief Sets the range of the PWM signal.
-         @param range The desired range value.
-         @return The actual range set, or -1 if not supported.
-      */
-      virtual long setRange (long range);
-      
       /**
          @brief Reads the current tick value of the PWM signal.
 

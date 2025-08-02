@@ -1,43 +1,38 @@
 /* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <iostream>
-#include <climits>
 #include <piduino/converter.h>
 #include "converter_p.h"
 #include "config.h"
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                             Converter Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                             Converter Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  Converter::Converter (Converter::Private &dd) : IoDevice (dd) {
-
-  }
+  Converter::Converter (Converter::Private &dd) : IoDevice (dd) {}
 
   // ---------------------------------------------------------------------------
   Converter::Converter () :
-    IoDevice (*new Private (this)) {
-
-  }
+    IoDevice (*new Private (this, None, 0)) {}
 
   // ---------------------------------------------------------------------------
   Converter::~Converter() {
@@ -105,6 +100,13 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  const std::string &Converter::deviceName() const {
+    PIMP_D (const Converter);
+
+    return d->deviceName();
+  }
+
+  // ---------------------------------------------------------------------------
   Converter::Type
   Converter::type() const {
     PIMP_D (const Converter);
@@ -113,19 +115,25 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  bool
-  Converter::bipolar() const {
+  unsigned int
+  Converter::flags() const {
     PIMP_D (const Converter);
 
-    return d->bipolar;
+    return d->flags;
   }
 
   // ---------------------------------------------------------------------------
-  int
-  Converter::resolution() const {
+  void Converter::setEnable (bool enable) {
+    PIMP_D (Converter);
+
+    d->setEnable (enable);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Converter::isEnabled () const {
     PIMP_D (const Converter);
 
-    return d->resolution;
+    return d->isEnabled();
   }
 
   // ---------------------------------------------------------------------------
@@ -144,70 +152,94 @@ namespace Piduino {
     return d->min();
   }
 
-  // ---------------------------------------------------------------------------
-  const std::string & Converter::deviceName() const {
-    static std::string dn;
+  // ------------------------------- Optional API ------------------------------
 
-    return dn;
+  // ---------------------------------------------------------------------------
+  int
+  Converter::resolution() const {
+    PIMP_D (const Converter);
+
+    return d->resolution();
   }
 
-// -----------------------------------------------------------------------------
-//
-//                         Converter::Private Class
-//
-// -----------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  int Converter::setResolution (int resolution) {
+    PIMP_D (Converter);
+
+    return d->setResolution (resolution);
+  }
 
   // ---------------------------------------------------------------------------
-  Converter::Private::Private (Converter * q, Type t, unsigned int r, bool b) :
-    IoDevice::Private (q), type (t), resolution (r), bipolar (b) {}
+  bool
+  Converter::bipolar() const {
+    PIMP_D (const Converter);
+
+    return d->bipolar();
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  Converter::setBipolar (bool bipolar) {
+    PIMP_D (Converter);
+
+    return d->setBipolar (bipolar);
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  Converter::range() const {
+    PIMP_D (const Converter);
+
+    return d->range();
+  }
+
+  // ---------------------------------------------------------------------------
+  long
+  Converter::setRange (long range) {
+    PIMP_D (Converter);
+
+    return d->setRange (range);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Converter::setReference (int reference) {
+    PIMP_D (Converter);
+
+    return d->setReference (reference);
+  }
+
+  // ---------------------------------------------------------------------------
+  int Converter::reference() const {
+    PIMP_D (const Converter);
+
+    return d->reference();
+  }
+
+  // ---------------------------------------------------------------------------
+  long Converter::frequency() const {
+    PIMP_D (const Converter);
+
+    return d->frequency();
+  }
+
+  // ---------------------------------------------------------------------------
+  long Converter::setFrequency (long freq) {
+    PIMP_D (Converter);
+
+    return d->setFrequency (freq);
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //                     Converter::Private Class
+  //
+  // ---------------------------------------------------------------------------
+  
+  // ---------------------------------------------------------------------------
+  Converter::Private::Private (Converter *q, Type type, unsigned int flags) :
+    IoDevice::Private (q), type (type), flags (flags) {}
 
   // ---------------------------------------------------------------------------
   Converter::Private::~Private() = default;
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  bool Converter::Private::open (OpenMode m) {
-
-    return IoDevice::Private::open (m);
-  }
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  void Converter::Private::close() {
-
-    IoDevice::Private::close();
-  }
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  long Converter::Private::read() {
-
-    return LONG_MIN;
-  }
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  bool Converter::Private::write (long value) {
-
-    return false;
-  }
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  long
-  Converter::Private::max() const {
-
-    return (1L << (resolution - (bipolar ? 1 : 0))) - 1;
-  }
-
-  // ---------------------------------------------------------------------------
-  // virtual
-  long
-  Converter::Private::min() const {
-
-    return bipolar ? - (1L << (resolution - 1)) : 0;
-  }
-
-}
-
+} // namespace Piduino
 /* ========================================================================== */
