@@ -1,4 +1,4 @@
-// SoftPwm Unit Test
+// GpioPwm Unit Test
 // Use UnitTest++ framework -> https://github.com/unittest-cpp/unittest-cpp/wiki
 #include <iostream>
 #include <iomanip>
@@ -9,7 +9,7 @@
 #include <piduino/clock.h>
 #include <piduino/tsqueue.h>
 #include <piduino/gpio.h>
-#include <piduino/softpwm.h>
+#include <piduino/gpiopwm.h>
 
 #include <UnitTest++/UnitTest++.h>
 
@@ -28,11 +28,8 @@ const long FreqMax = 1000; // tick = 10us for range 100
 const long FreqTolerance = 10; // Tolerance for frequency checks, in %
 const long DutyCycleTolerance = 10; // Tolerance for duty cycle checks, in %
 
-const long Freq1 = 50;
-const long Range1 = 200;
-
-const long Freq2 = 100;
-const long Range2 = 100;
+const long Freq1 = 100;
+const long Range1 = 1000;
 
 const long Freq3 = 100;
 const long Range3 = 200;
@@ -72,8 +69,7 @@ struct PwmFixture : public GpioFixture {
 
   Pin &output;
   Pin &input;
-  SoftPwm *pwm;
-
+  GpioPwm *pwm;
 
   PwmFixture() :
     output (gpio.pin (Pin1)), input (gpio.pin (Pin2)), pwm (nullptr) {
@@ -117,7 +113,6 @@ struct PwmFixture : public GpioFixture {
 
     output.setMode (Pin::ModeInput);
 
-    pwm = new SoftPwm (&output, Range1, Freq1);
   }
 
   ~PwmFixture() {
@@ -130,10 +125,15 @@ struct PwmFixture : public GpioFixture {
 // -----------------------------------------------------------------------------
 TEST_FIXTURE (PwmFixture, Test1) {
 
-  begin (1, "SoftPwm basic tests");
+  begin (1, "GpioPwm basic tests");
+
+  pwm = new GpioPwm (&output, Range1, Freq1);
   std::cout << "PwmEngine: " << pwm->deviceName() << std::endl;
   CHECK_EQUAL (pwm->type(), Converter::DigitalToAnalog);
   CHECK_EQUAL (pwm->bipolar(), false);
+
+  CHECK (pwm->flags() & Converter::hasFrequency);
+  CHECK (pwm->flags() & Converter::hasRange);
 
   CHECK_EQUAL (false, pwm->isEnabled());
   CHECK_EQUAL (pwm->frequency(), Freq1);
@@ -143,31 +143,18 @@ TEST_FIXTURE (PwmFixture, Test1) {
   CHECK_EQUAL (true, pwm->open());
   REQUIRE CHECK_EQUAL (true, pwm->isOpen());
 
-  pwm->setRange (Range2);
-  CHECK_EQUAL (Range2, pwm->range());
-  pwm->setFrequency (Freq2);
-  CHECK_CLOSE (Freq2, pwm->frequency(), 10);
 
   CHECK_EQUAL (pwm->range(), pwm->max());
   CHECK_EQUAL (0, pwm->min());
 
-  CHECK (pwm->write ( (Range2 * 50) / 100));
-  CHECK_EQUAL ( (Range2 * 50) / 100, pwm->read());
+  CHECK (pwm->write ( (Range1 * 50) / 100));
+  CHECK_EQUAL ( (Range1 * 50) / 100, pwm->read());
   std::cout << "PWM value: " << pwm->read() << std::endl;
 
   pwm->run ();
   CHECK (pwm->isEnabled());
   clk.delay (2000);
 
-  for (int i = FreqMin; i <= FreqMax; i += FreqMin) {
-
-    CHECK_CLOSE (i, pwm->setFrequency (i), i / 10);
-    std::cout << "PWM frequency " << i << " Hz: " << pwm->frequency() << " Hz, tick:" << pwm->tick() << " us" << std::endl;
-    clk.delay (2000);
-  }
-
-  CHECK (pwm->setFrequency (Freq3));
-  std::cout << "PWM frequency set to " << Freq3 << " Hz, tick: " << pwm->tick() << " us" << std::endl;
   for (int i = pwm->min(); i <= pwm->max(); i += (pwm->max() - pwm->min()) / 10) {
 
     CHECK (pwm->write (i)); // Write a value to PWM
@@ -195,7 +182,6 @@ TEST_FIXTURE (PwmFixture, Test1) {
   end();
 }
 
-#if 1
 // -----------------------------------------------------------------------------
 struct InterruptFixture : public PwmFixture {
   TSQueue <Pin::Event> queue;
@@ -221,8 +207,6 @@ struct InterruptFixture : public PwmFixture {
 
   InterruptFixture() {
 
-    CHECK_EQUAL (true, pwm->open());
-    REQUIRE CHECK (pwm->isOpen() == true);
     input.attachInterrupt (isr, Pin::EdgeBoth, this);
     REQUIRE CHECK (input.isGpioDevEnabled());
   }
@@ -281,14 +265,18 @@ struct InterruptFixture : public PwmFixture {
 
     begin (tp);
 
-    pwm->setRange (tp.range); // Set range to 4096
-
-    in.frequency = pwm->setFrequency (tp.frequency); // Set frequency to 1000 Hz
+    pwm = new GpioPwm (&output, tp.range, tp.frequency);
+    CHECK_EQUAL (true, pwm->open());
+    REQUIRE CHECK (pwm->isOpen() == true);
+    pwm->setEnable (false); // Disable PWM initially
+    REQUIRE CHECK (pwm->isEnabled() == false);
+    
+    in.frequency = pwm->frequency (); // Set frequency to 1000 Hz
     d = (static_cast<double> (102) / in.frequency) * 1000; // Calculate delay in milliseconds
     in.dutyCycle = static_cast<double> (tp.value) / tp.range * 100; // Calculate duty cycle
     in.period = 1000000.0 / in.frequency; // Calculate period in microseconds
     clk.delay (100);
-    std::cout << "  In  < Period: " << in.period << " us, Frequency: " << in.frequency << " Hz, Duty Cycle: " << in.dutyCycle << "%, tick: " << pwm->tick() << " us" << std::endl;
+    std::cout << "  In  < Period: " << in.period << " us, Frequency: " << in.frequency << " Hz, Duty Cycle: " << in.dutyCycle << "%" << std::endl;
 
     CHECK (pwm->write (tp.value)); // Write a value of 2048
     REQUIRE CHECK_EQUAL (tp.value, pwm->read()); // Read back the value, should be
@@ -309,6 +297,9 @@ struct InterruptFixture : public PwmFixture {
 
     CHECK_CLOSE (in.frequency, out.frequency, in.frequency * FreqTolerance / 100);
     CHECK_CLOSE (in.dutyCycle, out.dutyCycle, in.dutyCycle * DutyCycleTolerance / 100);
+
+    delete pwm; // Clean up the PWM object
+    pwm = nullptr; // Set the pointer to null to avoid dangling pointer
     end();
   }
 
@@ -350,7 +341,7 @@ TEST_FIXTURE (InterruptFixture, Test2) {
     TestAndCheck (tp);
   }
 }
-#endif
+
 // run all tests
 int main (int argc, char **argv) {
 

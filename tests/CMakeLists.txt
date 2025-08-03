@@ -67,7 +67,7 @@ function(add_test_incl_memcheck test)
   target_link_libraries(${test} ${LINK_OPTIONS} ${UNITTESTPP_LIBRARIES})
   target_compile_options(${test} PUBLIC ${COMPILE_DEFINITIONS} ${UNITTESTPP_CFLAGS})
 
-  if(test STREQUAL "test5-softpwm")
+  if(test STREQUAL "test5-gpiopwm")
     set(MEMORY_TESTS OFF)
   endif()
 
