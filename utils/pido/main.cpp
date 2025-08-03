@@ -25,6 +25,7 @@
 #include <piduino/clock.h>
 #include <piduino/gpio.h>
 #include <piduino/socpwm.h>
+#include <piduino/gpiopwm.h>
 #include <piduino/database.h>
 #include "exception.h"
 #include "version.h"
@@ -65,6 +66,7 @@ void pwm (int argc, char *argv[]);
 void pwmr (int argc, char *argv[]);
 void pwmf (int argc, char *argv[]);
 void drive (int argc, char *argv[]);
+void pwrite (int argc, char *argv[]);
 
 Pin *getPin (char *c_str);
 void usage ();
@@ -91,9 +93,10 @@ main (int argc, char **argv) {
     {"wfi", wfi},
     {"readall", readall},
     {"drive", drive},
-    {"pwm", pwm}, // TODO
-    {"pwmr", pwmr}, // TODO
-    {"pwmf", pwmf} // TODO
+    {"pwm", pwm},
+    {"pwmr", pwmr},
+    {"pwmf", pwmf},
+    {"pwrite", pwrite}
   };
 
   try {
@@ -465,6 +468,62 @@ blink (int argc, char *argv[]) {
 }
 
 /* -----------------------------------------------------------------------------
+  pwrite <pin> <value> [range] [frequency]
+    Writes the given value to the pin using a software PWM. The value must be
+    between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz.
+*/
+void
+pwrite (int argc, char *argv[]) {
+  int paramc = (argc - optind);
+  Clock clk;
+
+  if (paramc < 2)    {
+
+    throw Exception (Exception::ArgumentExpected);
+  }
+  else {
+    int range = 1024;
+    int frequency = 200;
+    int value;
+
+    gpio.setReleaseOnClose (true);
+
+    pin = getPin (argv[optind]);
+    value = stoi (string (argv[optind + 1]));
+
+    if (paramc > 2)    {
+
+      range = stoi (string (argv[optind + 2]));
+    }
+    if (paramc > 3)    {
+
+      frequency = stoi (string (argv[optind + 3]));
+    }
+
+    GpioPwm softpwm (pin, range, frequency);
+    softpwm.setDebug (debug);
+    if (!softpwm.open()) {
+
+      throw Exception (Exception::PwmOpenError, pin->logicalNumber());
+    }
+    if (!softpwm.write (value)) {
+
+      throw Exception (Exception::PwmWriteError, pin->logicalNumber());
+    }
+
+    // sig_handler() intercepte le CTRL+C
+    signal (SIGINT, sig_handler);
+    signal (SIGTERM, sig_handler);
+    cout << "Press Ctrl+C to abort ..." << endl;
+
+    for (;;) {
+
+      clk.delay (100);
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------------
   wfi <pin> <rising/falling/both> [timeout_ms]
     This set the given pin to the supplied interrupt mode:  rising,  falling  or
     both  then waits  for  the  interrupt  to happen.
@@ -798,25 +857,26 @@ usage () {
   cout << "    Change/Read the PWM range. The default is 1024 (pwm pin only)." << endl;
   cout << "  pwmf <pin> <freq>" << endl;
   cout << "    Change/Read the PWM frequency. The default is about 1000Hz (pwm pin only)." << endl;
+  cout << "  drive <pin> <level>" << endl;
+  cout << "    Get/Set the multi-driving output level." << endl;
+  cout << "  pwrite <pin> <value> [range] [frequency]" << endl;
+  cout << "    Writes the given value to the pin using a software PWM. The value must be" << endl;
+  cout << "    between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz." << endl;
 }
 
 // -----------------------------------------------------------------------------
 void debug_pwm (SocPwm &p) {
   #ifndef NDEBUG
   cout << "Pwm " << p.deviceName() << endl;
-  cout << "hasEngine : " << p.hasEngine() << endl;
   cout << "isOpen    : " << p.isOpen() << endl;
   cout << "Frequency : " << p.frequency() << endl;
   cout << "Resolution: " << p.resolution() << endl;
   cout << "Range     : " << p.range() << endl;
   cout << "Min value : " << p.min() << endl;
   cout << "Max value : " << p.max() << endl;
-  cout << "hasPin    : " << p.hasPin() << endl;
-  if (p.hasPin()) {
-    cout << "Pin#      : " << p.pin()->logicalNumber() << endl;
-    cout << "isEnabled : " << p.isEnabled() << endl;
-    cout << "Cur value : " << p.read() << endl;
-  }
+  cout << "Pin#      : " << p.pin()->logicalNumber() << endl;
+  cout << "isEnabled : " << p.isEnabled() << endl;
+  cout << "Cur value : " << p.read() << endl;
   #endif
 }
 /* ========================================================================== */

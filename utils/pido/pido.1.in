@@ -117,6 +117,13 @@ or both then waits for the interrupt to happen. It's a non-busy wait,
 so does not consume and CPU while it's waiting.
 
 .TP
+\fpwrite\fR \fIpin\fR \fIvalue\fR [\fIrange\fR] [\fIfrequency\fR]
+Writes the given value to the pin using a software PWM. The value must be
+between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz.
+This command is useful for pins that do not have hardware PWM support.
+This command blocks until the user interrupts it with Control-C.
+
+.TP
 \fBreadall\fR [\fIconnector\fR]
 Output a table of all GPIO pins values. The values represent the actual values read
 if the pin is in input mode, or the last value written if the pin is in output
