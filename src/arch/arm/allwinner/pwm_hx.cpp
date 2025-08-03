@@ -54,16 +54,9 @@ namespace Piduino {
     periodReg (PWM_CH0_PERIOD),
     timeout_us (10000) {
 
-    if (p->mcuNumber() == 5) {
-      
-      p->setMode (Pin::ModePwm);
-      open (IoDevice::ReadWrite); // set active state to 1
-      close();
-    }
-    else {
-
-      throw std::runtime_error (EXCEPTION_MSG ("Hardware PWM not supported on this pin"));
-    }
+    p->setMode (Pin::ModePwm); // throw an exception if pin is not PWM capable
+    open (IoDevice::ReadWrite); // set active state to 1
+    close();
   }
 
   // -------------------------------------------------------------------------

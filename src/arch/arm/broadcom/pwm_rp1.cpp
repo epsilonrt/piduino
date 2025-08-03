@@ -41,8 +41,8 @@ namespace Piduino {
     SocPwm::Private (q, p, hasFrequency | hasSetFrequency | hasResolution | hasSetResolution | hasRange | hasSetRange),
     pwm (nullptr), channel (0), base (Pwm0Offset), clkFreq (PwmClkOscFreq), mode (TrailingEdgeMsMode) {
 
-    ++instanceCount; // Increment instance counter
 
+    p->setMode (Pin::ModePwm);  // throw an exception if pin is not PWM capable
     switch (p->mcuNumber()) {
       case 12: // PWM00
         channel = 0;
@@ -60,8 +60,7 @@ namespace Piduino {
         throw std::runtime_error (EXCEPTION_MSG ("Hardware PWM not supported on this pin"));
     }
 
-    p->setMode (Pin::ModePwm); // Set pin mode to PWM
-
+    ++instanceCount; // Increment instance counter
     dataReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanDutyReg;
     rngReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanRangeReg;
     ctlReg = PwmChanBlockBase + PwmChanBlockSize * channel + PwmChanCtrlReg;

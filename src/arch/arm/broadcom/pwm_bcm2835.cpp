@@ -40,6 +40,8 @@ namespace Piduino {
     ctlMasqInit (RPTL1 | SBIT1 | POLA1),
     ctlMasqStartStop (MSEN1 | PWEN1) { // PWM0 by default
 
+    p->setMode (Pin::ModePwm); // throw an exception if pin is not PWM capable
+
     if (db.board().soc().id() == SoC::Bcm2711) {
 
       is2711 = true;
@@ -52,16 +54,12 @@ namespace Piduino {
 
     if ( (p->mcuNumber() == 13) || (p->mcuNumber() == 19)) { // PWM1
 
-      p->setMode (Pin::ModePwm);
       rngReg = RNG2;
       dataReg = DAT2;
       ctlMasqStartStop = MSEN2 | PWEN2;
       ctlMasqInit = RPTL2 | SBIT2 | POLA2;
     }
-    else {
 
-      throw std::runtime_error (EXCEPTION_MSG ("Hardware PWM not supported on this pin"));
-    }
   }
 
   // -------------------------------------------------------------------------
