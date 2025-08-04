@@ -98,7 +98,7 @@ namespace Piduino {
       */
       virtual long readSample (int channel = 0, bool differential = false) {
 
-        return LONG_MIN;
+        return read();
       }
 
       /**
@@ -124,7 +124,7 @@ namespace Piduino {
       */
       virtual bool writeSample (long value, int channel = 0, bool differential = false) {
 
-        return false;
+        return write (value);
       }
 
       /**
@@ -369,9 +369,9 @@ namespace Piduino {
     struct ClassName##Registrar { \
       ClassName##Registrar() { \
         Converter::registerConverter(ClassName::registeredName(), \
-                                    [](const std::string& parameters) -> Converter* { \
-                                        return new ClassName(parameters); \
-                                    }); \
+                                     [](const std::string& parameters) -> Converter* { \
+                                                                                       return new ClassName(parameters); \
+                                                                                     }); \
       } \
     }; \
     static ClassName##Registrar ClassName##_registrar; \
