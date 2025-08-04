@@ -34,7 +34,11 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   GpioPwm::GpioPwm (Pin *p, long r,  long f) :
-    Converter (*new Private (this, p, r, f)) { }
+    Converter (*new Private (this, p, r, f)) {}
+
+  // ---------------------------------------------------------------------------
+  GpioPwm::GpioPwm (const std::string &parameters) :
+    Converter (*new Private (this, parameters)) {}
 
   // ---------------------------------------------------------------------------
   GpioPwm::~GpioPwm() = default;
@@ -46,6 +50,8 @@ namespace Piduino {
 
     return *d->pin;
   }
+
+  REGISTER_CONVERTER (GpioPwm);
 
   // -----------------------------------------------------------------------------
   //
@@ -59,6 +65,23 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   GpioPwm::Private::Private (GpioPwm *q, Pin *p, long r, long f) :
     Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency),  pin (p), value (0), freq (f), range (r), flag (0) {
+  }
+
+  // ---------------------------------------------------------------------------
+  GpioPwm::Private::Private (GpioPwm *q, const std::string &params) :
+    Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency, params),
+    pin (nullptr), value (0), freq (100), range (1024), flag (0) {
+
+    if (parameters.empty()) {
+      throw std::invalid_argument (EXCEPTION_MSG ("parameters cannot be empty, you must specify a pin number"));
+    }
+    pin = getPin (parameters[0]); // throw an exception if not found
+    if (parameters.size() > 1) {
+      range = std::stol (parameters[1]);
+    }
+    if (parameters.size() > 2) {
+      freq = std::stol (parameters[2]);
+    }
   }
 
   // ---------------------------------------------------------------------------

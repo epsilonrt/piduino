@@ -47,6 +47,22 @@ namespace Piduino {
       virtual ~GpioPwm();
 
       /**
+         @brief Constructs a GpioPwm object from a string of parameters.
+         @param parameters A string containing the parameters for the PWM configuration, formatted as "pin:range:freq".
+         @note This constructor is used for factory registration and must be implemented by subclasses.
+      */
+      GpioPwm (const std::string &parameters);
+
+      /**
+         @brief Returns the name registered for this converter.
+         @return The name of the converter as a string.
+         @note This method is used for factory registration and must be implemented by subclasses.
+      */
+      static std::string registeredName() {
+        return "gpiopwm";
+      }
+
+      /**
          @brief Returns a constant reference to the associated Pin object.
          @return const Pin& Reference to the Pin used for PWM.
       */

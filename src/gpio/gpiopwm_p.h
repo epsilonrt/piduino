@@ -32,11 +32,12 @@ namespace Piduino {
 
     public:
       Private (GpioPwm *q, Pin *pin, long range, long freq);
+      Private (GpioPwm *q, const std::string &parameters);
       virtual ~Private();
 
       // --------------------------------------------------------------------------
       virtual const std::string &deviceName() const override {
-        static const std::string name = "GpioPwm";
+        static const std::string name = GpioPwm::registeredName();
         return name;
       }
 
@@ -102,6 +103,9 @@ namespace Piduino {
       virtual long frequency() const override {
         return freq;
       }
+
+
+      // ------------------------- internal methods -------------------------
 
       /**
          @brief Static method to generate PWM signal in a separate thread.
