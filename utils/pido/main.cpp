@@ -67,6 +67,7 @@ void pwmr (int argc, char *argv[]);
 void pwmf (int argc, char *argv[]);
 void drive (int argc, char *argv[]);
 void pwrite (int argc, char *argv[]);
+void converters(int argc, char *argv[]);
 
 Pin *getPin (char *c_str);
 void usage ();
@@ -96,7 +97,8 @@ main (int argc, char **argv) {
     {"pwm", pwm},
     {"pwmr", pwmr},
     {"pwmf", pwmf},
-    {"pwrite", pwrite}
+    {"pwrite", pwrite},
+    {"converters", converters},
   };
 
   try {
@@ -500,13 +502,15 @@ pwrite (int argc, char *argv[]) {
       frequency = stoi (string (argv[optind + 3]));
     }
 
-    GpioPwm softpwm (pin, range, frequency);
-    softpwm.setDebug (debug);
-    if (!softpwm.open()) {
+    // GpioPwm softpwm (pin, range, frequency);
+    std::unique_ptr<Converter> softpwm(Converter::factory("gpiopwm:1:1000:300"));
+    // std::unique_ptr<Converter> softpwm(Converter::factory("gpiopwm","1:1000:500"));
+    softpwm->setDebug (debug);
+    if (!softpwm->open()) {
 
       throw Exception (Exception::PwmOpenError, pin->logicalNumber());
     }
-    if (!softpwm.write (value)) {
+    if (!softpwm->write (value)) {
 
       throw Exception (Exception::PwmWriteError, pin->logicalNumber());
     }
@@ -707,6 +711,15 @@ pwmf (int argc, char *argv[]) {
 }
 
 // -----------------------------------------------------------------------------
+void
+converters(int argc, char *argv[]) {
+
+  for (const auto &converter : Converter::availableConverters()) {
+    cout << converter << endl;
+  }
+}
+
+// -----------------------------------------------------------------------------
 vector<string>
 split (const string &s, char seperator) {
   vector<string> output;
@@ -862,6 +875,10 @@ usage () {
   cout << "  pwrite <pin> <value> [range] [frequency]" << endl;
   cout << "    Writes the given value to the pin using a software PWM. The value must be" << endl;
   cout << "    between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz." << endl;
+  // cout << "  converters" << endl;
+  // cout << "    List all available converters." << endl;
+  // cout << "  conv <converter_name> [options]" << endl;
+  // cout << "    Use the specified converter with the given options." << endl;
 }
 
 // -----------------------------------------------------------------------------
