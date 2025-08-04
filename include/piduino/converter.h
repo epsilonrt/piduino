@@ -17,6 +17,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <functional>
 #include <piduino/iodevice.h>
 
 namespace Piduino {
@@ -62,8 +64,31 @@ namespace Piduino {
 
       /**
          @brief Constructs a Converter object.
+         @param parameters The parameters for the converter. This is a list of values separated by colon
+         @note This constructor must be implemented by subclasses that want to register in the factory.
+         @note This class is abstract and cannot be instantiated directly.
       */
-      Converter();
+      Converter (const std::string &parameters = "");
+
+      /**
+         @brief Creates a converter instance from device name.
+         @param deviceName The name of the converter class to instantiate.
+         @return Pointer to new Converter instance, or nullptr if not found.
+      */
+      static Converter *factory (const std::string &deviceName, const std::string &parameters = "");
+
+      /**
+         @brief Registers a converter class in the factory.
+         @param deviceName The name to register the class under.
+         @param creator Function that creates an instance of the class.
+      */
+      static void registerConverter (const std::string &deviceName,
+                                     std::function<Converter* (const std::string &) > creator);
+      /**
+         @brief Gets list of registered converter names.
+         @return Vector of available converter names.
+      */
+      static std::vector<std::string> availableConverters();
 
       /**
          @brief Destroys the Converter object.
@@ -114,6 +139,73 @@ namespace Piduino {
          @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
       */
       virtual bool write (long value);
+
+      /**
+         @brief Reads a value from the converter (ADC)
+         @param channel The channel to read from.
+         @param differential If true, reads in differential mode (default is false).
+      */
+      virtual long readSample (int channel = 0, bool differential = false);
+
+      /**
+         @brief Reads a value from the converter (ADC)
+         @param channel The channel to read from (default is 0).
+         @param differential If true, reads in differential mode (default is false).
+         @return The value read from the converter, which is converted to a value with digitalToValue().
+      */
+      virtual double readValue (int channel = 0, bool differential = false);
+
+      /**
+         @brief Reads an average value of count samples from the converter.
+         @param channel The channel to read from (default is 0).
+         @param differential If true, reads in differential mode (default is false).
+         @param count The number of samples to average (default is 8).
+         @return The average digital value read from the converter.
+      */
+      virtual double readAverage (int channel = 0, bool differential = false, int count = 8);
+
+      /**
+         @brief Reads an average value from the converter.
+         @param channel The channel to read from (default is 0).
+         @param differential If true, reads in differential mode (default is false).
+         @param count The number of samples to average (default is 8).
+         @return The average value read from the converter, which is converted to a value with digitalToValue().
+      */
+      virtual double readAverageValue (int channel = 0, bool differential = false, int count = 8);
+
+      /**
+         @brief Converts a digital value to voltage.
+         @param digitalValue The digital value to convert.
+         @return The corresponding voltage value.
+      */
+      virtual double digitalToValue (long digitalValue) const;
+
+      /**
+         @brief Writes a sample value to the converter (DAC).
+         @param value The sample value to write.
+         @param channel The channel to write to (default is 0).
+         @param differential If true, writes in differential mode (default is false).
+         @return true if successful, false otherwise.
+         @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
+      */
+      virtual bool writeSample (long value, int channel = 0, bool differential = false);
+
+      /**
+         @brief Writes a value to the converter (DAC).
+         @param value The value to write, which is converted to a digital value with valueToDigital().
+         @param channel The channel to write to (default is 0).
+         @param differential If true, writes in differential mode (default is false).
+         @return true if successful, false otherwise.
+         @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
+      */
+      virtual bool writeValue (double value, int channel = 0, bool differential = false);
+
+      /**
+        @brief Converts a voltage to digital value.
+        @param voltage The voltage to convert.
+        @return The corresponding digital value.
+      */
+      virtual long valueToDigital (double voltage) const;
 
       /**
          @brief Enables or disables the converter.
@@ -176,17 +268,23 @@ namespace Piduino {
       virtual bool setBipolar (bool bipolar);
 
       /**
-        @brief Sets the reference voltage of the ADC.
-        @param referenceId The ID of the reference voltage to set, which can be a predefined constant or a custom value depending on the ADC model.
-        @return true if the reference voltage was set successfully, false otherwise.
+         @brief Sets the reference value of the converter.
+         @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
+         @return true if the reference value was set successfully, false otherwise.
       */
       virtual bool setReference (int referenceId);
 
       /**
-         @brief Gets the reference voltage of the ADC.
-         @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the ADC model.
+         @brief Gets the current reference ID of the converter.
+         @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
       */
       virtual int reference() const;
+
+      /**
+        @brief Gets the current reference value.
+        @return The reference value, e.g. 3.3 for a converter with voltage input or output.
+      */
+      virtual double referenceValue() const;
 
       /**
         @brief Gets the current clock frequency.
