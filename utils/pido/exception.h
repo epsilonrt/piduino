@@ -34,7 +34,11 @@ class Exception: public std::exception {
       NotOutputPin,
       NotPwmPin,
       PwmOpenError,
-      PwmWriteError
+      PwmWriteError,
+      ConverterUnknown,
+      ConverterOpenError,
+      ConverterWriteError,
+      ConverterReadError
     };
 
     explicit Exception (Exception::Code code, int value = 0);

@@ -67,7 +67,9 @@ void pwmr (int argc, char *argv[]);
 void pwmf (int argc, char *argv[]);
 void drive (int argc, char *argv[]);
 void pwrite (int argc, char *argv[]);
-void converters(int argc, char *argv[]);
+void converters (int argc, char *argv[]);
+void cwrite (int argc, char *argv[]);
+
 
 Pin *getPin (char *c_str);
 void usage ();
@@ -99,6 +101,7 @@ main (int argc, char **argv) {
     {"pwmf", pwmf},
     {"pwrite", pwrite},
     {"converters", converters},
+    {"cwrite", cwrite}
   };
 
   try {
@@ -502,9 +505,7 @@ pwrite (int argc, char *argv[]) {
       frequency = stoi (string (argv[optind + 3]));
     }
 
-    // GpioPwm softpwm (pin, range, frequency);
-    std::unique_ptr<Converter> softpwm(Converter::factory("gpiopwm:1:1000:300"));
-    // std::unique_ptr<Converter> softpwm(Converter::factory("gpiopwm","1:1000:500"));
+    std::unique_ptr<GpioPwm> softpwm (new GpioPwm (pin, range, frequency));
     softpwm->setDebug (debug);
     if (!softpwm->open()) {
 
@@ -523,6 +524,75 @@ pwrite (int argc, char *argv[]) {
     for (;;) {
 
       clk.delay (100);
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------------
+  cwrite "<converter[:parameters]>" [chan] <value>
+    Writes the given value to the specified converter.
+*/
+void
+cwrite (int argc, char *argv[]) {
+  int paramc = (argc - optind);
+  Clock clk;
+
+  if (paramc < 2)    {
+
+    throw Exception (Exception::ArgumentExpected);
+  }
+  else {
+    int chan = -1;
+    long value;
+
+    std::unique_ptr<Converter> conv (Converter::factory (argv[optind]));
+
+    if (conv->type() != Converter::DigitalToAnalog) {
+
+      throw Exception (Exception::ConverterUnknown, argv[optind]);
+    }
+
+    if (paramc > 2) {
+
+      chan = stoi (string (argv[optind + 1]));
+      value = stol (string (argv[optind + 2]));
+    }
+    else {
+
+      value = stol (string (argv[optind + 1]));
+    }
+
+    conv->setDebug (debug);
+    if (!conv->open()) {
+
+      throw Exception (Exception::ConverterOpenError, conv->deviceName());
+    }
+    conv->setEnable (true);
+
+    if (chan >= 0) {
+      // TODO: get differential mode from parameters
+      if (!conv->writeSample (value, chan)) {
+
+        throw Exception (Exception::ConverterWriteError, conv->deviceName());
+      }
+    }
+    else {
+      if (!conv->write (value)) {
+
+        throw Exception (Exception::ConverterWriteError, conv->deviceName());
+      }
+    }
+
+    if (conv->flags() & Converter::requiresWaitLoop) {
+      // sig_handler() intercepte le CTRL+C
+      signal (SIGINT, sig_handler);
+      signal (SIGTERM, sig_handler);
+      cout << "Press Ctrl+C to abort ..." << endl;
+
+      for (;;) {
+
+        clk.delay (100);
+      }
     }
   }
 }
@@ -712,7 +782,7 @@ pwmf (int argc, char *argv[]) {
 
 // -----------------------------------------------------------------------------
 void
-converters(int argc, char *argv[]) {
+converters (int argc, char *argv[]) {
 
   for (const auto &converter : Converter::availableConverters()) {
     cout << converter << endl;
@@ -875,10 +945,10 @@ usage () {
   cout << "  pwrite <pin> <value> [range] [frequency]" << endl;
   cout << "    Writes the given value to the pin using a software PWM. The value must be" << endl;
   cout << "    between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz." << endl;
-  // cout << "  converters" << endl;
-  // cout << "    List all available converters." << endl;
-  // cout << "  conv <converter_name> [options]" << endl;
-  // cout << "    Use the specified converter with the given options." << endl;
+  cout << "  converters" << endl;
+  cout << "    List all available converters." << endl;
+  cout << "  cwrite <converter[:parameters]> [chan] <value>" << endl;
+  cout << "    Writes the given value to the specified converter (DAC)." << endl;
 }
 
 // -----------------------------------------------------------------------------

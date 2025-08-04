@@ -14,9 +14,11 @@ pido \- Allow the user easy access to the GPIO pins.
 \fBpwmf\fR \fIpin\fR [\fIhz_freq\fR] |
 \fBpwmr\fR \fIpin\fR [\fIrange\fR] |
 \fBpwrite\fR \fIpin\fR \fIvalue\fR [\fIrange\fR] [\fIfrequency\fR] |
+\fBcwrite\fR \fIconverter[:parameters]\fR [\fIchannel\fR] \fIvalue\fR |
 \fBread\fR \fIpin\fR |
 \fBwfi\fR \fIpin\fR \fIedge\fR  [\fItimeout_ms\fR] |
 \fBreadall\fR [\fIconnector\fR] |
+\fBconverters\fR |
 {\fB\-v\fR} | {\fB\-w\fR} | {\fB\-h\fR}}
 
 .SH DESCRIPTION
@@ -58,6 +60,15 @@ Writes the given value to the pin using a software PWM. The value must be
 between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz.
 This command is useful for pins that do not have hardware PWM support.
 This command blocks until the user interrupts it with Ctrl-C.
+
+.TP
+\fBconverters\fR
+List all available converters (ADC or DACs) that can be used with the \fBcwrite\fR or \fBcread\fR commands.
+
+.TP
+\fBcwrite\fR \fIconverter[:parameters]\fR [\fIchannel\fR] \fIvalue\fR
+Writes the given value to the specified converter (DAC). The converter must be specified by its name and can include parameters for configuration.
+If the converter requires specific channel information, it must be provided as well.
 
 .TP
 \fBtoggle\fR \fIpin\fR

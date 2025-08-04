@@ -58,6 +58,7 @@ Exception::Exception (Exception::Code code, int value) :
       s << "Unable to write on pwm Pin #" << value;
       _msg = s.str();
       break;
+
     default:
       break;
   }
@@ -76,6 +77,18 @@ Exception::Exception (Exception::Code code, const std::string& param) :
       break;
     case BadPinNumber:
       _msg.assign ("Invalid pin number: ");
+      break;
+    case ConverterUnknown:
+      _msg.assign ("Unknown converter: ");
+      break;
+    case ConverterOpenError:
+      _msg.assign ("Unable to open converter: ");
+      break;
+    case ConverterWriteError:
+      _msg.assign ("Unable to write on converter: ");
+      break;
+    case ConverterReadError:
+      _msg.assign ("Unable to read from converter: ");
       break;
     default:
       break;
