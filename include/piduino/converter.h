@@ -50,7 +50,8 @@ namespace Piduino {
         hasSetRange       = 0x00000040, ///< Indicates that the converter supports setting the range
         hasSetReference   = 0x00000080, ///< Indicates that the converter supports setting the reference voltage
         hasSetResolution  = 0x00000100, ///< Indicates that the converter supports setting the resolution
-        hasSetBipolar     = 0x00000200  ///< Indicates that the converter supports setting the bipolar mode
+        hasSetBipolar     = 0x00000200, ///< Indicates that the converter supports setting the bipolar mode
+        requiresWaitLoop  = 0x00000400, ///< Indicates that the converter requires a wait loop to function correctly
       };
 
       enum {

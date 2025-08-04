@@ -64,12 +64,12 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   GpioPwm::Private::Private (GpioPwm *q, Pin *p, long r, long f) :
-    Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency),  pin (p), value (0), freq (f), range (r), flag (0) {
+    Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency | requiresWaitLoop),  pin (p), value (0), freq (f), range (r), flag (0) {
   }
 
   // ---------------------------------------------------------------------------
   GpioPwm::Private::Private (GpioPwm *q, const std::string &params) :
-    Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency, params),
+    Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency | requiresWaitLoop, params),
     pin (nullptr), value (0), freq (100), range (1024), flag (0) {
 
     if (parameters.empty()) {
