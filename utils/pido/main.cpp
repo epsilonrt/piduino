@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <csignal>
 #include <unistd.h>
+#include <iomanip>
 #include <piduino/clock.h>
 #include <piduino/gpio.h>
 #include <piduino/socpwm.h>
@@ -783,9 +784,19 @@ pwmf (int argc, char *argv[]) {
 // -----------------------------------------------------------------------------
 void
 converters (int argc, char *argv[]) {
+  const int nameWidth = 20;
+  const int typeWidth = 10;
+  const int paramWidth = 50;
 
+  cout << left << setw(nameWidth) << "Name"
+       << left << setw(typeWidth) << "Type"
+       << left << setw(paramWidth) << "Parameters" << endl;
+  cout << setfill('-') << setw(nameWidth + typeWidth + paramWidth) << "" << endl;
+  cout << setfill(' ');
   for (const auto &converter : Converter::availableConverters()) {
-    cout << converter << endl;
+    cout << left << setw(nameWidth) << converter.name
+         << left << setw(typeWidth) << converter.type
+         << left << setw(paramWidth) << converter.parameters << endl;
   }
 }
 

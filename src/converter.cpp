@@ -55,7 +55,7 @@ namespace Piduino {
     auto it = registry.find (name);
 
     if (it != registry.end()) {
-      return it->second (params); // Appelle le créateur avec les paramètres
+      return it->second.creator (params); // Appelle le créateur avec les paramètres
     }
 
     return nullptr; // Classe non trouvée
@@ -63,20 +63,28 @@ namespace Piduino {
 
   // -----------------------------------------------------------------------------
   void Converter::registerConverter (const std::string &deviceName,
-                                              std::function<Converter* (const std::string &) > creator) {
-    Private::getRegistry() [deviceName] = creator;
+                                              std::function<Converter* (const std::string &) > creator,
+                                     const std::string &type,
+                                     const std::string &parameters) {
+    auto &registry = Private::getRegistry();
+    Private::registryKey key (creator, type, parameters);
+    registry[deviceName] = key;
   }
 
   // -----------------------------------------------------------------------------
-  std::vector<std::string> Converter::availableConverters() {
-    std::vector<std::string> names;
+  std::vector<Converter::Info> Converter::availableConverters() {
+    std::vector<Info> infos;
     auto &registry = Private::getRegistry();
 
     for (const auto &pair : registry) {
-      names.push_back (pair.first);
+      Info info;
+      info.name = pair.first; // The name of the converter class
+      info.type = pair.second.type; // The type of the converter (e.g., "dac", "adc")
+      info.parameters = pair.second.parameters; // Parameters for the converter, a colon-separated list of values
+      infos.push_back(info);
     }
 
-    return names;
+    return infos;
   }
 
   // ---------------------------------------------------------------------------
@@ -444,9 +452,9 @@ namespace Piduino {
   // -----------------------------------------------------------------------------
   // static
   // Returns a reference to the registry map that holds converter class creators.
-  std::map<std::string, std::function<Converter* (const std::string &parameters) >> &
+  std::map<std::string, Converter::Private::registryKey> &
   Converter::Private::getRegistry() {
-    static std::map<std::string, std::function<Converter* (const std::string &parameters) >> registry;
+    static std::map<std::string, Converter::Private::registryKey> registry;
     return registry;
   }
 

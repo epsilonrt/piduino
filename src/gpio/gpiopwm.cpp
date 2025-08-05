@@ -51,7 +51,9 @@ namespace Piduino {
     return *d->pin;
   }
 
-  REGISTER_CONVERTER (GpioPwm);
+  // ---------------------------------------------------------------------------
+  // Register the GpioPwm converter with the factory
+  REGISTER_CONVERTER (GpioPwm, "dac", "pin[:range:freq]");
 
   // -----------------------------------------------------------------------------
   //

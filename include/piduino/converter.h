@@ -84,12 +84,22 @@ namespace Piduino {
          @param creator Function that creates an instance of the class.
       */
       static void registerConverter (const std::string &deviceName,
-                                     std::function<Converter* (const std::string &) > creator);
+                                     std::function<Converter* (const std::string &) > creator,
+                                     const std::string &type = "dac",
+                                     const std::string &parameters = "");
+      struct Info {
+        std::string name; ///< The name of the converter class.
+        std::string type; ///< The type of the converter (e.g., "dac", "adc").
+        std::string parameters; ///< Parameters for the converter, a colon-separated list of values.
+        Info() = default;
+        Info (const std::string &name, const std::string &type, const std::string &parameters)
+          : name (name), type (type), parameters (parameters) {}
+      };
       /**
          @brief Gets list of registered converter names.
          @return Vector of available converter names.
       */
-      static std::vector<std::string> availableConverters();
+      static std::vector<Info> availableConverters();
 
       /**
          @brief Destroys the Converter object.

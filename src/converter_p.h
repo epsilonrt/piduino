@@ -309,12 +309,6 @@ namespace Piduino {
       }
 
       /**
-          @brief Gets the registry of converter creators.
-          @return A reference to the registry map.
-      */
-      static std::map<std::string, std::function<Converter* (const std::string &parameters) >>   &getRegistry();
-
-      /**
          @brief Splits a string into a vector of strings based on a delimiter.
          @param str The string to split.
          @param delimiter The character used to split the string.
@@ -330,6 +324,22 @@ namespace Piduino {
          @note This method is used to retrieve a Pin object based on its string identifier.
       */
       Pin *getPin (const std::string &s);
+
+      struct registryKey {
+        std::string type; ///< The type of the converter (e.g., "dac", "adc").
+        std::string parameters; ///< Parameters for the converter, a colon-separated list of values.
+        std::function<Converter* (const std::string &parameters) > creator; ///< Function to create an instance of the converter.
+        registryKey() = default; ///< Default constructor.
+        registryKey (std::function<Converter* (const std::string &parameters) > creator, const std::string & type = "dac",
+                     const std::string & parameters = "")
+          : creator (creator), type (type), parameters (parameters) {} ///< Constructor with parameters.
+      };
+
+      /**
+          @brief Gets the registry of converter creators.
+          @return A reference to the registry map.
+      */
+      static std::map<std::string, registryKey>   &getRegistry();
 
       //-- Private data members ------------------------------------------------------
 
@@ -364,14 +374,15 @@ namespace Piduino {
 
     @param ClassName The name of the class to register.
   */
-#define REGISTER_CONVERTER(ClassName) \
+#define REGISTER_CONVERTER(ClassName, Type, Parameters) \
   namespace { \
     struct ClassName##Registrar { \
       ClassName##Registrar() { \
         Converter::registerConverter(ClassName::registeredName(), \
                                      [](const std::string& parameters) -> Converter* { \
                                                                                        return new ClassName(parameters); \
-                                                                                     }); \
+                                                                                     }, \
+                                                                                    Type, Parameters); \
       } \
     }; \
     static ClassName##Registrar ClassName##_registrar; \
