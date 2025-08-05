@@ -16,47 +16,21 @@
 */
 #pragma once
 
-#include <iostream>
-#include <map>
-#include <climits>
-#include <cmath>
-#include <piduino/converter.h>
-#include <piduino/gpio.h>
-#include "iodevice_p.h"
+#include <piduino/converter_template.h>
+#include "converter_p.h"
 
 namespace Piduino {
 
   /**
-     @brief Private implementation class for Converter.
-
-     This class encapsulates the private data and implementation details for the Converter class,
-     inheriting from IoDevice::Private. It manages the configuration and state of a Converter,
-     including its type, resolution, and whether it operates in bipolar mode.
+     @class ConverterTemplate::Private
+     @brief Private implementation class for ConverterTemplate.
   */
-  class Converter::Private  : public IoDevice::Private {
+  class ConverterTemplate::Private  : public Converter::Private {
 
     public:
-
-      /**
-         @brief Constructor for the Private class.
-         @param q Pointer to the Converter instance.
-         @param type Type of the converter (default is None).
-         @param flags Flags for the converter (default is 0).
-         @param parameters Parameters for the converter, a colon-separated list of values (default is empty).
-      */
-      Private (Converter *q, Type type = None, unsigned int flags = 0, const std::string &parameters = "");
-
-      /**
-         @brief Destructor for the Private class.
-      */
+      Private (ConverterTemplate *q /* TODO: complete constructor */);
+      Private (ConverterTemplate *q, const std::string &parameters);
       virtual ~Private();
-
-      /**
-         @brief Returns the name of the device.
-         @return The device name as a string.
-         @note must be implemented by subclasses to return the actual device name.
-      */
-      virtual const std::string &deviceName() const = 0;
 
       /**
          @brief Opens the converter device with the specified mode.
@@ -64,17 +38,17 @@ namespace Piduino {
          @return True if the device was successfully opened, false otherwise.
          @note must be overridden by subclasses to implement specific opening logic.
       */
-      virtual bool open (OpenMode mode) {
+      virtual bool open (OpenMode mode) override {
 
-        return IoDevice::Private::open (mode);
+        return Converter::Private::open (mode);
       }
 
       /**
          @brief Closes the converter device.
       */
-      virtual void close() {
+      virtual void close() override {
 
-        IoDevice::Private::close();
+        Converter::Private::close();
       }
 
       /**
@@ -83,7 +57,7 @@ namespace Piduino {
          @note may be overridden by subclasses to implement specific reading logic.
          This function is not callable if the open mode is not ReadOnly or ReadWrite (or closed).
       */
-      virtual long read () {
+      virtual long read () override {
 
         return LONG_MIN;
       }
@@ -96,7 +70,7 @@ namespace Piduino {
          @note may be overridden by subclasses to implement specific reading logic.
           This function is not callable if the open mode is not ReadOnly or ReadWrite (or closed).
       */
-      virtual long readSample (int channel = 0, bool differential = false) {
+      virtual long readSample (int channel = 0, bool differential = false) override {
 
         return read();
       }
@@ -108,7 +82,7 @@ namespace Piduino {
          @note may be overridden by subclasses to implement specific writing logic.
           This function is not callable if the open mode is not WriteOnly or ReadWrite (or closed).
       */
-      virtual bool write (long value) {
+      virtual bool write (long value) override {
 
         return false;
       }
@@ -122,7 +96,7 @@ namespace Piduino {
          @note may be overridden by subclasses to implement specific writing logic.
           This function is not callable if the open mode is not WriteOnly or ReadWrite (or closed).
       */
-      virtual bool writeSample (long value, int channel = 0, bool differential = false) {
+      virtual bool writeSample (long value, int channel = 0, bool differential = false) override {
 
         return write (value);
       }
@@ -131,7 +105,7 @@ namespace Piduino {
          @brief Enables or disables the converter.
          @param enable true to enable, false to disable.
       */
-      virtual void setEnable (bool enable) {
+      virtual void setEnable (bool enable) override {
         // Default implementation does nothing
       }
 
@@ -139,7 +113,7 @@ namespace Piduino {
          @brief Checks if the converter is enabled.
          @return true if enabled, false otherwise.
       */
-      virtual bool isEnabled () const {
+      virtual bool isEnabled () const override {
         return false; // Default implementation returns false, indicating not enabled
       }
 
@@ -148,16 +122,20 @@ namespace Piduino {
          @return The maximum value.
          @note must be implemented by subclasses to return the actual maximum value.
       */
-      virtual long max() const = 0;
+      virtual long max() const {
+        // Default implementation returns 0, indicating no maximum set
+        return 0;
+      }
 
       /**
          @brief Returns the minimum value supported by the converter.
          @return The minimum value.
          @note must be implemented by subclasses to return the actual minimum value.
       */
-      virtual long min() const {
+      virtual long min() const override {
         return 0; // Default implementation returns 0, indicating no minimum set
       }
+
       // ------------------------------------ Optional API ------------------------------------
       // Depending on the flags and type, these methods may not be overridden by subclasses.
 
@@ -165,7 +143,7 @@ namespace Piduino {
         @brief Returns the resolution of the converter in bits.
         @return The resolution in bits.
       */
-      virtual int resolution() const {
+      virtual int resolution() const override {
         long r = range();
 
         if (r > 0) {
@@ -179,7 +157,7 @@ namespace Piduino {
          @param resolution The desired resolution in bits.
          @return The actual resolution set, or -1 if not supported.
       */
-      virtual int setResolution (int resolution) {
+      virtual int setResolution (int resolution) override {
         return setRange (1L << resolution);
       }
 
@@ -187,7 +165,7 @@ namespace Piduino {
          @brief Indicates if the converter supports bipolar operation.
          @return true if bipolar, false otherwise.
       */
-      virtual bool bipolar() const {
+      virtual bool bipolar() const override {
         return false; // Default implementation returns false, indicating no bipolar support
       }
 
@@ -196,7 +174,7 @@ namespace Piduino {
          @param bipolar true to enable bipolar mode, false to disable.
          @return true if the operation was successful, false otherwise.
       */
-      virtual bool setBipolar (bool bipolar) {
+      virtual bool setBipolar (bool bipolar) override {
         return false; // Default implementation returns false, indicating no bipolar support
       }
 
@@ -204,7 +182,7 @@ namespace Piduino {
         @brief Gets the current PWM range.
         @return The range value, typically max() - min()
       */
-      virtual long range() const {
+      virtual long range() const override {
         return max() - min();
       }
 
@@ -214,7 +192,7 @@ namespace Piduino {
          @return The set range value, or -1 if not supported.
          @note Default implementation returns -1. Should be overridden by subclasses.
       */
-      virtual long setRange (long range) {
+      virtual long setRange (long range) override {
         return -1;
       }
 
@@ -223,7 +201,7 @@ namespace Piduino {
         @param referenceId The ID of the reference voltage to set, which can be a predefined constant or a custom value depending on the ADC model.
         @return true if the reference voltage was set successfully, false otherwise.
       */
-      virtual bool setReference (int referenceId) {
+      virtual bool setReference (int referenceId) override {
         return false; // Default implementation returns false, should be overridden by subclasses
       }
 
@@ -231,7 +209,7 @@ namespace Piduino {
          @brief Gets the reference voltage of the ADC.
          @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the ADC model.
       */
-      virtual int reference() const {
+      virtual int reference() const override {
         return UnknownReference; // Default implementation returns UnknownReference
       }
 
@@ -239,7 +217,7 @@ namespace Piduino {
         @brief Gets the current reference voltage.
         @return The reference voltage value, typically 3.3V or 5V depending on the ADC model.
       */
-      virtual double referenceValue() const {
+      virtual double referenceValue() const override {
         return 3.3; // Default implementation returns 3.3V, should be overridden by subclasses
       }
 
@@ -267,7 +245,7 @@ namespace Piduino {
         @brief Gets the current clock frequency.
         @return The frequency in Hertz.
       */
-      virtual long frequency() const {
+      virtual long frequency() const override {
         return -1; // Default implementation returns -1, indicating no frequency set
       }
 
@@ -277,119 +255,25 @@ namespace Piduino {
          @return The actual frequency set, or -1 if not supported.
          @note Default implementation returns -1. Should be overridden by subclasses.
       */
-      virtual long setFrequency (long freq) {
+      virtual long setFrequency (long freq) override {
         return -1;
+      }
+
+      // --------------------------------------------------------------------------
+      virtual const std::string &deviceName() const override {
+        static const std::string name = ConverterTemplate::registeredName();
+        return name;
       }
 
       // ------------------------- internal methods -------------------------
 
-      /**
-         @brief Clamps a value to the valid range of the converter.
-         @param value The value to clamp.
-         @return The clamped value within the range [min(), max()].
-         @note This method ensures that the value does not exceed the converter's limits.
-      */
-      long clampValue (long value) const {
 
-        if (value < min()) {
 
-          value = min();
-          if (isDebug) {
-            std::cerr << "Converter::write(" << value << ") below minimum, setting to " << min() << std::endl;
-          }
-        }
-        if (value > max()) {
+      // --------------------------- data members ---------------------------
 
-          value = max();
-          if (isDebug) {
-            std::cerr << "Converter::write(" << value << ") above maximum, setting to " << max() << std::endl;
-          }
-        }
-        return value;
-      }
 
-      /**
-         @brief Splits a string into a vector of strings based on a delimiter.
-         @param str The string to split.
-         @param delimiter The character used to split the string.
-         @param skipEmpty If true, empty strings are skipped in the result (default is false).
-         @return A vector of strings resulting from the split operation.
-      */
-      static std::vector<std::string> split (const std::string &str, char delimiter, bool skipEmpty = false);
-
-      /**
-         @brief Gets the pin associated with a given string identifier.
-         @param s The string identifier for the pin.
-         @return Pointer to the Pin object, or nullptr if not found.
-         @note This method is used to retrieve a Pin object based on its string identifier.
-      */
-      Pin *getPin (const std::string &s);
-
-      /**
-         @brief struct for storing converter registration information.
-      */
-      struct registryKey {
-        std::string type; ///< The type of the converter ("dac" or "adc").
-        std::string parameters; ///< Parameters for the converter, a colon-separated list of values.
-        std::function<Converter* (const std::string &parameters) > creator; ///< Function to create an instance of the converter.
-        registryKey() = default; ///< Default constructor.
-        registryKey (std::function<Converter* (const std::string &parameters) > creator, const std::string &type = "dac",
-                     const std::string &parameters = "")
-          : creator (creator), type (type), parameters (parameters) {} ///< Constructor with parameters.
-      };
-
-      /**
-          @brief Gets the registry of converter creators.
-          @return A reference to the registry map.
-      */
-      static std::map<std::string, registryKey>   &getRegistry();
-
-      //-- Private data members ------------------------------------------------------
-
-      /**
-         @brief The type of the converter.
-      */
-      Type type;
-
-      /**
-         @brief The flags indicating the capabilities of the converter.
-      */
-      unsigned int flags;
-
-      /**
-         @brief The parameters for the converter.
-      */
-      std::vector<std::string> parameters; ///< Parameters for the converter, e.g., "param1:param2:param3"
-
-      /**
-         @brief Macro to declare the public interface for the Converter.
-      */
-      PIMP_DECLARE_PUBLIC (Converter)
+      PIMP_DECLARE_PUBLIC (ConverterTemplate)
   };
-
-  /**
-    @brief Macro to automatically register a converter class.
-
-    This macro simplifies the registration process by creating a static registrar
-    class that calls the Converter::registerConverter() function with the appropriate parameters.
-    For the registration to work, the class must implement the registeredName() static method and a constructor that takes
-    a std::string parameter corresponding to the colon-separated list of parameters.
-
-    @param ClassName The name of the class to register.
-  */
-#define REGISTER_CONVERTER(ClassName, Type, Parameters) \
-  namespace { \
-    struct ClassName##Registrar { \
-      ClassName##Registrar() { \
-        Converter::registerConverter(ClassName::registeredName(), \
-                                     [](const std::string& parameters) -> Converter* { \
-                                                                                       return new ClassName(parameters); \
-                                                                                     }, \
-                                     Type, Parameters); \
-      } \
-    }; \
-    static ClassName##Registrar ClassName##_registrar; \
-  }
 }
 
 /* ========================================================================== */
