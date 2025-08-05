@@ -23,6 +23,7 @@
 #include <csignal>
 #include <unistd.h>
 #include <iomanip>
+#include <atomic>
 #include <piduino/clock.h>
 #include <piduino/gpio.h>
 #include <piduino/socpwm.h>
@@ -53,6 +54,7 @@ Pin *pin = nullptr;
 bool debug = false;
 bool forceGpioDev = false;
 int useGpioDevBeforeWfi = -1;
+static std::atomic<bool> should_exit (false);
 
 /* private functions ======================================================== */
 void mode (int argc, char *argv[]);
@@ -465,8 +467,7 @@ blink (int argc, char *argv[]) {
     signal (SIGTERM, sig_handler);
     cout << "Press Ctrl+C to abort ..." << endl;
 
-    for (;;) {
-
+    while (!should_exit.load()) {
       pin->toggle ();
       clk.delay (period);
     }
@@ -590,7 +591,7 @@ cwrite (int argc, char *argv[]) {
       signal (SIGTERM, sig_handler);
       cout << "Press Ctrl+C to abort ..." << endl;
 
-      for (;;) {
+      while (!should_exit.load()) {
 
         clk.delay (100);
       }
@@ -788,15 +789,15 @@ converters (int argc, char *argv[]) {
   const int typeWidth = 10;
   const int paramWidth = 50;
 
-  cout << left << setw(nameWidth) << "Name"
-       << left << setw(typeWidth) << "Type"
-       << left << setw(paramWidth) << "Parameters" << endl;
-  cout << setfill('-') << setw(nameWidth + typeWidth + paramWidth) << "" << endl;
-  cout << setfill(' ');
+  cout << left << setw (nameWidth) << "Name"
+       << left << setw (typeWidth) << "Type"
+       << left << setw (paramWidth) << "Parameters" << endl;
+  cout << setfill ('-') << setw (nameWidth + typeWidth + paramWidth) << "" << endl;
+  cout << setfill (' ');
   for (const auto &converter : Converter::availableConverters()) {
-    cout << left << setw(nameWidth) << converter.name
-         << left << setw(typeWidth) << converter.type
-         << left << setw(paramWidth) << converter.parameters << endl;
+    cout << left << setw (nameWidth) << converter.name
+         << left << setw (typeWidth) << converter.type
+         << left << setw (paramWidth) << converter.parameters << endl;
   }
 }
 
@@ -865,17 +866,11 @@ getPin (char *c_str) {
 void
 sig_handler (int sig) {
 
-  if (gpio.isOpen()) {
+  // Signal safe operations only
+  should_exit.store (true);
 
-    if (useGpioDevBeforeWfi >= 0) {
-
-      pin->enableGpioDev (useGpioDevBeforeWfi != 0);
-    }
-
-    cout << endl << "everything was closed.";
-  }
-  cout << endl << "Have a nice day !" << endl;
-  exit (EXIT_SUCCESS);
+  const char msg[] = "\neverything was closed.\nHave a nice day !\n";
+  write (STDOUT_FILENO, msg, sizeof (msg) - 1);
 }
 
 // -----------------------------------------------------------------------------
