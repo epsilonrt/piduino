@@ -4,7 +4,7 @@
 pido \- Allow the user easy access to the GPIO pins.
 
 .SH SYNOPSIS
-\fBpido\fR [\fB\-g1sf\fR] {\fBmode\fR \fIpin\fR [\fIvalue\fR] | 
+\fBpido\fR [\fB\-g1sfDxmad\fR] {\fBmode\fR \fIpin\fR [\fIvalue\fR] | 
 \fBpull\fR \fIpin\fR [\fIvalue\fR] |
 \fBwrite\fR \fIpin\fR \fIvalue\fR |
 \fBtoggle\fR \fIpin\fR |
@@ -13,8 +13,8 @@ pido \- Allow the user easy access to the GPIO pins.
 \fBpwm\fR \fIpin\fR [\fIvalue\fR] |
 \fBpwmf\fR \fIpin\fR [\fIhz_freq\fR] |
 \fBpwmr\fR \fIpin\fR [\fIrange\fR] |
-\fBpwrite\fR \fIpin\fR \fIvalue\fR [\fIrange\fR] [\fIfrequency\fR] |
-\fBcwrite\fR \fIconverter[:parameters]\fR [\fIchannel\fR] \fIvalue\fR |
+\fBcwrite\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR] \fIvalue\fR |
+\fBcread\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR] |
 \fBread\fR \fIpin\fR |
 \fBwfi\fR \fIpin\fR \fIedge\fR  [\fItimeout_ms\fR] |
 \fBreadall\fR [\fIconnector\fR] |
@@ -66,9 +66,16 @@ This command blocks until the user interrupts it with Ctrl-C.
 List all available converters (ADC or DACs) that can be used with the \fBcwrite\fR or \fBcread\fR commands.
 
 .TP
-\fBcwrite\fR \fIconverter[:parameters]\fR [\fIchannel\fR] \fIvalue\fR
-Writes the given value to the specified converter (DAC). The converter must be specified by its name and can include parameters for configuration.
+\fBcwrite\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR] \fIvalue\fR
+Writes the given value to the specified converter (DAC). The converter must be specified with the \fB\-c\fR option, 
+and it can include parameters such as the bus ID, reference voltage, full-scale range... 
 If the converter requires specific channel information, it must be provided as well.
+
+.TP
+\fBcread\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR]
+Read a value from the specified converter (ADC or sensor). If \fIchan\fR is not specified, 
+the default channel is used. The converter must be specified with the \fB\-c\fR option, 
+and it can include parameters such as the bus ID, reference voltage, full-scale range...
 
 .TP
 \fBtoggle\fR \fIpin\fR
@@ -158,8 +165,32 @@ written in the form C.N, e.g.: 1.5 denotes pin 5 of connector 1.
 Use the System pin numbers rather than PiDuino pin numbers.
 
 .TP
+.B \-D
+Enable debug mode.
+
+.TP
 .B \-f
 Force the use of the Gpio2 device interface (/dev/gpiochipX) to control pin features.
+
+.TP
+.B \-x
+Output values in hexadecimal format.
+
+.TP
+\fB\-c\fR \fIconverter[:parameters]\fR
+Specify the converter to use and its options (e.g., -c max1161x:bipolar=1).
+
+.TP
+.B \-m
+Output values in analog format (for converters).
+
+.TP
+.B \-a
+Read converter values in average mode.
+
+.TP
+.B \-d
+Read converter values in differential mode.
 
 .TP
 .B \-v
@@ -222,6 +253,14 @@ The quickest way to get a list of the pin differences is to run the command:
 \fBpido read\fR 0 # Read pin 0
 .PP
 \fBpido wfi\fR 0 \fBfalling\fR # Wait for an interrupt on a falling edge of pin 0
+.PP
+\fBpido converters\fR # List all available converters
+.PP
+\fBpido\fR \fB\-c\fR gpiopwm:18:1024:500 \fBcwrite\fR 0 512 # Software PWM on pin 18, 50% duty cycle
+.PP
+\fBpido\fR \fB\-c\fR max1161x:bus=1:max=15:ref=int4 \fBcread\fR 0 # Read ADC channel 0 (MAX11615 on bus 1, internal reference voltage of 2.048V)
+.PP
+\fBpido\fR \fB\-c\fR max1161x:bus=1:max=15:bipolar=1 \fB\-md\fR \fBcread\fR 0 # Read differential ADC between channel 0 and 1 in analog format (MAX11615 on bus 1, bipolar mode)
 
 .SH SEE ALSO
 .PP

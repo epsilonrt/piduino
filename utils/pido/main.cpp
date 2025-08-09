@@ -43,7 +43,15 @@ const int pwmDefaultFreq = 1000;
 const long pwmDefautRange = 1024;
 
 /* types ==================================================================== */
-typedef void (*func) (int argc, char *argv[]);
+namespace Pido {
+  typedef void (*func) (int argc, char *argv[]);
+  enum Format {
+    FormatDecimal = 0,   ///< Decimal format, default
+    FormatHexadecimal, ///< Hexadecimal format
+    FormatBinary,      ///< Binary format
+    FormatAnalogValue, ///< Analog value format, do not display in LSB but as a value referencing to FSR
+  };
+} // namespace Pido
 
 /* private variables ======================================================== */
 Pin::Numbering numbering = Pin::NumberingLogical;
@@ -55,6 +63,10 @@ bool debug = false;
 bool forceGpioDev = false;
 int useGpioDevBeforeWfi = -1;
 static std::atomic<bool> should_exit (false);
+Pido::Format outFormat =  Pido::FormatDecimal;
+bool isAverage = false;
+bool isDifferential = false;
+std::string converterStr;
 
 /* private functions ======================================================== */
 void mode (int argc, char *argv[]);
@@ -72,6 +84,7 @@ void drive (int argc, char *argv[]);
 void pwrite (int argc, char *argv[]);
 void converters (int argc, char *argv[]);
 void cwrite (int argc, char *argv[]);
+void cread (int argc, char *argv[]);
 
 
 Pin *getPin (char *c_str);
@@ -87,9 +100,9 @@ int
 main (int argc, char **argv) {
   int opt;
   int ret = 0;
-  func do_it;
+  Pido::func do_it;
 
-  const map<string, func> str2func = {
+  const map<string, Pido::func> str2func = {
     {"mode", mode},
     {"pull", pull},
     {"read", read},
@@ -104,12 +117,13 @@ main (int argc, char **argv) {
     {"pwmf", pwmf},
     {"pwrite", pwrite},
     {"converters", converters},
-    {"cwrite", cwrite}
+    {"cwrite", cwrite},
+    {"cread", cread}
   };
 
   try {
     /* Traitement options ligne de commande */
-    while ( (opt = getopt (argc, argv, "gs1dhfvw")) != -1) {
+    while ( (opt = getopt (argc, argv, "gs1Dhfvwxmadc:")) != -1) {
 
       switch (opt) {
 
@@ -125,7 +139,7 @@ main (int argc, char **argv) {
           physicalNumbering = true;
           break;
 
-        case 'd':
+        case 'D':
           debug = true;
           break;
 
@@ -146,6 +160,26 @@ main (int argc, char **argv) {
         case 'w':
           warranty();
           exit (EXIT_SUCCESS);
+          break;
+
+        case 'x':
+          outFormat = Pido::FormatHexadecimal;
+          break;
+
+        case 'm':
+          outFormat = Pido::FormatAnalogValue;
+          break;
+
+        case 'a':
+          isAverage = true;
+          break;
+
+        case 'd':
+          isDifferential = true;
+          break;
+
+        case 'c':
+          converterStr = optarg;
           break;
 
         default:
@@ -531,7 +565,7 @@ pwrite (int argc, char *argv[]) {
 }
 
 /* -----------------------------------------------------------------------------
-  cwrite "<converter[:parameters]>" [chan] <value>
+  cwrite "-c <converter[:parameters]>" [chan] <value>
     Writes the given value to the specified converter.
 */
 void
@@ -539,7 +573,7 @@ cwrite (int argc, char *argv[]) {
   int paramc = (argc - optind);
   Clock clk;
 
-  if (paramc < 2)    {
+  if (paramc < 1)    {
 
     throw Exception (Exception::ArgumentExpected);
   }
@@ -547,21 +581,21 @@ cwrite (int argc, char *argv[]) {
     int chan = -1;
     long value;
 
-    std::unique_ptr<Converter> conv (Converter::factory (argv[optind]));
+    std::unique_ptr<Converter> conv (Converter::factory (converterStr));
 
     if (conv->type() != Converter::DigitalToAnalog) {
 
-      throw Exception (Exception::ConverterUnknown, argv[optind]);
+      throw Exception (Exception::ConverterUnknown, converterStr);
     }
 
-    if (paramc > 2) {
+    if (paramc > 1) {
 
-      chan = stoi (string (argv[optind + 1]));
-      value = stol (string (argv[optind + 2]));
+      chan = stoi (string (argv[optind]));
+      value = stol (string (argv[optind + 1]));
     }
     else {
 
-      value = stol (string (argv[optind + 1]));
+      value = stol (string (argv[optind]));
     }
 
     conv->setDebug (debug);
@@ -595,6 +629,115 @@ cwrite (int argc, char *argv[]) {
 
         clk.delay (100);
       }
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------------
+  cread -c <converter[:parameters]> [-x] [-a] [-d] [-m] [chan]
+    Reads a value from the specified converter.
+*/
+void
+cread (int argc, char *argv[]) {
+  int paramc = (argc - optind);
+  Clock clk;
+
+  if (paramc < 1)    {
+
+    throw Exception (Exception::ArgumentExpected);
+  }
+  else {
+    int chan = -1;
+
+    std::unique_ptr<Converter> conv (Converter::factory (converterStr));
+
+    if (conv->type() != Converter::AnalogToDigital) {
+
+      throw Exception (Exception::ConverterUnknown, converterStr);
+    }
+
+    if (paramc > 0) {
+      std::string param (argv[optind]);
+      chan = stoi (param);
+    }
+
+
+    if ( (isDifferential || isAverage || outFormat == Pido::FormatAnalogValue) && (chan < 0))   {
+
+      chan = 0; // Default channel for differential or average mode
+    }
+
+    conv->setDebug (debug);
+    if (!conv->open()) {
+
+      throw Exception (Exception::ConverterOpenError, conv->deviceName());
+    }
+    conv->setEnable (true);
+
+    if (outFormat != Pido::FormatAnalogValue) {
+      long value;
+
+      // Read the digital value
+      if (chan >= 0) {
+
+        if (isAverage) {
+
+          value = conv->readAverage (chan, isDifferential);
+
+        }
+        else  {
+
+          value = conv->readSample (chan, isDifferential);
+        }
+      }
+      else {
+
+        value = conv->read ();
+      }
+
+      if (value == Converter::InvalidValue) {
+
+        throw Exception (Exception::ConverterReadError, conv->deviceName());
+      }
+
+      if (outFormat == Pido::FormatHexadecimal) {
+        size_t valueSize = sizeof (value) * 2; // Size in bytes for hex output
+
+        if (conv->flags() & Converter::hasResolution) {
+          valueSize = conv->resolution() / 4; // Convert resolution to hex digits
+
+          if (valueSize < 1 || ( (valueSize * 4) < conv->resolution())) { // resolution is not a multiple of 4 bits or too small
+
+            valueSize++; // Increase size to fit the value
+          }
+        }
+
+        cout << "0x" << hex << uppercase << setfill ('0') << setw (valueSize) << value << endl;
+      }
+      else {
+
+        cout << dec << value << endl;
+      }
+    }
+    else { // Read the analog value
+      double value;
+
+      if (isAverage) {
+
+        value = conv->readAverageValue (chan, isDifferential);
+
+      }
+      else  {
+
+        value = conv->readValue (chan, isDifferential);
+      }
+
+      if (value == Converter::InvalidValue) {
+
+        throw Exception (Exception::ConverterReadError, conv->deviceName());
+      }
+
+      cout << fixed << setprecision (3) << value << endl;
     }
   }
 }
@@ -912,49 +1055,59 @@ usage () {
   cout << "Allow the user easy access to the GPIO pins." << endl << endl;
 
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
-  cout << "valid options are :" << endl;
-  cout << "  -g\tUse the SOC pins numbers rather than PiDuino pin numbers." << endl;
-  cout << "  -s\tUse the System pin numbers rather than PiDuino pin numbers." << endl;
-  cout << "  -f\tForce to use Gpio2 device interface (/dev/gpiochipX)." << endl;
-  cout << "  -1\tUse the connector pin numbers rather than PiDuino pin numbers." << endl;
-  cout << "    \ta number is written in the form C.P, eg: 1.5 denotes pin 5 of connector #1." << endl;
-  cout << "  -v\tOutput the current version and exit." << endl;
-  cout << "  -w\tOutput the warranty and exit." << endl;
-  cout << "  -h\tPrint this message and exit" << endl << endl;
+  cout << "Valid options are:" << endl;
+  cout << "  -g\tUse the SoC pin numbers instead of PiDuino pin numbers." << endl;
+  cout << "  -s\tUse the System pin numbers instead of PiDuino pin numbers." << endl;
+  cout << "  -f\tForce the use of the Gpio2 device interface (/dev/gpiochipX)." << endl;
+  cout << "  -1\tUse connector pin numbers instead of PiDuino pin numbers." << endl;
+  cout << "    \tA number is written in the form C.P, e.g., 1.5 denotes pin 5 of connector #1." << endl;
+  cout << "  -D\tEnable debug mode." << endl;
+  cout << "  -x\tOutput values in hexadecimal format." << endl;
+  cout << "  -c\tSpecify the converter to use and its options (e.g., -c max1161x:bipolar=1)."  << endl;
+  cout << "  -m\tOutput values in analog format (for converters)." << endl;
+  cout << "  -a\tRead converter values in average mode." << endl;
+  cout << "  -d\tRead converter values in differential mode." << endl;
+  cout << "  -v\tDisplay the current version and exit." << endl;
+  cout << "  -w\tDisplay the warranty and exit." << endl;
+  cout << "  -h\tPrint this message and exit." << endl << endl;
 
-  //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
-  cout << "valid commands are :" << endl;
+  cout << "Valid commands are:" << endl;
   cout << "  mode <pin> <in/out/off/pwm/alt{0..9}>" << endl;
-  cout << "    Get/Set a pin mode into input, output, off, alt0..9 or pwm mode." << endl;
+  cout << "    Get or set a pin mode to input, output, off, alt0..9, or pwm." << endl;
   cout << "  pull <pin> <up/down/off>" << endl;
-  cout << "    Get/Set the internal pull-up, pull-down or off controls." << endl;
+  cout << "    Get or set the internal pull-up, pull-down, or off controls." << endl;
   cout << "  read <pin>" << endl;
-  cout << "    Read the digital value of the given pin (0 or 1)" << endl;
+  cout << "    Read the boolean value of the given pin (0 or 1)." << endl;
   cout << "  readall [#connector]" << endl;
-  cout << "    Output a table of all connectors with pins informations." << endl;
+  cout << "    Output a table of all connectors with pin information." << endl;
   cout << "  write <pin> <value>" << endl;
-  cout << "    Write the given value (0 or 1) to the given pin (output)." << endl;
+  cout << "    Write the given boolean value (0 or 1) to the specified pin (output)." << endl;
   cout << "  toggle <pin>" << endl;
-  cout << "    Changes the state of a GPIO pin; 0 to 1, or 1 to 0 (output)." << endl;
+  cout << "    Change the state of a GPIO pin; 0 to 1, or 1 to 0 (output)." << endl;
   cout << "  blink <pin> [period]" << endl;
-  cout << "    Blinks the given pin on/off (explicitly sets the pin to output)." << endl;
+  cout << "    Blink the specified pin on/off (explicitly sets the pin to output)." << endl;
   cout << "  wfi <pin> <rising/falling/both> [timeout_ms]" << endl;
-  cout << "    Waits  for  the  interrupt  to happen. It's a non-busy wait." << endl;
+  cout << "    Wait for the interrupt to occur. This is a non-busy wait." << endl;
   cout << "  pwm <pin> <value>" << endl;
-  cout << "    Write/Read a PWM value (0 to pwmr) to the given pin (pwm pin only)." << endl;
+  cout << "    Write or read a PWM value (0 to pwmr) to the specified pin (PWM pin only)." << endl;
   cout << "  pwmr <pin> <range>" << endl;
-  cout << "    Change/Read the PWM range. The default is 1024 (pwm pin only)." << endl;
+  cout << "    Change or read the PWM range. The default is 1024 (PWM pin only)." << endl;
   cout << "  pwmf <pin> <freq>" << endl;
-  cout << "    Change/Read the PWM frequency. The default is about 1000Hz (pwm pin only)." << endl;
+  cout << "    Change or read the PWM frequency. The default is about 1000Hz (PWM pin only)." << endl;
   cout << "  drive <pin> <level>" << endl;
-  cout << "    Get/Set the multi-driving output level." << endl;
+  cout << "    Get or set the multi-drive output level." << endl;
   cout << "  pwrite <pin> <value> [range] [frequency]" << endl;
-  cout << "    Writes the given value to the pin using a software PWM. The value must be" << endl;
+  cout << "    Write the given value to the pin using software PWM. The value must be" << endl;
   cout << "    between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz." << endl;
   cout << "  converters" << endl;
   cout << "    List all available converters." << endl;
-  cout << "  cwrite <converter[:parameters]> [chan] <value>" << endl;
-  cout << "    Writes the given value to the specified converter (DAC)." << endl;
+  cout << "  cwrite -c <converter[:parameters]> [chan] <value>" << endl;
+  cout << "    Write the given value to the specified converter (DAC)." << endl;
+  cout << "  cread -c <converter[:parameters]> [chan]" << endl;
+  cout << "    Read a value from the specified converter (ADC or sensor)." << endl;
+  cout << "    If chan is not specified, the default channel is used." << endl;
+  cout << endl;
+  cout << "For more information, see man " << System::progName() << endl;
 }
 
 // -----------------------------------------------------------------------------
