@@ -79,20 +79,20 @@ namespace Piduino {
 
       /**
          @brief Reads a value from the converter device.
-         @return The value read from the device, default implementation returns LONG_MIN.
+         @return The value read from the device, default implementation returns InvalidValue.
          @note may be overridden by subclasses to implement specific reading logic.
          This function is not callable if the open mode is not ReadOnly or ReadWrite (or closed).
       */
       virtual long read () {
 
-        return LONG_MIN;
+        return InvalidValue;
       }
 
       /**
          @brief Reads a value from the converter device.
          @param channel The channel to read from.
          @param differential If true, reads in differential mode (default is false).
-         @return The value read from the device, default implementation returns LONG_MIN.
+         @return The value read from the device, default implementation returns InvalidValue.
          @note may be overridden by subclasses to implement specific reading logic.
           This function is not callable if the open mode is not ReadOnly or ReadWrite (or closed).
       */
@@ -144,22 +144,50 @@ namespace Piduino {
       }
 
       /**
+        @brief Gets the digital range of the converter
+        @return The range value in LSB,  this is the number of discrete values the converter can produce, 2^n for n bits resolution.
+        @note must be implemented by subclasses to return the actual range value. 
+      */
+      virtual long range() const = 0;
+
+      /**
          @brief Returns the maximum value supported by the converter.
          @return The maximum value.
-         @note must be implemented by subclasses to return the actual maximum value.
+         @note may be implemented by subclasses to return the actual maximum value.
       */
-      virtual long max() const = 0;
+      virtual long max (bool differential = false) const {
+
+        if (isBipolar() && differential) {
+          return range() / 2 - 1; // For bipolar, max is half the range minus one
+        }
+        return range() - 1; // For unipolar, max is the full range minus one
+      }
 
       /**
          @brief Returns the minimum value supported by the converter.
          @return The minimum value.
          @note must be implemented by subclasses to return the actual minimum value.
       */
-      virtual long min() const {
-        return 0; // Default implementation returns 0, indicating no minimum set
+      virtual long min (bool differential = false) const {
+
+        if (isBipolar() && differential) {
+          return -range() / 2; // For bipolar, min is negative half the range
+        }
+        return 0; // For unipolar, min is always 0
       }
+
       // ------------------------------------ Optional API ------------------------------------
       // Depending on the flags and type, these methods may not be overridden by subclasses.
+
+      /**
+         @brief Sets the digital range of the converter.
+         @param range The desired range value.
+         @return The set range value, 0 if not set, or -1 if not supported.
+         @note Default implementation returns -1. Should be overridden by subclasses.
+      */
+      virtual long setRange (long range) {
+        return -1;
+      }
 
       /**
         @brief Returns the resolution of the converter in bits.
@@ -187,7 +215,7 @@ namespace Piduino {
          @brief Indicates if the converter supports bipolar operation.
          @return true if bipolar, false otherwise.
       */
-      virtual bool bipolar() const {
+      virtual bool isBipolar() const {
         return false; // Default implementation returns false, indicating no bipolar support
       }
 
@@ -201,66 +229,55 @@ namespace Piduino {
       }
 
       /**
-        @brief Gets the current PWM range.
-        @return The range value, typically max() - min()
+         @brief Sets the reference value of the converter.
+         @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
+         @param fsr The full-scale range value, used for external reference (default is 0.0).
+         @return true if the reference value was set successfully, false otherwise.
+         @note Default implementation returns false, should be overridden by subclasses.
       */
-      virtual long range() const {
-        return max() - min();
-      }
-
-      /**
-         @brief Sets the PWM range.
-         @param range The desired range value.
-         @return The set range value, or -1 if not supported.
-         @note Default implementation returns -1. Should be overridden by subclasses.
-      */
-      virtual long setRange (long range) {
-        return -1;
-      }
-
-      /**
-        @brief Sets the reference voltage of the ADC.
-        @param referenceId The ID of the reference voltage to set, which can be a predefined constant or a custom value depending on the ADC model.
-        @return true if the reference voltage was set successfully, false otherwise.
-      */
-      virtual bool setReference (int referenceId) {
+      virtual bool setReference (int referenceId, double fsr = 0.0) {
         return false; // Default implementation returns false, should be overridden by subclasses
       }
 
       /**
-         @brief Gets the reference voltage of the ADC.
-         @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the ADC model.
+         @brief Gets the current reference ID of the converter.
+         @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
       */
       virtual int reference() const {
         return UnknownReference; // Default implementation returns UnknownReference
       }
 
       /**
-        @brief Gets the current reference voltage.
-        @return The reference voltage value, typically 3.3V or 5V depending on the ADC model.
+         @brief Gets the current full-scale range of the converter.
+         @return The full-scale range value, typically in volts but may vary depending on the converter model.
+         @note Default implementation returns 3.3V, should be overridden by subclasses.
       */
-      virtual double referenceValue() const {
+      virtual double fullScaleRange() const {
         return 3.3; // Default implementation returns 3.3V, should be overridden by subclasses
       }
 
       /**
-         @brief Converts digital value to analog value.
+         @brief Converts a digital value to an analog value.
          @param digitalValue The digital value to convert.
+         @param differential If true, converts in differential mode (default is false).
          @return The corresponding analog value.
-         @note Default implementation converts digital value to analog value based on reference value.
       */
-      virtual double digitalToValue (long digitalValue) const override {
-        return (static_cast<double> (digitalValue) * referenceValue()) / (max() - min() + 1);
+      virtual double digitalToValue (long digitalValue, bool differential = false) const {
+        double result = static_cast<double> (digitalValue) * fullScaleRange() / range();
+
+        return result;
       }
 
       /**
-         @brief Converts analog value to digital value.
-         @param value The analog value to convert.
-         @return The corresponding digital value.
-         @note Default implementation converts analog to digital value based on reference value.
+        @brief Converts a analog value to a digital value.
+        @param value The value to convert.
+        @param differential If true, converts in differential mode (default is false).
+        @return The corresponding digital value.
       */
-      virtual long valueToDigital (double value) const override {
-        return static_cast<long> ( (value * (max() - min() + 1)) / referenceValue());
+      virtual long valueToDigital (double value, bool differential = false) const {
+        long result = static_cast<long> ( (value * range()) / fullScaleRange());
+
+        return clampValue (result, differential);
       }
 
       /**
@@ -286,23 +303,24 @@ namespace Piduino {
       /**
          @brief Clamps a value to the valid range of the converter.
          @param value The value to clamp.
+         @param differential If true, clamps in differential mode (default is false).
          @return The clamped value within the range [min(), max()].
          @note This method ensures that the value does not exceed the converter's limits.
       */
-      long clampValue (long value) const {
+      long clampValue (long value, bool differential = false) const {
 
-        if (value < min()) {
+        if (value < min(differential)) {
 
-          value = min();
+          value = min(differential);
           if (isDebug) {
-            std::cerr << "Converter::write(" << value << ") below minimum, setting to " << min() << std::endl;
+            std::cerr << "Converter::write(" << value << ") below minimum, setting to " << min(differential) << std::endl;
           }
         }
-        if (value > max()) {
+        if (value > max(differential)) {
 
-          value = max();
+          value = max(differential);
           if (isDebug) {
-            std::cerr << "Converter::write(" << value << ") above maximum, setting to " << max() << std::endl;
+            std::cerr << "Converter::write(" << value << ") above maximum, setting to " << max(differential) << std::endl;
           }
         }
         return value;
@@ -316,6 +334,13 @@ namespace Piduino {
          @return A vector of strings resulting from the split operation.
       */
       static std::vector<std::string> split (const std::string &str, char delimiter, bool skipEmpty = false);
+
+      /**
+         @brief Parses a list of parameters into a map.
+         @param parameters The list of parameters as a vector of strings. Each parameter must be in the format "key=value" if not, it will be ignored.
+         @return A map where keys are parameter names and values are parameter values.
+      */
+      static std::map<std::string, std::string> parseParameters (std::vector<std::string> &parameters);
 
       /**
          @brief Gets the pin associated with a given string identifier.

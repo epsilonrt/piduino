@@ -29,19 +29,20 @@ namespace Piduino {
       Rp1Engine (SocPwm *q, Pin *p);
       ~Rp1Engine();
 
-      bool open (IoDevice::OpenMode mode) override;
-      void close() override;
-      const std::string &deviceName() const override;
+      virtual bool open (IoDevice::OpenMode mode) override;
+      virtual void close() override;
+      virtual const std::string &deviceName() const override;
 
-      long read() override;
-      bool write (long value) override;
-      void setEnable (bool enable) override;
-      bool isEnabled () const override;
-      long max() const override;
+      virtual long read() override;
+      virtual bool write (long value) override;
+      virtual void setEnable (bool enable) override;
+      virtual bool isEnabled () const override;
       virtual long range() const override;
-      long setRange (long range) override;
-      long frequency() const override;
-      long setFrequency (long freq) override;
+      virtual long setRange (long range) override;
+      virtual long max (bool differential = false) const override;
+      virtual long min (bool differential = false) const override;
+      virtual long frequency() const override;
+      virtual long setFrequency (long freq) override;
 
       // ----------- internal methods -----------
       uint32_t clockDivisor() const;

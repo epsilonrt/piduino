@@ -33,6 +33,15 @@ namespace Piduino {
       virtual ~Private();
 
       /**
+        @brief Returns the name of the device.
+        @return The device name as a string, the same as ConverterTemplate::registeredName().
+      */
+      virtual const std::string &deviceName() const override {
+        static const std::string name = ConverterTemplate::registeredName();
+        return name;
+      }
+
+      /**
          @brief Opens the converter device with the specified mode.
          @param mode The mode in which to open the device.
          @return True if the device was successfully opened, false otherwise.
@@ -53,20 +62,20 @@ namespace Piduino {
 
       /**
          @brief Reads a value from the converter device.
-         @return The value read from the device, default implementation returns LONG_MIN.
+         @return The value read from the device, default implementation returns InvalidValue.
          @note may be overridden by subclasses to implement specific reading logic.
          This function is not callable if the open mode is not ReadOnly or ReadWrite (or closed).
       */
       virtual long read () override {
 
-        return LONG_MIN;
+        return InvalidValue;
       }
 
       /**
          @brief Reads a value from the converter device.
          @param channel The channel to read from.
          @param differential If true, reads in differential mode (default is false).
-         @return The value read from the device, default implementation returns LONG_MIN.
+         @return The value read from the device, default implementation returns InvalidValue.
          @note may be overridden by subclasses to implement specific reading logic.
           This function is not callable if the open mode is not ReadOnly or ReadWrite (or closed).
       */
@@ -118,13 +127,23 @@ namespace Piduino {
       }
 
       /**
+        @brief Gets the digital range of the converter
+        @return The range value in LSB, e.g. max() - min() + 1.
+        @note must be implemented by subclasses to return the actual range value.
+      */
+      virtual long range() const = 0;
+
+      /**
          @brief Returns the maximum value supported by the converter.
          @return The maximum value.
-         @note must be implemented by subclasses to return the actual maximum value.
+         @note may be implemented by subclasses to return the actual maximum value.
       */
-      virtual long max() const {
-        // Default implementation returns 0, indicating no maximum set
-        return 0;
+      virtual long max (bool differential = false) const override {
+
+        if (isBipolar() && differential) {
+          return range() / 2 - 1; // For bipolar, max is half the range minus one
+        }
+        return range() - 1; // For unipolar, max is the full range minus one
       }
 
       /**
@@ -132,12 +151,63 @@ namespace Piduino {
          @return The minimum value.
          @note must be implemented by subclasses to return the actual minimum value.
       */
-      virtual long min() const override {
-        return 0; // Default implementation returns 0, indicating no minimum set
+      virtual long min (bool differential = false) const override {
+
+        if (isBipolar() && differential) {
+          return -range() / 2; // For bipolar, min is negative half the range
+        }
+        return 0; // For unipolar, min is always 0
+      }
+
+      /**
+         @brief Gets the current full-scale range of the converter.
+         @return The full-scale range value, typically in volts but may vary depending on the converter model.
+         @note Default implementation returns 3.3V, should be overridden by subclasses.
+      */
+      virtual double fullScaleRange() const override {
+        return 3.3; // Default implementation returns 3.3V, should be overridden by subclasses
+      }
+
+      /**
+         @brief Converts a digital value to an analog value.
+         @param digitalValue The digital value to convert.
+         @param differential If true, converts in differential mode (default is false).
+         @return The corresponding analog value.
+      */
+      virtual double digitalToValue (long digitalValue, bool differential = false) const override {
+        double result = static_cast<double> (digitalValue) * fullScaleRange() / range();
+        if (isBipolar() && differential) {
+          result -= fullScaleRange() / 2; // Adjust for bipolar range
+        }
+        return result;
+      }
+
+      /**
+        @brief Converts a analog value to a digital value.
+        @param value The value to convert.
+        @param differential If true, converts in differential mode (default is false).
+        @return The corresponding digital value.
+      */
+      virtual long valueToDigital (double value, bool differential = false) const override {
+        long result = static_cast<long> ( (value * range()) / fullScaleRange());
+        if (isBipolar() && differential) {
+          result += range() / 2; // Adjust for bipolar range
+        }
+        return clampValue (result, differential);
       }
 
       // ------------------------------------ Optional API ------------------------------------
       // Depending on the flags and type, these methods may not be overridden by subclasses.
+
+      /**
+         @brief Sets the digital range of the converter.
+         @param range The desired range value.
+         @return The set range value, 0 if not set, or -1 if not supported.
+         @note Default implementation returns -1. Should be overridden by subclasses.
+      */
+      virtual long setRange (long range) override {
+        return -1;
+      }
 
       /**
         @brief Returns the resolution of the converter in bits.
@@ -165,7 +235,7 @@ namespace Piduino {
          @brief Indicates if the converter supports bipolar operation.
          @return true if bipolar, false otherwise.
       */
-      virtual bool bipolar() const override {
+      virtual bool isBipolar() const override {
         return false; // Default implementation returns false, indicating no bipolar support
       }
 
@@ -179,66 +249,22 @@ namespace Piduino {
       }
 
       /**
-        @brief Gets the current PWM range.
-        @return The range value, typically max() - min()
+         @brief Sets the reference value of the converter.
+         @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
+         @param fsr The full-scale range value, used for external reference (default is 0.0).
+         @return true if the reference value was set successfully, false otherwise.
+         @note Default implementation returns false, should be overridden by subclasses.
       */
-      virtual long range() const override {
-        return max() - min();
-      }
-
-      /**
-         @brief Sets the PWM range.
-         @param range The desired range value.
-         @return The set range value, or -1 if not supported.
-         @note Default implementation returns -1. Should be overridden by subclasses.
-      */
-      virtual long setRange (long range) override {
-        return -1;
-      }
-
-      /**
-        @brief Sets the reference voltage of the ADC.
-        @param referenceId The ID of the reference voltage to set, which can be a predefined constant or a custom value depending on the ADC model.
-        @return true if the reference voltage was set successfully, false otherwise.
-      */
-      virtual bool setReference (int referenceId) override {
+      virtual bool setReference (int referenceId, double fsr = 0.0) override {
         return false; // Default implementation returns false, should be overridden by subclasses
       }
 
       /**
-         @brief Gets the reference voltage of the ADC.
-         @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the ADC model.
+         @brief Gets the current reference ID of the converter.
+         @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
       */
       virtual int reference() const override {
         return UnknownReference; // Default implementation returns UnknownReference
-      }
-
-      /**
-        @brief Gets the current reference voltage.
-        @return The reference voltage value, typically 3.3V or 5V depending on the ADC model.
-      */
-      virtual double referenceValue() const override {
-        return 3.3; // Default implementation returns 3.3V, should be overridden by subclasses
-      }
-
-      /**
-         @brief Converts digital value to analog value.
-         @param digitalValue The digital value to convert.
-         @return The corresponding analog value.
-         @note Default implementation converts digital value to analog value based on reference value.
-      */
-      virtual double digitalToValue (long digitalValue) const override {
-        return (static_cast<double> (digitalValue) * referenceValue()) / (max() - min() + 1);
-      }
-
-      /**
-         @brief Converts analog value to digital value.
-         @param value The analog value to convert.
-         @return The corresponding digital value.
-         @note Default implementation converts analog to digital value based on reference value.
-      */
-      virtual long valueToDigital (double value) const override {
-        return static_cast<long> ( (value * (max() - min() + 1)) / referenceValue());
       }
 
       /**
@@ -259,12 +285,6 @@ namespace Piduino {
         return -1;
       }
 
-      // --------------------------------------------------------------------------
-      virtual const std::string &deviceName() const override {
-        static const std::string name = ConverterTemplate::registeredName();
-        return name;
-      }
-
       // ------------------------- internal methods -------------------------
 
 
@@ -274,6 +294,5 @@ namespace Piduino {
 
       PIMP_DECLARE_PUBLIC (ConverterTemplate)
   };
-}
-
+} // namespace Piduino
 /* ========================================================================== */

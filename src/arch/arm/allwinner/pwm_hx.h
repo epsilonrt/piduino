@@ -35,7 +35,8 @@ namespace Piduino {
       bool write (long value) override;
       void setEnable (bool enable) override;
       bool isEnabled () const override;
-      long max() const override;
+      long max (bool differential = false) const override;
+      long min (bool differential = false) const override;
       long range() const override;
       long setRange (long range) override;
       long frequency() const override;
@@ -55,7 +56,7 @@ namespace Piduino {
 
       void writeReg (size_t offset, uint32_t value);
       uint32_t readReg (size_t offset) const;
-      
+
       // ------------- data members -------------
       IoMap pwm;
       size_t periodReg;

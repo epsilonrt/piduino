@@ -20,6 +20,7 @@
 #include <vector>
 #include <functional>
 #include <piduino/iodevice.h>
+#include <climits>
 
 namespace Piduino {
   /**
@@ -57,11 +58,17 @@ namespace Piduino {
       enum {
         DefaultReference = 0, ///< Default reference voltage
         InternalReference,    ///< Internal reference voltage
-        VccReference,        ///< Vcc reference voltage
-        ExternalReference,     ///< External reference voltage
+        VddReference,         ///< Vdd reference voltage (analog or digital power supply depending on the converter)
+        ExternalReference,    ///< External reference voltage
+        // The following references are for converters that have multiple internal reference configurations
+        Internal1Reference,   ///< 1st internal reference voltage
         Internal2Reference,   ///< 2nd internal reference voltage
+        Internal3Reference,   ///< 3rd internal reference voltage
+        Internal4Reference,   ///< 4th internal reference voltage
         UnknownReference = -1 ///< Unknown reference voltage
       };
+
+      static constexpr long InvalidValue = LONG_MIN; ///< Invalid value for the converter
 
       /**
          @brief Constructs a Converter object.
@@ -69,11 +76,12 @@ namespace Piduino {
          @note This constructor must be implemented by subclasses that want to register in the factory.
          @note This class is abstract and cannot be instantiated directly.
       */
-      Converter (const std::string &parameters = "");
+      explicit Converter (const std::string &parameters = "");
 
       /**
          @brief Creates a converter instance from device name.
-         @param deviceName The name of the converter class to instantiate.
+         @param deviceName The name of the converter class to instantiate, this name may be followed by parameters in the form of a colon-separated list.
+         @param parameters The parameters for the converter, a colon-separated list of values if not specified in deviceName.
          @return Pointer to new Converter instance, or nullptr if not found.
       */
       static Converter *factory (const std::string &deviceName, const std::string &parameters = "");
@@ -87,6 +95,9 @@ namespace Piduino {
                                      std::function<Converter* (const std::string &) > creator,
                                      const std::string &type = "dac",
                                      const std::string &parameters = "");
+      /**
+         @brief Contains information about a registered converter.
+      */
       struct Info {
         std::string name; ///< The name of the converter class.
         std::string type; ///< The type of the converter (e.g., "dac", "adc").
@@ -95,6 +106,7 @@ namespace Piduino {
         Info (const std::string &name, const std::string &type, const std::string &parameters)
           : name (name), type (type), parameters (parameters) {}
       };
+
       /**
          @brief Gets list of registered converter names.
          @return Vector of available converter names.
@@ -185,13 +197,6 @@ namespace Piduino {
       virtual double readAverageValue (int channel = 0, bool differential = false, int count = 8);
 
       /**
-         @brief Converts a digital value to voltage.
-         @param digitalValue The digital value to convert.
-         @return The corresponding voltage value.
-      */
-      virtual double digitalToValue (long digitalValue) const;
-
-      /**
          @brief Writes a sample value to the converter (DAC).
          @param value The sample value to write.
          @param channel The channel to write to (default is 0).
@@ -212,11 +217,20 @@ namespace Piduino {
       virtual bool writeValue (double value, int channel = 0, bool differential = false);
 
       /**
-        @brief Converts a voltage to digital value.
-        @param voltage The voltage to convert.
+         @brief Converts a digital value to an analog value.
+         @param digitalValue The digital value to convert.
+         @param differential If true, converts in differential mode (default is false).
+         @return The corresponding analog value.
+      */
+      virtual double digitalToValue (long digitalValue, bool differential = false) const;
+
+      /**
+        @brief Converts a analog value to a digital value.
+        @param value The value to convert.
+        @param differential If true, converts in differential mode (default is false).
         @return The corresponding digital value.
       */
-      virtual long valueToDigital (double voltage) const;
+      virtual long valueToDigital (double value, bool differential = false) const;
 
       /**
          @brief Enables or disables the converter.
@@ -244,13 +258,13 @@ namespace Piduino {
          @brief Returns the maximum value the converter can produce.
          @return The maximum value.
       */
-      virtual long max() const;
+      virtual long max (bool differential = false) const;
 
       /**
          @brief Returns the minimum value the converter can produce.
          @return The minimum value.
       */
-      virtual long min() const;
+      virtual long min (bool differential = false) const;
 
       /**
         @brief Returns the resolution of the converter in bits.
@@ -269,7 +283,7 @@ namespace Piduino {
          @brief Indicates if the converter supports bipolar operation.
          @return true if bipolar, false otherwise.
       */
-      virtual bool bipolar() const;
+      virtual bool isBipolar() const;
 
       /**
          @brief Sets the bipolar mode of the converter.
@@ -279,11 +293,13 @@ namespace Piduino {
       virtual bool setBipolar (bool bipolar);
 
       /**
-         @brief Sets the reference value of the converter.
-         @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
-         @return true if the reference value was set successfully, false otherwise.
+        @brief Sets the reference value of the converter.
+        @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
+        @param fsr The full-scale range value, used for external reference (default is 0.0 that indicates internal or VDD reference).
+        @return true if the reference value was set successfully, false otherwise.
+        @note Default implementation returns false, should be overridden by subclasses.
       */
-      virtual bool setReference (int referenceId);
+      virtual bool setReference (int referenceId, double fsr = 0.0);
 
       /**
          @brief Gets the current reference ID of the converter.
@@ -292,10 +308,11 @@ namespace Piduino {
       virtual int reference() const;
 
       /**
-        @brief Gets the current reference value.
-        @return The reference value, e.g. 3.3 for a converter with voltage input or output.
+         @brief Gets the current full-scale range of the converter.
+         @return The full-scale range value, typically in volts but may vary depending on the converter model.
+         @note Default implementation returns 3.3V, should be overridden by subclasses.
       */
-      virtual double referenceValue() const;
+      virtual double fullScaleRange() const;
 
       /**
         @brief Gets the current clock frequency.
@@ -312,13 +329,13 @@ namespace Piduino {
       virtual long setFrequency (long freq);
 
       /**
-        @brief Gets the current range.
-        @return The range value, typically max() - min()
+        @brief Gets the digital range of the converter
+        @return The range value in LSB, e.g. max() - min() + 1.
       */
       virtual long range() const;
 
       /**
-         @brief Sets the range.
+         @brief Sets the digital range of the converter.
          @param range The desired range value.
          @return The set range value, 0 if not set, or -1 if not supported.
          @note Default implementation returns -1. Should be overridden by subclasses.

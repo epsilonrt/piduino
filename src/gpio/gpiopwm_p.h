@@ -25,9 +25,9 @@
 namespace Piduino {
 
   /**
-   * @class GpioPwm::Private
-   * @brief Private implementation class for GpioPwm.
-   */
+     @class GpioPwm::Private
+     @brief Private implementation class for GpioPwm.
+  */
   class GpioPwm::Private  : public Converter::Private {
 
     public:
@@ -75,8 +75,18 @@ namespace Piduino {
       }
 
       // --------------------------------------------------------------------------
-      virtual long max() const override {
-        return range;
+      virtual long range() const override {
+        return prange;
+      }
+
+      // --------------------------------------------------------------------------
+      virtual long max (bool differential = false) const override {
+        return range();
+      }
+
+      // --------------------------------------------------------------------------
+      virtual long min (bool differential = false) const override {
+        return 0;
       }
 
       // --------------------------------------------------------------------------
@@ -101,7 +111,7 @@ namespace Piduino {
 
       // --------------------------------------------------------------------------
       virtual long frequency() const override {
-        return freq;
+        return pfreq;
       }
 
 
@@ -120,8 +130,8 @@ namespace Piduino {
       // --------------------------- data members ---------------------------
       Pin *pin; ///< Pointer to the associated Pin object
       long value; ///< Current PWM value (0 to range for duty cycle)
-      long freq; ///< PWM frequency
-      long range; ///< PWM range
+      long pfreq; ///< PWM frequency
+      long prange; ///< PWM range
       std::atomic<int> flag; ///< Atomic flag to control the PWM generation thread
       std::thread thread; ///< Thread for generating PWM signals
 

@@ -177,9 +177,17 @@ namespace Piduino {
   // -------------------------------------------------------------------------
   // override
   long
-  SocPwm::Rp1Engine::max() const {
+  SocPwm::Rp1Engine::max (bool differential) const {
 
     return range() + 1;
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Rp1Engine::min (bool differential) const {
+    
+    return 0; // Minimum value for PWM is always 0
   }
 
   // -------------------------------------------------------------------------

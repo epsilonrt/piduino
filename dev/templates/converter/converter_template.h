@@ -71,6 +71,5 @@ namespace Piduino {
       */
       PIMP_DECLARE_PRIVATE (ConverterTemplate)
   };
-}
-
+} // namespace Piduino
 /* ========================================================================== */

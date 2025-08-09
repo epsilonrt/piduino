@@ -154,9 +154,17 @@ namespace Piduino {
   // -------------------------------------------------------------------------
   // override
   long
-  SocPwm::HxEngine::max() const {
+  SocPwm::HxEngine::max (bool /*differential*/) const {
 
     return range() - 1;
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::HxEngine::min (bool /*differential*/) const {
+    
+    return 0;
   }
 
   // -------------------------------------------------------------------------

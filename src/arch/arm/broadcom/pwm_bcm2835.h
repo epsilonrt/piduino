@@ -38,7 +38,10 @@ namespace Piduino {
       void setEnable (bool enable) override;
       bool isEnabled () const override;
 
-      long max() const override;
+      long max (bool differential = false) const override;
+      long min (bool differential = false) const override;
+      long range () const override;
+
       long setRange (long range) override;
       long frequency() const override;
       long setFrequency (long freq) override;

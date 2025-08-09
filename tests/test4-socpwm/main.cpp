@@ -214,7 +214,7 @@ TEST_FIXTURE (PwmFixture, Test1) {
   REQUIRE CHECK (pwm->pin() == output);
   std::cout << "PwmEngine: " << pwm->deviceName() << std::endl;
   CHECK_EQUAL (pwm->type(), Converter::DigitalToAnalog);
-  CHECK_EQUAL (pwm->bipolar(), false);
+  CHECK_EQUAL (pwm->isBipolar(), false);
 
   CHECK_EQUAL (false, pwm->isOpen());
   CHECK_EQUAL (true, pwm->open());

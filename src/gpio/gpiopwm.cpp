@@ -66,23 +66,23 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   GpioPwm::Private::Private (GpioPwm *q, Pin *p, long r, long f) :
-    Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency | requiresWaitLoop),  pin (p), value (0), freq (f), range (r), flag (0) {
+    Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency | requiresWaitLoop),  pin (p), value (0), pfreq (f), prange (r), flag (0) {
   }
 
   // ---------------------------------------------------------------------------
   GpioPwm::Private::Private (GpioPwm *q, const std::string &params) :
     Converter::Private (q, DigitalToAnalog, hasRange | hasFrequency | requiresWaitLoop, params),
-    pin (nullptr), value (0), freq (100), range (1024), flag (0) {
+    pin (nullptr), value (0), pfreq (100), prange (1024), flag (0) {
 
     if (parameters.empty()) {
       throw std::invalid_argument (EXCEPTION_MSG ("parameters cannot be empty, you must specify a pin number"));
     }
     pin = getPin (parameters[0]); // throw an exception if not found
     if (parameters.size() > 1) {
-      range = std::stol (parameters[1]);
+      prange = std::stol (parameters[1]);
     }
     if (parameters.size() > 2) {
-      freq = std::stol (parameters[2]);
+      pfreq = std::stol (parameters[2]);
     }
   }
 
@@ -92,7 +92,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   void *
   GpioPwm::Private::generator (std::atomic<int> &flag, GpioPwm::Private *d) {
-    nanod_t T (1E9 / static_cast<double> (d->freq)) ;
+    nanod_t T (1E9 / static_cast<double> (d->pfreq)) ;
     double D = d->max() - d->min();
     Pin *pin = d->pin;
 

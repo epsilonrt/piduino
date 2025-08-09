@@ -40,11 +40,11 @@ namespace Piduino {
     std::string name;
 
     // Check if deviceName contains the ':' character
-    if (deviceName.find(':') != std::string::npos) {
+    if (deviceName.find (':') != std::string::npos) {
       // deviceName contains parameters
       // Split the deviceName into name and parameters
-      params = deviceName.substr(deviceName.find(':') + 1);
-      name = deviceName.substr(0, deviceName.find(':'));
+      params = deviceName.substr (deviceName.find (':') + 1);
+      name = deviceName.substr (0, deviceName.find (':'));
     }
     else {
       // Pas de paramètres, utilise le nom complet
@@ -63,7 +63,7 @@ namespace Piduino {
 
   // -----------------------------------------------------------------------------
   void Converter::registerConverter (const std::string &deviceName,
-                                              std::function<Converter* (const std::string &) > creator,
+                                     std::function<Converter* (const std::string &) > creator,
                                      const std::string &type,
                                      const std::string &parameters) {
     auto &registry = Private::getRegistry();
@@ -81,7 +81,7 @@ namespace Piduino {
       info.name = pair.first; // The name of the converter class
       info.type = pair.second.type; // The type of the converter (e.g., "dac", "adc")
       info.parameters = pair.second.parameters; // Parameters for the converter, a colon-separated list of values
-      infos.push_back(info);
+      infos.push_back (info);
     }
 
     return infos;
@@ -126,7 +126,7 @@ namespace Piduino {
 
       return d->read();
     }
-    return LONG_MIN;
+    return InvalidValue;
   }
 
   // ---------------------------------------------------------------------------
@@ -151,16 +151,25 @@ namespace Piduino {
 
       return d->readSample (channel, differential);
     }
-    return LONG_MIN;
+    return InvalidValue;
   }
 
   // -----------------------------------------------------------------------------
   // virtual
   double
-  Converter::digitalToValue (long digitalValue) const {
+  Converter::digitalToValue (long digitalValue, bool differential) const {
     PIMP_D (const Converter);
 
-    return d->digitalToValue (digitalValue);
+    return d->digitalToValue (digitalValue, differential);
+  }
+
+  // -----------------------------------------------------------------------------
+  // virtual
+  long
+  Converter::valueToDigital (double voltage, bool differential) const {
+    PIMP_D (const Converter);
+
+    return d->valueToDigital (voltage, differential);
   }
 
   // -----------------------------------------------------------------------------
@@ -179,7 +188,7 @@ namespace Piduino {
   double
   Converter::readValue (int channel, bool differential) {
 
-    return digitalToValue (readSample (channel, differential));
+    return digitalToValue (readSample (channel, differential), differential);
   }
 
   // -----------------------------------------------------------------------------
@@ -187,7 +196,7 @@ namespace Piduino {
   double
   Converter::readAverageValue (int channel, bool differential, int count) {
 
-    return digitalToValue (readAverage (channel, differential, count));
+    return digitalToValue (readAverage (channel, differential, count), differential);
   }
 
   // ---------------------------------------------------------------------------
@@ -198,24 +207,16 @@ namespace Piduino {
     if (openMode() & WriteOnly) {
       PIMP_D (Converter);
 
-      return d->writeSample (d->clampValue (value), channel, differential);
+      return d->writeSample (d->clampValue (value, differential), channel, differential);
     }
     return false;
-  }
-
-  // -----------------------------------------------------------------------------
-  long
-  Converter::valueToDigital (double voltage) const {
-    PIMP_D (const Converter);
-
-    return d->valueToDigital (voltage);
   }
 
   // ---------------------------------------------------------------------------
   // virtual
   bool Converter::writeValue (double value, int channel, bool differential) {
 
-    return writeSample (valueToDigital (value), channel, differential);
+    return writeSample (valueToDigital (value, differential), channel, differential);
   }
 
   // ---------------------------------------------------------------------------
@@ -257,18 +258,18 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   long
-  Converter::max() const {
+  Converter::max (bool differential) const {
     PIMP_D (const Converter);
 
-    return d->max();
+    return d->max (differential);
   }
 
   // ---------------------------------------------------------------------------
   long
-  Converter::min() const {
+  Converter::min (bool differential) const {
     PIMP_D (const Converter);
 
-    return d->min();
+    return d->min (differential);
   }
 
 
@@ -291,10 +292,10 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   bool
-  Converter::bipolar() const {
+  Converter::isBipolar() const {
     PIMP_D (const Converter);
 
-    return d->bipolar();
+    return d->isBipolar();
   }
 
   // ---------------------------------------------------------------------------
@@ -322,10 +323,10 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  bool Converter::setReference (int reference) {
+  bool Converter::setReference (int referenceId, double fsr) {
     PIMP_D (Converter);
 
-    return d->setReference (reference);
+    return d->setReference (referenceId, fsr);
   }
 
   // ---------------------------------------------------------------------------
@@ -336,9 +337,9 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  double Converter::referenceValue() const {
+  double Converter::fullScaleRange() const {
     PIMP_D (const Converter);
-    return d->referenceValue();
+    return d->fullScaleRange();
   }
 
   // ---------------------------------------------------------------------------
@@ -388,11 +389,35 @@ namespace Piduino {
 
     // Dernier élément
     std::string lastToken = str.substr (start);
-    if  (!skipEmpty || !lastToken.empty())  {
+    if (!skipEmpty || !lastToken.empty())  {
       tokens.push_back (lastToken);
     }
 
     return tokens;
+  }
+
+  std::map<std::string, std::string> Converter::Private::parseParameters (std::vector<std::string> &parameters) {
+    std::map<std::string, std::string> result;
+
+    auto it = parameters.begin();
+    while (it != parameters.end()) {
+      std::string::size_type pos = it->find ('=');
+      if (pos != std::string::npos) {
+        std::string key = it->substr (0, pos);
+        std::string value = it->substr (pos + 1);
+        result[key] = value;
+
+        // Supprimer l'élément - erase() retourne un itérateur vers l'élément suivant
+        it = parameters.erase (it);
+        // ❌ PAS de ++it ici car erase() nous a déjà positionné sur l'élément suivant
+      }
+      else {
+        // Pas de '=', passer à l'élément suivant
+        ++it;
+      }
+    }
+
+    return result;
   }
 
   // -----------------------------------------------------------------------------

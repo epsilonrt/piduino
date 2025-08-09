@@ -130,7 +130,7 @@ TEST_FIXTURE (PwmFixture, Test1) {
   pwm = new GpioPwm (&output, Range1, Freq1);
   std::cout << "PwmEngine: " << pwm->deviceName() << std::endl;
   CHECK_EQUAL (pwm->type(), Converter::DigitalToAnalog);
-  CHECK_EQUAL (pwm->bipolar(), false);
+  CHECK_EQUAL (pwm->isBipolar(), false);
 
   CHECK (pwm->flags() & Converter::hasFrequency);
   CHECK (pwm->flags() & Converter::hasRange);

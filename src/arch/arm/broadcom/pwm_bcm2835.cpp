@@ -140,9 +140,23 @@ namespace Piduino {
   // -------------------------------------------------------------------------
   // override
   long
-  SocPwm::Bcm2835Engine::max() const {
+  SocPwm::Bcm2835Engine::range() const {
 
     return readPwm (rngReg);
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Bcm2835Engine::min (bool /*differential*/) const {
+    return 0;
+  }
+
+  // -------------------------------------------------------------------------
+  // override
+  long
+  SocPwm::Bcm2835Engine::max (bool /*differential*/) const {
+    return range() -1;
   }
 
   // -------------------------------------------------------------------------
