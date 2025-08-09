@@ -106,6 +106,10 @@ set (hdr_serial
   ${PIDUINO_INC_DIR}/piduino/serialport.h
 )
 
+set (hdr_extensions
+  ${PIDUINO_INC_DIR}/piduino/max1161x.h
+)
+
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                 ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
 
@@ -147,17 +151,24 @@ if (PIDUINO_WITH_SPI)
   list(APPEND hdr_public ${hdr_spi})
 endif (PIDUINO_WITH_SPI)
 
+if (PIDUINO_WITH_EXTENSIONS AND PIDUINO_WITH_I2C AND PIDUINO_WITH_SPI)
+  file(GLOB src_extensions ${PIDUINO_SRC_DIR}/ext/*.cpp)
+  list(APPEND hdr_public ${hdr_extensions})
+endif ()
+
 file(GLOB src_serial ${PIDUINO_SRC_DIR}/serial/*.cpp)
 list(APPEND hdr_public ${hdr_serial})
 
-#message ("hdr_public=${hdr_public}")
-
 set (libsrc ${PIDUINO_SRC_DIR}/piduino.cpp  
   ${src_piduino} ${src_gpio} ${src_gpio_bcm2835} ${src_gpio_allwinnerh} 
-  ${src_i2c} ${src_spi} ${src_serial}
+  ${src_i2c} ${src_spi} ${src_serial} ${src_extensions}
   ${src_arduino} ${src_arduino_i2c} ${src_arduino_spi} ${src_arduino_serial}
   ${src_libc_compat}
   )
+
+# message (STATUS "piduino: hdr_public=${hdr_public}")
+# message (STATUS "piduino: libsrc=${libsrc}")
+# message (STATUS "piduino: src_extensions=${src_extensions}")
 
 # this is the "object library" target: compiles the sources only once
 add_library(objlib OBJECT ${libsrc})
