@@ -76,6 +76,15 @@ namespace Piduino {
       virtual long readSample (int channel = 0, bool differential = false) override;
 
       /**
+        @brief Returns the number of channels supported by the converter.
+        @return The number of channels, a channel is numbering from 0 to numberOfChannels() - 1.
+      */
+      virtual int numberOfChannels() const override {
+
+        return max.nchan;
+      }
+
+      /**
          @brief Checks if the converter is enabled.
          @return true if enabled, false otherwise.
       */
@@ -119,9 +128,11 @@ namespace Piduino {
         if (this->bipolar != bipolar) {
 
           this->bipolar = bipolar;
-          return updateSetup(); // Update the setup after changing bipolar mode
+          if (isConnected) {
+            return updateSetup();  // Update the setup after changing bipolar mode
+          }
         }
-        return false; // Default implementation returns false, indicating no bipolar support
+        return true; // Return true if the bipolar mode is unchanged
       }
 
       /**
@@ -133,12 +144,12 @@ namespace Piduino {
       */
       virtual bool setReference (int referenceId, double fsr = 0.0) override;
 
-
       /**
          @brief Gets the current reference ID of the converter.
          @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
       */
       virtual int reference() const override {
+
         return referenceId;
       }
 
@@ -148,67 +159,44 @@ namespace Piduino {
          @note Default implementation returns 3.3V, should be overridden by subclasses.
       */
       virtual double fullScaleRange() const override {
+
         return fsr;
       }
 
       /**
-        @brief Gets the current clock frequency.
-        @return The frequency in Hertz.
+         @brief Gets the current clock setting.
+         @return The current clock setting. 2 selections are available:
+          - `InternalClock` : The internal clock is used (default).
+          - `ExternalClock` : The external clock is used.
       */
-      virtual long frequency() const override {
-        // TODO: Implement frequency retrieval logic
-        return -1; // Default implementation returns -1, indicating no frequency set
+      virtual int clock() const override {
+
+        return clkSetting;
       }
 
       /**
-         @brief Sets the clock frequency.
-         @param freq The desired frequency in Hertz.
-         @return The actual frequency set, or -1 if not supported.
-         @note Default implementation returns -1. Should be overridden by subclasses.
+         @brief Sets the current clock setting.
+         @param clock The desired clock setting.
       */
-      virtual long setFrequency (long freq) override {
-        // TODO: Implement frequency setting logic
-        return -1;
+      virtual bool setClock (int clock) override {
+
+        if (clock != clkSetting) {
+          clkSetting = clock;
+          if (isConnected) {
+            return updateSetup(); // Update the setup after changing the clock setting
+          }
+        }
+        return true; // Return true if the clock setting is unchanged
       }
 
       // ------------------------- internal methods -------------------------
       bool sendByte (uint8_t data);
-      uint16_t getLastConversion();
+      bool getLastConversion (long &conversion);
       bool updateSetup ();
 
       // ----------------- internal typedef and structures ------------------
 
-      /**
-         @struct Info
-         @brief Structure containing information about the Max1161x converter.
-      */
-      struct Info {
-        // ------------------ data members ------------------
-        MaxIndex id; ///< The Max1161x model ID (12, 13, 14, 15, 16, or 17).
-        int addr; ///< The I2C address of the converter.
-        int nchan; ///< The number of channels configured for the converter.
-        double intref; ///< The internal reference voltage value.
-        double fsr; ///< The full-scale range value.
 
-        // ------------------ methods ------------------
-        /**
-           @brief Default constructor for Info.
-           @param id The Max1161x model ID (default is Max11615).
-           @note This constructor initializes all fields to the values corresponding to the Max11615 model.
-        */
-        Info (MaxIndex id = Max11615) {
-
-          setId (id); // Initialize the Info structure with the specified MaxIndex
-        }
-        Info (MaxIndex id, int addr, int nchan, double intref, double fsr)
-          : id (id), addr (addr), nchan (nchan), intref (intref), fsr (fsr) {}
-        /**
-           @brief Sets the Max1161x model ID.
-           @param id The Max1161x model ID to set.
-           @note This function updates the ID and all other fields to the values corresponding to the specified model.
-        */
-        void setId (MaxIndex id);
-      };
 
       // --------------------------- data members ---------------------------
       std::shared_ptr<I2cDev> i2c; ///< Pointer to the I2C device used for communication.
@@ -217,6 +205,7 @@ namespace Piduino {
       double fsr; ///< Full-scale range value, typically in volts but may vary depending on the converter model.
       bool bipolar; ///< Indicates if the converter is in bipolar mode.
       bool isConnected; ///< Indicates if the converter is successfully connected to the I2C bus.
+      int clkSetting; ///< The external clock setting.
 
       PIMP_DECLARE_PUBLIC (Max1161x)
   };

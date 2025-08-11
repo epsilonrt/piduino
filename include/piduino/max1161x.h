@@ -41,6 +41,7 @@ namespace Piduino {
     - `fsr=value` : The full-scale range value. It must be specified for external reference.
                     This value is automatically set based on the reference voltage for internal and VDD, but may be changed.
     - `bipolar={true|1,false|0}` : If true, enables bipolar mode (default is false).
+    - `clk={int,ext}` : The clock setting, either internal or external (default is internal).
   */
   class Max1161x : public Converter {
 
@@ -78,7 +79,7 @@ namespace Piduino {
       /**
          @brief Constructs a Max1161x object from a string of parameters.
          @param parameters A string containing the parameters for the PWM configuration, formatted as
-                "bus=id:max={12,13,14,15,16,17}:ref={ext,vdd,int1,int2,int3,int4}:fsr=value:bipolar={true|1,false|0}". \n
+                "bus=id:max={12,13,14,15,16,17}:ref={ext,vdd,int1,int2,int3,int4}:fsr=value:bipolar={1,0}:clk={int,ext}". \n
                 The parameters for the constructor registered are:
                 - `bus=id` : The I2C bus ID (default is I2cDev::Info::defaultBus().id(), use pinfo to check the default bus ID).
                 - `max={12,13,14,15,16,17}` : The Max1161x model to use, which can be 12, 13, 14, 15, 16, or 17 (default is 15 for Max11615).
@@ -86,6 +87,7 @@ namespace Piduino {
                 - `fsr=value` : The full-scale range value. It must be specified for external reference.
                                 This value is automatically set based on the reference voltage for internal and VDD, but may be changed.
                 - `bipolar={true|1,false|0}` : If true, enables bipolar mode (default is false).
+                - `clk={int,ext}` : The clock setting, either internal or external (default is internal).
          @note This constructor is used for factory registration and must be implemented by subclasses.
       */
       explicit Max1161x (const std::string &parameters);
@@ -98,6 +100,49 @@ namespace Piduino {
       static std::string registeredName() {
         return "max1161x";
       }
+
+      /**
+         @struct Info
+         @brief Structure containing information about the Max1161x converter.
+      */
+      struct Info {
+        MaxIndex id; ///< The Max1161x model ID (12, 13, 14, 15, 16, or 17).
+        int addr; ///< The I2C address of the converter.
+        int nchan; ///< The number of channels configured for the converter.
+        double intref; ///< The internal reference voltage value.
+        double fsr; ///< The full-scale range value.
+        int busId; ///< The I2C bus ID used for communication.
+
+        /**
+           @brief Default constructor for Info.
+           @param id The Max1161x model ID (default is Max11615).
+           @note This constructor initializes all fields to the values corresponding to the Max11615 model.
+        */
+        Info (MaxIndex id = Max11615, int busId = I2cDev::Info::defaultBus().id());
+
+        /**
+           @brief Constructs an Info object with the specified parameters.
+           @param id The Max1161x model ID.
+           @param addr The I2C address of the converter.
+           @param nchan The number of channels configured for the converter.
+           @param intref The internal reference voltage value.
+           @param fsr The full-scale range value.
+        */
+        Info (MaxIndex id, int addr, int nchan, double intref, double fsr);
+
+        /**
+           @brief Sets the Max1161x model ID.
+           @param id The Max1161x model ID to set.
+           @note This function updates the ID and all other fields to the values corresponding to the specified model.
+        */
+        void setId (MaxIndex id);
+      };
+
+      /**
+         @brief Returns the information about the Max1161x converter.
+         @return A constant reference to the Info structure containing the converter's information.
+      */
+      const Info & info() const;
 
     protected:
       /**

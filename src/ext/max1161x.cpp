@@ -15,6 +15,7 @@
    along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
 */
 #include <iostream>
+#include <piduino/clock.h>
 #include "max1161x_p.h"
 #include "config.h"
 
@@ -144,8 +145,15 @@ namespace Piduino {
   Max1161x::~Max1161x() = default;
 
   // ---------------------------------------------------------------------------
+  const Max1161x::Info &Max1161x::info() const {
+    PIMP_D (const Max1161x);
+
+    return d->max;
+  }
+
+  // ---------------------------------------------------------------------------
   // Register the Max1161x converter with the factory
-  REGISTER_CONVERTER (Max1161x, "adc", "bus=id:max={12,13,14,15,16,17}:ref={ext,vdd,int1,int2,int3,int4}:fsr=value:bipolar={true|1,false|0}");
+  REGISTER_CONVERTER (Max1161x, "adc", "bus=id:max={12,13,14,15,16,17}:ref={ext,vdd,int1,int2,int3,int4}:fsr=value:bipolar={1,0}:clk={int,ext}");
 
   // -----------------------------------------------------------------------------
   //
@@ -155,12 +163,10 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Max1161x::Private::Private (Max1161x *q, I2cDev *dev, MaxIndex maxId, int referenceId, double fsr, bool bipolar) :
-    Converter::Private (q, AnalogToDigital, hasReference | hasResolution | hasBipolar | hasRange | hasSetReference | hasSetBipolar),
-    i2c (dev), max (maxId), referenceId (referenceId), fsr (fsr), bipolar (bipolar), isConnected (false) {
+    Converter::Private (q, AnalogToDigital, hasReference | hasResolution | hasBipolar | hasRange | hasSetReference | hasSetBipolar | hasClockSelection),
+    i2c (dev), max (maxId, i2c->bus().id()), bipolar (bipolar), isConnected (false), clkSetting (InternalClock) {
 
-    if (fsr <= 0.0) {
-      this->fsr = max.fsr; // Set the full-scale range value based on the MaxIndex
-    }
+    setReference (referenceId, fsr); // Set the reference voltage and full-scale range
   }
 
   // ---------------------------------------------------------------------------
@@ -171,81 +177,85 @@ namespace Piduino {
   // - `fsr=value` : The full-scale range value. It  must be specified for external reference.
   //                 This value is automatically set based on the reference voltage for internal and VDD, but may be changed.
   // - `bipolar={true|1,false|0}` : If true, enables bipolar mode (default is false).
+  // - `clk={int,ext}` : The clock setting, either internal or external (default is internal).
   Max1161x::Private::Private (Max1161x *q, const std::string &params) :
-    Converter::Private (q, AnalogToDigital, hasReference | hasResolution | hasBipolar | hasRange | hasSetReference | hasSetBipolar, params),
-    i2c (new I2cDev (I2cDev::Info::defaultBus().id())), max (Max11615), referenceId (DefaultReference), bipolar (false), isConnected (false) {
+    Converter::Private (q, AnalogToDigital, hasReference | hasResolution | hasBipolar | hasRange | hasSetReference | hasSetBipolar | hasClockSelection, params),
+    i2c (new I2cDev (I2cDev::Info::defaultBus().id())), max (Max11615, i2c->bus().id()), bipolar (false), isConnected (false), clkSetting (InternalClock) {
+    std::map<std::string, std::string> paramsMap = parseParameters (parameters);
+    int refId = DefaultReference;
+    double fsr = 0.0;
 
-    if (parameters.size() > 0) {
-      std::map<std::string, std::string> paramsMap = parseParameters (parameters);
+    auto it = paramsMap.find ("bus");
+    if (it != paramsMap.end()) {
 
-      auto it = paramsMap.find ("bus");
-      if (it != paramsMap.end()) {
-        int busId = it->second.empty() ? 0 : std::stoi (it->second);
-        i2c->setBus (busId); // Set the I2C bus ID, default to 0 if not specified
-      }
+      int busId = it->second.empty() ? 0 : std::stoi (it->second);
+      i2c->setBus (busId); // Set the I2C bus ID, default to 0 if not specified
+      max.busId = i2c->bus().id(); // Update the bus ID in the Max1161x info
+    }
 
-      it = paramsMap.find ("max");
-      if (it != paramsMap.end()) {
+    it = paramsMap.find ("max");
+    if (it != paramsMap.end()) {
 
-        int id = it->second.empty() ? Max11615 : std::stoi (it->second);
-        max.setId (static_cast<MaxIndex> (id)); // Set the Max1161x model ID, Max11615 if id is invalid
-      }
-      fsr = max.fsr; // Set the full-scale range value based on the MaxIndex
+      int id = it->second.empty() ? Max11615 : std::stoi (it->second);
+      max.setId (static_cast<MaxIndex> (id)); // Set the Max1161x model ID, Max11615 if id is invalid
+    }
 
-      it = paramsMap.find ("ref");
-      if (it != paramsMap.end()) {
-        std::string ref = it->second;
-        static const std::map<std::string, int> referenceMap = {
-          {"int", InternalReference},
-          {"ext", ExternalReference},
-          {"vdd", VddReference},
-          {"default", DefaultReference},
-          {"int1", Internal1Reference},
-          {"int2", Internal2Reference},
-          {"int3", Internal3Reference},
-          {"int4", Internal4Reference}
-        };
+    it = paramsMap.find ("fsr");
+    if (it != paramsMap.end()) {
+      double fsrValue = std::stod (it->second);
+      if (fsrValue > 0.0) {
 
-        auto refIt = referenceMap.find (ref);
-        if (refIt != referenceMap.end()) {
-          referenceId = refIt->second;
-        }
-        else if (isDebug) {
-          // Log a warning if the reference is invalid
-          std::cerr << "Max1161x: Invalid reference specified: " << ref << ". Using default value of Vdd." << std::endl;
-        }
-
-      }
-
-      it = paramsMap.find ("fsr");
-      if (it != paramsMap.end()) {
-        double fsrValue = std::stod (it->second);
-        if (fsrValue > 0.0) {
-          fsr = fsrValue; // Set the full-scale range value
-
-        }
-        else {
-          if (isDebug) {
-            // Log a warning if the full-scale range is invalid
-            std::cerr << "Max1161x: Invalid full-scale range specified: " << fsrValue << ". Using default value of 3.3." << std::endl;
-          }
-        }
+        fsr = fsrValue; // Set the full-scale range value
       }
       else {
-        if (referenceId == ExternalReference) {
-          if (isDebug) {
-            // Log a warning if the full-scale range is not specified for external reference
-            std::cerr << "Max1161x: Full-scale range must be specified for external reference. Using default value of 3.3." << std::endl;
-          }
-        }
+        // Log a warning if the full-scale range is invalid
+        std::cerr << "Max1161x: Invalid full-scale range specified: " << fsrValue << ". Using default value of " << fsr << std::endl;
       }
+    }
 
-      it = paramsMap.find ("bipolar");
-      if (it != paramsMap.end()) {
-        std::string bipolarStr = it->second;
-        if (bipolarStr == "true" || bipolarStr == "1") {
-          bipolar = true; // Enable bipolar mode
-        }
+    it = paramsMap.find ("ref");
+    if (it != paramsMap.end()) {
+      std::string ref = it->second;
+      static const std::map<std::string, int> referenceMap = {
+        {"int", InternalReference},
+        {"ext", ExternalReference},
+        {"vdd", VddReference},
+        {"default", DefaultReference},
+        {"int1", Internal1Reference},
+        {"int2", Internal2Reference},
+        {"int3", Internal3Reference},
+        {"int4", Internal4Reference}
+      };
+
+      auto refIt = referenceMap.find (ref);
+      if (refIt != referenceMap.end()) {
+
+        refId = refIt->second;
+      }
+      else {
+        // Log a warning if the reference is invalid
+        std::cerr << "Max1161x: Invalid reference specified: " << ref << ". Using default value of Vdd." << std::endl;
+      }
+    }
+
+    if (!setReference (refId, fsr)) {
+      // If setting the reference fails, log an error
+      std::cerr << "Max1161x: Failed to set reference voltage." << std::endl;
+    }
+
+    it = paramsMap.find ("bipolar");
+    if (it != paramsMap.end()) {
+      std::string bipolarStr = it->second;
+      if (bipolarStr == "true" || bipolarStr == "1") {
+        bipolar = true; // Enable bipolar mode
+      }
+    }
+
+    it = paramsMap.find ("clk");
+    if (it != paramsMap.end()) {
+      std::string clk = it->second;
+      if (clk == "ext") {
+        clkSetting = ExternalClock; // Set clock to external
       }
     }
   }
@@ -312,6 +322,7 @@ namespace Piduino {
         if (isDebug) {
           std::cout << "Max1161x: Setup updated successfully." << std::endl;
         }
+        isConnected = true; // Set the connection status to true
         return Converter::Private::open (mode);
       }
       else {
@@ -322,8 +333,16 @@ namespace Piduino {
 
     }
     else {
+
+      if (i2c->error()) {
+
+        setError (); // Get errno and set error message
+      }
+      else {
+        setError (ENODEV); // Set device not found error if no error code is available
+      }
       if (isDebug) {
-        std::cerr << "Max1161x: Failed to open device." << std::endl;
+        std::cerr << "Max1161x: Failed to open device. Error(" << i2c->error() << ") :" << i2c->errorString() << std::endl;
       }
       isConnected = false; // Set the connection status to false
     }
@@ -349,37 +368,42 @@ namespace Piduino {
     if (channel >= 0 && channel < max.nchan) {
 
       if (sendByte (config (channel, differential))) {
-        static const long MASK_12 = 0xFFF;         // 12-bit mask
 
-        result = getLastConversion(); // Read the last conversion result
+        if (getLastConversion (result)) {
+          static const long MASK_12 = 0xFFF;         // 12-bit mask
 
-        // When operating in differential mode, the BIP/UNI bit of the set-up byte selects unipolar or bipolar
-        // operation. Unipolar mode sets the differential input range from 0 to VREF.
-        // A negative differential analog input in unipolar mode causes the digital output code to be zero.
-        // Selecting bipolar mode sets the differential input range to ±VREF/2.
-        // The digital output code is binary in unipolar mode and two’s complement in bipolar mode.
-        // IMPORTANT: In single-ended mode, the BIP/UNI bit is ignored:
-        // In single-ended mode, the MAX11612–MAX11617 always operates in unipolar mode irrespective of
-        // BIP/UNI. The analog inputs are internally referenced to
-        // GND with a full-scale input range from 0 to VREF.
+          // When operating in differential mode, the BIP/UNI bit of the set-up byte selects unipolar or bipolar
+          // operation. Unipolar mode sets the differential input range from 0 to VREF.
+          // A negative differential analog input in unipolar mode causes the digital output code to be zero.
+          // Selecting bipolar mode sets the differential input range to ±VREF/2.
+          // The digital output code is binary in unipolar mode and two’s complement in bipolar mode.
+          // IMPORTANT: In single-ended mode, the BIP/UNI bit is ignored:
+          // In single-ended mode, the MAX11612–MAX11617 always operates in unipolar mode irrespective of
+          // BIP/UNI. The analog inputs are internally referenced to
+          // GND with a full-scale input range from 0 to VREF.
 
-        if (bipolar && differential) {
-          // Portable sign extension for 12 bits to long
-          static const long SIGN_BIT_12 = 1L << 11;  // Bit 11 = sign bit for 12 bits
+          if (bipolar && differential) {
+            // Portable sign extension for 12 bits to long
+            static const long SIGN_BIT_12 = 1L << 11;  // Bit 11 = sign bit for 12 bits
 
-          result &= MASK_12;                   // Clean first
-          if (result & SIGN_BIT_12) {          // If sign bit is set
-            result |= ~MASK_12;                // Portable sign extension
+            result &= MASK_12;                   // Clean first
+            if (result & SIGN_BIT_12) {          // If sign bit is set
+              result |= ~MASK_12;                // Portable sign extension
+            }
           }
-        }
-        else {
-          // If in unipolar mode, we can return the result directly
-          result &= MASK_12; // Mask to ensure we only get the lower 12 bits
+          else {
+            // If in unipolar mode, we can return the result directly
+            result &= MASK_12; // Mask to ensure we only get the lower 12 bits
+          }
+          clearError(); // Clear any previous error
+          isConnected = true; // Set the connection status to true
         }
       }
     }
     else {
 
+      setError (EINVAL);
+      isConnected = false; // Set the connection status to false
       if (isDebug) {
         std::cerr << "Max1161x::Private::readSample: Invalid channel " << channel << ". Valid range is 0 to " << (max.nchan - 1) << "." << std::endl;
       }
@@ -394,23 +418,62 @@ namespace Piduino {
 
     i2c->beginTransmission (max.addr);
     i2c->write (data);
-    return i2c->endTransmission();
+    if (!i2c->endTransmission()) {
+
+      if (i2c->error()) {
+
+        setError (); // Get errno and set error message
+      }
+      else {
+
+        setError (EIO); // Set I/O error if no error code is available
+      }
+      if (isDebug) {
+
+        std::cerr << "Max1161x: Failed to send byte. Error(" << error << ") :" << errorString << std::endl;
+      }
+      isConnected = false; // Set the connection status to false
+      return false;
+    }
+    isConnected = true; // Set the connection status to true
+    return true;
   }
 
   // ---------------------------------------------------------------------------
   // internal
-  uint16_t Max1161x::Private::getLastConversion() {
+  bool Max1161x::Private::getLastConversion (long &conversion) {
 
-    i2c->requestFrom (max.addr, 2);
-    int b1 = i2c->read();
-    int b2 = i2c->read();
-    uint16_t conversion = ( (b1 & 0x0F) << 8) | b2;
-    return conversion;
+    if (i2c->requestFrom (max.addr, 2) == 2) {
+      // Read two bytes from the device
+      int b1 = i2c->read();
+      int b2 = i2c->read();
+      conversion = ( (b1 & 0x0F) << 8) | b2; // Combine the two bytes into a 12-bit value
+      isConnected = true; // Set the connection status to true
+      return true;
+    }
+    else {
+
+      if (i2c->error()) {
+        setError (); // Get errno and set error message
+
+      }
+      else {
+
+        setError (EIO); // Set I/O error if no error code is available
+      }
+
+      if (isDebug) {
+        std::cerr << "Max1161x: Failed to read last conversion. Error(" << error << ") :" << errorString << std::endl;
+      }
+      isConnected = false; // Set the connection status to false
+    }
+    return false; // Return false if reading the conversion fails
   }
 
   // ---------------------------------------------------------------------------
   // internal
   bool Max1161x::Private::updateSetup () {
+    bool result = false; // Default result if setup update fails
 
     static const std::map<int, uint8_t> referenceMap = {
       { DefaultReference, RefVdd }, // Default reference, same as Vdd
@@ -423,31 +486,42 @@ namespace Piduino {
       { Internal4Reference, RefInt4 }, // Internal reference 4
     };
 
-
     uint8_t setupByte = REG | RST; // Start with REG=1 and RST=1
 
     auto it = referenceMap.find (referenceId);
     if (it != referenceMap.end()) {
+
       setupByte |= it->second; // Set the reference bits based on the referenceId
     }
+
     if (bipolar) {
+
       setupByte |= BIP_UNI; // Set bipolar bit if bipolar mode is enabled
     }
 
-    // TODO: Add support for clock selection
-    // void MAX11615::setClock (bool useInternalClock);
-    // m_setup_byte &= (uint8_t) MAX11615_CLK_MASK;
-    // m_setup_byte |= useInternalClock ? (uint8_t) MAX11615_USE_INTERNAL_CLK : (uint8_t) MAX11615_USE_EXTERNAL_CLK ;
-    // sendByte (m_setup_byte);
+    if (clkSetting == ExternalClock) {
 
-    return sendByte (setupByte); // Send the setup byte to the device
+      setupByte |= CLK; // Set clock bit for external clock
+    }
+
+    result = sendByte (setupByte); // Send the setup byte to the device
+    clk.delayMicroseconds (100); // Wait for 100 microseconds after sending the setup byte
+    return result;
   }
 
   // -----------------------------------------------------------------------------
   //
-  //                         Max1161x::Private::Info Class
+  //                         Max1161x::Info Class
   //
   // -----------------------------------------------------------------------------
+  Max1161x::Info::Info (MaxIndex id, int busId) : busId (busId) {
+
+    setId (id); // Initialize the Info structure with the specified MaxIndex
+  }
+
+  // -----------------------------------------------------------------------------
+  Max1161x::Info::Info (MaxIndex id, int addr, int nchan, double intref, double fsr)
+    : id (id), addr (addr), nchan (nchan), intref (intref), fsr (fsr), busId (I2cDev::Info::defaultBus().id()) {}
 
   // ------------------------------------------------------------------------------------------------------------------
   // |          | Addr. | Chan SE | Chan Dif | DefaultReference | VccReference | InternalReference | ExternalReference |
@@ -458,7 +532,7 @@ namespace Piduino {
   // | Max11615 |  0x33 |    8    |     4    |   VccReference   |      3,3     |       2,048       |      3,3 max      |
   // | Max11616 |  0x35 |    12   |     6    |   VccReference   |       5      |       4,096       |       5 max       |
   // | Max11617 |  0x35 |    12   |     6    |   VccReference   |      3,3     |       2,048       |      3,3 max      |
-  void Max1161x::Private::Info::setId (MaxIndex id) {
+  void Max1161x::Info::setId (MaxIndex id) {
     static const std::map<MaxIndex, Info> maxInfoMap = {
       { Max11612, { Max11612, 0x34,  4, 4.096, 5.0 } },
       { Max11613, { Max11613, 0x34,  4, 2.048, 3.3 } },
@@ -468,14 +542,17 @@ namespace Piduino {
       { Max11617, { Max11617, 0x35, 12, 2.048, 3.3 } }
     };
 
+    int bid = this->busId; // Use the busId from the Info structure
+
     auto it = maxInfoMap.find (id);
     if (it == maxInfoMap.end()) {
-      std::cerr << "Max1161x::Private::Info: Invalid MaxIndex specified: " << id << ". Using default value of Max11615." << std::endl;
+      std::cerr << "Max1161x::Info: Invalid MaxIndex specified: " << id << ". Using default value of Max11615." << std::endl;
       id = Max11615; // Default to Max11615 if the ID is invalid
     }
 
     it = maxInfoMap.find (id);
     *this = it->second; // Set the Info structure to the values corresponding to the specified MaxIndex
+    this->busId = bid; // Restore the busId from the Info structure
   }
 } // namespace Piduino
 /* ========================================================================== */
