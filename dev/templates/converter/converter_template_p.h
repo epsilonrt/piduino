@@ -111,6 +111,16 @@ namespace Piduino {
       }
 
       /**
+        @brief Returns the number of channels supported by the converter.
+        @return The number of channels, a channel is numbering from 0 to numberOfChannels() - 1.
+        @note Default implementation returns 1, indicating a single channel.
+      */
+      virtual int numberOfChannels() const override {
+
+        return 1; // Default implementation returns 1, indicating a single channel
+      }
+
+      /**
          @brief Enables or disables the converter.
          @param enable true to enable, false to disable.
       */
@@ -176,9 +186,7 @@ namespace Piduino {
       */
       virtual double digitalToValue (long digitalValue, bool differential = false) const override {
         double result = static_cast<double> (digitalValue) * fullScaleRange() / range();
-        if (isBipolar() && differential) {
-          result -= fullScaleRange() / 2; // Adjust for bipolar range
-        }
+
         return result;
       }
 
@@ -190,9 +198,7 @@ namespace Piduino {
       */
       virtual long valueToDigital (double value, bool differential = false) const override {
         long result = static_cast<long> ( (value * range()) / fullScaleRange());
-        if (isBipolar() && differential) {
-          result += range() / 2; // Adjust for bipolar range
-        }
+
         return clampValue (result, differential);
       }
 
@@ -206,6 +212,7 @@ namespace Piduino {
          @note Default implementation returns -1. Should be overridden by subclasses.
       */
       virtual long setRange (long range) override {
+
         return -1;
       }
 
@@ -285,6 +292,23 @@ namespace Piduino {
         return -1;
       }
 
+      /**
+        @brief Gets the current clock setting.
+        @return The current clock setting. This is typically used to choose a specific clock source or frequency for the converter.
+        @note Default implementation returns UnknownClock, indicating no clock set.
+      */
+      virtual int clock() const override {
+        return UnknownClock; // Default implementation returns UnknownClock, indicating no clock set
+      }
+
+      /**
+         @brief Sets the current clock setting.
+         @param clock The desired clock setting.
+      */
+      virtual bool setClock (int clock) override {
+        return false; // Default implementation returns false, indicating no clock support
+      }
+      
       // ------------------------- internal methods -------------------------
 
 

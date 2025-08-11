@@ -38,7 +38,9 @@ namespace Piduino {
       enum Type {
         AnalogToDigital,  ///< Analog-to-Digital Converter (ADC)
         DigitalToAnalog,  ///< Digital-to-Analog Converter (DAC)
-        None = -1         ///< No converter type specified
+        Sensor,          ///< Sensor (not a converter, but can be used with converters)
+        GpioExtender,  ///< GPIO extender (not a converter, but can be used with converters)
+        UnknownType = -1         ///< No converter type specified
       };
 
       enum {
@@ -53,6 +55,7 @@ namespace Piduino {
         hasSetResolution  = 0x00000100, ///< Indicates that the converter supports setting the resolution
         hasSetBipolar     = 0x00000200, ///< Indicates that the converter supports setting the bipolar mode
         requiresWaitLoop  = 0x00000400, ///< Indicates that the converter requires a wait loop to function correctly
+        hasClockSelection = 0x00000800, ///< Indicates that the converter supports clock selection
       };
 
       enum {
@@ -66,6 +69,13 @@ namespace Piduino {
         Internal3Reference,   ///< 3rd internal reference voltage
         Internal4Reference,   ///< 4th internal reference voltage
         UnknownReference = -1 ///< Unknown reference voltage
+      };
+
+      enum {
+        DefaultClock = 0, ///< Default clock setting
+        InternalClock,    ///< Internal clock setting
+        ExternalClock,    ///< External clock setting
+        UnknownClock = -1 ///< Unknown clock setting
       };
 
       static constexpr long InvalidValue = LONG_MIN; ///< Invalid value for the converter
@@ -217,6 +227,13 @@ namespace Piduino {
       virtual bool writeValue (double value, int channel = 0, bool differential = false);
 
       /**
+         @brief Returns the number of channels supported by the converter.
+         @return The number of channels, a channel is numbering from 0 to numberOfChannels() - 1.
+         @note Default implementation returns 1, indicating a single channel.
+      */
+      virtual int numberOfChannels() const;
+
+      /**
          @brief Converts a digital value to an analog value.
          @param digitalValue The digital value to convert.
          @param differential If true, converts in differential mode (default is false).
@@ -341,6 +358,20 @@ namespace Piduino {
          @note Default implementation returns -1. Should be overridden by subclasses.
       */
       virtual long setRange (long range);
+
+      /**
+         @brief Gets the current clock setting.
+         @return The current clock setting. This is typically used to choose a specific clock source or frequency for the converter.
+         @note Default implementation returns UnknownClock, indicating no clock set.
+      */
+      virtual int clock() const;
+
+      /**
+         @brief Sets the current clock setting.
+         @param clock The desired clock setting.
+         @return true if the clock was set successfully, false otherwise.
+      */
+      virtual bool setClock (int clock);
 
     protected:
       /**

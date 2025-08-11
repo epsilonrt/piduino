@@ -220,6 +220,14 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // virtual
+  int Converter::numberOfChannels() const {
+    PIMP_D (const Converter);
+
+    return d->numberOfChannels();
+  }
+
+  // ---------------------------------------------------------------------------
   const std::string &Converter::deviceName() const {
     PIMP_D (const Converter);
 
@@ -354,6 +362,20 @@ namespace Piduino {
     PIMP_D (Converter);
 
     return d->setFrequency (freq);
+  }
+
+  // ---------------------------------------------------------------------------
+  int Converter::clock() const {
+    PIMP_D (const Converter);
+
+    return d->clock();
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Converter::setClock (int clock) {
+    PIMP_D (Converter);
+
+    return d->setClock (clock);
   }
 
   // ---------------------------------------------------------------------------

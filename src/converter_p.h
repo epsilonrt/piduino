@@ -44,7 +44,7 @@ namespace Piduino {
          @param flags Flags for the converter (default is 0).
          @param parameters Parameters for the converter, a colon-separated list of values (default is empty).
       */
-      Private (Converter *q, Type type = None, unsigned int flags = 0, const std::string &parameters = "");
+      Private (Converter *q, Type type = UnknownType, unsigned int flags = 0, const std::string &parameters = "");
 
       /**
          @brief Destructor for the Private class.
@@ -128,6 +128,16 @@ namespace Piduino {
       }
 
       /**
+         @brief Returns the number of channels supported by the converter.
+         @return The number of channels, a channel is numbering from 0 to numberOfChannels() - 1.
+         @note Default implementation returns 1, indicating a single channel.
+      */
+      virtual int numberOfChannels() const {
+
+        return 1; // Default implementation returns 1, indicating a single channel
+      }
+
+      /**
          @brief Enables or disables the converter.
          @param enable true to enable, false to disable.
       */
@@ -146,7 +156,7 @@ namespace Piduino {
       /**
         @brief Gets the digital range of the converter
         @return The range value in LSB,  this is the number of discrete values the converter can produce, 2^n for n bits resolution.
-        @note must be implemented by subclasses to return the actual range value. 
+        @note must be implemented by subclasses to return the actual range value.
       */
       virtual long range() const = 0;
 
@@ -298,6 +308,23 @@ namespace Piduino {
         return -1;
       }
 
+      /**
+         @brief Gets the current clock setting.
+         @return The current clock setting. This is typically used to choose a specific clock source or frequency for the converter.
+         @note Default implementation returns UnknownClock, indicating no clock set.
+      */
+      virtual int clock() const {
+        return UnknownClock; // Default implementation returns UnknownClock, indicating no clock set
+      }
+
+      /**
+         @brief Sets the current clock setting.
+         @param clock The desired clock setting.
+      */
+      virtual bool setClock (int clock) {
+        return false; // Default implementation returns false, indicating no clock support
+      }
+
       // ------------------------- internal methods -------------------------
 
       /**
@@ -309,18 +336,18 @@ namespace Piduino {
       */
       long clampValue (long value, bool differential = false) const {
 
-        if (value < min(differential)) {
+        if (value < min (differential)) {
 
-          value = min(differential);
+          value = min (differential);
           if (isDebug) {
-            std::cerr << "Converter::write(" << value << ") below minimum, setting to " << min(differential) << std::endl;
+            std::cerr << "Converter::write(" << value << ") below minimum, setting to " << min (differential) << std::endl;
           }
         }
-        if (value > max(differential)) {
+        if (value > max (differential)) {
 
-          value = max(differential);
+          value = max (differential);
           if (isDebug) {
-            std::cerr << "Converter::write(" << value << ") above maximum, setting to " << max(differential) << std::endl;
+            std::cerr << "Converter::write(" << value << ") above maximum, setting to " << max (differential) << std::endl;
           }
         }
         return value;
