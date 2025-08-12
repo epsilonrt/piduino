@@ -50,6 +50,7 @@ namespace Piduino {
       Fifo txbuf;
       Fifo rxbuf;
       Info bus;
+      static std::map<int, std::weak_ptr<I2cDev>> devices;
 
       PIMP_DECLARE_PUBLIC (I2cDev)
   };

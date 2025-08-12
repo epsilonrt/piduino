@@ -1,19 +1,19 @@
 /* Copyright © 2018-2025 Pascal JEAN, All rights reserved.
- * This file is part of the Piduino Library.
- *
- * The Piduino Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * The Piduino Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
- */
+   This file is part of the Piduino Library.
+
+   The Piduino Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   The Piduino Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with the Piduino Library; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -30,14 +30,15 @@
 
 namespace Piduino {
 
-// -----------------------------------------------------------------------------
-//
-//                         I2cDev::Private Class
-//
-// -----------------------------------------------------------------------------
-
+  // -----------------------------------------------------------------------------
+  //
+  //                         I2cDev::Private Class
+  //
+  // -----------------------------------------------------------------------------
+  std::map<int, std::weak_ptr<I2cDev>> I2cDev::Private::devices;
+  
   // ---------------------------------------------------------------------------
-  I2cDev::Private::Private (I2cDev * q) :
+  I2cDev::Private::Private (I2cDev *q) :
     IoDevice::Private (q), fd (-1), state (Idle), txbuf (I2C_BLOCK_MAX), rxbuf (I2C_BLOCK_MAX) {
 
     isSequential = true;
@@ -77,15 +78,15 @@ namespace Piduino {
     txbuf.clear();
   }
 
-// -----------------------------------------------------------------------------
-//
-//                           I2cDev::Info Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                           I2cDev::Info Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
   bool
-  I2cDev::Info::setPath (const std::string & p) {
+  I2cDev::Info::setPath (const std::string &p) {
 
     for (int i = 0; i < MaxBuses; i++) {
       std::string bp = busPath (i);
@@ -116,9 +117,9 @@ namespace Piduino {
 
     udev = udev_new();
     if (udev) {
-      struct udev_enumerate * enumerate;
-      struct udev_list_entry * devices, * dev_list_entry;
-      struct udev_device * dev;
+      struct udev_enumerate *enumerate;
+      struct udev_list_entry *devices, * dev_list_entry;
+      struct udev_device *dev;
 
       enumerate = udev_enumerate_new (udev);
       udev_enumerate_add_match_subsystem (enumerate, "i2c-dev");
@@ -134,7 +135,7 @@ namespace Piduino {
           break;
         }
 
-        const char * path = udev_device_get_devnode (dev);
+        const char *path = udev_device_get_devnode (dev);
         if (path) {
           Info bus;
           if (bus.setPath (path)) {
@@ -155,11 +156,11 @@ namespace Piduino {
     return Info (db.board().defaultI2cBus());
   }
 
-// -----------------------------------------------------------------------------
-//
-//                             I2cDev Class
-//
-// -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
+  //
+  //                             I2cDev Class
+  //
+  // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
   I2cDev::I2cDev (I2cDev::Private &dd) : IoDevice (dd) {
@@ -173,19 +174,19 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  I2cDev::I2cDev (const char * path) : I2cDev() {
+  I2cDev::I2cDev (const char *path) : I2cDev() {
 
     setBusPath (path);
   }
 
   // ---------------------------------------------------------------------------
-  I2cDev::I2cDev (const std::string & path) : I2cDev() {
+  I2cDev::I2cDev (const std::string &path) : I2cDev() {
 
     setBusPath (path);
   }
 
   // ---------------------------------------------------------------------------
-  I2cDev::I2cDev (const Info & bus) : I2cDev() {
+  I2cDev::I2cDev (const Info &bus) : I2cDev() {
 
     setBus (bus);
   }
@@ -200,6 +201,23 @@ namespace Piduino {
   I2cDev::~I2cDev() {
 
     close();
+  }
+
+  // ---------------------------------------------------------------------------
+  std::shared_ptr<I2cDev>
+  I2cDev::factory (int busId) {
+
+    auto it = Private::devices.find (busId);
+    if (it != Private::devices.end()) {
+      if (auto dev = it->second.lock()) {
+        return dev;  // reuse existing instance
+      }
+    }
+
+    // Create new instance
+    auto dev = std::make_shared<I2cDev> (busId);
+    Private::devices[busId] = dev;
+    return dev;
   }
 
   // ---------------------------------------------------------------------------
@@ -256,7 +274,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  I2cDev::setBus (const Info & bus) {
+  I2cDev::setBus (const Info &bus) {
     PIMP_D (I2cDev);
 
     if (d->bus != bus) {
@@ -291,7 +309,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  I2cDev::setBusPath (const std::string & path) {
+  I2cDev::setBusPath (const std::string &path) {
     PIMP_D (I2cDev);
 
     if (d->bus.path() != path) {
@@ -308,7 +326,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   void
-  I2cDev::setBusPath (const char * path) {
+  I2cDev::setBusPath (const char *path) {
     PIMP_D (I2cDev);
 
     setBusPath (std::string (path));
@@ -340,7 +358,7 @@ namespace Piduino {
         d->state = Private::Write;
       }
       else {
-        struct i2c_msg & msg = d->i2c_msgs.back();
+        struct i2c_msg &msg = d->i2c_msgs.back();
 
         msg.addr = slave;
       }
@@ -349,11 +367,11 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   int
-  I2cDev::write (const uint8_t * buffer, uint16_t len) {
+  I2cDev::write (const uint8_t *buffer, uint16_t len) {
     PIMP_D (I2cDev);
 
     if (d->state == Private::Write) {
-      struct i2c_msg & msg = d->i2c_msgs.back();
+      struct i2c_msg &msg = d->i2c_msgs.back();
       int ret = d->txbuf.push (buffer, len);
 
       msg.len = d->txbuf.length();
@@ -369,7 +387,7 @@ namespace Piduino {
     PIMP_D (I2cDev);
 
     if (d->state == Private::Write) {
-      struct i2c_msg & msg = d->i2c_msgs.back();
+      struct i2c_msg &msg = d->i2c_msgs.back();
       int ret = d->txbuf.push (data);
 
       msg.len = d->txbuf.length();
@@ -443,7 +461,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   int
-  I2cDev::read (uint8_t * buffer, uint16_t max) {
+  I2cDev::read (uint8_t *buffer, uint16_t max) {
     PIMP_D (I2cDev);
 
     max = std::min (available(), max);
@@ -484,6 +502,8 @@ namespace Piduino {
       d->flush();
     }
   }
+
+
 }
 
 /* ========================================================================== */
