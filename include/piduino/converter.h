@@ -43,6 +43,33 @@ namespace Piduino {
         UnknownType = -1         ///< No converter type specified
       };
 
+      /**
+         @brief Flags that specify the channel mode for the converter.
+      */
+      enum ModeFlag {
+        NoMode = 0x00000000, ///< No mode specified
+        DigitalInput = 0x00000001, ///< Digital input mode
+        DigitalOutput = 0x00000002, ///< Digital output mode
+        AnalogInput = 0x00000004, ///< Analog input mode (for ADCs)
+        AnalogOutput = 0x00000008, ///< Analog output mode (for DACs
+        PullUp = 0x00000010, ///< Pull-up resistor enabled
+        PullDown = 0x00000020, ///< Pull-down resistor enabled
+        PullOff = 0x00000040, ///< Pull-up and pull-down resistors disabled
+        ActiveLow = 0x00000080, ///< Active low mode
+        EdgeRising = 0x00000100, ///< Edge rising trigger
+        EdgeFalling = 0x00000200, ///< Edge falling trigger
+        EdgeBoth = EdgeRising | EdgeFalling, ///< Both rising and falling edge triggers
+        Interrupt = 0x00000400, ///< Interrupt mode
+        Continuous = 0x00000800, ///< Continuous mode (for ADCs)
+        SingleShot = 0x00001000, ///< Single-shot mode (for ADCs)
+      };
+
+      /**
+         @typedef Mode
+         @brief Type representing a combination of ModeFlag values.
+      */
+      typedef Flags<ModeFlag> Mode; ///< Type representing a combination of ModeFlag values
+
       enum {
         hasFrequency      = 0x00000001, ///< Indicates that the converter has a clock
         hasReference      = 0x00000002, ///< Indicates that the converter has a reference voltage
@@ -56,6 +83,7 @@ namespace Piduino {
         hasSetBipolar     = 0x00000200, ///< Indicates that the converter supports setting the bipolar mode
         requiresWaitLoop  = 0x00000400, ///< Indicates that the converter requires a wait loop to function correctly
         hasClockSelection = 0x00000800, ///< Indicates that the converter supports clock selection
+        hasModeSetting    = 0x00001000, ///< Indicates that the converter supports mode setting
       };
 
       enum {
@@ -372,6 +400,22 @@ namespace Piduino {
          @return true if the clock was set successfully, false otherwise.
       */
       virtual bool setClock (int clock);
+
+      /**
+        Return the current mode of the converter.
+        @param channel The channel number (default is 0).
+        @return The current mode of the converter as a Mode object, the default channel implementation returns NoMode.
+      */
+      virtual Mode mode (int channel = 0) const;
+
+      /**
+         Set the mode of the converter.
+         @param m The mode to set.
+         @param channel The channel number (default is 0).
+         @return True if the mode was successfully set, false otherwise. The default implementation returns false.
+         @note This function may be overridden by subclasses to implement specific mode setting logic.
+      */
+      virtual bool setMode (Mode m, int channel = 0);
 
     protected:
       /**

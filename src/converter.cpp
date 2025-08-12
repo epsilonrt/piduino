@@ -379,6 +379,20 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  Converter::Mode Converter::mode(int channel) const {
+    PIMP_D (const Converter);
+
+    return d->mode(channel);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool Converter::setMode (Mode m, int channel) {
+    PIMP_D (Converter);
+
+    return d->setMode(m, channel);
+  }
+
+  // ---------------------------------------------------------------------------
   //
   //                     Converter::Private Class
   //
