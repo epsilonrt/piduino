@@ -78,7 +78,7 @@ namespace Piduino {
 
       /**
          @brief Constructs a Max1161x object from a string of parameters.
-         @param parameters A string containing the parameters for the PWM configuration, formatted as
+         @param parameters A string containing the parameters for the Max1161x configuration, formatted as
                 "bus=id:max={12,13,14,15,16,17}:ref={ext,vdd,int1,int2,int3,int4}:fsr=value:bipolar={1,0}:clk={int,ext}". \n
                 The parameters for the constructor registered are:
                 - `bus=id` : The I2C bus ID (default is I2cDev::Info::defaultBus().id(), use pinfo to check the default bus ID).

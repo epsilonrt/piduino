@@ -135,7 +135,7 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Max1161x::Max1161x (int busId, MaxIndex maxId, int referenceId, double fsr, bool bipolar) :
-    Converter (*new Private (this, new I2cDev (busId), maxId, referenceId, fsr, bipolar)) {}
+    Converter (*new Private (this, I2cDev::factory (busId), maxId, referenceId, fsr, bipolar)) {}
 
   // ---------------------------------------------------------------------------
   Max1161x::Max1161x (const std::string &parameters) :
@@ -162,7 +162,7 @@ namespace Piduino {
   // -----------------------------------------------------------------------------
 
   // ---------------------------------------------------------------------------
-  Max1161x::Private::Private (Max1161x *q, I2cDev *dev, MaxIndex maxId, int referenceId, double fsr, bool bipolar) :
+  Max1161x::Private::Private (Max1161x *q, std::shared_ptr<I2cDev> dev, MaxIndex maxId, int referenceId, double fsr, bool bipolar) :
     Converter::Private (q, AnalogToDigital, hasReference | hasResolution | hasBipolar | hasRange | hasSetReference | hasSetBipolar | hasClockSelection),
     i2c (dev), max (maxId, i2c->bus().id()), bipolar (bipolar), isConnected (false), clkSetting (InternalClock) {
 
@@ -180,7 +180,7 @@ namespace Piduino {
   // - `clk={int,ext}` : The clock setting, either internal or external (default is internal).
   Max1161x::Private::Private (Max1161x *q, const std::string &params) :
     Converter::Private (q, AnalogToDigital, hasReference | hasResolution | hasBipolar | hasRange | hasSetReference | hasSetBipolar | hasClockSelection, params),
-    i2c (new I2cDev (I2cDev::Info::defaultBus().id())), max (Max11615, i2c->bus().id()), bipolar (false), isConnected (false), clkSetting (InternalClock) {
+    i2c (I2cDev::factory (I2cDev::Info::defaultBus().id())), max (Max11615, i2c->bus().id()), bipolar (false), isConnected (false), clkSetting (InternalClock) {
     std::map<std::string, std::string> paramsMap = parseParameters (parameters);
     int refId = DefaultReference;
     double fsr = 0.0;
@@ -354,7 +354,7 @@ namespace Piduino {
   void
   Max1161x::Private::close() {
 
-    i2c->close();
+    // do not close the I2C device, it is shared, std::shared_ptr destruction will handle it
     isConnected = false; // Set the connection status to false
     Converter::Private::close();
   }

@@ -28,7 +28,7 @@ namespace Piduino {
   class Max1161x::Private  : public Converter::Private {
 
     public:
-      Private (Max1161x *q, I2cDev *dev, MaxIndex maxId, int referenceId, double fsr, bool bipolar);
+      Private (Max1161x *q, std::shared_ptr<I2cDev> dev, MaxIndex maxId, int referenceId, double fsr, bool bipolar);
       Private (Max1161x *q, const std::string &parameters);
       virtual ~Private();
 
