@@ -144,12 +144,12 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   // virtual
-  long Converter::readSample (int channel, bool differential) {
+  long Converter::readChannel (int channel, bool differential) {
 
     if (openMode() & ReadOnly) {
       PIMP_D (Converter);
 
-      return d->readSample (channel, differential);
+      return d->readChannel (channel, differential);
     }
     return InvalidValue;
   }
@@ -178,7 +178,7 @@ namespace Piduino {
   Converter::readAverage (int channel, bool differential, int count) {
     double sum = 0.0;
     for (int i = 0; i < count; ++i) {
-      sum += readSample (channel, differential); // Read each sample
+      sum += readChannel (channel, differential); // Read each sample
     }
     return sum / count;
   }
@@ -188,7 +188,7 @@ namespace Piduino {
   double
   Converter::readValue (int channel, bool differential) {
 
-    return digitalToValue (readSample (channel, differential), differential);
+    return digitalToValue (readChannel (channel, differential), differential);
   }
 
   // -----------------------------------------------------------------------------
@@ -202,12 +202,12 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // virtual
   bool
-  Converter::writeSample (long value, int channel, bool differential) {
+  Converter::writeChannel (long value, int channel, bool differential) {
 
     if (openMode() & WriteOnly) {
       PIMP_D (Converter);
 
-      return d->writeSample (d->clampValue (value, differential), channel, differential);
+      return d->writeChannel (d->clampValue (value, differential), channel, differential);
     }
     return false;
   }
@@ -216,7 +216,7 @@ namespace Piduino {
   // virtual
   bool Converter::writeValue (double value, int channel, bool differential) {
 
-    return writeSample (valueToDigital (value, differential), channel, differential);
+    return writeChannel (valueToDigital (value, differential), channel, differential);
   }
 
   // ---------------------------------------------------------------------------

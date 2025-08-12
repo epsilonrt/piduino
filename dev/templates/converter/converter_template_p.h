@@ -79,7 +79,7 @@ namespace Piduino {
          @note may be overridden by subclasses to implement specific reading logic.
           This function is not callable if the open mode is not ReadOnly or ReadWrite (or closed).
       */
-      virtual long readSample (int channel = 0, bool differential = false) override {
+      virtual long readChannel (int channel = 0, bool differential = false) override {
 
         return read();
       }
@@ -105,7 +105,7 @@ namespace Piduino {
          @note may be overridden by subclasses to implement specific writing logic.
           This function is not callable if the open mode is not WriteOnly or ReadWrite (or closed).
       */
-      virtual bool writeSample (long value, int channel = 0, bool differential = false) override {
+      virtual bool writeChannel (long value, int channel = 0, bool differential = false) override {
 
         return write (value);
       }

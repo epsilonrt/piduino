@@ -62,7 +62,7 @@ namespace Piduino {
       */
       virtual long read () override {
 
-        return readSample();
+        return readChannel();
       }
 
       /**
@@ -73,7 +73,7 @@ namespace Piduino {
          @note may be overridden by subclasses to implement specific reading logic.
           This function is not callable if the open mode is not ReadOnly or ReadWrite (or closed).
       */
-      virtual long readSample (int channel = 0, bool differential = false) override;
+      virtual long readChannel (int channel = 0, bool differential = false) override;
 
       /**
         @brief Returns the number of channels supported by the converter.

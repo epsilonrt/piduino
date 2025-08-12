@@ -424,7 +424,7 @@ TEST_FIXTURE (ConverterFixture, Test4) {
 
   for (int i = 0; i < numSamples; i++) {
     // Read AIN0
-    long ain0 = conv->readSample (0);
+    long ain0 = conv->readChannel (0);
     std::cout << "AIN0: " << ain0 << " (Digital), " << conv->digitalToValue (ain0) << "V (Analog)" << std::endl;
     CHECK_CLOSE (D1Int, ain0, digitalErr); // Check if the reading is close to the expected value for V1
     dMin[0] = std::min (dMin[0], ain0);
@@ -432,7 +432,7 @@ TEST_FIXTURE (ConverterFixture, Test4) {
     dSum[0] += ain0;
 
     // Read AIN1
-    long ain1 = conv->readSample (1);
+    long ain1 = conv->readChannel (1);
     std::cout << "AIN1: " << ain1 << " (Digital), " << conv->digitalToValue (ain1) << "V (Analog)" << std::endl;
     CHECK_CLOSE (D2Int, ain1, digitalErr); // Check if the reading is close to the expected value for V2
     dMin[1] = std::min (dMin[1], ain1);

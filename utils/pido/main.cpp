@@ -607,7 +607,7 @@ cwrite (int argc, char *argv[]) {
 
     if (chan >= 0) {
       // TODO: get differential mode from parameters
-      if (!conv->writeSample (value, chan)) {
+      if (!conv->writeChannel (value, chan)) {
 
         throw Exception (Exception::ConverterWriteError, conv->deviceName());
       }
@@ -687,7 +687,7 @@ cread (int argc, char *argv[]) {
         }
         else  {
 
-          value = conv->readSample (chan, isDifferential);
+          value = conv->readChannel (chan, isDifferential);
         }
       }
       else {

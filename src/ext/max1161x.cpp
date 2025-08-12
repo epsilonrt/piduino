@@ -362,7 +362,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // override
   long
-  Max1161x::Private::readSample (int channel, bool differential) {
+  Max1161x::Private::readChannel (int channel, bool differential) {
     long result = InvalidValue; // Default result if read fails
 
     if (channel >= 0 && channel < max.nchan) {
@@ -405,7 +405,7 @@ namespace Piduino {
       setError (EINVAL);
       isConnected = false; // Set the connection status to false
       if (isDebug) {
-        std::cerr << "Max1161x::Private::readSample: Invalid channel " << channel << ". Valid range is 0 to " << (max.nchan - 1) << "." << std::endl;
+        std::cerr << "Max1161x::Private::readChannel: Invalid channel " << channel << ". Valid range is 0 to " << (max.nchan - 1) << "." << std::endl;
       }
     }
     return result; // Return the default result if read fails

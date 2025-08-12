@@ -187,26 +187,27 @@ namespace Piduino {
       virtual void close();
 
       /**
-         @brief Reads a value from the converter.
-         @return The value read.
+         @brief Reads a digital value from the converter.
+         @return The value read from the converter as a digital value. This value is between \c min() and \c max().
          @note This function is disabled if the open mode is not ReadOnly or ReadWrite.
       */
       virtual long read();
 
       /**
          @brief Writes a value to the converter.
-         @param value The value to write.
+         @param value The value to write. This value will be clamped to the valid range defined by \c min() and \c max().
          @return true if successful, false otherwise.
          @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
       */
       virtual bool write (long value);
 
       /**
-         @brief Reads a value from the converter (ADC)
+         @brief Reads the digital value of a specific channel from the converter.
          @param channel The channel to read from.
          @param differential If true, reads in differential mode (default is false).
+         @return The value read from the converter as a digital value. This value is between \c min() and \c max().
       */
-      virtual long readSample (int channel = 0, bool differential = false);
+      virtual long readChannel (int channel = 0, bool differential = false);
 
       /**
          @brief Reads a value from the converter (ADC)
@@ -235,14 +236,14 @@ namespace Piduino {
       virtual double readAverageValue (int channel = 0, bool differential = false, int count = 8);
 
       /**
-         @brief Writes a sample value to the converter (DAC).
-         @param value The sample value to write.
+         @brief Writes a digital value to a specific channel of the converter.
+         @param value The sample value to write. This value will be clamped to the valid range defined by \c min() and \c max().
          @param channel The channel to write to (default is 0).
          @param differential If true, writes in differential mode (default is false).
          @return true if successful, false otherwise.
          @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
       */
-      virtual bool writeSample (long value, int channel = 0, bool differential = false);
+      virtual bool writeChannel (long value, int channel = 0, bool differential = false);
 
       /**
          @brief Writes a value to the converter (DAC).
