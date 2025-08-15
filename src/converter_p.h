@@ -337,11 +337,11 @@ namespace Piduino {
       /**
          Set the mode of the converter.
          @param m The mode to set.
-         @param channel The channel number (default is 0).
+         @param channel The channel number (default is -1, indicating all channels).
          @return True if the mode was successfully set, false otherwise. The default implementation returns false.
          @note This function may be overridden by subclasses to implement specific mode setting logic.
       */
-      virtual bool setMode (Mode m, int channel = 0) {
+      virtual bool setMode (Mode m, int channel = -1) {
         return false; // Default implementation returns false, indicating no mode support
       }
 

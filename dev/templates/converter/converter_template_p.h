@@ -308,7 +308,27 @@ namespace Piduino {
       virtual bool setClock (int clock) override {
         return false; // Default implementation returns false, indicating no clock support
       }
-      
+
+      /**
+        Return the current mode of the converter.
+        @param channel The channel number (default is 0).
+        @return The current mode of the converter as a Mode object, the default channel implementation returns NoMode.
+      */
+      virtual Mode mode (int channel = 0) const override {
+        return NoMode; // Default implementation returns NoMode, indicating no specific mode set
+      }
+
+      /**
+         Set the mode of the converter.
+         @param m The mode to set.
+         @param channel The channel number (default is -1, indicating all channels).
+         @return True if the mode was successfully set, false otherwise. The default implementation returns false.
+         @note This function may be overridden by subclasses to implement specific mode setting logic.
+      */
+      virtual bool setMode (Mode m, int channel = -1) override {
+        return false; // Default implementation returns false, indicating no mode support
+      }
+
       // ------------------------- internal methods -------------------------
 
 

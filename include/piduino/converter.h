@@ -39,7 +39,7 @@ namespace Piduino {
         AnalogToDigital,  ///< Analog-to-Digital Converter (ADC)
         DigitalToAnalog,  ///< Digital-to-Analog Converter (DAC)
         Sensor,          ///< Sensor (not a converter, but can be used with converters)
-        GpioExtender,  ///< GPIO extender (not a converter, but can be used with converters)
+        GpioExpander,  ///< GPIO expander (not a converter, but can be used with converters)
         UnknownType = -1         ///< No converter type specified
       };
 
@@ -47,21 +47,20 @@ namespace Piduino {
          @brief Flags that specify the channel mode for the converter.
       */
       enum ModeFlag {
-        NoMode = 0x00000000, ///< No mode specified
-        DigitalInput = 0x00000001, ///< Digital input mode
+        NoMode =        0x00000000, ///< No mode specified
+        DigitalInput =  0x00000001, ///< Digital input mode
         DigitalOutput = 0x00000002, ///< Digital output mode
-        AnalogInput = 0x00000004, ///< Analog input mode (for ADCs)
-        AnalogOutput = 0x00000008, ///< Analog output mode (for DACs
-        PullUp = 0x00000010, ///< Pull-up resistor enabled
-        PullDown = 0x00000020, ///< Pull-down resistor enabled
-        PullOff = 0x00000040, ///< Pull-up and pull-down resistors disabled
-        ActiveLow = 0x00000080, ///< Active low mode
-        EdgeRising = 0x00000100, ///< Edge rising trigger
-        EdgeFalling = 0x00000200, ///< Edge falling trigger
-        EdgeBoth = EdgeRising | EdgeFalling, ///< Both rising and falling edge triggers
-        Interrupt = 0x00000400, ///< Interrupt mode
-        Continuous = 0x00000800, ///< Continuous mode (for ADCs)
-        SingleShot = 0x00001000, ///< Single-shot mode (for ADCs)
+        AnalogInput =   0x00000004, ///< Analog input mode (for ADCs)
+        AnalogOutput =  0x00000008, ///< Analog output mode (for DACs)   
+        PullUp =        0x00000010, ///< Pull-up resistor enabled
+        PullDown =      0x00000020, ///< Pull-down resistor enabled
+        ActiveLow =     0x00000040, ///< Active low mode
+        EdgeRising =    0x00000080, ///< Edge rising trigger
+        EdgeFalling =   0x00000100, ///< Edge falling trigger
+        EdgeBoth =      EdgeRising | EdgeFalling, ///< Both rising and falling edge triggers
+        Interrupt =     0x00000200, ///< Interrupt mode
+        Continuous =    0x00000400, ///< Continuous mode (for ADCs)
+        SingleShot =    0x00000800, ///< Single-shot mode (for ADCs)
       };
 
       /**
@@ -412,11 +411,11 @@ namespace Piduino {
       /**
          Set the mode of the converter.
          @param m The mode to set.
-         @param channel The channel number (default is 0).
+         @param channel The channel number (default is -1, indicating all channels).
          @return True if the mode was successfully set, false otherwise. The default implementation returns false.
          @note This function may be overridden by subclasses to implement specific mode setting logic.
       */
-      virtual bool setMode (Mode m, int channel = 0);
+      virtual bool setMode (Mode m, int channel = -1);
 
     protected:
       /**
