@@ -67,6 +67,7 @@ Pido::Format outFormat =  Pido::FormatDecimal;
 bool isAverage = false;
 bool isDifferential = false;
 std::string converterStr;
+int blinkDelay = 1000;
 
 /* private functions ======================================================== */
 void mode (int argc, char *argv[]);
@@ -87,6 +88,7 @@ void cwrite (int argc, char *argv[]);
 void cread (int argc, char *argv[]);
 void cmode (int argc, char *argv[]);
 void ctoggle (int argc, char *argv[]);
+void cblink (int argc, char *argv[]);
 
 Pin *getPin (char *c_str);
 void usage ();
@@ -121,13 +123,13 @@ main (int argc, char **argv) {
     {"cwrite", cwrite},
     {"cread", cread},
     {"cmode", cmode},
-    {"ctoggle", ctoggle}
-
+    {"ctoggle", ctoggle},
+    {"cblink", cblink}
   };
 
   try {
     /* Traitement options ligne de commande */
-    while ( (opt = getopt (argc, argv, "gs1Dhfvwxmadc:")) != -1) {
+    while ( (opt = getopt (argc, argv, "gs1Dhfvwxmadc:b:")) != -1) {
 
       switch (opt) {
 
@@ -184,6 +186,13 @@ main (int argc, char **argv) {
 
         case 'c':
           converterStr = optarg;
+          break;
+
+        case 'b':
+          blinkDelay = stoi (string (optarg));
+          if (blinkDelay < 2) {
+            blinkDelay = 2;
+          }
           break;
 
         default:
@@ -483,22 +492,21 @@ blink (int argc, char *argv[]) {
     throw Exception (Exception::PinNumberExpected);
   }
   else {
-    int period = 1000;
 
     gpio.setReleaseOnClose (true);
 
     pin = getPin (argv[optind]);
     if (paramc > 1)    {
 
-      period = stoi (string (argv[optind + 1]));
-      if (period < 1) {
-        period = 1;
-        cout << "Warning: Pin " << pin->name() << " the period has been set to " << period << " ms (min.) !" << endl;
+      blinkDelay = stoi (string (argv[optind + 1]));
+      if (blinkDelay < 2) {
+        blinkDelay = 2;
+        cout << "Warning: Pin " << pin->name() << " the period has been set to " << blinkDelay << " ms (min.) !" << endl;
       }
     }
 
     pin->setMode (Pin::ModeOutput);
-    period /= 2;
+    blinkDelay /= 2;
 
     // sig_handler() intercepte le CTRL+C
     signal (SIGINT, sig_handler);
@@ -507,7 +515,7 @@ blink (int argc, char *argv[]) {
 
     while (!should_exit.load()) {
       pin->toggle ();
-      clk.delay (period);
+      clk.delay (blinkDelay);
     }
   }
 }
@@ -899,6 +907,85 @@ ctoggle (int argc, char *argv[]) {
   }
 }
 
+
+/* -----------------------------------------------------------------------------
+  cblink "-c <converter[:parameters]>" <chan> [period]
+    Blinks the given pin on/off (explicitly sets the pin to output)
+*/
+void
+cblink (int argc, char *argv[]) {
+  std::unique_ptr<Converter> conv (Converter::factory (converterStr));
+
+  if (conv->type() != Converter::GpioExpander || ( (conv->flags() & Converter::hasToggle) == 0)) {
+
+    throw Exception (Exception::ConverterUnknown, converterStr);
+  }
+  else {
+    int paramc = (argc - optind);
+    Clock clk;
+    int chan = -1;
+    Converter::Mode mode = Converter::NoMode;
+
+    if (paramc > 0) {
+
+      chan = stoi (string (argv[optind]));
+    }
+
+    conv->setDebug (debug);
+    if (!conv->open()) {
+
+      throw Exception (Exception::ConverterOpenError, conv->deviceName());
+    }
+    conv->setEnable (true);
+
+    if (chan >= 0) {
+
+      mode = conv->mode (chan); // backup current mode
+    }
+
+    if (!conv->setMode (Converter::DigitalOutput, chan)) {
+
+      throw Exception (Exception::ConverterModeError, conv->deviceName());
+    }
+
+    blinkDelay = (blinkDelay / 2) - 1;
+
+    // sig_handler() intercepte le CTRL+C
+    signal (SIGINT, sig_handler);
+    signal (SIGTERM, sig_handler);
+    cout << "Press Ctrl+C to abort ..." << endl;
+
+    while (!should_exit.load()) {
+      if (!conv->toggle (chan)) {
+
+        throw Exception (Exception::ConverterWriteError, conv->deviceName());
+      }
+      clk.delay (blinkDelay);
+    }
+
+    // restore
+    if (chan >= 0) {
+      // If a channel was specified, write the last value to it
+      if (!conv->writeChannel (false, chan)) {
+
+        throw Exception (Exception::ConverterWriteError, conv->deviceName());
+      }
+      if (!conv->setMode (mode, chan)) {
+
+        throw Exception (Exception::ConverterModeError, conv->deviceName());
+      }
+    }
+    else {
+      // Write the last value to all channels
+      if (!conv->write (0)) {
+
+        throw Exception (Exception::ConverterWriteError, conv->deviceName());
+      }
+    }
+  }
+}
+
+
 /* -----------------------------------------------------------------------------
   wfi <pin> <rising/falling/both> [timeout_ms]
     This set the given pin to the supplied interrupt mode:  rising,  falling  or
@@ -1241,7 +1328,7 @@ usage () {
   cout << "    Write the given boolean value (0 or 1) to the specified pin (output)." << endl;
   cout << "  toggle <pin>" << endl;
   cout << "    Change the state of a GPIO pin; 0 to 1, or 1 to 0 (output)." << endl;
-  cout << "  blink <pin> [period]" << endl;
+  cout << "  blink [-b period] <pin>" << endl;
   cout << "    Blink the specified pin on/off (explicitly sets the pin to output)." << endl;
   cout << "  wfi <pin> <rising/falling/both> [timeout_ms]" << endl;
   cout << "    Wait for the interrupt to occur. This is a non-busy wait." << endl;
