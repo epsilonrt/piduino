@@ -68,6 +68,7 @@ bool isAverage = false;
 bool isDifferential = false;
 std::string converterStr;
 int blinkDelay = 1000;
+bool extendedMode = false;
 
 /* private functions ======================================================== */
 void mode (int argc, char *argv[]);
@@ -121,15 +122,12 @@ main (int argc, char **argv) {
     {"pwrite", pwrite},
     {"converters", converters},
     {"cwrite", cwrite},
-    {"cread", cread},
-    {"cmode", cmode},
-    {"ctoggle", ctoggle},
-    {"cblink", cblink}
+    {"cread", cread}
   };
 
   try {
     /* Traitement options ligne de commande */
-    while ( (opt = getopt (argc, argv, "gs1Dhfvwxmadc:b:")) != -1) {
+    while ( (opt = getopt (argc, argv, "gs1Dhfvwxmadc:p:")) != -1) {
 
       switch (opt) {
 
@@ -188,7 +186,7 @@ main (int argc, char **argv) {
           converterStr = optarg;
           break;
 
-        case 'b':
+        case 'p':
           blinkDelay = stoi (string (optarg));
           if (blinkDelay < 2) {
             blinkDelay = 2;
@@ -267,18 +265,26 @@ main (int argc, char **argv) {
 */
 void
 readall (int argc, char *argv[]) {
-  int paramc = (argc - optind);
 
-  if (paramc >= 1) {
+  if (converterStr.empty()) {
+    int paramc = (argc - optind);
 
-    int connector = stoi (string (argv[optind]));
-    cout << gpio.connector (connector);
+    if (paramc >= 1) {
+
+      int connector = stoi (string (argv[optind]));
+      cout << gpio.connector (connector);
+    }
+    else {
+      for (auto p = gpio.connector().cbegin(); p != gpio.connector().cend(); ++p) {
+        // p est une pair: first = numéro et second = connecteur
+        cout << p->second << endl;
+      }
+    }
   }
   else {
-    for (auto p = gpio.connector().cbegin(); p != gpio.connector().cend(); ++p) {
-      // p est une pair: first = numéro et second = connecteur
-      cout << p->second << endl;
-    }
+
+    extendedMode = true;
+    cread (optind, argv); // mask the connector, not supported by extended mode
   }
 }
 
@@ -288,46 +294,54 @@ readall (int argc, char *argv[]) {
 */
 void
 mode (int argc, char *argv[]) {
-  int paramc = (argc - optind);
 
-  if (paramc < 1)    {
+  if (converterStr.empty()) {
+    int paramc = (argc - optind);
 
-    throw Exception (Exception::ArgumentExpected);
+    if (paramc < 1)    {
+
+      throw Exception (Exception::ArgumentExpected);
+    }
+    else {
+
+      pin = getPin (argv[optind]);
+
+      if (paramc > 1) {
+        Pin::Mode m;
+        string smode (argv[optind + 1]);
+        static const map<string, Pin::Mode> str2mode = {
+          {"in",    Pin::ModeInput   },
+          {"out",   Pin::ModeOutput  },
+          {"alt0",  Pin::ModeAlt0    },
+          {"alt1",  Pin::ModeAlt1    },
+          {"alt2",  Pin::ModeAlt2    },
+          {"alt3",  Pin::ModeAlt3    },
+          {"alt4",  Pin::ModeAlt4    },
+          {"alt5",  Pin::ModeAlt5    },
+          {"alt6",  Pin::ModeAlt6    },
+          {"alt7",  Pin::ModeAlt7    },
+          {"alt8",  Pin::ModeAlt8    },
+          {"alt9",  Pin::ModeAlt9    },
+          {"off",   Pin::ModeDisabled},
+          {"pwm",   Pin::ModePwm     }
+        };
+
+        m = str2mode.at (smode);
+
+        // Modification à garder après fermeture !
+        gpio.setReleaseOnClose (false);
+        pin->setMode (m);
+      }
+      else {
+        // Lecture du mode
+        cout << pin->modeName() << endl;
+      }
+    }
   }
   else {
 
-    pin = getPin (argv[optind]);
-
-    if (paramc > 1) {
-      Pin::Mode m;
-      string smode (argv[optind + 1]);
-      static const map<string, Pin::Mode> str2mode = {
-        {"in",    Pin::ModeInput   },
-        {"out",   Pin::ModeOutput  },
-        {"alt0",  Pin::ModeAlt0    },
-        {"alt1",  Pin::ModeAlt1    },
-        {"alt2",  Pin::ModeAlt2    },
-        {"alt3",  Pin::ModeAlt3    },
-        {"alt4",  Pin::ModeAlt4    },
-        {"alt5",  Pin::ModeAlt5    },
-        {"alt6",  Pin::ModeAlt6    },
-        {"alt7",  Pin::ModeAlt7    },
-        {"alt8",  Pin::ModeAlt8    },
-        {"alt9",  Pin::ModeAlt9    },
-        {"off",   Pin::ModeDisabled},
-        {"pwm",   Pin::ModePwm     }
-      };
-
-      m = str2mode.at (smode);
-
-      // Modification à garder après fermeture !
-      gpio.setReleaseOnClose (false);
-      pin->setMode (m);
-    }
-    else {
-      // Lecture du mode
-      cout << pin->modeName() << endl;
-    }
+    extendedMode = true;
+    cmode (argc, argv);
   }
 }
 
@@ -337,35 +351,42 @@ mode (int argc, char *argv[]) {
 */
 void
 pull (int argc, char *argv[]) {
-  int paramc = (argc - optind);
+  if (converterStr.empty()) {
+    int paramc = (argc - optind);
 
-  if (paramc < 1)    {
+    if (paramc < 1)    {
 
-    throw Exception (Exception::ArgumentExpected);
-  }
-  else {
-    // forceGpioDev = false;
-    pin = getPin (argv[optind]);
-
-    if (paramc > 1) {
-      Pin::Pull p;
-      string pmode (argv[optind + 1]);
-      const map<string, Pin::Pull> str2pull = {
-        {"off",   Pin::PullOff},
-        {"up",    Pin::PullUp},
-        {"down",  Pin::PullDown}
-      };
-
-      p = str2pull.at (pmode);
-
-      // Modification à garder après fermeture !
-      gpio.setReleaseOnClose (false);
-      pin->setPull (p);
+      throw Exception (Exception::ArgumentExpected);
     }
     else {
-      // Lecture de la résistance
-      cout << pin->pullName() << endl;
+      // forceGpioDev = false;
+      pin = getPin (argv[optind]);
+
+      if (paramc > 1) {
+        Pin::Pull p;
+        string pmode (argv[optind + 1]);
+        const map<string, Pin::Pull> str2pull = {
+          {"off",   Pin::PullOff},
+          {"up",    Pin::PullUp},
+          {"down",  Pin::PullDown}
+        };
+
+        p = str2pull.at (pmode);
+
+        // Modification à garder après fermeture !
+        gpio.setReleaseOnClose (false);
+        pin->setPull (p);
+      }
+      else {
+        // Lecture de la résistance
+        cout << pin->pullName() << endl;
+      }
     }
+  }
+  else {
+
+    extendedMode = true;
+    cmode (argc, argv);
   }
 }
 
@@ -407,16 +428,24 @@ drive (int argc, char *argv[]) {
 */
 void
 read (int argc, char *argv[]) {
-  int paramc = (argc - optind);
 
-  if (paramc < 1)    {
+  if (converterStr.empty()) {
+    int paramc = (argc - optind);
 
-    throw Exception (Exception::PinNumberExpected);
+    if (paramc < 1)    {
+
+      throw Exception (Exception::PinNumberExpected);
+    }
+    else {
+
+      pin = getPin (argv[optind]);
+      cout << pin->read () << endl;
+    }
   }
   else {
 
-    pin = getPin (argv[optind]);
-    cout << pin->read () << endl;
+    extendedMode = true;
+    cread (argc, argv);
   }
 }
 
@@ -426,30 +455,38 @@ read (int argc, char *argv[]) {
 */
 void
 write (int argc, char *argv[]) {
-  int paramc = (argc - optind);
 
-  if (paramc < 2)    {
+  if (converterStr.empty()) {
+    int paramc = (argc - optind);
 
-    throw Exception (Exception::ArgumentExpected);
+    if (paramc < 2)    {
+
+      throw Exception (Exception::ArgumentExpected);
+    }
+    else {
+      int value;
+
+      pin = getPin (argv[optind]);
+
+      value = stoi (string (argv[optind + 1]));
+      if ( (value < 0) || (value > 1)) {
+
+        throw Exception (Exception::NotBinaryValue, value);
+      }
+
+      if (pin->mode () != Pin::ModeOutput) {
+
+        throw Exception (Exception::NotOutputPin, pinnumber);
+      }
+      // Modification à garder après fermeture !
+      gpio.setReleaseOnClose (false);
+      pin->write (value);
+    }
   }
   else {
-    int value;
 
-    pin = getPin (argv[optind]);
-
-    value = stoi (string (argv[optind + 1]));
-    if ( (value < 0) || (value > 1)) {
-
-      throw Exception (Exception::NotBinaryValue, value);
-    }
-
-    if (pin->mode () != Pin::ModeOutput) {
-
-      throw Exception (Exception::NotOutputPin, pinnumber);
-    }
-    // Modification à garder après fermeture !
-    gpio.setReleaseOnClose (false);
-    pin->write (value);
+    extendedMode = true;
+    cwrite (argc, argv);
   }
 }
 
@@ -459,64 +496,80 @@ write (int argc, char *argv[]) {
 */
 void
 toggle (int argc, char *argv[]) {
-  int paramc = (argc - optind);
 
-  if (paramc < 1)    {
+  if (converterStr.empty()) {
+    int paramc = (argc - optind);
 
-    throw Exception (Exception::PinNumberExpected);
+    if (paramc < 1)    {
+
+      throw Exception (Exception::PinNumberExpected);
+    }
+    else {
+
+      pin = getPin (argv[optind]);
+      if (pin->mode () != Pin::ModeOutput) {
+
+        throw Exception (Exception::NotOutputPin, pinnumber);
+      }
+      // Modification à garder après fermeture !
+      gpio.setReleaseOnClose (false);
+      pin->toggle ();
+    }
   }
   else {
 
-    pin = getPin (argv[optind]);
-    if (pin->mode () != Pin::ModeOutput) {
-
-      throw Exception (Exception::NotOutputPin, pinnumber);
-    }
-    // Modification à garder après fermeture !
-    gpio.setReleaseOnClose (false);
-    pin->toggle ();
+    extendedMode = true;
+    ctoggle (argc, argv);
   }
 }
 
 /* -----------------------------------------------------------------------------
-  blink <pin> [period]
+  blink  [-p period_ms] <pin>
     Blinks the given pin on/off (explicitly sets the pin to output)
 */
 void
 blink (int argc, char *argv[]) {
-  int paramc = (argc - optind);
-  Clock clk;
 
-  if (paramc < 1)    {
+  if (converterStr.empty()) {
+    int paramc = (argc - optind);
+    Clock clk;
 
-    throw Exception (Exception::PinNumberExpected);
+    if (paramc < 1)    {
+
+      throw Exception (Exception::PinNumberExpected);
+    }
+    else {
+
+      gpio.setReleaseOnClose (true);
+
+      pin = getPin (argv[optind]);
+      if (paramc > 1)    {
+
+        blinkDelay = stoi (string (argv[optind + 1]));
+        if (blinkDelay < 2) {
+          blinkDelay = 2;
+          cout << "Warning: Pin " << pin->name() << " the period has been set to " << blinkDelay << " ms (min.) !" << endl;
+        }
+      }
+
+      pin->setMode (Pin::ModeOutput);
+      blinkDelay /= 2;
+
+      // sig_handler() intercepte le CTRL+C
+      signal (SIGINT, sig_handler);
+      signal (SIGTERM, sig_handler);
+      cout << "Press Ctrl+C to abort ..." << endl;
+
+      while (!should_exit.load()) {
+        pin->toggle ();
+        clk.delay (blinkDelay);
+      }
+    }
   }
   else {
 
-    gpio.setReleaseOnClose (true);
-
-    pin = getPin (argv[optind]);
-    if (paramc > 1)    {
-
-      blinkDelay = stoi (string (argv[optind + 1]));
-      if (blinkDelay < 2) {
-        blinkDelay = 2;
-        cout << "Warning: Pin " << pin->name() << " the period has been set to " << blinkDelay << " ms (min.) !" << endl;
-      }
-    }
-
-    pin->setMode (Pin::ModeOutput);
-    blinkDelay /= 2;
-
-    // sig_handler() intercepte le CTRL+C
-    signal (SIGINT, sig_handler);
-    signal (SIGTERM, sig_handler);
-    cout << "Press Ctrl+C to abort ..." << endl;
-
-    while (!should_exit.load()) {
-      pin->toggle ();
-      clk.delay (blinkDelay);
-    }
+    extendedMode = true;
+    cblink (argc, argv);
   }
 }
 
@@ -680,10 +733,9 @@ cread (int argc, char *argv[]) {
   }
   conv->setEnable (true);
 
-  if (outFormat != Pido::FormatAnalogValue) {
+  if (outFormat != Pido::FormatAnalogValue) { // Read the digital value
     long value;
 
-    // Read the digital value
     if (chan >= 0) { // Read a specific channel
 
       if (isAverage) {
@@ -698,6 +750,10 @@ cread (int argc, char *argv[]) {
     }
     else { // Read the whole converter value
 
+      if (extendedMode) {
+
+        outFormat = Pido::FormatHexadecimal;
+      }
       value = conv->read ();
     }
 
@@ -909,7 +965,7 @@ ctoggle (int argc, char *argv[]) {
 
 
 /* -----------------------------------------------------------------------------
-  cblink "-c <converter[:parameters]>" <chan> [period]
+  cblink -c <converter[:parameters]> [-p period_ms] <chan>
     Blinks the given pin on/off (explicitly sets the pin to output)
 */
 void
@@ -1296,7 +1352,8 @@ void
 usage () {
   cout << "usage : " << System::progName() << " [ options ] [ command ]  [ parameters ] [ options ]" << endl;;
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
-  cout << "Allow the user easy access to the GPIO pins." << endl << endl;
+  cout << "Allow the user easy access to the GPIO pins, or other devices," << endl;
+  cout << " such as I2C or SPI peripherals (ADC, DAC, Digital sensors, GPIO expander)." << endl << endl;
 
   //       01234567890123456789012345678901234567890123456789012345678901234567890123456789
   cout << "Valid options are:" << endl;
@@ -1306,11 +1363,12 @@ usage () {
   cout << "  -1\tUse connector pin numbers instead of PiDuino pin numbers." << endl;
   cout << "    \tA number is written in the form C.P, e.g., 1.5 denotes pin 5 of connector #1." << endl;
   cout << "  -D\tEnable debug mode." << endl;
+  cout << "  -p\tSet the blink period in milliseconds (default: 1000 ms)." << endl;
   cout << "  -x\tOutput values in hexadecimal format." << endl;
-  cout << "  -c\tSpecify the converter to use and its options (e.g., -c max1161x:bipolar=1)."  << endl;
-  cout << "  -m\tOutput values in analog format (for converters)." << endl;
-  cout << "  -a\tRead converter values in average mode." << endl;
-  cout << "  -d\tRead converter values in differential mode." << endl;
+  cout << "  -c\tSpecify the converter to use and its options (e.g., -c max1161x:bipolar=1, -c max7311 ...)."  << endl;
+  cout << "  -m\tOutput values in analog format (for ADC or sensor converter)." << endl;
+  cout << "  -a\tRead converter values in average mode (for ADC or sensor converter)." << endl;
+  cout << "  -d\tRead converter values in differential mode (for ADC or sensor converter)." << endl;
   cout << "  -v\tDisplay the current version and exit." << endl;
   cout << "  -w\tDisplay the warranty and exit." << endl;
   cout << "  -h\tPrint this message and exit." << endl << endl;
@@ -1318,18 +1376,27 @@ usage () {
   cout << "Valid commands are:" << endl;
   cout << "  mode <pin> <in/out/off/pwm/alt{0..9}>" << endl;
   cout << "    Get or set a pin mode to input, output, off, alt0..9, or pwm." << endl;
+  cout << "    You can use the -c option to specify a gpio expander." << endl;
   cout << "  pull <pin> <up/down/off>" << endl;
   cout << "    Get or set the internal pull-up, pull-down, or off controls." << endl;
-  cout << "  read <pin>" << endl;
-  cout << "    Read the boolean value of the given pin (0 or 1)." << endl;
-  cout << "  readall [#connector]" << endl;
-  cout << "    Output a table of all connectors with pin information." << endl;
+  cout << "    You can use the -c option to specify a gpio expander." << endl;
+  cout << "  drive <pin> <level>" << endl;
+  cout << "    Get or set the multi-drive output level." << endl;
   cout << "  write <pin> <value>" << endl;
   cout << "    Write the given boolean value (0 or 1) to the specified pin (output)." << endl;
+  cout << "    You can use the -c option to specify a gpio expander." << endl;
   cout << "  toggle <pin>" << endl;
   cout << "    Change the state of a GPIO pin; 0 to 1, or 1 to 0 (output)." << endl;
-  cout << "  blink [-b period] <pin>" << endl;
+  cout << "    You can use the -c option to specify a gpio expander." << endl;
+  cout << "  blink [-p <period_ms>] <pin>" << endl;
   cout << "    Blink the specified pin on/off (explicitly sets the pin to output)." << endl;
+  cout << "    You can use the -c option to specify a gpio expander." << endl;
+  cout << "  read <pin>" << endl;
+  cout << "    Read the boolean value of the given pin (0 or 1)." << endl;
+  cout << "    You can use the -c option to specify a gpio expander." << endl;
+  cout << "  readall [#connector]" << endl;
+  cout << "    Output a table of all connectors with pin information." << endl;
+  cout << "    You can use the -c option to specify a gpio expander." << endl;
   cout << "  wfi <pin> <rising/falling/both> [timeout_ms]" << endl;
   cout << "    Wait for the interrupt to occur. This is a non-busy wait." << endl;
   cout << "  pwm <pin> <value>" << endl;
@@ -1338,8 +1405,6 @@ usage () {
   cout << "    Change or read the PWM range. The default is 1024 (PWM pin only)." << endl;
   cout << "  pwmf <pin> <freq>" << endl;
   cout << "    Change or read the PWM frequency. The default is about 1000Hz (PWM pin only)." << endl;
-  cout << "  drive <pin> <level>" << endl;
-  cout << "    Get or set the multi-drive output level." << endl;
   cout << "  pwrite <pin> <value> [range] [frequency]" << endl;
   cout << "    Write the given value to the pin using software PWM. The value must be" << endl;
   cout << "    between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz." << endl;

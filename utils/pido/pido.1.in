@@ -1,24 +1,25 @@
 .TH PIDO 1 "@DATE_DAY@ @DATE_MONTH_STR@ @DATE_YEAR@" "PIDUINO @PIDUINO_VERSION_MAJOR@.@PIDUINO_VERSION_MINOR@.@PIDUINO_VERSION_PATCH@" "Easy access to the GPIO pins"
 
 .SH NAME
-pido \- Allow the user easy access to the GPIO pins.
+pido \- Allow the user easy access to the GPIO pins, or other devices, such as I2C or SPI peripherals (ADC, DAC, Digital sensors, GPIO expander).
 
 .SH SYNOPSIS
 \fBpido\fR [\fB\-g1sfDxmad\fR] {\fBmode\fR \fIpin\fR [\fIvalue\fR] | 
 \fBpull\fR \fIpin\fR [\fIvalue\fR] |
+\fBdrive\fR \fIpin\fR [\fIvalue\fR] |
 \fBwrite\fR \fIpin\fR \fIvalue\fR |
 \fBtoggle\fR \fIpin\fR |
 \fBblink\fR \fIpin\fR [\fIvalue\fR] |
-\fBdrive\fR \fIpin\fR [\fIvalue\fR] |
+\fBread\fR \fIpin\fR |
+\fBreadall\fR [\fIconnector\fR] |
+\fBwfi\fR \fIpin\fR \fIedge\fR  [\fItimeout_ms\fR] |
 \fBpwm\fR \fIpin\fR [\fIvalue\fR] |
 \fBpwmf\fR \fIpin\fR [\fIhz_freq\fR] |
 \fBpwmr\fR \fIpin\fR [\fIrange\fR] |
+\fBpwrite\fR \fIpin\fR \fBvalue\fR [\fIrange\fR] [\fIfrequency\fR] |
+\fBconverters\fR |
 \fBcwrite\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR] \fIvalue\fR |
 \fBcread\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR] |
-\fBread\fR \fIpin\fR |
-\fBwfi\fR \fIpin\fR \fIedge\fR  [\fItimeout_ms\fR] |
-\fBreadall\fR [\fIconnector\fR] |
-\fBconverters\fR |
 {\fB\-v\fR} | {\fB\-w\fR} | {\fB\-h\fR}}
 
 .SH DESCRIPTION
@@ -41,6 +42,11 @@ Disabling a pin with \fIoff\fR is only available on some SoC models (see datashe
 The ALT modes can also be set using \fIalt0\fR, \fIalt1\fR,  ... \fIalt9\fR.
 The number of alternative modes available depends on the SoC model (see datasheet).
 
+You can use the \fB-c\fR option to specify a gpio expander (e.g. MCP23017 or MAX7311), 
+in this case:
+    \(bu all modes are not generally available (input and output)
+    \(bu you can omit the pin number to modify all pins at once.
+
 .TP
 \fBpull\fR \fIpin\fR [\fBup\fR | \fBdown\fR | \fBoff\fR]
 Gets the current state of the resistor if no value is supplied. This feature is 
@@ -49,46 +55,8 @@ only available on some SoC models (see datasheet).
 Use \fIup\fR, \fIdown\fR or \fIoff\fR to set the internal pull-up, pull-down, or 
 off (tristate) controls.
 
-.TP
-\fBwrite\fR \fIpin\fR \fB0\fR | \fB1\fR
-Write the given value (0 or 1) to the pin. You need to set the pin
-to output mode first.
-
-.TP
-\fBpwrite\fR \fIpin\fR \fBvalue\fR [\fIrange\fR] [\fIfrequency\fR]
-Writes the given value to the pin using a software PWM. The value must be
-between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz.
-This command is useful for pins that do not have hardware PWM support.
-This command blocks until the user interrupts it with Ctrl-C.
-
-.TP
-\fBconverters\fR
-List all available converters (ADC or DACs) that can be used with the \fBcwrite\fR or \fBcread\fR commands.
-
-.TP
-\fBcwrite\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR] \fIvalue\fR
-Writes the given value to the specified converter (DAC). The converter must be specified with the \fB\-c\fR option, 
-and it can include parameters such as the bus ID, reference voltage, full-scale range... 
-If the converter requires specific channel information, it must be provided as well.
-
-.TP
-\fBcread\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR]
-Read a value from the specified converter (ADC or sensor). If \fIchan\fR is not specified, 
-the default channel is used. The converter must be specified with the \fB\-c\fR option, 
-and it can include parameters such as the bus ID, reference voltage, full-scale range...
-
-.TP
-\fBtoggle\fR \fIpin\fR
-Changes the state of a GPIO pin; 0 to 1, or 1 to 0. You need to set the pin
-to output mode first.
-
-.TP
-\fBblink\fR \fIpin\fR [\fIms_period\fR]
-Blinks the given pin on/off. Press Ctrl-C to exit. The flashing period in 
-milliseconds can be specified; otherwise, its default value is 1000 
-(it cannot be less than 1 ms).
-
-Note: This command explicitly sets the pin to output mode.
+You can use the \fB-c\fR option to specify a gpio expander (e.g. MCP23017 or MAX7311), 
+in this case, you can omit the pin number to modify all pins at once.
 
 .TP
 \fBdrive\fR \fIpin\fR [\fBlevel\fR]
@@ -97,6 +65,57 @@ Gets the current state of the pin drive strength if no value is supplied.
 Use \fIlevel\fR to set the pin drive strength.
 
 This feature is only available on some SoC models (see datasheet).
+
+.TP
+\fBwrite\fR \fIpin\fR \fBvalue\fR
+Write the given value to the pin. You need to set the pin
+to output mode first.
+
+You can use the \fB-c\fR option to specify a gpio expander (e.g. MCP23017 or MAX7311), 
+in this case, you can omit the pin number to modify all pins at once.
+
+.TP
+\fBtoggle\fR \fIpin\fR
+Changes the state of a GPIO pin; 0 to 1, or 1 to 0. You need to set the pin
+to output mode first.
+
+You can use the \fB-c\fR option to specify a gpio expander (e.g. MCP23017 or MAX7311), 
+in this case, you can omit the pin number to modify all pins at once.
+
+.TP
+\fBblink\fR \fIpin\fR
+Blinks the given pin on/off. Press Ctrl-C to exit. The flashing period in 
+milliseconds can be specified with the \fB-p\fR option; otherwise, its default value is 1000 
+(it cannot be less than 2 ms).
+
+Note: This command explicitly sets the pin to output mode.
+
+You can use the \fB-c\fR option to specify a gpio expander (e.g. MCP23017 or MAX7311), 
+in this case, you can omit the pin number to modify all pins at once.
+
+.TP
+\fBread\fR \fIpin\fR
+Read the digital value of the given pin and print 0 or 1 to represent the
+corresponding logic levels.
+
+You can use the \fB-c\fR option to specify a gpio expander (e.g. MCP23017 or MAX7311), 
+in this case, you can omit the pin number to read all pins at once (in hexadecimal format).
+
+.TP
+\fBreadall\fR [\fIconnector\fR]
+Outputs a table of all GPIO pin values. The values represent the actual values read
+if the pin is in input mode, or the last value written if the pin is in output
+mode. All connectors are displayed by default; to display only one connector, 
+just specify its number (listed above the table).
+
+You can use the \fB-c\fR option to specify a gpio expander (e.g. MCP23017 or MAX7311), 
+in this case, the connector number will be ignored and all pins on the expander will be read (in hexadecimal format).
+
+.TP
+\fBwfi\fR \fIpin\fR \fBrising\fR | \fBfalling\fR | \fBboth\fR [\fItimeout_ms\fR]
+This sets the given pin to the supplied interrupt mode: rising, falling,
+or both, then waits for the interrupt to happen. It's a non-busy wait,
+so does not consume any CPU while it's waiting.
 
 .TP
 \fBpwm\fR \fIpin\fR [\fIvalue\fR]
@@ -132,22 +151,29 @@ Note: The pin must have hardware PWM functionality (c.f. datasheet) and needs to
 be put into PWM mode first.
 
 .TP
-\fBread\fR \fIpin\fR
-Read the digital value of the given pin and print 0 or 1 to represent the
-corresponding logic levels.
+\fBpwrite\fR \fIpin\fR \fBvalue\fR [\fIrange\fR] [\fIfrequency\fR]
+Writes the given value to the pin using a software PWM. The value must be
+between 0 and the range (default 1024). The frequency is optional and defaults to 200 Hz.
+This command is useful for pins that do not have hardware PWM support.
+This command blocks until the user interrupts it with Ctrl-C.
 
 .TP
-\fBwfi\fR \fIpin\fR \fBrising\fR | \fBfalling\fR | \fBboth\fR [\fItimeout_ms\fR]
-This sets the given pin to the supplied interrupt mode: rising, falling,
-or both, then waits for the interrupt to happen. It's a non-busy wait,
-so does not consume any CPU while it's waiting.
+\fBconverters\fR
+List all available converters (ADC or DACs) that can be used with the \fBcwrite\fR or \fBcread\fR commands.
 
 .TP
-\fBreadall\fR [\fIconnector\fR]
-Outputs a table of all GPIO pin values. The values represent the actual values read
-if the pin is in input mode, or the last value written if the pin is in output
-mode. All connectors are displayed by default; to display only one connector, 
-just specify its number (listed above the table).
+\fBcwrite\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR] \fIvalue\fR
+Writes the given value to the specified converter (DAC). The converter must be specified with the \fB\-c\fR option, 
+and it can include parameters such as the bus ID, reference voltage, full-scale range... 
+If the converter requires specific channel information, it must be provided as well.
+
+.TP
+\fBcread\fR \fB\-c\fR \fIconverter[:parameters]\fR [\fIchan\fR]
+Read a value from the specified converter (ADC or sensor). If \fIchan\fR is not specified, 
+the default channel is used. The converter must be specified with the \fB\-c\fR option, 
+and it can include parameters such as the bus ID, reference voltage, full-scale range...
+
+You can use the \fB-m\fR, \fB-a\fR, and \fB-d\fR options to modify the read behavior.
 
 .SH OPTIONS
 
@@ -173,6 +199,10 @@ Enable debug mode.
 Force the use of the Gpio2 device interface (/dev/gpiochipX) to control pin features.
 
 .TP
+.B \-p \fI<period_ms>\fR
+Set the blink period in milliseconds (default is 1000 ms). Not less than 2 ms.
+
+.TP
 .B \-x
 Output values in hexadecimal format.
 
@@ -182,15 +212,16 @@ Specify the converter to use and its options (e.g., -c max1161x:bipolar=1).
 
 .TP
 .B \-m
-Output values in analog format (for converters).
+Output ADC or digital sensor values in analog format (e.g. voltage, temperature...).
 
 .TP
 .B \-a
-Read converter values in average mode.
+Calculates an average over several samples (the number of samples depends on the converter used).
+
 
 .TP
 .B \-d
-Read converter values in differential mode.
+Read ADC values in differential mode.
 
 .TP
 .B \-v
