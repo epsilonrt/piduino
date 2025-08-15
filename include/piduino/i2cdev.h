@@ -214,12 +214,17 @@ namespace Piduino {
       /**
          @brief Begins an I2C transmission to the specified slave device.
          This must be called before writing data to a slave device.
+         This function sets the slave address for the transaction and initializes the internal buffer but it does not send any data yet.
          @param slave The 7-bit I2C slave address
       */
       void beginTransmission (uint16_t slave);
 
       /**
-         @brief Ends the current I2C transmission and sends the data.
+         @brief Ends the current I2C transmission and sends the data if stop is true.
+
+          This function sends the data accumulated with write() in the internal buffer **only if stop is true**.
+          If stop is false, the transmission is not finalized, allowing for further data to be added (e.g. for reading).
+
          @param stop Whether to send a stop condition (default: true)
          @return true if the transmission was successful, false otherwise
       */
@@ -284,8 +289,12 @@ namespace Piduino {
 
       /**
          @brief Requests data from an I2C slave device and stores it in the read buffer.
+
+         This function initiates a read transaction from the specified I2C slave device, but does not transfer
+         any data yet, even if the stop parameter is true.
+
          @param slave The 7-bit I2C slave address
-         @param max Maximum number of bytes to request
+         @param max The maximum number of bytes to request
          @param stop Whether to send a stop condition after the transaction (default: true)
          @return The number of bytes actually received, or -1 on error
       */
@@ -293,8 +302,12 @@ namespace Piduino {
 
       /**
          @brief Requests data from an I2C slave device (convenience overload with int parameters).
+
+         This function initiates a read transaction from the specified I2C slave device, but does not transfer
+         any data yet, even if the stop parameter is true.
+
          @param slave The I2C slave address
-         @param max Maximum number of bytes to request
+         @param max The maximum number of bytes to request
          @param stop Whether to send a stop condition (1 = true, 0 = false, default: 1)
          @return The number of bytes actually received, or -1 on error
       */
