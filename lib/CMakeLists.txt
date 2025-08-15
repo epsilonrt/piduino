@@ -45,7 +45,6 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/manufacturer.h
   ${PIDUINO_INC_DIR}/piduino/memory.h
   ${PIDUINO_INC_DIR}/piduino/popl.h
-  ${PIDUINO_INC_DIR}/piduino/pwm.h
   ${PIDUINO_INC_DIR}/piduino/ringbuffer.h
   ${PIDUINO_INC_DIR}/piduino/scheduler.h
   ${PIDUINO_INC_DIR}/piduino/soc.h
@@ -108,6 +107,7 @@ set (hdr_serial
 
 set (hdr_extensions
   ${PIDUINO_INC_DIR}/piduino/max1161x.h
+  ${PIDUINO_INC_DIR}/piduino/max7311.h
 )
 
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
