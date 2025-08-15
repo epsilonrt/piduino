@@ -85,7 +85,7 @@ void pwrite (int argc, char *argv[]);
 void converters (int argc, char *argv[]);
 void cwrite (int argc, char *argv[]);
 void cread (int argc, char *argv[]);
-
+void cmode (int argc, char *argv[]);
 
 Pin *getPin (char *c_str);
 void usage ();
@@ -118,7 +118,9 @@ main (int argc, char **argv) {
     {"pwrite", pwrite},
     {"converters", converters},
     {"cwrite", cwrite},
-    {"cread", cread}
+    {"cread", cread},
+    {"cmode", cmode},
+
   };
 
   try {
@@ -288,7 +290,7 @@ mode (int argc, char *argv[]) {
     if (paramc > 1) {
       Pin::Mode m;
       string smode (argv[optind + 1]);
-      const map<string, Pin::Mode> str2mode = {
+      static const map<string, Pin::Mode> str2mode = {
         {"in",    Pin::ModeInput   },
         {"out",   Pin::ModeOutput  },
         {"alt0",  Pin::ModeAlt0    },
@@ -583,7 +585,8 @@ cwrite (int argc, char *argv[]) {
 
     std::unique_ptr<Converter> conv (Converter::factory (converterStr));
 
-    if (conv->type() != Converter::DigitalToAnalog) {
+    if (conv->type() != Converter::DigitalToAnalog &&
+        conv->type() != Converter::GpioExpander) {
 
       throw Exception (Exception::ConverterUnknown, converterStr);
     }
@@ -591,11 +594,11 @@ cwrite (int argc, char *argv[]) {
     if (paramc > 1) {
 
       chan = stoi (string (argv[optind]));
-      value = stol (string (argv[optind + 1]));
+      value = stol (string (argv[optind + 1]), nullptr, 0);
     }
     else {
 
-      value = stol (string (argv[optind]));
+      value = stol (string (argv[optind]), nullptr, 0);
     }
 
     conv->setDebug (debug);
@@ -641,103 +644,220 @@ void
 cread (int argc, char *argv[]) {
   int paramc = (argc - optind);
   Clock clk;
+  int chan = -1;
+  std::unique_ptr<Converter> conv (Converter::factory (converterStr));
+
+  if (conv->type() != Converter::AnalogToDigital &&
+      conv->type() != Converter::GpioExpander) {
+
+    throw Exception (Exception::ConverterUnknown, converterStr);
+  }
+
+  if (paramc > 0) {
+    std::string param (argv[optind]);
+    chan = stoi (param);
+  }
+
+  if ( (isDifferential || isAverage || outFormat == Pido::FormatAnalogValue) && (chan < 0))   {
+
+    chan = 0; // Default channel for differential or average mode
+  }
+
+  conv->setDebug (debug);
+  if (!conv->open()) {
+
+    throw Exception (Exception::ConverterOpenError, conv->deviceName());
+  }
+  conv->setEnable (true);
+
+  if (outFormat != Pido::FormatAnalogValue) {
+    long value;
+
+    // Read the digital value
+    if (chan >= 0) { // Read a specific channel
+
+      if (isAverage) {
+
+        value = conv->readAverage (chan, isDifferential);
+
+      }
+      else  {
+
+        value = conv->readChannel (chan, isDifferential);
+      }
+    }
+    else { // Read the whole converter value
+
+      value = conv->read ();
+    }
+
+    if (value == Converter::InvalidValue) {
+
+      throw Exception (Exception::ConverterReadError, conv->deviceName());
+    }
+
+    if (outFormat == Pido::FormatHexadecimal) {
+      size_t valueSize = sizeof (value) * 2; // Size in bytes for hex output
+
+      if (conv->flags() & Converter::hasResolution) {
+        valueSize = conv->resolution() / 4; // Convert resolution to hex digits
+
+        if (valueSize < 1 || ( (valueSize * 4) < conv->resolution())) { // resolution is not a multiple of 4 bits or too small
+
+          valueSize++; // Increase size to fit the value
+        }
+      }
+
+      cout << "0x" << hex << uppercase << setfill ('0') << setw (valueSize) << value << endl;
+    }
+    else {
+
+      cout << dec << value << endl;
+    }
+  }
+  else { // Read the analog value
+    double value;
+
+    if (isAverage) {
+
+      value = conv->readAverageValue (chan, isDifferential);
+
+    }
+    else  {
+
+      value = conv->readValue (chan, isDifferential);
+    }
+
+    if (value == Converter::InvalidValue) {
+
+      throw Exception (Exception::ConverterReadError, conv->deviceName());
+    }
+
+    cout << fixed << setprecision (3) << value << endl;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+  cmode -c <converter[:parameters]> [chan] [in/out] [up/down/off] [activelow]
+    Set or get the mode of a converter channel.
+    If no <chan> is specified, the mode of all channels will be affected, for reading the channel must be specified.
+*/
+void cmode (int argc, char *argv[]) {
+  int paramc = (argc - optind);
 
   if (paramc < 1)    {
 
     throw Exception (Exception::ArgumentExpected);
   }
   else {
-    int chan = -1;
-
     std::unique_ptr<Converter> conv (Converter::factory (converterStr));
 
-    if (conv->type() != Converter::AnalogToDigital) {
+    if (conv->flags() & Converter::hasModeSetting) {
+      int chan = -1;
+      Converter::Mode mode = Converter::NoMode;
+      static const map<string, Converter::ModeFlag> str2mode = {
+        {"in",    Converter::DigitalInput  },
+        {"out",   Converter::DigitalOutput },
+        {"off",   Converter::NoMode },
+        {"activelow", Converter::ActiveLow },
+        {"up", Converter::PullUp },
+        {"down", Converter::PullDown }
+      };
 
-      throw Exception (Exception::ConverterUnknown, converterStr);
-    }
+      try {
+        chan = stoi (argv[optind]);
+      }
+      catch (...) {
+        // Do nothing, chan will remain -1
+      }
 
-    if (paramc > 0) {
-      std::string param (argv[optind]);
-      chan = stoi (param);
-    }
+      conv->setDebug (debug);
+      if (!conv->open()) {
 
+        throw Exception (Exception::ConverterOpenError, conv->deviceName());
+      }
+      conv->setEnable (true);
 
-    if ( (isDifferential || isAverage || outFormat == Pido::FormatAnalogValue) && (chan < 0))   {
-
-      chan = 0; // Default channel for differential or average mode
-    }
-
-    conv->setDebug (debug);
-    if (!conv->open()) {
-
-      throw Exception (Exception::ConverterOpenError, conv->deviceName());
-    }
-    conv->setEnable (true);
-
-    if (outFormat != Pido::FormatAnalogValue) {
-      long value;
-
-      // Read the digital value
       if (chan >= 0) {
 
-        if (isAverage) {
-
-          value = conv->readAverage (chan, isDifferential);
-
-        }
-        else  {
-
-          value = conv->readChannel (chan, isDifferential);
-        }
-      }
-      else {
-
-        value = conv->read ();
+        paramc--; // Decrease paramc to account for the channel argument
+        optind++; // Move to the next argument
+        mode = conv->mode (chan);
       }
 
-      if (value == Converter::InvalidValue) {
+      if (paramc > 0) {
+        // Setting the mode
 
-        throw Exception (Exception::ConverterReadError, conv->deviceName());
-      }
+        while (paramc > 0) {
+          string str (argv[optind]);
+          Converter::ModeFlag flag = str2mode.at (str);
 
-      if (outFormat == Pido::FormatHexadecimal) {
-        size_t valueSize = sizeof (value) * 2; // Size in bytes for hex output
-
-        if (conv->flags() & Converter::hasResolution) {
-          valueSize = conv->resolution() / 4; // Convert resolution to hex digits
-
-          if (valueSize < 1 || ( (valueSize * 4) < conv->resolution())) { // resolution is not a multiple of 4 bits or too small
-
-            valueSize++; // Increase size to fit the value
+          switch (flag) {
+            case Converter::DigitalInput:
+              mode |= Converter::DigitalInput;
+              mode &= ~ (Converter::DigitalOutput);
+              break;
+            case Converter::DigitalOutput:
+              mode |= Converter::DigitalOutput;
+              mode &= ~ (Converter::DigitalInput);
+              break;
+            case Converter::ActiveLow:
+              mode |= Converter::ActiveLow;
+              break;
+            case Converter::PullUp:
+              mode |= Converter::PullUp;
+              mode &= ~ (Converter::PullDown);
+              break;
+            case Converter::PullDown:
+              mode |= Converter::PullDown;
+              mode &= ~ (Converter::PullUp);
+              break;
+            default:
+              mode &= ~(Converter::ActiveLow);
+              break;
           }
+
+          paramc--;
+          optind++;
         }
 
-        cout << "0x" << hex << uppercase << setfill ('0') << setw (valueSize) << value << endl;
+
+        if (! conv->setMode (mode, chan)) {
+          throw Exception (Exception::ConverterModeError, converterStr);
+        }
       }
       else {
+        // Reading the mode
 
-        cout << dec << value << endl;
+        if (mode & Converter::DigitalInput) {
+          cout << "in";
+        }
+        else if (mode & Converter::DigitalOutput) {
+          cout << "out";
+        }
+        else if (! (mode & (Converter::DigitalInput | Converter::DigitalOutput))) {
+          cout << "off";
+        }
+
+        if (mode & Converter::PullUp) {
+          cout << " up";
+        }
+        else if (mode & Converter::PullDown) {
+          cout << " down";
+        }
+        else if (! (mode & (Converter::PullUp | Converter::PullDown))) {
+          cout << " off";
+        }
+
+        if (mode & Converter::ActiveLow) {
+          cout << " activelow";
+        }
+        cout << endl;
       }
     }
-    else { // Read the analog value
-      double value;
+    else {
 
-      if (isAverage) {
-
-        value = conv->readAverageValue (chan, isDifferential);
-
-      }
-      else  {
-
-        value = conv->readValue (chan, isDifferential);
-      }
-
-      if (value == Converter::InvalidValue) {
-
-        throw Exception (Exception::ConverterReadError, conv->deviceName());
-      }
-
-      cout << fixed << setprecision (3) << value << endl;
+      throw Exception (Exception::ConverterModeError, converterStr);
     }
   }
 }

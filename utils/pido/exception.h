@@ -38,7 +38,9 @@ class Exception: public std::exception {
       ConverterUnknown,
       ConverterOpenError,
       ConverterWriteError,
-      ConverterReadError
+      ConverterReadError,
+      ConverterModeError,
+      ConverterPullError,
     };
 
     explicit Exception (Exception::Code code, int value = 0);
