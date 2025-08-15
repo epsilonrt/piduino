@@ -51,7 +51,7 @@ namespace Piduino {
         DigitalInput =  0x00000001, ///< Digital input mode
         DigitalOutput = 0x00000002, ///< Digital output mode
         AnalogInput =   0x00000004, ///< Analog input mode (for ADCs)
-        AnalogOutput =  0x00000008, ///< Analog output mode (for DACs)   
+        AnalogOutput =  0x00000008, ///< Analog output mode (for DACs)
         PullUp =        0x00000010, ///< Pull-up resistor enabled
         PullDown =      0x00000020, ///< Pull-down resistor enabled
         ActiveLow =     0x00000040, ///< Active low mode
@@ -83,6 +83,7 @@ namespace Piduino {
         requiresWaitLoop  = 0x00000400, ///< Indicates that the converter requires a wait loop to function correctly
         hasClockSelection = 0x00000800, ///< Indicates that the converter supports clock selection
         hasModeSetting    = 0x00001000, ///< Indicates that the converter supports mode setting
+        hasToggle         = 0x00002000, ///< Indicates that the converter supports toggling (GpioExpander only)
       };
 
       enum {
@@ -199,6 +200,14 @@ namespace Piduino {
          @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
       */
       virtual bool write (long value);
+
+      /**
+        @brief Toggles the state of a specific channel on the converter.
+        @param channel The channel to toggle (default is -1, which toggles all channels).
+        @return true if successful, false otherwise.
+        @note This function is disabled if the open mode is not WriteOnly or ReadWrite or if type() is not GpioExpander.
+      */
+      virtual bool toggle (int channel = -1);
 
       /**
          @brief Reads the digital value of a specific channel from the converter.

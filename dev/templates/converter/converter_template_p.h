@@ -206,6 +206,17 @@ namespace Piduino {
       // Depending on the flags and type, these methods may not be overridden by subclasses.
 
       /**
+        @brief Toggles the state of a specific channel on the converter.
+        @param channel The channel to toggle (default is -1, which toggles all channels).
+        @return true if successful, false otherwise.
+        @note This function is disabled if the open mode is not WriteOnly or ReadWrite or if type() is not GpioExpander.
+      */
+      virtual bool toggle (int channel = -1) override {
+
+        return false;
+      }
+
+      /**
          @brief Sets the digital range of the converter.
          @param range The desired range value.
          @return The set range value, 0 if not set, or -1 if not supported.

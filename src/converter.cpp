@@ -142,6 +142,17 @@ namespace Piduino {
     return false;
   }
 
+  // -----------------------------------------------------------------------------
+  // virtual
+  bool Converter::toggle (int channel) {
+    if (openMode() & WriteOnly && type() == GpioExpander) {
+      PIMP_D (Converter);
+
+      return d->toggle (channel);
+    }
+    return false;
+  }
+
   // ---------------------------------------------------------------------------
   // virtual
   long Converter::readChannel (int channel, bool differential) {
@@ -379,17 +390,17 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  Converter::Mode Converter::mode(int channel) const {
+  Converter::Mode Converter::mode (int channel) const {
     PIMP_D (const Converter);
 
-    return d->mode(channel);
+    return d->mode (channel);
   }
 
   // ---------------------------------------------------------------------------
   bool Converter::setMode (Mode m, int channel) {
     PIMP_D (Converter);
 
-    return d->setMode(m, channel);
+    return d->setMode (m, channel);
   }
 
   // ---------------------------------------------------------------------------
