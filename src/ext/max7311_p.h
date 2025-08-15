@@ -116,6 +116,14 @@ namespace Piduino {
       virtual bool writeChannel (long value, int channel = 0, bool differential = false) override;
 
       /**
+        @brief Toggles the state of a specific channel on the converter.
+        @param channel The channel to toggle (default is -1, which toggles all channels).
+        @return true if successful, false otherwise.
+        @note This function is disabled if the open mode is not WriteOnly or ReadWrite or if type() is not GpioExpander.
+      */
+      virtual bool toggle (int channel = -1) override;
+
+      /**
          @brief Returns the current mode of the converter.
          @param channel The channel number (default is 0).
          @return The current mode of the converter as a Mode object, the default channel implementation returns NoMode.

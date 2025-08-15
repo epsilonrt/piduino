@@ -71,13 +71,13 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Max7311::Private::Private (Max7311 *q, std::shared_ptr<I2cDev> dev, int address) :
-    Converter::Private (q, GpioExpander, hasResolution | hasRange | hasModeSetting),
+    Converter::Private (q, GpioExpander, hasResolution | hasRange | hasModeSetting | hasToggle),
     i2c (dev),
     addr (address), isConnected (false), busTimeout (true) {}
 
   // ---------------------------------------------------------------------------
   Max7311::Private::Private (Max7311 *q, const std::string &params) :
-    Converter::Private (q, GpioExpander, hasResolution | hasRange | hasModeSetting, params),
+    Converter::Private (q, GpioExpander, hasResolution | hasRange | hasModeSetting | hasToggle, params),
     i2c (std::make_shared<I2cDev> (I2cDev::Info::defaultBus().id())),
     addr (0x20), isConnected (false), busTimeout (true) {
 
@@ -177,7 +177,7 @@ namespace Piduino {
   Max7311::Private::read() {
     long value = InvalidValue;
     if (readInputPorts()) {
-      value = (regs.input[0] << 8) | regs.input[1];
+      value = (regs.input[1] << 8) | regs.input[0];
     }
     else {
       if (isDebug) {
@@ -214,6 +214,61 @@ namespace Piduino {
     }
     if (isDebug) {
       std::cerr << "Max7311: Failed to write output ports." << std::endl;
+    }
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
+  // override
+  bool
+  Max7311::Private::toggle (int channel) {
+
+    if (channel >= 0) {
+      uint8_t index = channel / 8; // Determine the index of the output port
+
+      if (index >= 0 && index <= 1) {
+
+        if (readOutputPorts (index, 1)) { // Read the current output state
+          uint8_t bit = channel % 8; // Determine the bit position within the port
+
+          // Toggle the specific bit
+          regs.output[index] ^= (1 << bit);
+
+          if (writeOutputPorts (index, 1)) {
+            if (isDebug) {
+              std::cout << "Max7311: Output channel " << channel << " toggled successfully" << std::endl;
+            }
+            return true;
+          }
+        }
+        else {
+          if (isDebug) {
+            std::cerr << "Max7311: Failed to read output ports." << std::endl;
+          }
+          return false; // Return false if reading output ports fails
+        }
+
+      }
+      if (isDebug) {
+        std::cerr << "Max7311: Failed to toggle output channel " << channel << std::endl;
+      }
+    }
+    else {
+      if (readOutputPorts ()) { // Read both output ports
+        // Toggle all bits in both output ports
+        regs.output[0] ^= 0xFF; // Toggle all bits in port 1
+        regs.output[1] ^= 0xFF; // Toggle all bits in port 2
+
+        if (writeOutputPorts ()) {
+          if (isDebug) {
+            std::cout << "Max7311: All output channels toggled successfully" << std::endl;
+          }
+          return true;
+        }
+      }
+      if (isDebug) {
+        std::cerr << "Max7311: Failed to read output ports." << std::endl;
+      }
     }
     return false;
   }
@@ -297,7 +352,7 @@ namespace Piduino {
       return false; // Return false if pull-up or pull-down mode is requested
     }
 
-    if ((m & DigitalOutput) && (m & DigitalInput)) {
+    if ( (m & DigitalOutput) && (m & DigitalInput)) {
 
       if (isDebug) {
         std::cerr << "Max7311:setMode: cannot set both DigitalOutput and DigitalInput modes at the same time." << std::endl;

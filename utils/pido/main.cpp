@@ -86,6 +86,7 @@ void converters (int argc, char *argv[]);
 void cwrite (int argc, char *argv[]);
 void cread (int argc, char *argv[]);
 void cmode (int argc, char *argv[]);
+void ctoggle (int argc, char *argv[]);
 
 Pin *getPin (char *c_str);
 void usage ();
@@ -120,6 +121,7 @@ main (int argc, char **argv) {
     {"cwrite", cwrite},
     {"cread", cread},
     {"cmode", cmode},
+    {"ctoggle", ctoggle}
 
   };
 
@@ -813,14 +815,13 @@ void cmode (int argc, char *argv[]) {
               mode &= ~ (Converter::PullUp);
               break;
             default:
-              mode &= ~(Converter::ActiveLow);
+              mode &= ~ (Converter::ActiveLow);
               break;
           }
 
           paramc--;
           optind++;
         }
-
 
         if (! conv->setMode (mode, chan)) {
           throw Exception (Exception::ConverterModeError, converterStr);
@@ -858,6 +859,42 @@ void cmode (int argc, char *argv[]) {
     else {
 
       throw Exception (Exception::ConverterModeError, converterStr);
+    }
+  }
+}
+
+/* -----------------------------------------------------------------------------
+  ctoggle "-c <converter[:parameters]>" [chan]
+    Toggles the given value on the specified converter.
+    If <chan> is not specified, the converter will toggle all channels.
+*/
+void
+ctoggle (int argc, char *argv[]) {
+  std::unique_ptr<Converter> conv (Converter::factory (converterStr));
+
+  if (conv->type() != Converter::GpioExpander || ( (conv->flags() & Converter::hasToggle) == 0)) {
+
+    throw Exception (Exception::ConverterUnknown, converterStr);
+  }
+  else {
+    int paramc = (argc - optind);
+    int chan = -1;
+
+    if (paramc > 0) {
+
+      chan = stoi (string (argv[optind]));
+    }
+
+    conv->setDebug (debug);
+    if (!conv->open()) {
+
+      throw Exception (Exception::ConverterOpenError, conv->deviceName());
+    }
+    conv->setEnable (true);
+
+    if (!conv->toggle (chan)) {
+
+      throw Exception (Exception::ConverterWriteError, conv->deviceName());
     }
   }
 }
