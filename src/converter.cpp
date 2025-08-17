@@ -361,6 +361,13 @@ namespace Piduino {
     return d->fullScaleRange();
   }
 
+  // --------------------------------------------------------------------------
+  bool Converter::setFullScaleRange (double fsr) {
+    PIMP_D (Converter);
+
+    return d->setFullScaleRange (fsr);
+  }
+
   // ---------------------------------------------------------------------------
   long Converter::frequency() const {
     PIMP_D (const Converter);

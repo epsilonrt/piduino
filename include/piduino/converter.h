@@ -61,13 +61,25 @@ namespace Piduino {
         Interrupt =     0x00000200, ///< Interrupt mode
         Continuous =    0x00000400, ///< Continuous mode (for ADCs)
         SingleShot =    0x00000800, ///< Single-shot mode (for ADCs)
+        FastMode =      0x00001000, ///< Fast mode (for DACs)
+        SaveToEEPROM =  0x00002000, ///< Save to EEPROM (for DACs)
+        PwrDwn0 =       0x00004000, ///< Power down mode (for DACs), LSB
+        PwrDwn1 =       0x00008000, ///< Power down mode (for DACs), MSB
+        PwrDwnEn =      0x00010000, ///< Power down mode enable (for DACs)
+        PwrDwn  =       PwrDwnEn, ///< Power down mode (for DACs)
+        PwrDwnR1 =      PwrDwnEn, ///< Power down mode (for DACs), resistor value depends on device
+        PwrDwnR2 =      PwrDwnEn | PwrDwn0, ///< Power down mode (for DACs), resistor value depends on device
+        PwrDwnR3 =      PwrDwnEn | PwrDwn1, ///< Power down mode (for DACs), resistor value depends on device
+        PwrDwnR4 =      PwrDwnEn | PwrDwn1 | PwrDwn0, ///< Power down mode (for DACs), resistor value depends on device
+        PwrDwnMask =    PwrDwnEn | PwrDwn1 | PwrDwn0, ///< Power down mode (for DACs), resistor value depends on device
+        NormalMode =    0x00000000, ///< Normal mode (default)
       };
 
       /**
          @typedef Mode
          @brief Type representing a combination of ModeFlag values.
       */
-      typedef Flags<ModeFlag> Mode; ///< Type representing a combination of ModeFlag values
+      typedef Flags<ModeFlag, long> Mode; ///< Type representing a combination of ModeFlag values
 
       enum {
         hasFrequency      = 0x00000001, ///< Indicates that the converter has a clock
@@ -363,10 +375,21 @@ namespace Piduino {
 
       /**
          @brief Gets the current full-scale range of the converter.
+
+         This function is used, by default, by \c valueToDigital() and \c digitalToValue() to calculate the appropriate scaling factors.
+
          @return The full-scale range value, typically in volts but may vary depending on the converter model.
          @note Default implementation returns 3.3V, should be overridden by subclasses.
       */
       virtual double fullScaleRange() const;
+
+      /**
+         @brief Sets the full-scale range of the converter.
+         @param fsr The desired full-scale range value.
+         @return True if the full-scale range was successfully set, false otherwise.
+         @note Default implementation returns false. Should be overridden by subclasses.
+      */
+      virtual bool setFullScaleRange (double fsr);
 
       /**
         @brief Gets the current clock frequency.
@@ -384,6 +407,9 @@ namespace Piduino {
 
       /**
         @brief Gets the digital range of the converter
+
+        This function is used by default by \c valueToDigital() and \c digitalToValue() to calculate the appropriate scaling factors.
+
         @return The range value in LSB, e.g. max() - min() + 1.
       */
       virtual long range() const;

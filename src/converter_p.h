@@ -155,6 +155,9 @@ namespace Piduino {
 
       /**
         @brief Gets the digital range of the converter
+
+        This function is used by default by \c valueToDigital() and \c digitalToValue() to calculate the appropriate scaling factors.
+
         @return The range value in LSB,  this is the number of discrete values the converter can produce, 2^n for n bits resolution.
         @note must be implemented by subclasses to return the actual range value.
       */
@@ -270,11 +273,24 @@ namespace Piduino {
 
       /**
          @brief Gets the current full-scale range of the converter.
+         
+         This function is used by default by \c valueToDigital() and \c digitalToValue() to calculate the appropriate scaling factors.
+
          @return The full-scale range value, typically in volts but may vary depending on the converter model.
          @note Default implementation returns 3.3V, should be overridden by subclasses.
       */
       virtual double fullScaleRange() const {
         return 3.3; // Default implementation returns 3.3V, should be overridden by subclasses
+      }
+
+      /**
+        @brief Sets the full-scale range of the converter.
+        @param fsr The desired full-scale range value.
+        @return True if the full-scale range was successfully set, false otherwise.
+        @note Default implementation returns false. Should be overridden by subclasses.
+      */
+      virtual bool setFullScaleRange (double fsr) {
+        return false;
       }
 
       /**
