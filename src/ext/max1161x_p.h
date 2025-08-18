@@ -152,15 +152,26 @@ namespace Piduino {
 
         return referenceId;
       }
-
       /**
-         @brief Gets the current full-scale range of the converter.
-         @return The full-scale range value, typically in volts but may vary depending on the converter model.
-         @note Default implementation returns 3.3V, should be overridden by subclasses.
+        @brief Gets the current full-scale range of the converter.
+
+        This function is used by default by \c valueToDigital() and \c digitalToValue() to calculate the appropriate scaling factors.
+
+        @return The full-scale range value, typically in volts but may vary depending on the converter model.
       */
       virtual double fullScaleRange() const override {
 
         return fsr;
+      }
+
+      /**
+        @brief Sets the full-scale range of the converter.
+        @param fsr The desired full-scale range value.
+        @return True if the full-scale range was successfully set, false otherwise.
+      */
+      virtual bool setFullScaleRange (double fsr) override {
+        this->fsr = fsr;
+        return true;
       }
 
       /**
