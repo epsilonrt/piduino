@@ -368,8 +368,6 @@ namespace Piduino {
 
           uint8_t bit = channel % 8; // Determine the bit position within the port
 
-
-
           if (m & DigitalOutput) {
 
             regs.config[index] &= ~ (1 << bit); // Set the specific bit to 0 for output
