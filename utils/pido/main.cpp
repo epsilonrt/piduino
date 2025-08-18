@@ -63,7 +63,7 @@ bool debug = false;
 bool forceGpioDev = false;
 int useGpioDevBeforeWfi = -1;
 static std::atomic<bool> should_exit (false);
-Pido::Format outFormat =  Pido::FormatDecimal;
+Pido::Format convFormat =  Pido::FormatDecimal;
 bool isAverage = false;
 bool isDifferential = false;
 std::string converterStr;
@@ -167,11 +167,11 @@ main (int argc, char **argv) {
           break;
 
         case 'x':
-          outFormat = Pido::FormatHexadecimal;
+          convFormat = Pido::FormatHexadecimal;
           break;
 
         case 'm':
-          outFormat = Pido::FormatAnalogValue;
+          convFormat = Pido::FormatAnalogValue;
           break;
 
         case 'a':
@@ -644,24 +644,28 @@ cwrite (int argc, char *argv[]) {
   }
   else {
     int chan = -1;
-    long value;
-
+    double value;
     std::unique_ptr<Converter> conv (Converter::factory (converterStr));
-
-    if (conv->type() != Converter::DigitalToAnalog &&
-        conv->type() != Converter::GpioExpander) {
-
-      throw Exception (Exception::ConverterUnknown, converterStr);
-    }
+    int vIndex = optind;
 
     if (paramc > 1) {
 
       chan = stoi (string (argv[optind]));
-      value = stol (string (argv[optind + 1]), nullptr, 0);
+      vIndex++;
+    }
+
+    if (convFormat == Pido::FormatAnalogValue) {
+
+      value = stod (string (argv[vIndex]));
     }
     else {
 
-      value = stol (string (argv[optind]), nullptr, 0);
+      value = stol (string (argv[vIndex]), nullptr, 0);
+    }
+
+    if ( (convFormat == Pido::FormatAnalogValue) && (chan < 0))  {
+
+      chan = 0; // Default channel for analog value
     }
 
     conv->setDebug (debug);
@@ -672,10 +676,18 @@ cwrite (int argc, char *argv[]) {
     conv->setEnable (true);
 
     if (chan >= 0) {
-      // TODO: get differential mode from parameters
-      if (!conv->writeChannel (value, chan)) {
+      if (convFormat == Pido::FormatAnalogValue) {
 
-        throw Exception (Exception::ConverterWriteError, conv->deviceName());
+        if (!conv->writeValue (value, chan, isDifferential)) {
+
+          throw Exception (Exception::ConverterWriteError, conv->deviceName());
+        }
+      }
+      else {
+        if (!conv->writeChannel (value, chan, isDifferential)) {
+
+          throw Exception (Exception::ConverterWriteError, conv->deviceName());
+        }
       }
     }
     else {
@@ -710,18 +722,12 @@ cread (int argc, char *argv[]) {
   int chan = -1;
   std::unique_ptr<Converter> conv (Converter::factory (converterStr));
 
-  if (conv->type() != Converter::AnalogToDigital &&
-      conv->type() != Converter::GpioExpander) {
-
-    throw Exception (Exception::ConverterUnknown, converterStr);
-  }
-
   if (paramc > 0) {
     std::string param (argv[optind]);
     chan = stoi (param);
   }
 
-  if ( (isDifferential || isAverage || outFormat == Pido::FormatAnalogValue) && (chan < 0))   {
+  if ( (isDifferential || isAverage || convFormat == Pido::FormatAnalogValue) && (chan < 0))   {
 
     chan = 0; // Default channel for differential or average mode
   }
@@ -733,7 +739,7 @@ cread (int argc, char *argv[]) {
   }
   conv->setEnable (true);
 
-  if (outFormat != Pido::FormatAnalogValue) { // Read the digital value
+  if (convFormat != Pido::FormatAnalogValue) { // Read the digital value
     long value;
 
     if (chan >= 0) { // Read a specific channel
@@ -752,7 +758,7 @@ cread (int argc, char *argv[]) {
 
       if (extendedMode) {
 
-        outFormat = Pido::FormatHexadecimal;
+        convFormat = Pido::FormatHexadecimal;
       }
       value = conv->read ();
     }
@@ -762,7 +768,7 @@ cread (int argc, char *argv[]) {
       throw Exception (Exception::ConverterReadError, conv->deviceName());
     }
 
-    if (outFormat == Pido::FormatHexadecimal) {
+    if (convFormat == Pido::FormatHexadecimal) {
       size_t valueSize = sizeof (value) * 2; // Size in bytes for hex output
 
       if (conv->flags() & Converter::hasResolution) {
@@ -821,14 +827,6 @@ void cmode (int argc, char *argv[]) {
     if (conv->flags() & Converter::hasModeSetting) {
       int chan = -1;
       Converter::Mode mode = Converter::NoMode;
-      static const map<string, Converter::ModeFlag> str2mode = {
-        {"in",    Converter::DigitalInput  },
-        {"out",   Converter::DigitalOutput },
-        {"off",   Converter::NoMode },
-        {"activelow", Converter::ActiveLow },
-        {"up", Converter::PullUp },
-        {"down", Converter::PullDown }
-      };
 
       try {
         chan = stoi (argv[optind]);
@@ -854,39 +852,23 @@ void cmode (int argc, char *argv[]) {
       if (paramc > 0) {
         // Setting the mode
 
+        if (! (conv->flags() & Converter::hasModeSetting)) {
+          cerr << "Converter " << conv->deviceName() << " does not support mode setting." << endl;
+          throw Exception (Exception::ConverterModeError, converterStr);
+        }
+
         while (paramc > 0) {
           string str (argv[optind]);
-          Converter::ModeFlag flag = str2mode.at (str);
 
-          switch (flag) {
-            case Converter::DigitalInput:
-              mode |= Converter::DigitalInput;
-              mode &= ~ (Converter::DigitalOutput);
-              break;
-            case Converter::DigitalOutput:
-              mode |= Converter::DigitalOutput;
-              mode &= ~ (Converter::DigitalInput);
-              break;
-            case Converter::ActiveLow:
-              mode |= Converter::ActiveLow;
-              break;
-            case Converter::PullUp:
-              mode |= Converter::PullUp;
-              mode &= ~ (Converter::PullDown);
-              break;
-            case Converter::PullDown:
-              mode |= Converter::PullDown;
-              mode &= ~ (Converter::PullUp);
-              break;
-            default:
-              mode &= ~ (Converter::ActiveLow);
-              break;
+          auto it = Converter::stringToModeFlagMap().find (str);
+          if (it != Converter::stringToModeFlagMap().end()) {
+            mode |= it->second;
           }
-
           paramc--;
           optind++;
         }
 
+        // The device is responsible to detect illegal mode combinations
         if (! conv->setMode (mode, chan)) {
           throw Exception (Exception::ConverterModeError, converterStr);
         }
@@ -894,34 +876,29 @@ void cmode (int argc, char *argv[]) {
       else {
         // Reading the mode
 
-        if (mode & Converter::DigitalInput) {
-          cout << "in";
-        }
-        else if (mode & Converter::DigitalOutput) {
-          cout << "out";
-        }
-        else if (! (mode & (Converter::DigitalInput | Converter::DigitalOutput))) {
-          cout << "off";
-        }
+        if (mode) {
+          for (auto &pair : Converter::modeFlagToStringMap()) {
+            Converter::ModeFlag flag = pair.first;
 
-        if (mode & Converter::PullUp) {
-          cout << " up";
+            if (mode & flag) {
+              cout << pair.second << " ";
+            }
+          }
         }
-        else if (mode & Converter::PullDown) {
-          cout << " down";
-        }
-        else if (! (mode & (Converter::PullUp | Converter::PullDown))) {
-          cout << " off";
-        }
+        else {
 
-        if (mode & Converter::ActiveLow) {
-          cout << " activelow";
+          if (conv->type() == Converter::GpioExpander) {
+            cout << "off";
+          }
+          else {
+            cout << "normal";
+          }
         }
         cout << endl;
       }
     }
     else {
-
+      cerr << "Converter " << conv->deviceName() << " does not support mode setting." << endl;
       throw Exception (Exception::ConverterModeError, converterStr);
     }
   }
