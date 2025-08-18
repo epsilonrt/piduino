@@ -18,6 +18,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <functional>
 #include <piduino/iodevice.h>
 #include <climits>
@@ -74,6 +75,63 @@ namespace Piduino {
         PwrDwnMask =    PwrDwnEn | PwrDwn1 | PwrDwn0, ///< Power down mode (for DACs), resistor value depends on device
         NormalMode =    0x00000000, ///< Normal mode (default)
       };
+
+      /**
+         @brief Get the mapping of mode flags to their string representations.
+
+         This function returns a map where the keys are the mode flags and the values are their string representations:
+
+         | **Flag**      | **Str**     |
+         |---------------|-------------|
+         | DigitalInput  | in          |
+         | DigitalOutput | out         |
+         | AnalogInput   | ain         |
+         | AnalogOutput  | aout        |
+         | ActiveLow     | activelow   |
+         | PullUp        | up          |
+         | PullDown      | down        |
+         | NoMode        | off         |
+         | EdgeRising    | rising      |
+         | EdgeFalling   | falling     |
+         | Interrupt     | int         |
+         | Continuous    | continuous  |
+         | SingleShot    | single      |
+         | FastMode      | fast        |
+         | SaveToEEPROM  | eeprom      |
+         | PwrDwnEn      | pden        |
+         | PwrDwn0       | pd0         |
+         | PwrDwn1       | pd1         |
+      */
+      static const std::map<ModeFlag, std::string> &modeFlagToStringMap();
+
+      /**
+         @brief Get the mapping of mode flags from their string representations.
+
+         This function returns a map where the keys are the string representations and the values are the mode flags.
+
+         | **Flag**      | **Str**     |
+         |---------------|-------------|
+         | DigitalInput  | in          |
+         | DigitalOutput | out         |
+         | AnalogInput   | ain         |
+         | AnalogOutput  | aout        |
+         | ActiveLow     | activelow   |
+         | PullUp        | up          |
+         | PullDown      | down        |
+         | NoMode        | off         |
+         | EdgeRising    | rising      |
+         | EdgeFalling   | falling     |
+         | Interrupt     | int         |
+         | Continuous    | continuous  |
+         | SingleShot    | single      |
+         | FastMode      | fast        |
+         | SaveToEEPROM  | eeprom      |
+         | PwrDwnEn      | pden        |
+         | PwrDwn0       | pd0         |
+         | PwrDwn1       | pd1         |         
+      */
+      static const std::map<std::string, Converter::ModeFlag> &stringToModeFlagMap();
+
 
       /**
          @typedef Mode

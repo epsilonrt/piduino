@@ -411,6 +411,60 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  // static
+  const std::map<Converter::ModeFlag, std::string> &Converter::modeFlagToStringMap() {
+
+    static const std::map<Converter::ModeFlag, std::string> modeFlagMap = {
+      {Converter::DigitalInput, "in"  },
+      {Converter::DigitalOutput, "out" },
+      {Converter::AnalogInput, "ain" },
+      {Converter::AnalogOutput, "aout" },
+      {Converter::ActiveLow, "activelow" },
+      {Converter::PullUp, "up" },
+      {Converter::PullDown, "down" },
+      {Converter::NoMode, "off" },
+      {Converter::EdgeRising, "rising" },
+      {Converter::EdgeFalling, "falling" },
+      {Converter::Interrupt, "int" },
+      {Converter::Continuous, "continuous" },
+      {Converter::SingleShot, "single" },
+      {Converter::FastMode, "fast" },
+      {Converter::SaveToEEPROM, "eeprom" },
+      {Converter::PwrDwnEn, "pden" },
+      {Converter::PwrDwn0, "pd0" },
+      {Converter::PwrDwn1, "pd1" },
+    };
+    return modeFlagMap;
+  }
+
+  // ---------------------------------------------------------------------------
+  // static
+  const std::map<std::string, Converter::ModeFlag> &Converter::stringToModeFlagMap() {
+
+    static const std::map<std::string, Converter::ModeFlag> stringMap = {
+      {"in",    Converter::DigitalInput  },
+      {"out",   Converter::DigitalOutput },
+      {"ain", Converter::AnalogInput },
+      {"aout", Converter::AnalogOutput },
+      {"off",   Converter::NoMode },
+      {"activelow", Converter::ActiveLow },
+      {"up", Converter::PullUp },
+      {"down", Converter::PullDown },
+      {"rising", Converter::EdgeRising },
+      {"falling", Converter::EdgeFalling },
+      {"int", Converter::Interrupt },
+      {"continuous", Converter::Continuous },
+      {"single", Converter::SingleShot },
+      {"fast", Converter::FastMode },
+      {"eeprom", Converter::SaveToEEPROM },
+      {"pden", Converter::PwrDwnEn },
+      {"pd0", Converter::PwrDwn0 },
+      {"pd1", Converter::PwrDwn1 },
+    };
+    return stringMap;
+  }
+
+  // ---------------------------------------------------------------------------
   //
   //                     Converter::Private Class
   //
