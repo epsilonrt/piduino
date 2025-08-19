@@ -259,7 +259,7 @@ namespace Piduino {
          @return true if the reference value was set successfully, false otherwise.
          @note Default implementation returns false, should be overridden by subclasses.
       */
-      virtual bool setReference (int referenceId, double fsr = 0.0) {
+      virtual bool setReference (int referenceId, double fsr = 0.0, int channel = -1) {
         return false; // Default implementation returns false, should be overridden by subclasses
       }
 
@@ -267,19 +267,19 @@ namespace Piduino {
          @brief Gets the current reference ID of the converter.
          @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
       */
-      virtual int reference() const {
+      virtual int reference (int channel = -1) const {
         return UnknownReference; // Default implementation returns UnknownReference
       }
 
       /**
          @brief Gets the current full-scale range of the converter.
-         
+
          This function is used by default by \c valueToDigital() and \c digitalToValue() to calculate the appropriate scaling factors.
 
          @return The full-scale range value, typically in volts but may vary depending on the converter model.
          @note Default implementation returns 3.3V, should be overridden by subclasses.
       */
-      virtual double fullScaleRange() const {
+      virtual double fullScaleRange (int channel = -1) const {
         return 3.3; // Default implementation returns 3.3V, should be overridden by subclasses
       }
 
@@ -289,7 +289,7 @@ namespace Piduino {
         @return True if the full-scale range was successfully set, false otherwise.
         @note Default implementation returns false. Should be overridden by subclasses.
       */
-      virtual bool setFullScaleRange (double fsr) {
+      virtual bool setFullScaleRange (double fsr, int channel = -1) {
         return false;
       }
 
@@ -299,8 +299,8 @@ namespace Piduino {
          @param differential If true, converts in differential mode (default is false).
          @return The corresponding analog value.
       */
-      virtual double digitalToValue (long digitalValue, bool differential = false) const {
-        double result = static_cast<double> (digitalValue) * fullScaleRange() / range();
+      virtual double digitalToValue (long digitalValue, bool differential = false, int channel = -1) const {
+        double result = static_cast<double> (digitalValue) * fullScaleRange(channel) / range();
 
         return result;
       }
@@ -311,8 +311,8 @@ namespace Piduino {
         @param differential If true, converts in differential mode (default is false).
         @return The corresponding digital value.
       */
-      virtual long valueToDigital (double value, bool differential = false) const {
-        long result = static_cast<long> ( (value * range()) / fullScaleRange());
+      virtual long valueToDigital (double value, bool differential = false, int channel = -1) const {
+        long result = static_cast<long> ( (value * range()) / fullScaleRange(channel));
 
         return clampValue (result, differential);
       }

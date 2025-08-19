@@ -266,7 +266,7 @@ namespace Piduino {
   // ---------------------------------------------------------------------------
   // override
   bool
-  Max1161x::Private::setReference (int referenceId, double fsr) {
+  Max1161x::Private::setReference (int referenceId, double fsr, int channel) {
 
     switch (referenceId) {
 

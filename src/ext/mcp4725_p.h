@@ -193,7 +193,7 @@ namespace Piduino {
 
         @return The full-scale range value, typically in volts but may vary depending on the converter model.
       */
-      virtual double fullScaleRange() const override {
+      virtual double fullScaleRange (int channel = -1) const override {
 
         return fsr;
       }
@@ -203,7 +203,7 @@ namespace Piduino {
         @param fsr The desired full-scale range value.
         @return True if the full-scale range was successfully set, false otherwise.
       */
-      virtual bool setFullScaleRange (double fsr) override {
+      virtual bool setFullScaleRange (double fsr, int channel = -1) override {
         this->fsr = fsr;
         return true;
       }

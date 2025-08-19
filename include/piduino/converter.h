@@ -49,6 +49,7 @@ namespace Piduino {
       */
       enum ModeFlag {
         NoMode =        0x00000000, ///< No mode specified
+        NormalMode =    0x00000000, ///< Normal mode (default)
         DigitalInput =  0x00000001, ///< Digital input mode
         DigitalOutput = 0x00000002, ///< Digital output mode
         AnalogInput =   0x00000004, ///< Analog input mode (for ADCs)
@@ -56,14 +57,21 @@ namespace Piduino {
         PullUp =        0x00000010, ///< Pull-up resistor enabled
         PullDown =      0x00000020, ///< Pull-down resistor enabled
         ActiveLow =     0x00000040, ///< Active low mode
+
+        // Trigger Modes for GPIO
         EdgeRising =    0x00000080, ///< Edge rising trigger
         EdgeFalling =   0x00000100, ///< Edge falling trigger
         EdgeBoth =      EdgeRising | EdgeFalling, ///< Both rising and falling edge triggers
         Interrupt =     0x00000200, ///< Interrupt mode
+
+        // Conversion Modes for ADCs
         Continuous =    0x00000400, ///< Continuous mode (for ADCs)
         SingleShot =    0x00000800, ///< Single-shot mode (for ADCs)
+
         FastMode =      0x00001000, ///< Fast mode (for DACs)
         SaveToEEPROM =  0x00002000, ///< Save to EEPROM (for DACs)
+
+        // Power Down Modes
         PwrDwn0 =       0x00004000, ///< Power down mode (for DACs), LSB
         PwrDwn1 =       0x00008000, ///< Power down mode (for DACs), MSB
         PwrDwnEn =      0x00010000, ///< Power down mode enable (for DACs)
@@ -73,7 +81,21 @@ namespace Piduino {
         PwrDwnR3 =      PwrDwnEn | PwrDwn1, ///< Power down mode (for DACs), resistor value depends on device
         PwrDwnR4 =      PwrDwnEn | PwrDwn1 | PwrDwn0, ///< Power down mode (for DACs), resistor value depends on device
         PwrDwnMask =    PwrDwnEn | PwrDwn1 | PwrDwn0, ///< Power down mode (for DACs), resistor value depends on device
-        NormalMode =    0x00000000, ///< Normal mode (default)
+
+        // Amplifier Gain Selection
+        GainBit0 =      0x00020000, ///< Gain Bit 0
+        GainBit1 =      0x00040000, ///< Gain Bit 1
+        GainBit2 =      0x00080000, ///< Gain Bit 2
+        GainEn =        0x00100000, ///< Gain Enable
+        GainMask =      GainBit0 | GainBit1 | GainBit2 | GainEn, ///< Gain Mask
+        Gain1 = GainEn,                                   ///< Gain1 = 000 -> The lowest gain level, the real value depends on the device
+        Gain2 = GainEn |                       GainBit0,  ///< Gain2 = 001
+        Gain3 = GainEn |            GainBit1,             ///< Gain3 = 010
+        Gain4 = GainEn |            GainBit1 | GainBit0,  ///< Gain4 = 011
+        Gain5 = GainEn | GainBit2,                        ///< Gain5 = 100
+        Gain6 = GainEn | GainBit2 |            GainBit0,  ///< Gain6 = 101
+        Gain7 = GainEn | GainBit2 | GainBit1,             ///< Gain7 = 110
+        Gain8 = GainEn | GainBit2 | GainBit1 | GainBit0,  ///< Gain8 = 111 -> The highest gain level, the real value depends on the device
       };
 
       /**
@@ -128,7 +150,7 @@ namespace Piduino {
          | SaveToEEPROM  | eeprom      |
          | PwrDwnEn      | pden        |
          | PwrDwn0       | pd0         |
-         | PwrDwn1       | pd1         |         
+         | PwrDwn1       | pd1         |
       */
       static const std::map<std::string, Converter::ModeFlag> &stringToModeFlagMap();
 
@@ -349,12 +371,32 @@ namespace Piduino {
       virtual double digitalToValue (long digitalValue, bool differential = false) const;
 
       /**
+         Converts a digital value to an analog value for a specific channel.
+         @param channel The channel number.
+         @param digitalValue The digital value to convert.
+         @param differential If true, converts in differential mode (default is false).
+         @return The corresponding analog value.
+         @note if the converter does not support per-channel references, the default channel reference ID will be used.
+      */
+      virtual double digitalToValue (int channel, long digitalValue, bool differential = false) const;
+
+      /**
         @brief Converts a analog value to a digital value.
         @param value The value to convert.
         @param differential If true, converts in differential mode (default is false).
         @return The corresponding digital value.
       */
       virtual long valueToDigital (double value, bool differential = false) const;
+
+      /**
+         Converts an analog value to a digital value for a specific channel.
+         @param channel The channel number.
+         @param value The value to convert.
+         @param differential If true, converts in differential mode (default is false).
+         @return The corresponding digital value.
+         @note if the converter does not support per-channel references, the default channel reference ID will be used.
+      */
+      virtual long valueToDigital (int channel, double value, bool differential = false) const;
 
       /**
          @brief Enables or disables the converter.
@@ -419,17 +461,34 @@ namespace Piduino {
       /**
         @brief Sets the reference value of the converter.
         @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
-        @param fsr The full-scale range value, used for external reference (default is 0.0 that indicates internal or VDD reference).
+        @param fsr The full-scale range value, mandatory for external reference (default is 0.0 that indicates internal or VDD reference).
         @return true if the reference value was set successfully, false otherwise.
         @note Default implementation returns false, should be overridden by subclasses.
       */
       virtual bool setReference (int referenceId, double fsr = 0.0);
 
       /**
+         Sets the reference value of the converter for a specific channel.
+         @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
+         @param channel The channel number. If the converter does not support per-channel references, the default channel reference ID will be used.
+         @param fsr The full-scale range value, mandatory for external reference (default is 0.0 that indicates internal or VDD reference).
+         @return true if the reference value was set successfully, false otherwise.
+         @note Default implementation returns false, should be overridden by subclasses.
+      */
+      virtual bool setReference (int referenceId, int channel, double fsr = 0.0);
+
+      /**
          @brief Gets the current reference ID of the converter.
          @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
       */
       virtual int reference() const;
+
+      /**
+         Gets the current reference ID of the converter for a specific channel.
+         @param channel The channel number.
+         @return The reference ID for the specified channel. If it's not possible to set for a specific channel, the default channel reference ID will be returned.
+      */
+      virtual int reference (int channel) const;
 
       /**
          @brief Gets the current full-scale range of the converter.
@@ -442,12 +501,31 @@ namespace Piduino {
       virtual double fullScaleRange() const;
 
       /**
+         Gets the current full-scale range of the converter for a specific channel.
+
+         This function is used, by default, by \c valueToDigital() and \c digitalToValue() to calculate the appropriate scaling factors.
+
+         @param channel The channel number.
+         @return The full-scale range value for the specified channel. If it's not possible to set for a specific channel, the default channel full-scale range will be returned.
+      */
+      virtual double fullScaleRange (int channel) const;
+
+      /**
          @brief Sets the full-scale range of the converter.
          @param fsr The desired full-scale range value.
          @return True if the full-scale range was successfully set, false otherwise.
          @note Default implementation returns false. Should be overridden by subclasses.
       */
       virtual bool setFullScaleRange (double fsr);
+
+      /**
+         Sets the full-scale range of the converter for a specific channel.
+         @param channel The channel number.
+         @param fsr The desired full-scale range value.
+         @return True if the full-scale range was successfully set, false otherwise.
+         @note Default implementation returns false. Should be overridden by subclasses.
+      */
+      virtual bool setFullScaleRange (int channel, double fsr);
 
       /**
         @brief Gets the current clock frequency.

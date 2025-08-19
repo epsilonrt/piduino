@@ -140,18 +140,18 @@ namespace Piduino {
          @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
          @param fsr The full-scale range value, used for external reference (default is 0.0).
          @return true if the reference value was set successfully, false otherwise.
-         @note Default implementation returns false, should be overridden by subclasses.
       */
-      virtual bool setReference (int referenceId, double fsr = 0.0) override;
+      virtual bool setReference (int referenceId, double fsr = 0.0, int channel = -1) override;
 
       /**
          @brief Gets the current reference ID of the converter.
          @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
       */
-      virtual int reference() const override {
+      virtual int reference (int channel = -1) const override {
 
         return referenceId;
       }
+
       /**
         @brief Gets the current full-scale range of the converter.
 
@@ -159,7 +159,7 @@ namespace Piduino {
 
         @return The full-scale range value, typically in volts but may vary depending on the converter model.
       */
-      virtual double fullScaleRange() const override {
+      virtual double fullScaleRange (int channel = -1) const override {
 
         return fsr;
       }
@@ -169,7 +169,7 @@ namespace Piduino {
         @param fsr The desired full-scale range value.
         @return True if the full-scale range was successfully set, false otherwise.
       */
-      virtual bool setFullScaleRange (double fsr) override {
+      virtual bool setFullScaleRange (double fsr, int channel = -1) override {
         this->fsr = fsr;
         return true;
       }

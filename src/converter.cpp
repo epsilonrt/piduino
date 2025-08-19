@@ -176,11 +176,30 @@ namespace Piduino {
 
   // -----------------------------------------------------------------------------
   // virtual
+  double 
+  Converter::digitalToValue (int channel, long digitalValue, bool differential) const {
+    PIMP_D (const Converter);
+
+    return d->digitalToValue (digitalValue, differential, channel);
+  }
+
+  // -----------------------------------------------------------------------------
+  // virtual
   long
   Converter::valueToDigital (double voltage, bool differential) const {
     PIMP_D (const Converter);
 
     return d->valueToDigital (voltage, differential);
+  }
+
+
+  // -----------------------------------------------------------------------------
+  // virtual
+    long 
+    Converter::valueToDigital (int channel, double value, bool differential) const {
+    PIMP_D (const Converter);
+
+    return d->valueToDigital (value, differential, channel);
   }
 
   // -----------------------------------------------------------------------------
@@ -199,7 +218,7 @@ namespace Piduino {
   double
   Converter::readValue (int channel, bool differential) {
 
-    return digitalToValue (readChannel (channel, differential), differential);
+    return digitalToValue (channel, readChannel (channel, differential), differential);
   }
 
   // -----------------------------------------------------------------------------
@@ -207,7 +226,7 @@ namespace Piduino {
   double
   Converter::readAverageValue (int channel, bool differential, int count) {
 
-    return digitalToValue (readAverage (channel, differential, count), differential);
+    return digitalToValue (channel, readAverage (channel, differential, count), differential);
   }
 
   // ---------------------------------------------------------------------------
@@ -227,7 +246,7 @@ namespace Piduino {
   // virtual
   bool Converter::writeValue (double value, int channel, bool differential) {
 
-    return writeChannel (valueToDigital (value, differential), channel, differential);
+    return writeChannel (valueToDigital (channel, value, differential), channel, differential);
   }
 
   // ---------------------------------------------------------------------------
@@ -342,23 +361,51 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
-  bool Converter::setReference (int referenceId, double fsr) {
+  bool
+  Converter::setReference (int referenceId, double fsr) {
     PIMP_D (Converter);
 
     return d->setReference (referenceId, fsr);
   }
 
   // ---------------------------------------------------------------------------
-  int Converter::reference() const {
+  bool
+  Converter::setReference (int referenceId, int channel, double fsr) {
+    PIMP_D (Converter);
+
+    return d->setReference (referenceId, fsr, channel);
+  }
+
+  // ---------------------------------------------------------------------------
+  int
+  Converter::reference() const {
     PIMP_D (const Converter);
 
     return d->reference();
   }
 
   // ---------------------------------------------------------------------------
-  double Converter::fullScaleRange() const {
+  int
+  Converter::reference (int channel) const {
     PIMP_D (const Converter);
+
+    return d->reference (channel);
+  }
+
+  // ---------------------------------------------------------------------------
+  double
+  Converter::fullScaleRange() const {
+    PIMP_D (const Converter);
+
     return d->fullScaleRange();
+  }
+
+  // ---------------------------------------------------------------------------
+  double
+  Converter::fullScaleRange (int channel) const {
+    PIMP_D (const Converter);
+
+    return d->fullScaleRange (channel);
   }
 
   // --------------------------------------------------------------------------
@@ -366,6 +413,14 @@ namespace Piduino {
     PIMP_D (Converter);
 
     return d->setFullScaleRange (fsr);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  Converter::setFullScaleRange (int channel, double fsr) {
+    PIMP_D (Converter);
+
+    return d->setFullScaleRange (fsr, channel);
   }
 
   // ---------------------------------------------------------------------------
