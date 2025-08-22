@@ -109,6 +109,7 @@ set (hdr_extensions
   ${PIDUINO_INC_DIR}/piduino/max1161x.h
   ${PIDUINO_INC_DIR}/piduino/max7311.h
   ${PIDUINO_INC_DIR}/piduino/mcp4725.h
+  ${PIDUINO_INC_DIR}/piduino/mcp4728.h
 )
 
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
