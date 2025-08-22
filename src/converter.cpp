@@ -176,7 +176,7 @@ namespace Piduino {
 
   // -----------------------------------------------------------------------------
   // virtual
-  double 
+  double
   Converter::digitalToValue (int channel, long digitalValue, bool differential) const {
     PIMP_D (const Converter);
 
@@ -195,8 +195,8 @@ namespace Piduino {
 
   // -----------------------------------------------------------------------------
   // virtual
-    long 
-    Converter::valueToDigital (int channel, double value, bool differential) const {
+  long
+  Converter::valueToDigital (int channel, double value, bool differential) const {
     PIMP_D (const Converter);
 
     return d->valueToDigital (value, differential, channel);
@@ -246,6 +246,15 @@ namespace Piduino {
   // virtual
   bool Converter::writeValue (double value, int channel, bool differential) {
 
+    if (flags() & hasReferencePerChannel && channel < 0) {
+      PIMP_D (Converter);
+
+      d->setError (EINVAL); 
+      if (d->isDebug) {
+        std::cerr << "Invalid argument: writing an analog value to all channels is not supported when per-channel references are enabled." << std::endl;
+      }
+      return false;
+    }
     return writeChannel (valueToDigital (channel, value, differential), channel, differential);
   }
 
@@ -466,6 +475,22 @@ namespace Piduino {
   }
 
   // ---------------------------------------------------------------------------
+  bool
+  Converter::setModeFlags (long flags, long mask, int channel) {
+    PIMP_D (Converter);
+
+    return d->setModeFlags (flags, mask, channel);
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  Converter::clearModeFlags (long flags, long mask, int channel) {
+    PIMP_D (Converter);
+
+    return d->clearModeFlags (flags, mask, channel);
+  }
+
+  // ---------------------------------------------------------------------------
   // static
   const std::map<Converter::ModeFlag, std::string> &Converter::modeFlagToStringMap() {
 
@@ -531,6 +556,60 @@ namespace Piduino {
 
   // ---------------------------------------------------------------------------
   Converter::Private::~Private() = default;
+
+  // ---------------------------------------------------------------------------
+  bool
+  Converter::Private::setModeFlags (long flags, long mask, int channel) {
+    Mode m;
+
+    if (channel == -1) {
+
+      for (int i = 0; i < numberOfChannels(); ++i) {
+        m = mode (i) & ~mask;
+        m |= flags & mask; // Set the specified flags
+        if (!setMode (m, i)) {
+          if (isDebug) {
+            std::cerr << "Converter: Failed to set mode flags for channel: " << i << std::endl;
+          }
+          return false; // If setting mode fails for any channel, return false
+        }
+      }
+    }
+    else if (channel >= 0 && channel < numberOfChannels()) {
+
+      m = mode (channel) & ~mask;
+      m |= flags & mask; // Set the specified flags
+      return setMode (m, channel);
+    }
+    return false;
+  }
+
+  // ---------------------------------------------------------------------------
+  bool
+  Converter::Private::clearModeFlags (long flags, long mask, int channel) {
+    Mode m;
+
+    if (channel == -1) {
+
+      for (int i = 0; i < numberOfChannels(); ++i) {
+        m = mode (i) & ~mask;
+        m &= ~flags & mask; // Clear the specified flags
+        if (!setMode (m, i)) {
+          if (isDebug) {
+            std::cerr << "Converter: Failed to clear mode flags for channel: " << i << std::endl;
+          }
+          return false; // If setting mode fails for any channel, return false
+        }
+      }
+    }
+    else if (channel >= 0 && channel < numberOfChannels()) {
+
+      m = mode (channel) & ~mask;
+      m &= ~flags & mask; // Clear the specified flags
+      return setMode (m, channel);
+    }
+    return false;
+  }
 
   // -----------------------------------------------------------------------------
   // Converts a string to a vector of strings by splitting it at the given delimiter.

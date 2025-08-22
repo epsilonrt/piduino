@@ -176,6 +176,7 @@ namespace Piduino {
         hasClockSelection = 0x00000800, ///< Indicates that the converter supports clock selection
         hasModeSetting    = 0x00001000, ///< Indicates that the converter supports mode setting
         hasToggle         = 0x00002000, ///< Indicates that the converter supports toggling (GpioExpander only)
+        hasReferencePerChannel = 0x00004000, ///< Indicates that the converter supports per-channel references
       };
 
       enum {
@@ -290,6 +291,7 @@ namespace Piduino {
          @param value The value to write. This value will be clamped to the valid range defined by \c min() and \c max().
          @return true if successful, false otherwise.
          @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
+         @note if the converter has channels, this function will write all channels with the same value.
       */
       virtual bool write (long value);
 
@@ -338,22 +340,23 @@ namespace Piduino {
       /**
          @brief Writes a digital value to a specific channel of the converter.
          @param value The sample value to write. This value will be clamped to the valid range defined by \c min() and \c max().
-         @param channel The channel to write to (default is 0).
+         @param channel The channel to write to (default is -1, which writes to all channels).
          @param differential If true, writes in differential mode (default is false).
          @return true if successful, false otherwise.
          @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
       */
-      virtual bool writeChannel (long value, int channel = 0, bool differential = false);
+      virtual bool writeChannel (long value, int channel = -1, bool differential = false);
 
       /**
          @brief Writes a value to the converter (DAC).
          @param value The value to write, which is converted to a digital value with valueToDigital().
-         @param channel The channel to write to (default is 0).
+         @param channel The channel to write to (default is -1, which writes to all channels).
          @param differential If true, writes in differential mode (default is false).
          @return true if successful, false otherwise.
          @note This function is disabled if the open mode is not WriteOnly or ReadWrite.
+         @note if the converter supports per-channel references, this function cannot be called with channel=-1
       */
-      virtual bool writeValue (double value, int channel = 0, bool differential = false);
+      virtual bool writeValue (double value, int channel = -1, bool differential = false);
 
       /**
          @brief Returns the number of channels supported by the converter.
@@ -470,23 +473,26 @@ namespace Piduino {
       /**
          Sets the reference value of the converter for a specific channel.
          @param referenceId The ID of the reference value to set, which can be a predefined constant or a custom value depending on the converter model.
-         @param channel The channel number. If the converter does not support per-channel references, the default channel reference ID will be used.
+         @param channel The channel number.
          @param fsr The full-scale range value, mandatory for external reference (default is 0.0 that indicates internal or VDD reference).
          @return true if the reference value was set successfully, false otherwise.
          @note Default implementation returns false, should be overridden by subclasses.
+         @note if the converter does not support per-channel references, the common reference ID will be set (channel will be ignored).
       */
       virtual bool setReference (int referenceId, int channel, double fsr = 0.0);
 
       /**
          @brief Gets the current reference ID of the converter.
          @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
+         @note if the converter supports per-channel references, the default channel reference ID will be returned (Channel 0)
       */
       virtual int reference() const;
 
       /**
          Gets the current reference ID of the converter for a specific channel.
          @param channel The channel number.
-         @return The reference ID for the specified channel. If it's not possible to set for a specific channel, the default channel reference ID will be returned.
+         @return The reference ID for the specified channel.
+         @note if it's not possible to set for a specific channel, the common reference ID will be returned (channel will be ignored)
       */
       virtual int reference (int channel) const;
 
@@ -497,6 +503,7 @@ namespace Piduino {
 
          @return The full-scale range value, typically in volts but may vary depending on the converter model.
          @note Default implementation returns 3.3V, should be overridden by subclasses.
+         @note if the converter supports per-channel full-scale ranges, the default channel full-scale range will be returned (Channel 0)
       */
       virtual double fullScaleRange() const;
 
@@ -506,7 +513,8 @@ namespace Piduino {
          This function is used, by default, by \c valueToDigital() and \c digitalToValue() to calculate the appropriate scaling factors.
 
          @param channel The channel number.
-         @return The full-scale range value for the specified channel. If it's not possible to set for a specific channel, the default channel full-scale range will be returned.
+         @return The full-scale range value for the specified channel.
+         @note if it's not possible to set for a specific channel, the common full-scale range will be returned (channel will be ignored)
       */
       virtual double fullScaleRange (int channel) const;
 
@@ -515,6 +523,7 @@ namespace Piduino {
          @param fsr The desired full-scale range value.
          @return True if the full-scale range was successfully set, false otherwise.
          @note Default implementation returns false. Should be overridden by subclasses.
+         @note if the converter does not support per-channel full-scale ranges, the default channel full-scale range will be set (Channel 0)
       */
       virtual bool setFullScaleRange (double fsr);
 
@@ -524,6 +533,7 @@ namespace Piduino {
          @param fsr The desired full-scale range value.
          @return True if the full-scale range was successfully set, false otherwise.
          @note Default implementation returns false. Should be overridden by subclasses.
+         @note if the converter does not support per-channel full-scale ranges, the common full-scale range will be set (channel will be ignored).
       */
       virtual bool setFullScaleRange (int channel, double fsr);
 
@@ -587,6 +597,28 @@ namespace Piduino {
          @note This function may be overridden by subclasses to implement specific mode setting logic.
       */
       virtual bool setMode (Mode m, int channel = -1);
+
+      /**
+         @brief Sets the mode flags for the converter.
+         @param flags The flags to set.
+         @param mask The mask to apply (default is -1, which means all flags). The bits are used to select specific mode flags.
+         @param channel The channel number (default is -1, indicating all channels).
+         @return True if the mode flags were successfully set, false otherwise.
+         @note This function may be overridden by subclasses to implement specific mode flag setting logic.
+         @note The flags are a combination of ModeFlag values, and the mask allows selective setting
+      */
+      virtual bool setModeFlags (long flags, long mask = -1, int channel = -1);
+
+      /**
+         @brief Clears the mode flags for the converter.
+         @param flags The flags to clear.
+         @param mask The mask to apply (default is -1, which means all flags). The bits are used to select specific mode flags.
+         @param channel The channel number (default is -1, indicating all channels).
+         @return True if the mode flags were successfully cleared, false otherwise.
+         @note This function may be overridden by subclasses to implement specific mode flag clearing logic.
+         @note The flags are a combination of ModeFlag values, and the mask allows selective clearing.
+      */
+      virtual bool clearModeFlags (long flags, long mask = -1, int channel = -1);
 
     protected:
       /**

@@ -116,13 +116,13 @@ namespace Piduino {
       /**
          @brief Writes a value to the converter device.
          @param value The value to write, this value will be clamped to the valid range.
-         @param channel The channel to write to.
+         @param channel The channel to write to. -1 to all channels.
          @param differential If true, writes in differential mode (default is false).
          @return True if the value was successfully written, false otherwise.
          @note may be overridden by subclasses to implement specific writing logic.
           This function is not callable if the open mode is not WriteOnly or ReadWrite (or closed).
       */
-      virtual bool writeChannel (long value, int channel = 0, bool differential = false) {
+      virtual bool writeChannel (long value, int channel = -1, bool differential = false) {
 
         return write (value);
       }
@@ -267,7 +267,7 @@ namespace Piduino {
          @brief Gets the current reference ID of the converter.
          @return The ID reference of the reference voltage, which can be a predefined constant or a custom value depending on the converter model.
       */
-      virtual int reference (int channel = -1) const {
+      virtual int reference (int channel = 0) const {
         return UnknownReference; // Default implementation returns UnknownReference
       }
 
@@ -279,7 +279,7 @@ namespace Piduino {
          @return The full-scale range value, typically in volts but may vary depending on the converter model.
          @note Default implementation returns 3.3V, should be overridden by subclasses.
       */
-      virtual double fullScaleRange (int channel = -1) const {
+      virtual double fullScaleRange (int channel = 0) const {
         return 3.3; // Default implementation returns 3.3V, should be overridden by subclasses
       }
 
@@ -299,7 +299,7 @@ namespace Piduino {
          @param differential If true, converts in differential mode (default is false).
          @return The corresponding analog value.
       */
-      virtual double digitalToValue (long digitalValue, bool differential = false, int channel = -1) const {
+      virtual double digitalToValue (long digitalValue, bool differential = false, int channel = 0) const {
         double result = static_cast<double> (digitalValue) * fullScaleRange(channel) / range();
 
         return result;
@@ -311,7 +311,7 @@ namespace Piduino {
         @param differential If true, converts in differential mode (default is false).
         @return The corresponding digital value.
       */
-      virtual long valueToDigital (double value, bool differential = false, int channel = -1) const {
+      virtual long valueToDigital (double value, bool differential = false, int channel = 0) const {
         long result = static_cast<long> ( (value * range()) / fullScaleRange(channel));
 
         return clampValue (result, differential);
@@ -371,6 +371,28 @@ namespace Piduino {
       virtual bool setMode (Mode m, int channel = -1) {
         return false; // Default implementation returns false, indicating no mode support
       }
+
+      /**
+         @brief Sets the mode flags for the converter.
+         @param flags The flags to set.
+         @param mask The mask to apply (default is -1, which means all flags). The bits are used to select specific mode flags.
+         @param channel The channel number (default is -1, indicating all channels).
+         @return True if the mode flags were successfully set, false otherwise.
+         @note This function may be overridden by subclasses to implement specific mode flag setting logic.
+         @note The flags are a combination of ModeFlag values, and the mask allows selective setting
+      */
+      virtual bool setModeFlags (long flags, long mask = -1, int channel = -1);
+
+      /**
+         @brief Clears the mode flags for the converter.
+         @param flags The flags to clear.
+         @param mask The mask to apply (default is -1, which means all flags). The bits are used to select specific mode flags.
+         @param channel The channel number (default is -1, indicating all channels).
+         @return True if the mode flags were successfully cleared, false otherwise.
+         @note This function may be overridden by subclasses to implement specific mode flag clearing logic.
+         @note The flags are a combination of ModeFlag values, and the mask allows selective clearing.
+      */
+      virtual bool clearModeFlags (long flags, long mask = -1, int channel = -1);
 
       // ------------------------- internal methods -------------------------
 
