@@ -643,7 +643,7 @@ cwrite (int argc, char *argv[]) {
     throw Exception (Exception::ArgumentExpected);
   }
   else {
-    int chan = -1;
+    int chan = -2;
     double value;
     std::unique_ptr<Converter> conv (Converter::factory (converterStr));
     int vIndex = optind;
@@ -663,9 +663,9 @@ cwrite (int argc, char *argv[]) {
       value = stol (string (argv[vIndex]), nullptr, 0);
     }
 
-    if ( (convFormat == Pido::FormatAnalogValue) && (chan < 0))  {
+    if ( (convFormat == Pido::FormatAnalogValue) && (chan == -2))  {
 
-      chan = 0; // Default channel for analog value
+      chan = -1; // Set all channels
     }
 
     conv->setDebug (debug);
@@ -675,7 +675,7 @@ cwrite (int argc, char *argv[]) {
     }
     conv->setEnable (true);
 
-    if (chan >= 0) {
+    if (chan >= -1) {
       if (convFormat == Pido::FormatAnalogValue) {
 
         if (!conv->writeValue (value, chan, isDifferential)) {
