@@ -203,7 +203,7 @@ namespace Piduino {
     it = paramsMap.find ("fsr");
     if (it != paramsMap.end()) {
       double fsrValue = std::stod (it->second);
-      if (fsrValue > 0.0) {
+      if (fsrValue != 0.0) {
 
         fsr = fsrValue; // Set the full-scale range value
       }

@@ -97,7 +97,7 @@ namespace Piduino {
 
     it = paramsMap.find ("addr");
     if (it != paramsMap.end()) {
-      int id = it->second.empty() ? 0x20 : std::stoi (it->second);
+      int id = it->second.empty() ? 0x60 : std::stoi (it->second);
       addr = id;
     }
 
