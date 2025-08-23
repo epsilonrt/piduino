@@ -166,3 +166,60 @@ It is also possible to use [Codelite](https://codelite.org/) it's easier and fun
 ![Debugging with Codelite](https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-2.png)
 
 You should read the [wiki on the examples](https://github.com/epsilonrt/piduino/wiki/Examples) to learn more...
+
+## Converters System and extension
+
+Since version 0.7, Piduino has supported a unified conversion system for sensors and actuators. This includes classes for ADCs, DACs, and GPIO expanders, allowing for easy integration of I2C and SPI peripherals. This is made possible by a modular and extensible architecture and the Converter class.
+
+The Converter class provides a unified interface for interacting with various analog and digital converters such as ADCs, DACs, and GPIO expanders. This powerful abstraction layer allows seamless integration of I2C and SPI peripherals like the MAX1161x series ADCs, MCP4725/MCP4728 DACs, and MAX7311 GPIO expanders. The converter system supports automatic device detection, multiple reference voltages, differential measurements, and configurable resolution settings.
+
+The list of supported converters can be found with the pido utility:
+
+```bash
+$ pido converters
+Name                Type      Parameters
+--------------------------------------------------------------------------------
+gpiopwm             dac       pin[:range:freq]
+max1161x            adc       bus=id:max={12,13,14,15,16,17}:ref={ext,vdd,int1,int2,int3,int4}:fsr=value:bipolar={1,0}:clk={int,ext}
+max7311             gpioexp   bus=id:addr={0x20...0xDE}:bustimeout={0,1}
+mcp4725             dac       bus=id:addr={0x60..0x67}:fsr=value:mode={norm,fast,eeprom,pd1k,pd100k,pd500k}
+mcp4728             dac       bus=id:addr={0x60..0x67}:ref={vdd,int}:fsr=value:gain={1,2}:mode={norm,fast,eeprom,pd1k,pd100k,pd500k}
+```
+
+For the moment, the list is relatively short, but it should grow over time.
+
+You can easily control converters from the command line using the pido utility. For example, to read an analog value from channel 0 of a MAX11615 ADC connected to I2C bus 1:
+
+```bash
+$ pido -c max1161x:bus=1:max=15:ref=int4 cread 0
+1843
+
+$ pido -c max1161x:bus=1:max=15:ref=int4 -m cread 0
+1.502V
+```
+
+The same functionality is available in C++ code using the converter factory system:
+
+```c++
+#include <Piduino.h>
+#include <Converters.h>
+
+int main() {
+    // Create a MAX11615 ADC instance
+    std::unique_ptr<Converter> adc(Converter::factory("max1161x:bus=1:max=15:ref=int4"));
+    
+    if (adc && adc->open()) {
+        // Read digital value from channel 0
+        long digitalValue = adc->readChannel(0);
+        
+        // Convert to analog voltage
+        double voltage = adc->digitalToValue(digitalValue);
+        
+        std::cout << "Channel 0: " << digitalValue << " (" << voltage << "V)" << std::endl;
+        
+        adc->close();
+    }
+    
+    return 0;
+}
+```
