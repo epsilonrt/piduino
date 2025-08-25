@@ -19,23 +19,8 @@ RUN apt-get update && \
       fakeroot \
       doxygen \
       doxygen-latex \
-      doxygen-doc \
-      doxygen-gui \
       graphviz 
 
-COPY .github/docker/nodesource-repo.gpg.key /tmp/nodesource-repo.gpg.key
-RUN gpg --dearmor --yes --output /etc/apt/keyrings/nodesource.gpg /tmp/nodesource-repo.gpg.key
-
-# Add the repository to the sources list
-RUN echo 'deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main' > /etc/apt/sources.list.d/nodesource.list
-
-# Update the package list
-RUN apt-get update && \
-      apt-get install -y \
-        nodejs \
-        npm \
-        && npm install -g marked \
-        && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace
 COPY . /workspace
