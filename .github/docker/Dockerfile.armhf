@@ -1,0 +1,44 @@
+# Dockerfile to build CMake project on armhf with a raspios image
+ARG BASE_IMAGE=arm32v7/debian:bookworm
+FROM ${BASE_IMAGE}
+
+# Install required dependencies for CMake and build
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      build-essential \
+      cmake \
+      git \
+      ninja-build \
+      ca-certificates \
+      gnupg \
+      libcppdb-dev \
+      pkg-config \
+      libudev-dev \
+      valgrind \
+      libunittest++-dev \
+      fakeroot \
+      doxygen \
+      doxygen-latex \
+      doxygen-doc \
+      doxygen-gui \
+      graphviz 
+
+COPY .github/docker/nodesource-repo.gpg.key /tmp/nodesource-repo.gpg.key
+RUN gpg --dearmor --yes --output /etc/apt/keyrings/nodesource.gpg /tmp/nodesource-repo.gpg.key
+
+# Add the repository to the sources list
+RUN echo 'deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main' > /etc/apt/sources.list.d/nodesource.list
+
+# Update the package list
+RUN apt-get update && \
+      apt-get install -y \
+        nodejs \
+        npm \
+        && npm install -g marked \
+        && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+COPY . /workspace
+
+# Default command (adapt to your project if needed)
+CMD ["sh", "-c", "cmake -S . -B build && cmake --build build"]
