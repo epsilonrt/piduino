@@ -24,7 +24,7 @@
 */
 var NAVTREE =
 [
-  [ "PiDuino", "index.html", [
+  [ "PIDUINO", "index.html", [
     [ "Abstract", "index.html#autotoc_md2", null ],
     [ "Quickstart guide", "index.html#autotoc_md3", [
       [ "Utilities", "index.html#autotoc_md4", null ],
