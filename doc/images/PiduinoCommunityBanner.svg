@@ -2,23 +2,23 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="288.99554mm"
    height="83.255554mm"
    viewBox="0 0 1024 294.99999"
    id="svg5152"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
    sodipodi:docname="PiduinoCommunityBanner.svg"
    inkscape:export-filename="/home/pascal/src/piduino/doc/images/PiduinoCommunityBanner.png"
    inkscape:export-xdpi="87.889999"
-   inkscape:export-ydpi="87.889999">
+   inkscape:export-ydpi="87.889999"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs5154" />
   <sodipodi:namedview
@@ -29,8 +29,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="577.21241"
-     inkscape:cy="159.83192"
+     inkscape:cx="577.14286"
+     inkscape:cy="160.35714"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -40,10 +40,13 @@
      fit-margin-bottom="0"
      showborder="false"
      inkscape:window-width="1920"
-     inkscape:window-height="943"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1" />
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata5157">
     <rdf:RDF>
@@ -276,17 +279,16 @@
          id="text20">
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:180px;line-height:125%;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0px;word-spacing:-10.00000113px;fill:#e47128;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0px;word-spacing:-10px;fill:#e47128;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
            x="16.226673"
            y="474.58469"
            id="text3354"
-           sodipodi:linespacing="125%"
            transform="scale(0.98312573,1.0171639)"><tspan
              sodipodi:role="line"
              id="tspan3356"
              x="16.226673"
              y="474.58469"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5px;font-family:'Bitstream Vera Sans Mono';-inkscape-font-specification:'Bitstream Vera Sans Mono';word-spacing:-8.0000009px;fill:#e47128;fill-opacity:1">ON PI BOARDS</tspan></text>
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5px;line-height:1.25;font-family:'Bitstream Vera Sans Mono';-inkscape-font-specification:'Bitstream Vera Sans Mono';word-spacing:-8px;fill:#e47128;fill-opacity:1">ON PI BOARDS</tspan></text>
       </g>
     </g>
     <g
@@ -303,17 +305,16 @@
          id="text20-3">
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:180px;line-height:125%;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0px;word-spacing:0px;fill:#00878f;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0px;word-spacing:0px;fill:#00878f;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
            x="16.226673"
            y="474.58469"
            id="text3354-3"
-           sodipodi:linespacing="125%"
            transform="scale(0.98312573,1.0171639)"><tspan
              sodipodi:role="line"
              id="tspan3356-2"
              x="16.226673"
              y="474.58469"
-             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:35px;font-family:'Bitstream Vera Sans Mono';-inkscape-font-specification:'Bitstream Vera Sans Mono Bold';fill:#00878f;fill-opacity:1">PIDUINO</tspan></text>
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:35px;line-height:1.25;font-family:'Bitstream Vera Sans Mono';-inkscape-font-specification:'Bitstream Vera Sans Mono Bold';fill:#00878f;fill-opacity:1">PIDUINO</tspan></text>
       </g>
     </g>
     <g
@@ -330,22 +331,21 @@
          id="text20-8">
         <text
            xml:space="preserve"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:180px;line-height:125%;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0px;word-spacing:0px;fill:#8c7965;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';letter-spacing:0px;word-spacing:0px;fill:#8c7965;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
            x="16.226673"
            y="474.58469"
            id="text3354-0"
-           sodipodi:linespacing="125%"
            transform="scale(0.98312573,1.0171639)"><tspan
              sodipodi:role="line"
              id="tspan3356-6"
              x="16.226673"
              y="474.58469"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5px;font-family:'Bitstream Vera Sans Mono';-inkscape-font-specification:'Bitstream Vera Sans Mono';fill:#8c7965;fill-opacity:1;word-spacing:-10.00000113px"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5px;line-height:1.25;font-family:'Bitstream Vera Sans Mono';-inkscape-font-specification:'Bitstream Vera Sans Mono';word-spacing:-10px;fill:#8c7965;fill-opacity:1"
              dx="0 0 0 0 0 0 0 0">ARDUINO<tspan
-   style="font-size:10px;word-spacing:-10.00000113px"
+   style="font-size:10px;word-spacing:-10px"
    id="tspan5070">®</tspan><tspan
    id="tspan4246"
-   style="font-size:22.50000255px;word-spacing:-10.00000113px"> API</tspan></tspan></text>
+   style="font-size:22.5px;word-spacing:-10px"> API</tspan></tspan></text>
       </g>
     </g>
   </g>
