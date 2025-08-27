@@ -2,7 +2,7 @@
 
 _Arduino on Pi boards, the best of both worlds !_
 
-<img src="https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/PiduinoCommunityLogo.png" alt="Piduino Logo" align="right" valign="top">
+<img src="https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/PiduinoCommunityLogoSmall.png" alt="Piduino Logo" align="right" valign="top">
 
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/epsilonrt/piduino?include_prereleases)](https://github.com/epsilonrt/piduino/releases)  
 
