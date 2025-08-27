@@ -1,4 +1,4 @@
-name: Build CMake on armhf (debian)
+name: Build armhf
 
 on:
   workflow_dispatch:
