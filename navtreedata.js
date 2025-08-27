@@ -31,7 +31,6 @@ var NAVTREE =
       [ "Blink Example", "index.html#autotoc_md5", null ]
     ] ],
     [ "Converters System and extension", "index.html#autotoc_md6", null ],
-    [ "Topics", "topics.html", "topics" ],
     [ "Namespace Members", "namespacemembers.html", [
       [ "All", "namespacemembers.html", null ],
       [ "Functions", "namespacemembers_func.html", null ],
@@ -60,17 +59,16 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"class_piduino_1_1_database_1_1_board.html#a2554a6433478479b307cef6a14f54afb",
-"class_piduino_1_1_gpio_1_1_descriptor.html",
-"class_piduino_1_1_implicit.html#a4927039be497b971d6edd9bb9f20f2cf",
-"class_piduino_1_1_max1161x.html#aebe1af007b5ecac3c3ee96f04136cc47",
-"class_piduino_1_1_mcp4725.html#ab872872581bb8b88e319b9fe4d0a603d",
-"class_piduino_1_1_pin.html#a7c112f51af1ae355e89c5f96c974c102",
-"class_piduino_1_1_serial_port.html#a6934214e780ec721f4af0779e6c300b1",
-"class_piduino_1_1_soc_pwm.html#a6c76d8c56ae26a4ee2d64431afeb6f21",
-"class_piduino_1_1_sys_log.html#ae3e0c4c569e8046014007bb35a46691da426c69f8505ac7a71721719c1897e7e9",
-"class_piduino_1_1_value.html#a30039646dd52048ed833c36f45663752",
-"namespace_piduino.html"
+"class_piduino_1_1_database_1_1_board.html#a7c41b55b6992bc07464a8a0f22b50907",
+"class_piduino_1_1_gpio_pwm.html#a096af715ac66a137616be8dab7dad6bf",
+"class_piduino_1_1_io_device.html#aae2ead67d734d911381bfb830817f913",
+"class_piduino_1_1_max7311.html#a5425ba8313fa55335fb63d0f6a682f70a39cdeda3d7bdb34ad3317020e2ee3eb8",
+"class_piduino_1_1_mcp4728.html#a2a0ec5b937a12979efce01ca6a83add8",
+"class_piduino_1_1_pin.html#ad7687fa9e14ec46ec18e3c4354983551ad5ff3bcc2af58da652efb9e5c158cc76",
+"class_piduino_1_1_serial_port.html#ad28ad1f8b401944a28d9421e5f07229e",
+"class_piduino_1_1_soc_pwm.html#af6568085bc739fed2cdee72b0f42f270",
+"class_piduino_1_1_system.html#ac4c3d9929da0b02970c82058f0bf4534",
+"classgpio__v2__line__config__attribute.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

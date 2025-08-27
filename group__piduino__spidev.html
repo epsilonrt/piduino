@@ -95,6 +95,12 @@ $(document).ready(function(){initNavTree('group__piduino__spidev.html',''); init
   <div class="headertitle"><div class="title">SPI Bus</div></div>
 </div><!--header-->
 <div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p>Ce module permet l'utilisation des bus SPI en mode maître à l'aide du driver spidev.</p>
+<dl class="section warning"><dt>Warning</dt><dd>Dans le modèle Arduino, qui est monotâche, c'est l'utilisateur qui gère le signal de sélection d'esclave (SS,CS ou CE en fonction des circuits) à l'aide de la fonction digitalWrite(). Dans les nouvelles version d'Arduino, il est apparu les fonctions beginTransaction() et endTransaction() qui préfigure une évolution de l'utilisation du bus SPI qui se rapproche de ce qu'on trouve sur un système comme GNU Linux (structure spi_ioc_transfer).</dd></dl>
+<p>Dans un système multitâche, l'accès au bus SPI (et plus généralement à toutes les ressources non partageables) est géré par le système d'exploitation par le driver. C'est le driver spidev qui gère tous les signaux du bus : MOSI, MISO, SCK et CS.</p>
+<p>La gestion du CS de l'espace utilisateur a été envisagée car on constate la présence d'un flag SPI_NO_CS dans les sources du noyau <a href="https://github.com/torvalds/linux/blob/master/drivers/spi">https://github.com/torvalds/linux/blob/master/drivers/spi</a>, néanmoins, on constate que seuls des drivers spi-bcm2835.c (Raspberry Pi !), spi-davinci.c et spi-imx.c gère cette possibilité.</p>
+<p>Le choix qui a été fait, pour l'instant dans le noyau Arduino de PiDuino (src/arduino/Core.cpp) est de laisser le driver spi gérer le signal CS sur les autres cartes que les RaspberryPi. Dans ce cas, Les appels à pinMode() et donc à digitalWrite() n'ont aucun effet lorsqu'il s'agit de la broche correspondant au CS du bus SPI utilisé. Cela permet d'assurer une compatibilité avec le code Arduino, tout en restant compatible avec toutes les cartes Pi.Néanmoins,cela n'autorise pas l'utilisation d'une autre broche GPIO que celle du CS SPI sur les autres cartes que Raspberry Pi (pour l'instant...). </p>
 <div class="dynheader">
 Collaboration diagram for SPI Bus:</div>
 <div class="dyncontent">
@@ -107,12 +113,6 @@ Namespaces</h2></td></tr>
 <tr class="memdesc:namespace_piduino"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global namespace for <a class="el" href="namespace_piduino.html" title="Global namespace for Piduino.">Piduino</a>. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Ce module permet l'utilisation des bus SPI en mode maître à l'aide du driver spidev.</p>
-<dl class="section warning"><dt>Warning</dt><dd>Dans le modèle Arduino, qui est monotâche, c'est l'utilisateur qui gère le signal de sélection d'esclave (SS,CS ou CE en fonction des circuits) à l'aide de la fonction digitalWrite(). Dans les nouvelles version d'Arduino, il est apparu les fonctions beginTransaction() et endTransaction() qui préfigure une évolution de l'utilisation du bus SPI qui se rapproche de ce qu'on trouve sur un système comme GNU Linux (structure spi_ioc_transfer).</dd></dl>
-<p>Dans un système multitâche, l'accès au bus SPI (et plus généralement à toutes les ressources non partageables) est géré par le système d'exploitation par le driver. C'est le driver spidev qui gère tous les signaux du bus : MOSI, MISO, SCK et CS.</p>
-<p>La gestion du CS de l'espace utilisateur a été envisagée car on constate la présence d'un flag SPI_NO_CS dans les sources du noyau <a href="https://github.com/torvalds/linux/blob/master/drivers/spi">https://github.com/torvalds/linux/blob/master/drivers/spi</a>, néanmoins, on constate que seuls des drivers spi-bcm2835.c (Raspberry Pi !), spi-davinci.c et spi-imx.c gère cette possibilité.</p>
-<p>Le choix qui a été fait, pour l'instant dans le noyau Arduino de PiDuino (src/arduino/Core.cpp) est de laisser le driver spi gérer le signal CS sur les autres cartes que les RaspberryPi. Dans ce cas, Les appels à pinMode() et donc à digitalWrite() n'ont aucun effet lorsqu'il s'agit de la broche correspondant au CS du bus SPI utilisé. Cela permet d'assurer une compatibilité avec le code Arduino, tout en restant compatible avec toutes les cartes Pi.Néanmoins,cela n'autorise pas l'utilisation d'une autre broche GPIO que celle du CS SPI sur les autres cartes que Raspberry Pi (pour l'instant...). </p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
