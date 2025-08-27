@@ -11,3 +11,5 @@ obj/
 version.*
 *build*/
 work/
+doc/docs
+doc/html

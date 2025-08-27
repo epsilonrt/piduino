@@ -2,6 +2,15 @@
 
 _Arduino on Pi boards, the best of both worlds !_
 
+<img src="https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/PiduinoCommunityLogo.png" alt="Piduino Logo" align="right" valign="top">
+
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/epsilonrt/piduino?include_prereleases)](https://github.com/epsilonrt/piduino/releases)  
+
+[![Arm64 Build](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml.yml)
+[![ArmHf Build](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml.yml)
+
+---
+
 ## Abstract
 
 PiDuino is a C ++ library for Pi boards that allows the use of I/O like GPIO,
@@ -200,7 +209,7 @@ $ pido -c max1161x:bus=1:max=15:ref=int4 -m cread 0
 
 The same functionality is available in C++ code using the converter factory system:
 
-```c++
+```cpp
 #include <Piduino.h>
 #include <Converters.h>
 
