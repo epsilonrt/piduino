@@ -36,13 +36,13 @@ if (PIDUINO_WITH_DOXYGEN_DOC)
     message(FATAL_ERROR "sed is required but was not found. Please install sed.")
   endif()
 
-  set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
+  set(DOXYFILE_IN ${PROJECT_SOURCE_DIR}/Doxyfile)
   set(DOXYFILE_BUILD ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
   # You must set the following variables to point to your project's files
   set(DOXY_README "${PROJECT_SOURCE_DIR}/README.md")
   set(DOXY_INPUT ${DOXY_README} ${PROJECT_SOURCE_DIR}/include/piduino)
   set(DOXY_IMAGE_PATH "${PROJECT_SOURCE_DIR}/doc/images")
-  set(DOXY_PROJECT_LOGO "${PROJECT_SOURCE_DIR}/doc/images/PiduinoLogoSmall.png")
+  set(DOXY_PROJECT_LOGO "${PROJECT_SOURCE_DIR}/doc/images/PiduinoCommunityLogo.png")
   set(DOXY_EXAMPLE_PATH "${PROJECT_SOURCE_DIR}/examples")
 
   # replace placeholders in the Doxyfile for local generation
