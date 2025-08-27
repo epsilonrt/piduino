@@ -233,23 +233,33 @@ Converters System and extension</h1>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;Piduino.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;Converters.h&gt;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">    <span class="comment">// Create a MAX11615 ADC instance</span></div>
-<div class="line">    std::unique_ptr&lt;Converter&gt; adc(Converter::factory(<span class="stringliteral">&quot;max1161x:bus=1:max=15:ref=int4&quot;</span>));</div>
-<div class="line">    </div>
-<div class="line">    <span class="keywordflow">if</span> (adc &amp;&amp; adc-&gt;open()) {</div>
-<div class="line">        <span class="comment">// Read digital value from channel 0</span></div>
-<div class="line">        <span class="keywordtype">long</span> digitalValue = adc-&gt;readChannel(0);</div>
-<div class="line">        </div>
-<div class="line">        <span class="comment">// Convert to analog voltage</span></div>
-<div class="line">        <span class="keywordtype">double</span> voltage = adc-&gt;digitalToValue(digitalValue);</div>
-<div class="line">        </div>
-<div class="line">        std::cout &lt;&lt; <span class="stringliteral">&quot;Channel 0: &quot;</span> &lt;&lt; digitalValue &lt;&lt; <span class="stringliteral">&quot; (&quot;</span> &lt;&lt; voltage &lt;&lt; <span class="stringliteral">&quot;V)&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line">        </div>
-<div class="line">        adc-&gt;close();</div>
-<div class="line">    }</div>
-<div class="line">    </div>
-<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><span class="comment">// Create a MAX11615 ADC instance with the factory method</span></div>
+<div class="line">std::unique_ptr&lt;Converter&gt; adc (Converter::factory (<span class="stringliteral">&quot;max1161x:bus=1:max=15:ref=int4&quot;</span>));</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> setup() {</div>
+<div class="line"> </div>
+<div class="line">  Console.begin (115200);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">if</span> (!adc-&gt;open()) {</div>
+<div class="line">    Console.println (<span class="stringliteral">&quot;Failed to open ADC&quot;</span>);</div>
+<div class="line">    exit (EXIT_FAILURE);</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> loop() {</div>
+<div class="line">  <span class="comment">// Read digital value from channel 0</span></div>
+<div class="line">  <span class="keywordtype">long</span> digitalValue = adc-&gt;readChannel (0);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Convert to analog voltage</span></div>
+<div class="line">  <span class="keywordtype">double</span> voltage = adc-&gt;digitalToValue (digitalValue);</div>
+<div class="line"> </div>
+<div class="line">  Console.print (<span class="stringliteral">&quot;Channel 0: &quot;</span>);</div>
+<div class="line">  Console.print (digitalValue);</div>
+<div class="line">  Console.print (<span class="stringliteral">&quot; (&quot;</span>);</div>
+<div class="line">  Console.print (voltage);</div>
+<div class="line">  Console.println (<span class="stringliteral">&quot;V)&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">  delay (1000);</div>
 <div class="line">}</div>
 </div><!-- fragment --> </div></div><!-- PageDoc -->
 </div><!-- contents -->
