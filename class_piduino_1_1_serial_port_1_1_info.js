@@ -1,0 +1,28 @@
+var class_piduino_1_1_serial_port_1_1_info =
+[
+    [ "Info", "class_piduino_1_1_serial_port_1_1_info.html#ab4c59a7aa53951b785caab6cc6a4e29e", null ],
+    [ "Info", "class_piduino_1_1_serial_port_1_1_info.html#ae1bdfdbdcf763584a4510040c9fbecd5", null ],
+    [ "Info", "class_piduino_1_1_serial_port_1_1_info.html#aa2087678e14273209cf440e61dc33776", null ],
+    [ "Info", "class_piduino_1_1_serial_port_1_1_info.html#a1a5f8fb19478a75f5d7ed433698bd230", null ],
+    [ "~Info", "class_piduino_1_1_serial_port_1_1_info.html#af218cd342821fbb3a2b4cf8b2a852997", null ],
+    [ "Info", "class_piduino_1_1_serial_port_1_1_info.html#af2aa46cbd71bd497c53f81248358808a", null ],
+    [ "availablePorts", "class_piduino_1_1_serial_port_1_1_info.html#ae10862208b7eeb50808a18ab740947dc", null ],
+    [ "defaultPort", "class_piduino_1_1_serial_port_1_1_info.html#ac0e3654275a2f3c6debaefc7937a6f45", null ],
+    [ "description", "class_piduino_1_1_serial_port_1_1_info.html#a987203de2e04b2bec63700ee84d2b28c", null ],
+    [ "driverName", "class_piduino_1_1_serial_port_1_1_info.html#af54493e12d17662a054930e7af439d32", null ],
+    [ "hasProductIdentifier", "class_piduino_1_1_serial_port_1_1_info.html#ae1e7a3b6e32993000e4a4dafb373ed0d", null ],
+    [ "hasVendorIdentifier", "class_piduino_1_1_serial_port_1_1_info.html#a7ec3b50d54784f569978762b4e103040", null ],
+    [ "isNull", "class_piduino_1_1_serial_port_1_1_info.html#ac6c05eab1398c988519dbcbe0791af9b", null ],
+    [ "manufacturer", "class_piduino_1_1_serial_port_1_1_info.html#aa8038c4a1dd770679f0b969cf59b9956", null ],
+    [ "operator!=", "class_piduino_1_1_serial_port_1_1_info.html#ac00ba849c101fbb66d3670f0cf4dc7a5", null ],
+    [ "operator=", "class_piduino_1_1_serial_port_1_1_info.html#a092dc7b49b06dbc6dd45a159fe01e80e", null ],
+    [ "operator==", "class_piduino_1_1_serial_port_1_1_info.html#a1127edce730af6c823cb65522e4207a2", null ],
+    [ "portName", "class_piduino_1_1_serial_port_1_1_info.html#a560ea54a70d36a52e2ccf667436b89c1", null ],
+    [ "productIdentifier", "class_piduino_1_1_serial_port_1_1_info.html#a89a9b54ca6eb661ec0572942fc4a60a7", null ],
+    [ "serialNumber", "class_piduino_1_1_serial_port_1_1_info.html#a6fc8d90810b927d1071a7564e96a10d4", null ],
+    [ "standardBaudRates", "class_piduino_1_1_serial_port_1_1_info.html#a5f05a7079c8bf694126c634cc465f62b", null ],
+    [ "swap", "class_piduino_1_1_serial_port_1_1_info.html#aa792c00451cf50c0d8c8fb0ea354902e", null ],
+    [ "systemLocation", "class_piduino_1_1_serial_port_1_1_info.html#a5ab90f837bb7777fb4e4300dd0759e7d", null ],
+    [ "vendorIdentifier", "class_piduino_1_1_serial_port_1_1_info.html#a5da4719453c1bf31a06d2ce937be0a3b", null ],
+    [ "d_ptr", "class_piduino_1_1_serial_port_1_1_info.html#a8769de5ad85323e158866f6a966ef9a1", null ]
+];

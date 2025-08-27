@@ -1,0 +1,5 @@
+<map id="Gpio2::Chip::lineInfo" name="Gpio2::Chip::lineInfo">
+<area shape="rect" id="Node000001" title="Retrieves information about a specific GPIO line." alt="" coords="5,5,160,31"/>
+<area shape="rect" id="Node000002" href="$class_gpio2_1_1_chip.html#ae7713bc115a815b7553014f8129b9c7c" title="Performs an IOCTL operation on the GPIO chip." alt="" coords="208,5,343,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,15,194,15,194,21,160,21"/>
+</map>

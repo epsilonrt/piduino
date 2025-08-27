@@ -1,0 +1,32 @@
+<map id="Piduino::SoC" name="Piduino::SoC">
+<area shape="rect" id="Node000001" title=" " alt="" coords="316,528,443,793"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="113,163,140,228"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,209,70,254,46,286,29,321,15,361,9,395,12,427,29,464,54,499,84,529,118,556,155,579,231,615,301,639,300,644,229,620,152,584,115,560,80,533,50,502,24,467,7,428,3,395,10,360,24,319,42,283,66,251,111,206"/>
+<area shape="rect" id="Node000005" href="$class_piduino_1_1_so_c_1_1_family.html" title=" " alt="" coords="68,320,214,465"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="129,228,130,296,131,303,126,304,125,296,123,228"/>
+<area shape="rect" id="Node000006" href="$class_piduino_1_1_manufacturer.html" title=" " alt="" coords="238,320,396,465"/>
+<area shape="poly" id="edge8_Node000006_Node000002" title=" " alt="" coords="141,198,189,215,217,231,243,250,265,276,283,304,279,307,261,279,239,254,214,235,187,220,139,203"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="291,163,370,228"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="370,227,389,251,403,284,410,319,430,411,432,452,428,504,427,512,421,511,422,504,427,452,424,412,405,321,398,285,384,253,366,230"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="292,205,239,222,212,235,190,254,172,278,160,306,155,303,168,275,186,250,209,231,237,217,290,200"/>
+<area shape="poly" id="edge9_Node000006_Node000003" title=" " alt="" coords="331,229,326,304,320,303,326,228"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="265,5,396,85"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="333,99,333,162,328,162,328,99"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="207,464,307,575,303,578,203,467"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="318,465,322,504,324,512,319,513,317,504,313,466"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="542,13,572,78"/>
+<area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="558,78,553,149,542,247,522,357,492,466,474,509,454,550,449,547,469,506,487,464,517,356,537,246,548,149,553,78"/>
+<area shape="rect" id="Node000009" href="$class_piduino_1_1_pin_1_1_spi_cs.html" title="Represents a SPI chip select configuration for a pin." alt="" coords="580,163,715,228"/>
+<area shape="poly" id="edge14_Node000009_Node000007" title=" " alt="" coords="574,77,606,137,614,148,609,151,602,140,569,79"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="574,353,721,433"/>
+<area shape="poly" id="edge11_Node000001_Node000008" title=" " alt="" coords="619,435,555,506,457,597,454,593,551,502,615,431"/>
+<area shape="poly" id="edge12_Node000008_Node000009" title=" " alt="" coords="650,228,650,336,645,336,645,228"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="626,13,669,78"/>
+<area shape="poly" id="edge13_Node000009_Node000010" title=" " alt="" coords="650,78,650,146,645,146,645,78"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="693,13,744,78"/>
+<area shape="poly" id="edge15_Node000009_Node000011" title=" " alt="" coords="713,79,690,140,684,150,680,148,685,138,708,77"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="740,163,862,228"/>
+<area shape="poly" id="edge16_Node000008_Node000012" title=" " alt="" coords="774,241,733,298,685,354,681,351,728,294,770,238"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="790,13,812,78"/>
+<area shape="poly" id="edge17_Node000012_Node000013" title=" " alt="" coords="804,78,804,146,798,146,798,78"/>
+</map>

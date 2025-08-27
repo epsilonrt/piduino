@@ -1,0 +1,5 @@
+<map id="Piduino::BashCompletionOptionPrinter" name="Piduino::BashCompletionOptionPrinter">
+<area shape="rect" id="Node000001" title="Option printer for bash completion." alt="" coords="5,159,248,279"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_option_printer.html" title="Base class for an OptionPrinter." alt="" coords="49,5,205,111"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="129,124,129,158,124,158,124,124"/>
+</map>

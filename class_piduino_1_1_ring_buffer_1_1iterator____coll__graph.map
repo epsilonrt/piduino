@@ -1,0 +1,14 @@
+<map id="Piduino::RingBuffer&lt; T, A &gt;::iterator_&lt; E, EN &gt;" name="Piduino::RingBuffer&lt; T, A &gt;::iterator_&lt; E, EN &gt;">
+<area shape="rect" id="Node000001" title="RingBuffer iterator class template." alt="" coords="163,760,301,1055"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,390,184,485"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,497,192,759,186,760,109,498"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_ring_buffer.html" title="STL&#45;style circular buffer." alt="" coords="325,177,486,697"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="327,657,294,746,289,744,322,655"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="217,5,293,71"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="257,71,239,744,234,744,251,71"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="269,70,300,152,321,209,316,211,295,154,264,72"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="367,5,476,71"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="423,71,419,161,414,161,417,71"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="509,5,569,71"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="534,72,512,154,494,209,489,207,507,153,529,70"/>
+</map>

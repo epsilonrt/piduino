@@ -1,0 +1,15 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,13,112,38"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="160,13,331,38"/>
+<area shape="poly" id="edge34_Node000000_Node000001" title=" " alt="" coords="126,23,160,23,160,28,126,28"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="379,5,524,45"/>
+<area shape="poly" id="edge35_Node000001_Node000002" title=" " alt="" coords="344,23,378,23,378,28,344,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="601,15,705,41"/>
+<area shape="poly" id="edge36_Node000002_Node000003" title=" " alt="" coords="537,24,601,25,601,30,537,29"/>
+<area shape="rect" id="Node000004" href="$class_piduino_1_1_sys_log.html" title="System logger." alt="" coords="783,42,907,67"/>
+<area shape="poly" id="edge37_Node000003_Node000004" title=" " alt="" coords="720,35,783,43,782,49,719,40"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="397,70,505,95"/>
+<area shape="rect" id="Node000005" href="$class_piduino_1_1_sys_log_buffer.html" title=" " alt="" coords="572,66,735,91"/>
+<area shape="poly" id="edge38_Node000006_Node000005" title=" " alt="" coords="519,79,572,78,572,83,519,84"/>
+<area shape="poly" id="edge39_Node000005_Node000004" title=" " alt="" coords="748,64,782,60,783,65,748,69"/>
+</map>

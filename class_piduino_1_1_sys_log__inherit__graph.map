@@ -1,0 +1,15 @@
+<map id="Piduino::SysLog" name="Piduino::SysLog">
+<area shape="rect" id="Node000001" title="System logger." alt="" coords="95,533,220,939"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_sys_log_buffer.html" title=" " alt="" coords="5,360,160,485"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,498,112,533,106,534,98,499"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="33,239,133,305"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="85,318,85,360,80,360,80,318"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="184,390,280,455"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="224,469,208,534,203,533,219,468"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="163,232,301,312"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="235,326,235,390,229,390,229,326"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="151,119,313,184"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="235,198,235,232,229,232,229,198"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="183,5,281,71"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="235,84,235,119,229,119,229,84"/>
+</map>

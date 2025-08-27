@@ -1,0 +1,11 @@
+<map id="Piduino::FileDevice" name="Piduino::FileDevice">
+<area shape="rect" id="Node000001" title="Provides an interface for reading from and writing to files." alt="" coords="23,339,161,704"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_file_stream.html" title="Provides an interface for reading from and writing to files with stream." alt="" coords="22,752,162,957"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="95,718,95,752,89,752,89,718"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_io_device.html" title="Abstract base class for input/output devices." alt="" coords="5,5,179,291"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,305,95,338,89,338,89,305"/>
+<area shape="rect" id="Node000004" href="$class_piduino_1_1_terminal.html" title="Provides an interface for reading from and writing to terminals (tty)" alt="" coords="29,1005,155,1311"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="95,971,95,1005,89,1005,89,971"/>
+<area shape="rect" id="Node000005" href="$class_piduino_1_1_serial_port.html" title="Provides functions to access serial ports." alt="" coords="25,1359,159,1644"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="95,1324,95,1358,89,1358,89,1324"/>
+</map>

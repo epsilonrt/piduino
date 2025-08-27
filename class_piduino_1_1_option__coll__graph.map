@@ -1,0 +1,9 @@
+<map id="Piduino::Option" name="Piduino::Option">
+<area shape="rect" id="Node000001" title="Abstract Base class for Options." alt="" coords="75,292,191,597"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="31,135,110,200"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,200,71,233,75,268,76,275,71,276,69,268,66,233,66,200"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,5,136,85"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="73,99,73,134,68,134,68,99"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="162,135,233,200"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="193,201,175,277,170,275,187,200"/>
+</map>

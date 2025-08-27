@@ -1,0 +1,9 @@
+<map id="Piduino::System::ArmbianInfo" name="Piduino::System::ArmbianInfo">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,336,212,541"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="47,135,90,200"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="70,200,70,253,75,312,77,320,71,321,70,312,65,253,65,200"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="115,135,193,200"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="151,200,131,320,126,319,146,200"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="89,5,219,85"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="157,99,157,134,151,134,151,99"/>
+</map>

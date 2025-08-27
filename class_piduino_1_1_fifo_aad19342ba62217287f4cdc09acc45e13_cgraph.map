@@ -1,0 +1,7 @@
+<map id="Piduino::Fifo::push" name="Piduino::Fifo::push">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,147,31"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_fifo.html#a5ec68b3372696f318d191be2f19073cf" title=" " alt="" coords="195,5,331,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,15,181,15,181,21,147,21"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_fifo.html#abe1d74ea3ea2d22ed6ffcffcc1aaaed1" title=" " alt="" coords="379,5,529,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="331,15,365,15,365,21,331,21"/>
+</map>

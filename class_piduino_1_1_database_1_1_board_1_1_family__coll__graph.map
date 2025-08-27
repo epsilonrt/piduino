@@ -1,0 +1,9 @@
+<map id="Piduino::Database::Board::Family" name="Piduino::Database::Board::Family">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,307,145,527"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="33,135,59,200"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="51,200,58,282,59,290,54,291,53,283,45,200"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="84,135,163,200"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="120,201,102,291,97,290,115,200"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="58,5,189,85"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="126,99,126,134,121,134,121,99"/>
+</map>

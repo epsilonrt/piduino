@@ -1,0 +1,9 @@
+<map id="Piduino::TSQueue&lt; T &gt;" name="Piduino::TSQueue&lt; T &gt;">
+<area shape="rect" id="Node000001" title="Thread&#45;safe queue implementation." alt="" coords="80,133,247,279"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,97,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="69,69,91,108,98,119,94,122,86,111,64,72"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="121,5,205,71"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="166,71,166,117,161,117,161,71"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="229,5,364,71"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="274,72,243,111,234,122,230,119,239,108,270,69"/>
+</map>

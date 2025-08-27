@@ -1,0 +1,7 @@
+<map id="Gpio2::Line::setConfig" name="Gpio2::Line::setConfig">
+<area shape="rect" id="Node000001" title="Sets the configuration for the GPIO line." alt="" coords="5,31,169,56"/>
+<area shape="rect" id="Node000002" href="$class_gpio2_1_1_line.html#a55afa86ffff008038c5bd4ccfa487c03" title="Gets the current line configuration." alt="" coords="220,5,363,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,31,206,26,206,31,170,36"/>
+<area shape="rect" id="Node000003" href="$class_gpio2_1_1_line.html#af6ebb0f3d30ff33fe6033aca7b316332" title="Checks if the GPIO line is open." alt="" coords="217,55,365,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="170,50,204,54,203,60,169,56"/>
+</map>

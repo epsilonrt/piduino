@@ -1,0 +1,31 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$class_piduino_1_1_io_device.html" title="Abstract base class for input/output devices." alt="" coords="5,203,140,228"/>
+<area shape="rect" id="Node000001" href="$class_piduino_1_1_converter.html" title="The Converter class provides an interface for analog&#45;to&#45;digital and digital&#45;to&#45;analog converters." alt="" coords="190,128,333,153"/>
+<area shape="poly" id="edge10_Node000000_Node000001" title=" " alt="" coords="112,194,187,162,218,151,220,156,189,167,114,199"/>
+<area shape="rect" id="Node000008" href="$class_piduino_1_1_file_device.html" title="Provides an interface for reading from and writing to files." alt="" coords="188,177,335,203"/>
+<area shape="poly" id="edge17_Node000000_Node000008" title=" " alt="" coords="153,202,187,197,188,202,154,207"/>
+<area shape="rect" id="Node000013" href="$class_piduino_1_1_i2c_dev.html" title="I2C device interface for communicating with I2C peripheral devices." alt="" coords="200,227,323,252"/>
+<area shape="poly" id="edge21_Node000000_Node000013" title=" " alt="" coords="154,223,200,229,199,234,153,228"/>
+<area shape="rect" id="Node000014" href="$class_piduino_1_1_spi_dev.html" title=" " alt="" coords="199,276,323,301"/>
+<area shape="poly" id="edge22_Node000000_Node000014" title=" " alt="" coords="117,231,189,261,223,273,222,278,187,266,114,236"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_gpio_pwm.html" title="Provides PWM (Pulse Width Modulation) control for a GPIO pin." alt="" coords="387,5,527,31"/>
+<area shape="poly" id="edge11_Node000001_Node000002" title=" " alt="" coords="283,116,326,78,381,40,407,28,409,33,384,44,330,82,287,120"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_max1161x.html" title="Class for the MAX11612 to MAX11617 series of analog&#45;to&#45;digital converters." alt="" coords="383,55,530,80"/>
+<area shape="poly" id="edge12_Node000001_Node000003" title=" " alt="" coords="304,120,382,89,414,78,416,83,384,94,306,125"/>
+<area shape="rect" id="Node000004" href="$class_piduino_1_1_max7311.html" title="I2C GPIO expander controller for the MAX7311 device." alt="" coords="387,104,526,129"/>
+<area shape="poly" id="edge13_Node000001_Node000004" title=" " alt="" coords="346,128,387,123,387,128,347,133"/>
+<area shape="rect" id="Node000005" href="$class_piduino_1_1_mcp4725.html" title="Class for the MCP4725 series of digital&#45;to&#45;analog converters." alt="" coords="388,153,525,179"/>
+<area shape="poly" id="edge14_Node000001_Node000005" title=" " alt="" coords="347,149,388,154,387,160,346,154"/>
+<area shape="rect" id="Node000006" href="$class_piduino_1_1_mcp4728.html" title="Class for the MCP4728 series of digital&#45;to&#45;analog converters." alt="" coords="388,203,525,228"/>
+<area shape="poly" id="edge15_Node000001_Node000006" title=" " alt="" coords="318,155,336,162,384,188,416,200,414,205,382,192,334,167,316,160"/>
+<area shape="rect" id="Node000007" href="$class_piduino_1_1_soc_pwm.html" title=" " alt="" coords="390,252,523,277"/>
+<area shape="poly" id="edge16_Node000001_Node000007" title=" " alt="" coords="329,157,336,163,353,182,361,201,369,219,384,237,406,250,403,254,381,241,364,222,356,203,349,185,333,167,326,162"/>
+<area shape="rect" id="Node000009" href="$class_piduino_1_1_file_stream.html" title="Provides an interface for reading from and writing to files with stream." alt="" coords="383,313,531,339"/>
+<area shape="poly" id="edge18_Node000008_Node000009" title=" " alt="" coords="329,207,336,212,354,231,362,250,369,269,384,288,421,311,419,315,381,292,365,272,357,252,349,234,333,216,326,211"/>
+<area shape="rect" id="Node000010" href="$class_piduino_1_1_terminal.html" title="Provides an interface for reading from and writing to terminals (tty)" alt="" coords="579,313,713,339"/>
+<area shape="poly" id="edge19_Node000009_Node000010" title=" " alt="" coords="544,323,579,323,579,329,544,329"/>
+<area shape="rect" id="Node000011" href="$class_piduino_1_1_serial_port.html" title="Provides functions to access serial ports." alt="" coords="761,313,903,339"/>
+<area shape="poly" id="edge20_Node000010_Node000011" title=" " alt="" coords="727,323,761,323,761,329,727,329"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="207,325,315,351"/>
+<area shape="poly" id="edge23_Node000012_Node000009" title=" " alt="" coords="329,331,382,328,383,333,329,337"/>
+</map>

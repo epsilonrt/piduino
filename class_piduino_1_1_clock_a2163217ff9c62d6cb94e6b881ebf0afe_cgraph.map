@@ -1,0 +1,5 @@
+<map id="Piduino::Clock::sleep" name="Piduino::Clock::sleep">
+<area shape="rect" id="Node000001" title="Pauses for the amount of seconds." alt="" coords="5,5,163,31"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_clock.html#a4c8649ae086fcccb13a228a920ac99b9" title="Pauses for the amount of milliseconds." alt="" coords="211,5,369,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,15,197,15,197,21,163,21"/>
+</map>

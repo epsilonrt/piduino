@@ -1,0 +1,13 @@
+<map id="Piduino::I2cDev" name="Piduino::I2cDev">
+<area shape="rect" id="Node000001" title="I2C device interface for communicating with I2C peripheral devices." alt="" coords="37,724,160,1029"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_io_device.html" title="Abstract base class for input/output devices." alt="" coords="12,389,185,675"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,688,101,724,96,724,96,688"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,261,192,327"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,327,101,373,96,373,96,327"/>
+<area shape="rect" id="Node000004" href="$class_private.html" title="Internal implementation class for GpioDevice." alt="" coords="37,133,97,199"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="77,198,89,245,84,246,72,200"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="121,133,271,199"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="165,211,125,263,121,259,161,208"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="185,5,207,71"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="199,71,199,117,193,117,193,71"/>
+</map>

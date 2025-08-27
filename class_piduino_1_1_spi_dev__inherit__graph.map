@@ -1,0 +1,5 @@
+<map id="Piduino::SpiDev" name="Piduino::SpiDev">
+<area shape="rect" id="Node000001" title=" " alt="" coords="31,339,153,624"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_io_device.html" title="Abstract base class for input/output devices." alt="" coords="5,5,179,291"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,304,95,339,89,339,89,304"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="Piduino::Manufacturer" name="Piduino::Manufacturer">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,263,163,408"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="41,135,68,200"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="61,200,67,238,68,246,63,247,61,239,56,200"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="93,135,171,200"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="125,201,112,248,107,246,120,199"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="67,5,197,85"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="135,99,135,134,129,134,129,99"/>
+</map>

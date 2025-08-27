@@ -1,0 +1,9 @@
+<map id="Piduino::Max1161x::Info" name="Piduino::Max1161x::Info">
+<area shape="rect" id="Node000001" title="Structure containing information about the Max1161x converter." alt="" coords="38,163,209,268"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,84,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="61,70,96,147,91,149,56,72"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="108,5,139,71"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="126,71,126,146,121,146,121,71"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="175,5,234,71"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="201,71,191,105,178,140,173,150,168,147,173,138,186,103,196,70"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="Piduino::SysLogBuffer" name="Piduino::SysLogBuffer">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,119,160,244"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_sys_log.html" title="System logger." alt="" coords="20,292,145,697"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="85,257,85,292,80,292,80,257"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="33,5,133,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,85,85,119,80,119,80,85"/>
+</map>

@@ -1,0 +1,42 @@
+<map id="Piduino::Connector::Descriptor" name="Piduino::Connector::Descriptor">
+<area shape="rect" id="Node000001" title="Descripteur d&#39;un connecteur." alt="" coords="229,997,365,1137"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="31,148,110,213"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="65,214,42,324,33,393,29,463,29,896,34,927,47,953,67,977,92,997,151,1027,214,1047,212,1053,149,1032,89,1001,63,980,42,956,29,928,24,896,24,463,28,392,37,323,60,213"/>
+<area shape="rect" id="Node000005" href="$class_piduino_1_1_connector_1_1_family.html" title=" " alt="" coords="103,364,239,564"/>
+<area shape="poly" id="edge7_Node000005_Node000002" title=" " alt="" coords="75,213,82,273,99,339,102,348,97,350,93,341,77,274,70,214"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="577,424,727,504"/>
+<area shape="poly" id="edge17_Node000013_Node000002" title=" " alt="" coords="111,203,130,211,157,215,193,217,276,216,358,218,392,224,417,235,430,247,438,260,443,287,447,314,453,326,464,338,489,350,513,351,538,352,567,362,595,383,619,409,615,412,591,387,564,366,537,357,512,357,488,355,461,342,449,329,442,315,438,288,433,262,426,250,415,240,390,229,358,223,276,221,193,222,157,221,129,216,109,208"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,5,136,85"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="73,99,73,148,68,148,68,99"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="291,148,322,213"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="308,214,303,376,300,594,300,896,300,981,295,981,295,896,295,594,298,376,303,213"/>
+<area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="292,189,254,207,234,221,218,239,209,257,201,283,188,348,183,347,196,282,204,255,214,236,231,217,251,203,290,185"/>
+<area shape="rect" id="Node000011" href="$class_piduino_1_1_pin_1_1_number.html" title="Holds various numbering representations for a pin." alt="" coords="402,431,553,497"/>
+<area shape="poly" id="edge13_Node000011_Node000004" title=" " alt="" coords="319,213,327,237,337,291,344,313,358,338,373,351,391,362,444,417,440,421,388,366,370,355,354,342,339,315,332,292,321,238,314,214"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="182,564,198,691,224,830,245,908,269,981,264,982,240,909,219,831,193,692,177,565"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="141,148,168,213"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="157,213,159,340,159,347,154,348,153,340,151,214"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="335,862,409,927"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="361,929,336,983,332,981,356,927"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="517,855,664,935"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="525,937,381,1020,379,1016,522,932"/>
+<area shape="rect" id="Node000009" href="$class_piduino_1_1_pin_1_1_descriptor.html" title="Describes a pin&#39;s type, numbering, and associated names." alt="" coords="508,627,673,792"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="593,792,593,838,588,838,588,792"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="751,431,795,497"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="769,498,759,531,742,565,717,600,687,632,683,628,712,597,738,563,754,529,764,496"/>
+<area shape="poly" id="edge12_Node000009_Node000011" title=" " alt="" coords="495,496,548,610,543,612,490,498"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="335,431,377,497"/>
+<area shape="poly" id="edge14_Node000009_Node000012" title=" " alt="" coords="365,496,375,530,393,562,415,589,441,613,496,653,492,658,437,617,411,592,388,566,370,532,359,498"/>
+<area shape="poly" id="edge15_Node000009_Node000013" title=" " alt="" coords="645,505,618,611,613,610,640,504"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="703,148,753,213"/>
+<area shape="poly" id="edge16_Node000013_Node000014" title=" " alt="" coords="726,214,717,273,701,341,678,409,673,407,696,339,711,272,721,213"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="515,148,642,213"/>
+<area shape="poly" id="edge18_Node000013_Node000015" title=" " alt="" coords="560,227,557,238,548,289,550,312,557,339,581,384,612,422,608,426,576,387,552,341,544,313,543,289,552,237,555,225"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="567,13,590,78"/>
+<area shape="poly" id="edge19_Node000015_Node000016" title=" " alt="" coords="581,78,581,131,576,131,576,78"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="723,13,746,78"/>
+<area shape="poly" id="edge20_Node000015_Node000017" title=" " alt="" coords="725,59,630,139,627,135,721,55"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="781,256,902,321"/>
+<area shape="poly" id="edge22_Node000018_Node000017" title=" " alt="" coords="749,71,823,239,818,242,744,74"/>
+<area shape="poly" id="edge21_Node000008_Node000018" title=" " alt="" coords="843,335,835,441,825,503,811,565,785,646,761,708,727,765,675,832,651,856,647,852,671,829,723,762,756,706,780,644,805,563,820,502,830,440,838,335"/>
+</map>

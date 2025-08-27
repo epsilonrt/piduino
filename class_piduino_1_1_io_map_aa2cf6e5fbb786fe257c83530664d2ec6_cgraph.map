@@ -1,0 +1,5 @@
+<map id="Piduino::IoMap::write" name="Piduino::IoMap::write">
+<area shape="rect" id="Node000001" title="Write a value to a register." alt="" coords="5,5,164,31"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_io_map.html#a4ea5255c9d8806b3911907df29765484" title="Pointer to access registers." alt="" coords="212,5,351,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,15,198,15,198,21,164,21"/>
+</map>

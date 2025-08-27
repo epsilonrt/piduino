@@ -1,0 +1,5 @@
+<map id="Gpio2::Chip::errorMessage" name="Gpio2::Chip::errorMessage">
+<area shape="rect" id="Node000001" title="Gets the error message corresponding to the last error code." alt="" coords="5,5,200,31"/>
+<area shape="rect" id="Node000002" href="$class_gpio2_1_1_chip.html#a3345eb7d025636116aa164c0ad44a7cc" title="Gets the last error code from the IOCTL operation." alt="" coords="248,5,417,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="200,15,234,15,234,21,200,21"/>
+</map>

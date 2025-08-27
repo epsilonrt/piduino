@@ -1,0 +1,25 @@
+<map id="Piduino::BashCompletionOptionPrinter" name="Piduino::BashCompletionOptionPrinter">
+<area shape="rect" id="Node000001" title="Option printer for bash completion." alt="" coords="501,976,744,1096"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_option_printer.html" title="Base class for an OptionPrinter." alt="" coords="479,821,635,927"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="586,939,601,974,596,976,581,941"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_option_parser.html" title="OptionParser manages all Options." alt="" coords="358,433,511,759"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="509,758,530,805,525,807,504,760"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="117,276,259,356"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="225,355,349,494,345,498,221,358"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,148,155,213"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="88,213,95,232,105,250,115,263,111,266,100,254,90,234,83,214"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="137,13,159,78"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="139,70,106,135,101,132,134,68"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="179,148,301,213"/>
+<area shape="poly" id="edge7_Node000007_Node000006" title=" " alt="" coords="162,62,211,133,207,136,157,65"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="198,226,192,238,187,257,186,276,181,276,182,256,187,236,194,223"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="307,283,485,349"/>
+<area shape="poly" id="edge12_Node000010_Node000007" title=" " alt="" coords="289,220,360,281,357,285,285,224"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="510,148,589,213"/>
+<area shape="poly" id="edge13_Node000001_Node000008" title=" " alt="" coords="590,199,621,218,652,244,675,276,682,295,684,315,684,876,678,920,665,962,660,960,673,918,679,875,679,315,676,296,670,279,648,248,618,222,588,203"/>
+<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="553,214,551,303,545,357,533,410,520,447,515,446,528,409,540,356,546,303,548,214"/>
+<area shape="poly" id="edge11_Node000010_Node000008" title=" " alt="" coords="511,203,482,219,455,239,426,272,422,268,452,235,479,215,508,198"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="484,5,615,85"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="552,99,552,148,547,148,547,99"/>
+<area shape="poly" id="edge10_Node000003_Node000010" title=" " alt="" coords="398,349,400,409,401,417,396,417,395,410,392,349"/>
+</map>

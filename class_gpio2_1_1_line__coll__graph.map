@@ -1,0 +1,26 @@
+<map id="Gpio2::Line" name="Gpio2::Line">
+<area shape="rect" id="Node000001" title="Represents a GPIO line and provides methods to interact with it." alt="" coords="182,803,305,1068"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="161,657,325,737"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="246,738,246,786,241,786,241,738"/>
+<area shape="rect" id="Node000003" href="$class_gpio2_1_1_chip.html" title="Represents a GPIO chip and provides methods to interact with it." alt="" coords="102,292,230,577"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="211,577,230,640,224,642,206,578"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="119,135,197,200"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="162,200,164,276,159,276,156,200"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="91,5,222,85"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="160,99,160,134,155,134,155,99"/>
+<area shape="rect" id="Node000006" href="$struct_gpio2_1_1_chip_info.html" title="Information about a certain GPIO chip." alt="" coords="235,135,350,200"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="288,201,278,235,263,269,244,294,241,299,236,296,240,290,258,267,273,233,283,199"/>
+<area shape="rect" id="Node000007" href="$classgpiochip__info.html" title=" " alt="" coords="246,13,347,78"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="298,92,296,135,291,134,292,92"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="5,135,36,200"/>
+<area shape="poly" id="edge12_Node000001_Node000008" title=" " alt="" coords="27,200,49,363,68,469,93,577,118,659,151,739,177,797,173,800,146,741,113,661,87,578,63,470,44,363,21,201"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="35,199,64,267,96,322,91,325,60,269,30,201"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="254,402,403,467"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="317,481,259,658,254,656,312,480"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="395,135,417,200"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="399,201,345,387,340,386,394,199"/>
+<area shape="rect" id="Node000011" href="$struct_gpio2_1_1_line_request.html" title="Information about a request for GPIO lines." alt="" coords="405,655,545,740"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="436,742,318,862,314,858,432,738"/>
+<area shape="rect" id="Node000012" href="$classgpio__v2__line__request.html" title=" " alt="" coords="427,402,579,467"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="501,481,482,655,477,654,496,481"/>
+</map>

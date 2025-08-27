@@ -1,0 +1,5 @@
+<map id="Piduino::IoMap::atomicRead" name="Piduino::IoMap::atomicRead">
+<area shape="rect" id="Node000001" title="Atomic read of a register." alt="" coords="5,5,209,31"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_io_map.html#a4ea5255c9d8806b3911907df29765484" title="Pointer to access registers." alt="" coords="257,5,396,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="209,15,244,15,244,21,209,21"/>
+</map>

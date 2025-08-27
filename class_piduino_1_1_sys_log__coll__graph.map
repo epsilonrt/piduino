@@ -1,0 +1,27 @@
+<map id="Piduino::SysLog" name="Piduino::SysLog">
+<area shape="rect" id="Node000001" title="System logger." alt="" coords="433,1039,559,1404"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_sys_log_buffer.html" title=" " alt="" coords="5,355,160,481"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,494,94,595,114,719,129,785,149,851,175,915,206,975,229,1008,256,1040,316,1098,378,1146,434,1183,431,1187,375,1150,313,1102,252,1044,225,1012,202,977,170,917,144,853,124,787,108,720,89,596,81,495"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="17,120,117,185"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="72,199,82,355,76,355,67,200"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="193,120,223,185"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="193,161,153,178,131,192,114,211,99,241,88,273,81,339,75,339,83,272,94,239,110,208,128,188,150,173,191,156"/>
+<area shape="rect" id="Node000009" href="$class_piduino_1_1_flags.html" title=" " alt="" coords="217,651,423,976"/>
+<area shape="poly" id="edge9_Node000009_Node000004" title=" " alt="" coords="207,186,202,258,200,359,205,473,212,531,223,587,236,635,231,636,217,589,207,532,200,473,195,359,197,258,202,185"/>
+<area shape="rect" id="Node000010" href="$class_piduino_1_1_flags.html" title="A type&#45;safe flags class for bitwise operations on enum values." alt="" coords="299,248,493,588"/>
+<area shape="poly" id="edge11_Node000010_Node000004" title=" " alt="" coords="226,172,282,246,292,260,287,263,278,250,221,175"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="448,781,544,846"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="499,860,499,1038,493,1038,493,860"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="517,378,654,458"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="576,472,506,781,501,780,571,471"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="504,120,667,185"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="588,200,588,378,583,378,583,200"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="536,5,635,71"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="588,85,588,120,583,120,583,85"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="393,975,429,1060,424,1062,388,977"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="363,602,354,651,349,650,358,601"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="569,781,629,846"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="593,847,549,1023,543,1022,588,845"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="668,781,711,846"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="686,847,666,925,633,1016,604,1072,570,1124,566,1122,599,1069,628,1014,661,923,681,846"/>
+</map>

@@ -1,0 +1,67 @@
+<map id="Piduino::Connector" name="Piduino::Connector">
+<area shape="rect" id="Node000001" title="Connecteur." alt="" coords="791,1841,927,2347"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="479,1676,521,1741"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="515,1740,536,1777,593,1849,657,1916,721,1976,779,2027,776,2031,718,1980,653,1920,589,1852,531,1780,510,1743"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_gpio.html" title="Classe Gpio." alt="" coords="1224,1167,1389,1472"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1308,1473,1299,1526,1282,1577,1250,1646,1211,1712,1167,1776,1120,1836,1025,1942,941,2025,937,2021,1022,1938,1116,1832,1162,1773,1206,1709,1245,1643,1278,1575,1294,1524,1303,1472"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="1109,431,1296,497"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1221,496,1255,576,1271,626,1283,677,1298,800,1307,924,1312,1150,1307,1150,1301,925,1292,800,1277,678,1266,627,1250,578,1216,498"/>
+<area shape="rect" id="Node000027" href="$class_piduino_1_1_pin.html" title="Represents a general&#45;purpose input/output (GPIO) pin and its configuration." alt="" coords="1121,677,1269,1143"/>
+<area shape="poly" id="edge34_Node000027_Node000004" title=" " alt="" coords="1205,497,1202,661,1196,661,1199,497"/>
+<area shape="rect" id="Node000005" href="$class_private.html" title="Internal implementation class for GpioDevice." alt="" coords="1177,148,1237,213"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1209,214,1206,415,1201,415,1204,214"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="991,148,1140,213"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="1079,226,1097,281,1121,339,1150,387,1179,429,1175,432,1145,390,1116,341,1092,283,1074,228"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="894,13,917,78"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="919,54,1016,135,1013,139,915,58"/>
+<area shape="rect" id="Node000022" title=" " alt="" coords="705,148,831,213"/>
+<area shape="poly" id="edge27_Node000022_Node000007" title=" " alt="" coords="895,60,814,138,811,134,892,56"/>
+<area shape="rect" id="Node000024" title=" " alt="" coords="157,256,278,321"/>
+<area shape="poly" id="edge29_Node000024_Node000007" title=" " alt="" coords="894,50,779,55,593,71,494,84,403,101,327,123,297,136,275,150,257,169,243,192,227,241,222,239,239,190,253,166,272,146,295,131,325,118,402,96,494,78,592,65,779,50,894,44"/>
+<area shape="rect" id="Node000028" title=" " alt="" coords="1363,588,1512,653"/>
+<area shape="poly" id="edge36_Node000028_Node000007" title=" " alt="" coords="917,44,975,47,1063,60,1112,73,1161,91,1208,115,1250,146,1294,194,1331,248,1361,307,1385,367,1418,481,1434,571,1429,572,1413,482,1380,368,1356,309,1326,251,1290,197,1246,150,1205,119,1159,96,1111,78,1062,66,974,52,917,49"/>
+<area shape="rect" id="Node000008" href="$class_piduino_1_1_connector_1_1_descriptor.html" title="Descripteur d&#39;un connecteur." alt="" coords="545,1639,681,1779"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="660,1777,784,1971,779,1974,655,1780"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="33,148,111,213"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="58,214,49,238,36,300,30,349,31,463,31,1537,35,1555,46,1569,64,1581,89,1591,153,1603,230,1610,396,1617,471,1623,530,1636,529,1641,470,1629,396,1622,230,1615,152,1608,87,1596,62,1586,42,1573,30,1557,25,1538,25,463,25,349,30,299,44,237,53,213"/>
+<area shape="rect" id="Node000012" href="$class_piduino_1_1_connector_1_1_family.html" title=" " alt="" coords="537,364,673,564"/>
+<area shape="poly" id="edge14_Node000012_Node000009" title=" " alt="" coords="112,186,274,211,331,212,407,212,480,217,510,224,532,235,552,258,558,282,560,309,567,339,569,348,564,349,561,341,555,309,553,283,547,261,529,239,508,229,479,222,406,217,331,218,273,216,111,192"/>
+<area shape="rect" id="Node000020" title=" " alt="" coords="227,424,378,504"/>
+<area shape="poly" id="edge24_Node000020_Node000009" title=" " alt="" coords="64,214,58,243,54,275,57,308,69,339,97,373,133,401,172,422,213,438,211,443,170,427,130,405,93,377,64,341,52,309,49,275,52,242,59,213"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="5,5,136,85"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="74,99,74,148,69,148,69,99"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="899,148,930,213"/>
+<area shape="poly" id="edge10_Node000008_Node000011" title=" " alt="" coords="922,213,933,323,940,463,940,1538,933,1576,916,1608,889,1634,855,1656,817,1673,776,1686,698,1702,697,1697,775,1681,815,1668,852,1651,885,1630,911,1605,928,1574,935,1537,935,463,928,324,916,214"/>
+<area shape="poly" id="edge13_Node000012_Node000011" title=" " alt="" coords="900,192,843,216,812,222,785,223,761,226,735,239,712,276,669,351,665,348,707,273,732,235,760,221,785,217,811,217,842,211,898,187"/>
+<area shape="rect" id="Node000018" href="$class_piduino_1_1_pin_1_1_number.html" title="Holds various numbering representations for a pin." alt="" coords="698,431,849,497"/>
+<area shape="poly" id="edge20_Node000018_Node000011" title=" " alt="" coords="901,196,880,215,861,239,836,283,815,331,787,416,782,415,810,329,831,281,856,236,876,211,897,192"/>
+<area shape="rect" id="Node000025" title=" " alt="" coords="919,1661,1073,1756"/>
+<area shape="poly" id="edge31_Node000025_Node000011" title=" " alt="" coords="932,198,966,242,1006,305,1024,341,1039,381,1050,421,1053,463,1053,1538,1046,1594,1028,1647,1023,1645,1040,1593,1048,1537,1048,463,1044,422,1034,382,1020,344,1002,307,962,245,928,201"/>
+<area shape="poly" id="edge11_Node000008_Node000012" title=" " alt="" coords="609,564,615,1622,610,1622,603,564"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="631,148,657,213"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="642,214,624,348,619,347,637,213"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="327,1503,401,1569"/>
+<area shape="poly" id="edge15_Node000008_Node000014" title=" " alt="" coords="403,1566,415,1574,472,1604,533,1636,530,1640,469,1608,412,1578,400,1570"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="425,1496,572,1576"/>
+<area shape="poly" id="edge16_Node000008_Node000015" title=" " alt="" coords="527,1575,560,1623,556,1626,523,1578"/>
+<area shape="rect" id="Node000016" href="$class_piduino_1_1_pin_1_1_descriptor.html" title="Describes a pin&#39;s type, numbering, and associated names." alt="" coords="411,827,576,993"/>
+<area shape="poly" id="edge17_Node000015_Node000016" title=" " alt="" coords="497,993,501,1480,496,1480,491,993"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="402,431,446,497"/>
+<area shape="poly" id="edge18_Node000016_Node000017" title=" " alt="" coords="429,496,445,653,474,811,469,812,440,654,424,497"/>
+<area shape="poly" id="edge19_Node000016_Node000018" title=" " alt="" coords="756,498,556,815,551,812,751,495"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="471,431,513,497"/>
+<area shape="poly" id="edge21_Node000016_Node000019" title=" " alt="" coords="495,497,496,811,490,811,489,497"/>
+<area shape="poly" id="edge22_Node000016_Node000020" title=" " alt="" coords="320,503,380,652,450,811,446,813,375,654,315,505"/>
+<area shape="rect" id="Node000021" title=" " alt="" coords="285,148,336,213"/>
+<area shape="poly" id="edge23_Node000020_Node000021" title=" " alt="" coords="312,214,307,408,302,408,307,214"/>
+<area shape="poly" id="edge25_Node000020_Node000022" title=" " alt="" coords="692,211,670,216,606,219,523,218,443,221,411,228,388,239,371,261,366,283,365,310,359,341,323,425,318,423,353,339,360,309,361,283,366,259,385,235,409,223,442,216,523,212,606,214,669,211,691,206"/>
+<area shape="poly" id="edge37_Node000025_Node000022" title=" " alt="" coords="845,210,859,221,870,236,881,263,880,287,874,311,871,340,874,404,880,454,879,504,873,533,862,565,852,586,839,601,812,623,785,644,774,658,764,678,741,745,728,804,721,856,722,906,727,957,737,1011,764,1142,782,1219,806,1295,863,1442,923,1568,972,1660,967,1662,918,1570,858,1444,801,1297,777,1220,759,1143,731,1012,722,958,716,907,716,856,722,803,736,744,759,676,769,656,781,640,809,618,836,597,847,583,858,563,868,531,874,504,874,455,868,404,865,340,869,310,874,286,875,264,866,239,855,225,842,214"/>
+<area shape="rect" id="Node000023" title=" " alt="" coords="161,13,183,78"/>
+<area shape="poly" id="edge26_Node000022_Node000023" title=" " alt="" coords="166,78,166,102,175,122,186,128,204,133,260,140,415,145,574,143,670,145,689,150,688,155,669,151,574,148,415,150,259,146,203,139,184,133,171,126,161,103,161,78"/>
+<area shape="poly" id="edge28_Node000015_Node000024" title=" " alt="" coords="203,335,184,398,167,477,158,565,159,609,164,653,193,782,231,911,275,1037,322,1156,413,1360,480,1495,475,1497,408,1362,317,1158,270,1039,226,913,188,783,159,654,153,610,153,565,162,476,179,397,198,334"/>
+<area shape="poly" id="edge30_Node000001_Node000025" title=" " alt="" coords="982,1757,935,1888,930,1887,977,1755"/>
+<area shape="rect" id="Node000026" title=" " alt="" coords="1094,1496,1269,1576"/>
+<area shape="poly" id="edge32_Node000025_Node000026" title=" " alt="" coords="1141,1578,1060,1652,1056,1648,1137,1574"/>
+<area shape="poly" id="edge33_Node000026_Node000027" title=" " alt="" coords="1182,1143,1181,1167,1179,1319,1181,1472,1182,1480,1176,1480,1176,1472,1173,1319,1176,1167,1177,1143"/>
+<area shape="poly" id="edge35_Node000026_Node000028" title=" " alt="" coords="1454,666,1472,730,1491,815,1507,916,1517,1028,1516,1145,1510,1204,1499,1262,1484,1319,1463,1373,1437,1425,1403,1474,1382,1489,1350,1503,1269,1523,1268,1518,1348,1498,1380,1485,1399,1470,1432,1423,1458,1371,1479,1317,1494,1261,1505,1203,1511,1145,1512,1029,1502,917,1486,816,1467,731,1449,667"/>
+</map>

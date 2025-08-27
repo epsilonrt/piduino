@@ -1,0 +1,5 @@
+<map id="gpio_v2_line_attribute" name="gpio_v2_line_attribute">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,164,71"/>
+<area shape="rect" id="Node000002" href="$struct_gpio2_1_1_line_attribute.html" title="a configurable attribute of a line" alt="" coords="13,119,157,204"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,85,87,119,82,119,82,85"/>
+</map>

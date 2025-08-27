@@ -1,0 +1,18 @@
+<map id="Piduino::System::ArmCore" name="Piduino::System::ArmCore">
+<area shape="rect" id="Node000001" title=" " alt="" coords="237,463,421,528"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="205,148,284,213"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="267,212,278,236,295,292,309,348,326,446,320,447,304,349,290,293,273,238,262,215"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="67,276,246,341"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="219,215,200,239,184,264,180,261,196,236,214,212"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="179,5,310,85"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="247,99,247,148,242,148,242,99"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="164,341,179,390,191,415,208,437,225,452,222,456,204,440,187,418,174,392,159,342"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,148,127,213"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="76,226,87,251,108,274,104,278,82,253,71,228"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="55,13,77,78"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="69,78,69,131,63,131,63,78"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="375,276,434,341"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="394,343,350,448,345,446,389,341"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="479,276,509,341"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="497,342,490,391,481,417,467,440,437,465,433,461,463,437,476,415,485,390,492,341"/>
+</map>

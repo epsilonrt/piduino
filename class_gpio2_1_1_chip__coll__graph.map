@@ -1,0 +1,13 @@
+<map id="Gpio2::Chip" name="Gpio2::Chip">
+<area shape="rect" id="Node000001" title="Represents a GPIO chip and provides methods to interact with it." alt="" coords="144,292,272,577"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="35,135,114,200"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,199,112,267,138,318,133,320,107,269,81,201"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,5,136,85"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="75,99,76,134,71,134,70,100"/>
+<area shape="rect" id="Node000004" href="$struct_gpio2_1_1_chip_info.html" title="Information about a certain GPIO chip." alt="" coords="152,135,267,200"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="212,200,211,276,206,276,207,200"/>
+<area shape="rect" id="Node000005" href="$classgpiochip__info.html" title=" " alt="" coords="160,13,261,78"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="213,92,212,134,207,134,207,92"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="309,135,339,200"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="319,201,297,269,281,305,277,303,292,267,314,199"/>
+</map>

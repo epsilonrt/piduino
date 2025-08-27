@@ -1,0 +1,11 @@
+<map id="Gpio2::Line::setDebounce" name="Gpio2::Line::setDebounce">
+<area shape="rect" id="Node000001" title="Sets the debounce period for the GPIO line." alt="" coords="5,31,193,56"/>
+<area shape="rect" id="Node000002" href="$class_gpio2_1_1_line.html#a751035efc1dd63960e363fd0744e4d19" title="Gets the debounce period for the GPIO line." alt="" coords="241,5,408,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,30,227,26,228,32,194,35"/>
+<area shape="rect" id="Node000003" href="$class_gpio2_1_1_line.html#a246d2a70a138bd69f7bdee298d069f69" title="Sets the configuration for the GPIO line." alt="" coords="243,55,407,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="194,51,229,55,229,60,194,56"/>
+<area shape="rect" id="Node000004" href="$class_gpio2_1_1_line.html#a55afa86ffff008038c5bd4ccfa487c03" title="Gets the current line configuration." alt="" coords="459,29,601,55"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="406,55,444,50,445,55,407,60"/>
+<area shape="rect" id="Node000005" href="$class_gpio2_1_1_line.html#af6ebb0f3d30ff33fe6033aca7b316332" title="Checks if the GPIO line is open." alt="" coords="456,79,604,104"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="407,74,442,78,442,84,406,80"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="Gpio2::Line::waitForEvent" name="Gpio2::Line::waitForEvent">
+<area shape="rect" id="Node000001" title="Waits for an event on the GPIO line." alt="" coords="5,5,193,31"/>
+<area shape="rect" id="Node000002" href="$class_gpio2_1_1_line.html#af6ebb0f3d30ff33fe6033aca7b316332" title="Checks if the GPIO line is open." alt="" coords="241,5,389,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,15,228,15,228,21,194,21"/>
+</map>

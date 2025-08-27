@@ -1,0 +1,6 @@
+<map id="Piduino::SysLog::facilityName" name="Piduino::SysLog::facilityName">
+<area shape="rect" id="Node000001" title="Name of the current facility." alt="" coords="5,29,221,55"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="74,31,65,21,70,11,86,5,113,3,148,7,157,11,161,17,157,20,154,15,146,12,113,8,87,10,73,15,71,20,78,27"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_sys_log.html#a8b337f4ed33c46e599d6a58e89f9de5b" title="Reads the current facility." alt="" coords="269,29,447,55"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,39,256,39,256,45,222,45"/>
+</map>

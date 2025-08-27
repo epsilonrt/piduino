@@ -1,0 +1,5 @@
+<map id="Piduino::Clock" name="Piduino::Clock">
+<area shape="rect" id="Node000001" title="Horloge." alt="" coords="5,148,169,333"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="54,5,121,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,71,90,132,85,132,85,71"/>
+</map>

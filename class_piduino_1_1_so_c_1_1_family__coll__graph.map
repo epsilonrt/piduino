@@ -1,0 +1,9 @@
+<map id="Piduino::SoC::Family" name="Piduino::SoC::Family">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,263,152,408"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="36,135,63,200"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="56,200,61,238,63,246,57,247,56,239,50,200"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="87,135,166,200"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="120,201,106,248,101,246,115,199"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="61,5,192,85"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="129,99,129,134,124,134,124,99"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="Piduino::IoMap::atomicWrite" name="Piduino::IoMap::atomicWrite">
+<area shape="rect" id="Node000001" title="Atomic write to a register." alt="" coords="5,5,212,31"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_io_map.html#a4ea5255c9d8806b3911907df29765484" title="Pointer to access registers." alt="" coords="260,5,399,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="213,15,246,15,246,21,213,21"/>
+</map>

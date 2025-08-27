@@ -1,0 +1,21 @@
+<map id="Piduino::System::RaspianInfo" name="Piduino::System::RaspianInfo">
+<area shape="rect" id="Node000001" title=" " alt="" coords="82,592,286,897"/>
+<area shape="rect" id="Node000002" href="$union_piduino_1_1_system_1_1_raspian_info_1_1_board_info.html" title=" " alt="" coords="95,349,273,529"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="187,529,187,575,181,575,181,529"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="109,214,176,279"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="152,279,164,333,159,334,147,280"/>
+<area shape="rect" id="Node000004" href="$struct_piduino_1_1_system_1_1_raspian_info_1_1_board_info_field.html" title=" " alt="" coords="200,207,379,287"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="270,288,244,336,239,333,265,286"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,5,64,71"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="33,71,33,98,36,127,45,156,62,181,88,198,115,202,146,201,184,204,183,209,146,206,114,207,86,203,58,185,41,159,31,128,28,98,28,71"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="89,5,172,71"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="134,71,143,126,153,155,169,181,188,200,184,204,165,184,148,157,138,127,129,72"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="196,5,273,71"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="232,71,229,124,231,154,239,182,243,192,238,194,233,184,226,155,223,125,226,71"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="297,5,399,71"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="345,72,317,183,314,192,309,190,312,182,340,70"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="431,5,526,71"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="482,71,475,128,464,158,447,184,423,206,395,222,392,217,420,202,443,181,459,155,469,126,477,71"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="559,5,601,71"/>
+<area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="585,71,585,98,580,129,570,159,553,185,527,201,489,214,395,234,394,229,487,209,525,196,549,181,565,156,575,127,579,98,580,71"/>
+</map>

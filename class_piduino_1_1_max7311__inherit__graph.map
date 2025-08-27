@@ -1,0 +1,7 @@
+<map id="Piduino::Max7311" name="Piduino::Max7311">
+<area shape="rect" id="Node000001" title="I2C GPIO expander controller for the MAX7311 device." alt="" coords="25,772,169,957"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_converter.html" title="The Converter class provides an interface for analog&#45;to&#45;digital and digital&#45;to&#45;analog converters." alt="" coords="5,339,189,724"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,738,100,772,95,772,95,738"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_io_device.html" title="Abstract base class for input/output devices." alt="" coords="11,5,184,291"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="100,305,100,338,95,338,95,305"/>
+</map>

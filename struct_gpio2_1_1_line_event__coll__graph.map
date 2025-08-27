@@ -1,0 +1,5 @@
+<map id="Gpio2::LineEvent" name="Gpio2::LineEvent">
+<area shape="rect" id="Node000001" title="The actual event being pushed to userspace." alt="" coords="13,119,137,184"/>
+<area shape="rect" id="Node000002" href="$classgpio__v2__line__event.html" title=" " alt="" coords="5,5,145,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="78,84,78,119,73,119,73,84"/>
+</map>

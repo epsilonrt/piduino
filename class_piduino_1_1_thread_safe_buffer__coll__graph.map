@@ -1,0 +1,11 @@
+<map id="Piduino::ThreadSafeBuffer&lt; T &gt;" name="Piduino::ThreadSafeBuffer&lt; T &gt;">
+<area shape="rect" id="Node000001" title="This provides a thread safe buffer." alt="" coords="100,133,321,639"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,77,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="59,70,95,143,90,145,55,72"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="102,5,186,71"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="146,71,148,109,149,117,144,117,143,110,141,71"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="211,5,346,71"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="275,72,266,118,261,117,270,71"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="409,5,461,71"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="421,72,400,111,333,215,328,213,395,108,416,69"/>
+</map>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PiDuino: Main Page</title>
+<title>PiDuino: PiDuino</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -24,6 +24,7 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="PiduinoLogoSmall.png"/></td>
   <td id="projectalign">
    <div id="projectname">PiDuino
    </div>
@@ -89,10 +90,169 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">PiDuino Documentation</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">PiDuino </div></div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="md__r_e_a_d_m_e"></a> <em>Arduino on Pi boards, the best of both worlds !</em></p>
+<p><img src="https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/PiduinoCommunityLogoSmall.png" alt="Piduino Logo" align="right" valign="top" class="inline"/></p>
+<p><a href="https://github.com/epsilonrt/piduino/releases"><img src="https://img.shields.io/github/v/release/epsilonrt/piduino?include_prereleases" alt="GitHub release (latest by date including pre-releases)" class="inline"/></a> <br  />
+</p>
+<p><a href="https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml.yml"><img src="https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml/badge.svg" alt="Arm64 Build" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml.yml"><img src="https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml/badge.svg" alt="ArmHf Build" style="pointer-events: none;" class="inline"/></a></p>
+<hr  />
+<h1><a class="anchor" id="autotoc_md2"></a>
+Abstract</h1>
+<p>PiDuino is a C ++ library for Pi boards that allows the use of I/O like GPIO, I2C, SPI, UART ... with an API as close as possible to the Arduino language. <br  />
+ The description of Pi cards uses a stored "Object" model in a database that allows to add new models of boards easily. <br  />
+</p>
+<p>This approach allows you to compile libraries normally intended for Arduino, for example, <a href="https://github.com/epsilonrt/RadioHead">Radiohead</a>. Normally, all libraries that do not use the specificities of a target microcontroller should be able to compile. There is a <a href="https://epsilonrt.fr/2019/02/arduino-lib-on-pi/">tutorial</a> explaining how to do this, in French, but Google will translate it into your language...</p>
+<p>At this time, the SoC models supported are AllWinner H-Series and Broadcom BCM2708 through 2712 which allows it to be used on Raspberry Pi and most Nano Pi, Orange Pi and Banana Pi.</p>
+<p>The updated list of all the boards in the database is available in the <a href="https://github.com/epsilonrt/piduino/wiki/List-of-all-the-boards-currently-in-the-Piduino-database">Wiki</a>. <br  />
+ Note that if the revision number of your Raspberry Pi board is not in the database, piduino will use this number to find the same model boards in the database to make the right settings.</p>
+<p>To learn more about PiDuino, you can follow the <a href="https://github.com/epsilonrt/piduino/wiki">Wiki</a>, but if you're in a hurry, let's go to the quick start version...</p>
+<h1><a class="anchor" id="autotoc_md3"></a>
+Quickstart guide</h1>
+<p>The fastest and safest way to install piduino on Armbian is to use the APT repository from <a href="http://apt.piduino.org">piduino.org</a>, so you should do the following : </p><pre class="fragment">wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/piduino-archive-keyring.gpg] http://apt.piduino.org $(lsb_release -c -s) piduino" | sudo tee /etc/apt/sources.list.d/piduino.list
+sudo apt update
+sudo apt install libpiduino-dev piduino-utils
+</pre><p> This repository provides <a class="el" href="namespace_piduino.html" title="Global namespace for Piduino.">Piduino</a> packages for <code>armhf</code> and <code>arm64</code> architectures for <code>buster</code>, <code>bullseye</code>, and <code>bookworm</code> distributions. <br  />
+</p>
+<p>If you want to build from sources, you can follow the <a href="https://github.com/epsilonrt/piduino/wiki/Build-from-source">Wiki</a>.</p>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Utilities</h2>
+<p>Once installed, you should run the following on the command line : </p><pre class="fragment">$ pinfo
+Name            : NanoPi Core2 Mini Shield
+Family          : NanoPi
+Database Id     : 40
+Manufacturer    : Friendly ARM
+Board Tag       : nanopineocore2shield
+SoC             : H5 (Allwinner)
+Memory          : 1024MB
+GPIO Id         : 9
+I2C Buses       : /dev/i2c-0
+SPI Buses       : /dev/spidev1.0
+Serial Ports    : /dev/ttyS1
+</pre><p> As we can imagine, in the example, we are on a <a href="http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Core2">NanoPi Neo Core2</a> connected to a <a href="http://wiki.friendlyarm.com/wiki/index.php/Mini_Shield_for_NanoPi_NEO_Core/Core2">Mini Shield</a>.</p>
+<p>To read the pin status of connector 1, run the following on the command line : </p><pre class="fragment">$ pido readall 1
+                                          CON1 (#1)
++-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+| sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
++-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+|     |     |     3.3V |      |      |   |  1 || 2  |   |      |      | 5V       |     |     |
+|  12 |   8 |  I2C0SDA | ALT2 |  OFF |   |  3 || 4  |   |      |      | 5V       |     |     |
+|  11 |   9 |  I2C0SCK | ALT2 |  OFF |   |  5 || 6  |   |      |      | GND      |     |     |
+|  91 |   7 |  GPIOG11 |  OFF |  OFF |   |  7 || 8  |   | OFF  | ALT2 | UART1TX  | 15  | 86  |
+|     |     |      GND |      |      |   |  9 || 10 |   | OFF  | ALT2 | UART1RX  | 16  | 87  |
+|   0 |   0 |   GPIOA0 |  OFF |  OFF |   | 11 || 12 |   | OFF  | OFF  | GPIOA6   | 1   | 6   |
+|   2 |   2 |   GPIOA2 |  OFF |  OFF |   | 13 || 14 |   |      |      | GND      |     |     |
+|   3 |   3 |   GPIOA3 |  OFF |  OFF |   | 15 || 16 |   | OFF  | ALT2 | UART1RTS | 4   | 88  |
+|     |     |     3.3V |      |      |   | 17 || 18 |   | OFF  | ALT2 | UART1CTS | 5   | 89  |
+|  15 |  28 | SPI1MOSI | ALT2 |  OFF |   | 19 || 20 |   |      |      | GND      |     |     |
+|  16 |  24 | SPI1MISO | ALT2 |  OFF |   | 21 || 22 |   | OFF  | OFF  | GPIOA1   | 6   | 1   |
+|  14 |  29 |  SPI1CLK | ALT2 |  OFF |   | 23 || 24 |   | OFF  | ALT2 | SPI1CS   | 27  | 13  |
+|     |     |      GND |      |      |   | 25 || 26 |   | OFF  | OFF  | GPIOA17  | 11  | 17  |
++-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+| sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
++-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+</pre><p> <code>pido</code> and <code>pinfo</code> come with manpages...</p>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Blink Example</h2>
+<p>Arduino programming on Pi board ? We are going there !</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;Piduino.h&gt;</span> <span class="comment">// all the magic is here ;-)</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> ledPin = 0; <span class="comment">// Header Pin 11: GPIO17 for RPi, GPIOA0 for NanoPi</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> setup() {</div>
+<div class="line">  <span class="comment">// initialize digital pin ledPin as an output.</span></div>
+<div class="line">  pinMode (ledPin, OUTPUT);</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> loop () {</div>
+<div class="line">  <span class="comment">// Press Ctrl+C to abort ...</span></div>
+<div class="line">  digitalWrite (ledPin, HIGH);  <span class="comment">// turn the LED on (HIGH is the voltage level)</span></div>
+<div class="line">  delay (1000);                 <span class="comment">// wait for a second</span></div>
+<div class="line">  digitalWrite (ledPin, LOW);   <span class="comment">// turn the LED off by making the voltage LOW</span></div>
+<div class="line">  delay (1000);                 <span class="comment">// wait for a second</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><p>Obviously, you need to know the pin number where you connected the LED ! </p><pre class="fragment">$ pido readall 1
+                                          CON1 (#1)
++-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+| sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
++-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+|     |     |     3.3V |      |      |   |  1 || 2  |   |      |      | 5V       |     |     |
+|  12 |   8 |  I2C0SDA | ALT2 |  OFF |   |  3 || 4  |   |      |      | 5V       |     |     |
+|  11 |   9 |  I2C0SCK | ALT2 |  OFF |   |  5 || 6  |   |      |      | GND      |     |     |
+|  91 |   7 |  GPIOG11 |  OFF |  OFF |   |  7 || 8  |   | OFF  | ALT2 | UART1TX  | 15  | 86  |
+|     |     |      GND |      |      |   |  9 || 10 |   | OFF  | ALT2 | UART1RX  | 16  | 87  |
+|   0 |   0 |   GPIOA0 |  OFF |  OFF |   | 11 || 12 |   | OFF  | OFF  | GPIOA6   | 1   | 6   |
+|   2 |   2 |   GPIOA2 |  OFF |  OFF |   | 13 || 14 |   |      |      | GND      |     |     |
+|   3 |   3 |   GPIOA3 |  OFF |  OFF |   | 15 || 16 |   | OFF  | OFF  | GPIOG8   | 4   | 88  |
+|     |     |     3.3V |      |      |   | 17 || 18 |   | OFF  | OFF  | GPIOG9   | 5   | 89  |
+|  22 |  12 |   GPIOC0 |  OFF |  OFF |   | 19 || 20 |   |      |      | GND      |     |     |
+|  23 |  13 |   GPIOC1 |  OFF |  OFF |   | 21 || 22 |   | OFF  | OFF  | GPIOA1   | 6   | 1   |
+|  24 |  14 |   GPIOC2 |  OFF |  OFF |   | 23 || 24 |   | UP   | OFF  | GPIOC3   | 10  | 25  |
++-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+| sOc | iNo |   Name   | Mode | Pull | V | Ph || Ph | V | Pull | Mode |   Name   | iNo | sOc |
++-----+-----+----------+------+------+---+----++----+---+------+------+----------+-----+-----+
+</pre><p>The iNo column corresponds to the 'Arduino' number, the number 0 pin corresponds therefore at pin 11 of the GPIO connector (GPIOA0).</p>
+<p>To build, you must type the command: </p><pre class="fragment">$ cd examples/Blink
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+</pre><p> You can then execute the program : </p><pre class="fragment">$ sudo ./Blink
+</pre><p> <code>sudo</code> is necessary for an access to the memory mapping of the GPIO). You can enable the <b>setuid</b> bit to avoid <code>sudo</code> in the future : </p><pre class="fragment">$ sudo chmod u+s Blink
+$ ./Blink
+</pre><p> It is possible to use Visual Studio Code for development with a SSH connection, but you have to install the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools">CMake Tools</a> plugin and <a href="https://cmake.org/download/">CMake</a> (version 3.10 or higher).</p>
+<p>You can use the <a href="https://github.com/epsilonrt/piduino/tree/master/examples/Template">examples/Template</a> folder and the <a href="https://marketplace.visualstudio.com/items?itemName=cantonios.project-templates">Project Templates</a> extension to simplify project creation.</p>
+<p><img src="https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/vscode.png" alt="Debugging with VsCode" class="inline"/></p>
+<p>It is also possible to use <a href="https://codelite.org/">Codelite</a> it's easier and funny, right ?</p>
+<p><img src="https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/codelite-2.png" alt="Debugging with Codelite" class="inline"/></p>
+<p>You should read the <a href="https://github.com/epsilonrt/piduino/wiki/Examples">wiki on the examples</a> to learn more...</p>
+<h1><a class="anchor" id="autotoc_md6"></a>
+Converters System and extension</h1>
+<p>Since version 0.7, <a class="el" href="namespace_piduino.html" title="Global namespace for Piduino.">Piduino</a> has supported a unified conversion system for sensors and actuators. This includes classes for ADCs, DACs, and GPIO expanders, allowing for easy integration of I2C and SPI peripherals. This is made possible by a modular and extensible architecture and the Converter class.</p>
+<p>The Converter class provides a unified interface for interacting with various analog and digital converters such as ADCs, DACs, and GPIO expanders. This powerful abstraction layer allows seamless integration of I2C and SPI peripherals like the MAX1161x series ADCs, MCP4725/MCP4728 DACs, and MAX7311 GPIO expanders. The converter system supports automatic device detection, multiple reference voltages, differential measurements, and configurable resolution settings.</p>
+<p>The list of supported converters can be found with the pido utility:</p>
+<div class="fragment"><div class="line">$ pido converters</div>
+<div class="line">Name                Type      Parameters</div>
+<div class="line">--------------------------------------------------------------------------------</div>
+<div class="line">gpiopwm             dac       pin[:range:freq]</div>
+<div class="line">max1161x            adc       bus=id:max={12,13,14,15,16,17}:ref={ext,vdd,int1,int2,int3,int4}:fsr=value:bipolar={1,0}:clk={int,ext}</div>
+<div class="line">max7311             gpioexp   bus=id:addr={0x20...0xDE}:bustimeout={0,1}</div>
+<div class="line">mcp4725             dac       bus=id:addr={0x60..0x67}:fsr=value:mode={norm,fast,eeprom,pd1k,pd100k,pd500k}</div>
+<div class="line">mcp4728             dac       bus=id:addr={0x60..0x67}:ref={vdd,int}:fsr=value:gain={1,2}:mode={norm,fast,eeprom,pd1k,pd100k,pd500k}</div>
+</div><!-- fragment --><p>For the moment, the list is relatively short, but it should grow over time.</p>
+<p>You can easily control converters from the command line using the pido utility. For example, to read an analog value from channel 0 of a MAX11615 ADC connected to I2C bus 1:</p>
+<div class="fragment"><div class="line">$ pido -c max1161x:bus=1:max=15:ref=int4 cread 0</div>
+<div class="line">1843</div>
+<div class="line"> </div>
+<div class="line">$ pido -c max1161x:bus=1:max=15:ref=int4 -m cread 0</div>
+<div class="line">1.502V</div>
+</div><!-- fragment --><p>The same functionality is available in C++ code using the converter factory system:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;Piduino.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;Converters.h&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    <span class="comment">// Create a MAX11615 ADC instance</span></div>
+<div class="line">    std::unique_ptr&lt;Converter&gt; adc(Converter::factory(<span class="stringliteral">&quot;max1161x:bus=1:max=15:ref=int4&quot;</span>));</div>
+<div class="line">    </div>
+<div class="line">    <span class="keywordflow">if</span> (adc &amp;&amp; adc-&gt;open()) {</div>
+<div class="line">        <span class="comment">// Read digital value from channel 0</span></div>
+<div class="line">        <span class="keywordtype">long</span> digitalValue = adc-&gt;readChannel(0);</div>
+<div class="line">        </div>
+<div class="line">        <span class="comment">// Convert to analog voltage</span></div>
+<div class="line">        <span class="keywordtype">double</span> voltage = adc-&gt;digitalToValue(digitalValue);</div>
+<div class="line">        </div>
+<div class="line">        std::cout &lt;&lt; <span class="stringliteral">&quot;Channel 0: &quot;</span> &lt;&lt; digitalValue &lt;&lt; <span class="stringliteral">&quot; (&quot;</span> &lt;&lt; voltage &lt;&lt; <span class="stringliteral">&quot;V)&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line">        </div>
+<div class="line">        adc-&gt;close();</div>
+<div class="line">    }</div>
+<div class="line">    </div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+</div><!-- fragment --> </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

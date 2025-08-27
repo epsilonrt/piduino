@@ -1,0 +1,19 @@
+<map id="Gestion des logs" name="Gestion des logs">
+<area shape="rect" id="Node000002" href="$group__piduino__board.html" title=" " alt="" coords="281,5,341,31"/>
+<area shape="rect" id="Node000003" href="$group__piduino__configfile.html" title=" " alt="" coords="233,55,388,80"/>
+<area shape="rect" id="Node000004" href="$group__piduino__database.html" title=" " alt="" coords="269,104,353,129"/>
+<area shape="rect" id="Node000005" href="$group__piduino__filedevice.html" title=" " alt="" coords="263,153,358,179"/>
+<area shape="rect" id="Node000006" href="$group__piduino__filestream.html" title=" " alt="" coords="263,203,359,228"/>
+<area shape="rect" id="Node000007" href="$group__piduino__global.html" title=" " alt="" coords="243,252,379,277"/>
+<area shape="rect" id="Node000008" href="$group__piduino__iomap.html" title=" " alt="" coords="239,301,382,327"/>
+<area shape="rect" id="Node000009" href="$group__piduino__linearbuffer.html" title=" " alt="" coords="258,351,363,376"/>
+<area shape="rect" id="Node000010" href="$group__piduino__manufacturer.html" title=" " alt="" coords="267,400,355,425"/>
+<area shape="rect" id="Node000011" href="$group__piduino__sceduler.html" title=" " alt="" coords="267,449,354,475"/>
+<area shape="rect" id="Node000012" href="$group__piduino__serialport.html" title=" " alt="" coords="266,499,355,524"/>
+<area shape="rect" id="Node000013" href="$group__piduino__soc.html" title=" " alt="" coords="287,548,334,573"/>
+<area shape="rect" id="Node000014" href="$group__piduino__spidev.html" title=" " alt="" coords="275,597,346,623"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,376,136,401"/>
+<area shape="rect" id="Node000015" href="$group__piduino__system.html" title=" " alt="" coords="275,647,346,672"/>
+<area shape="rect" id="Node000016" href="$group__piduino__terminal.html" title=" " alt="" coords="271,696,350,721"/>
+<area shape="rect" id="Node000017" href="$group__piduino__terminalnotifier.html" title=" " alt="" coords="257,745,364,771"/>
+</map>

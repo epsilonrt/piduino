@@ -1,0 +1,17 @@
+<map id="Piduino::FileStream" name="Piduino::FileStream">
+<area shape="rect" id="Node000001" title="Provides an interface for reading from and writing to files with stream." alt="" coords="101,1139,241,1344"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_file_device.html" title="Provides an interface for reading from and writing to files." alt="" coords="29,724,168,1089"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,1102,151,1138,146,1139,138,1103"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_io_device.html" title="Abstract base class for input/output devices." alt="" coords="12,389,185,675"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,689,101,724,96,724,96,689"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,261,192,327"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="101,327,101,373,96,373,96,327"/>
+<area shape="rect" id="Node000005" href="$class_private.html" title="Internal implementation class for GpioDevice." alt="" coords="37,133,97,199"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="77,198,89,245,84,246,72,200"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="121,133,271,199"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="165,211,125,263,121,259,161,208"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="185,5,207,71"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="199,71,199,117,193,117,193,71"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="193,874,293,939"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="236,954,195,1139,190,1138,230,952"/>
+</map>

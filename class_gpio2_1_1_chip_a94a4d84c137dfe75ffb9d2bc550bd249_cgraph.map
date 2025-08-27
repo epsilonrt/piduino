@@ -1,0 +1,11 @@
+<map id="Gpio2::Chip::open" name="Gpio2::Chip::open">
+<area shape="rect" id="Node000001" title="Opens the GPIO chip device using a string." alt="" coords="5,29,143,55"/>
+<area shape="rect" id="Node000002" href="$class_gpio2_1_1_chip.html#aa0ec649057e32e0e806facfbd07d64fd" title="Gets the path to the GPIO chip device." alt="" coords="387,5,516,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,32,190,27,373,18,373,23,191,33,143,37"/>
+<area shape="rect" id="Node000003" href="$class_gpio2_1_1_chip.html#a1abb604774694528539a4e5eabd85f67" title="Opens the GPIO chip device." alt="" coords="191,67,328,92"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="138,52,183,61,182,67,137,57"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="299,64,397,32,399,37,301,69"/>
+<area shape="poly" id="edge5_Node000003_Node000003" title=" " alt="" coords="229,68,222,58,226,49,238,42,259,40,285,44,295,52,292,56,283,48,259,45,240,47,230,52,228,58,233,65"/>
+<area shape="rect" id="Node000004" href="$class_gpio2_1_1_chip.html#a6946d2012fde1e860cb39ca2e7dc3017" title="Checks if the GPIO chip device is open." alt="" coords="376,67,527,92"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="328,77,362,77,362,82,328,82"/>
+</map>

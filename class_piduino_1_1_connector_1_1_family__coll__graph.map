@@ -1,0 +1,11 @@
+<map id="Piduino::Connector::Family" name="Piduino::Connector::Family">
+<area shape="rect" id="Node000001" title=" " alt="" coords="11,277,147,477"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,135,32,200"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="30,199,48,261,43,262,25,201"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="63,135,94,200"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="81,200,81,261,76,261,76,200"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="142,135,221,200"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="175,201,154,254,150,264,145,261,150,252,170,199"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="116,5,247,85"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="184,99,184,134,179,134,179,99"/>
+</map>

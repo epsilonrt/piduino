@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classgpio__v2__line__event.html" title=" " alt="" coords="5,5,153,31"/>
+<area shape="rect" id="Node000001" href="$struct_gpio2_1_1_line_event.html" title="The actual event being pushed to userspace." alt="" coords="201,5,333,31"/>
+<area shape="poly" id="edge5_Node000000_Node000001" title=" " alt="" coords="167,15,201,15,201,21,167,21"/>
+</map>

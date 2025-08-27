@@ -1,0 +1,12 @@
+<map id="Piduino::Option" name="Piduino::Option">
+<area shape="rect" id="Node000001" title="Abstract Base class for Options." alt="" coords="45,5,161,371"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_value.html" title=" " alt="" coords="5,908,169,1333"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,385,94,908,88,908,97,385"/>
+<area shape="rect" id="Node000004" href="$class_piduino_1_1_value.html" title="Value option with optional default value." alt="" coords="125,420,279,845"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="149,384,157,419,152,420,144,385"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_switch.html" title="Value option without value." alt="" coords="19,1383,156,1508"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="90,1347,90,1382,85,1382,85,1347"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="152,859,140,908,135,907,146,858"/>
+<area shape="rect" id="Node000005" href="$class_piduino_1_1_implicit.html" title="Value option with implicit default value." alt="" coords="194,1068,351,1173"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="237,859,268,1067,263,1068,232,859"/>
+</map>

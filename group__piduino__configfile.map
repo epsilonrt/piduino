@@ -1,0 +1,19 @@
+<map id="Fichier configuration" name="Fichier configuration">
+<area shape="rect" id="Node000002" href="$group__piduino__board.html" title=" " alt="" coords="299,5,359,31"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,376,160,401"/>
+<area shape="rect" id="Node000003" href="$group__piduino__database.html" title=" " alt="" coords="287,55,371,80"/>
+<area shape="rect" id="Node000004" href="$group__piduino__filedevice.html" title=" " alt="" coords="281,104,376,129"/>
+<area shape="rect" id="Node000005" href="$group__piduino__filestream.html" title=" " alt="" coords="281,153,377,179"/>
+<area shape="rect" id="Node000006" href="$group__piduino__global.html" title=" " alt="" coords="261,203,397,228"/>
+<area shape="rect" id="Node000007" href="$group__piduino__iomap.html" title=" " alt="" coords="257,252,400,277"/>
+<area shape="rect" id="Node000008" href="$group__piduino__linearbuffer.html" title=" " alt="" coords="276,301,381,327"/>
+<area shape="rect" id="Node000009" href="$group__piduino__manufacturer.html" title=" " alt="" coords="285,351,373,376"/>
+<area shape="rect" id="Node000010" href="$group__piduino__sceduler.html" title=" " alt="" coords="285,400,372,425"/>
+<area shape="rect" id="Node000011" href="$group__piduino__serialport.html" title=" " alt="" coords="284,449,373,475"/>
+<area shape="rect" id="Node000012" href="$group__piduino__soc.html" title=" " alt="" coords="305,499,352,524"/>
+<area shape="rect" id="Node000013" href="$group__piduino__spidev.html" title=" " alt="" coords="293,548,364,573"/>
+<area shape="rect" id="Node000014" href="$group__piduino__syslog.html" title=" " alt="" coords="263,597,394,623"/>
+<area shape="rect" id="Node000015" href="$group__piduino__system.html" title=" " alt="" coords="293,647,364,672"/>
+<area shape="rect" id="Node000016" href="$group__piduino__terminal.html" title=" " alt="" coords="289,696,368,721"/>
+<area shape="rect" id="Node000017" href="$group__piduino__terminalnotifier.html" title=" " alt="" coords="275,745,382,771"/>
+</map>

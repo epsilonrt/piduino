@@ -1,0 +1,10 @@
+<map id="Piduino::Switch" name="Piduino::Switch">
+<area shape="rect" id="Node000001" title="Value option without value." alt="" coords="19,1383,156,1508"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_value.html" title=" " alt="" coords="5,908,169,1333"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,1347,90,1382,85,1382,85,1347"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_option.html" title="Abstract Base class for Options." alt="" coords="24,5,140,371"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="86,385,89,908,83,908,80,385"/>
+<area shape="rect" id="Node000004" href="$class_piduino_1_1_value.html" title="Value option with optional default value." alt="" coords="104,420,257,845"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="128,384,136,419,131,420,123,385"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="140,859,131,908,125,907,135,858"/>
+</map>

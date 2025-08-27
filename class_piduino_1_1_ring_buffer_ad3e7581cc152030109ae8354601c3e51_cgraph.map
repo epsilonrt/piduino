@@ -1,0 +1,23 @@
+<map id="Piduino::RingBuffer::RingBuffer" name="Piduino::RingBuffer::RingBuffer">
+<area shape="rect" id="Node000001" title="??" alt="" coords="5,105,152,145"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_ring_buffer.html#a9a692f9e646cca49cd815bab3c41b7c7" title=" " alt="" coords="200,61,347,101"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,106,186,98,187,104,153,111"/>
+<area shape="rect" id="Node000010" href="$class_piduino_1_1_ring_buffer.html#a08b17e1925a6a2de57143ff2f03feacc" title=" " alt="" coords="200,149,347,189"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="153,139,187,147,186,152,151,144"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_ring_buffer.html#a021b3199a3664b7d9b2490be7860c336" title=" " alt="" coords="395,21,541,61"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="346,64,380,57,381,62,347,69"/>
+<area shape="rect" id="Node000006" href="$class_piduino_1_1_ring_buffer.html#a5b1af985fff4cdd849b2238a599dc93e" title="Appends the given item to the end of the container." alt="" coords="395,101,541,141"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="347,94,381,101,380,106,346,99"/>
+<area shape="rect" id="Node000004" href="$class_piduino_1_1_ring_buffer.html#ab06f8c1fbbff67e810be1d1fd6681efb" title=" " alt="" coords="589,5,741,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="542,33,575,30,576,35,542,38"/>
+<area shape="rect" id="Node000005" href="$class_piduino_1_1_ring_buffer.html#ae4b5db6bed34336a27e3af6210bb74e4" title=" " alt="" coords="789,5,936,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="741,23,775,23,775,28,741,28"/>
+<area shape="rect" id="Node000007" href="$class_piduino_1_1_ring_buffer.html#a3357ba39908fb401aa38f4c6de92441c" title=" " alt="" coords="592,69,739,109"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="541,107,578,101,578,106,542,112"/>
+<area shape="rect" id="Node000008" href="$class_piduino_1_1_ring_buffer.html#abdb5ce4e15b71e0c0b5ac40c86bb1d43" title=" " alt="" coords="592,133,739,173"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="542,131,578,137,578,142,541,136"/>
+<area shape="rect" id="Node000009" href="$class_piduino_1_1_ring_buffer.html#a29757120ceccd1317d247e16061a3c32" title=" " alt="" coords="789,161,936,201"/>
+<area shape="poly" id="edge9_Node000006_Node000009" title=" " alt="" coords="499,139,541,164,590,183,637,191,685,195,776,191,776,196,685,200,636,196,589,188,538,168,496,144"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="740,161,776,166,775,172,739,166"/>
+<area shape="poly" id="edge11_Node000010_Node000010" title=" " alt="" coords="237,150,234,140,240,131,253,125,273,123,296,126,309,133,306,137,295,131,273,128,255,130,244,135,240,141,242,148"/>
+</map>

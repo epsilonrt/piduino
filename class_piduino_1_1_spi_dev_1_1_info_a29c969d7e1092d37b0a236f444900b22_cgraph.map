@@ -1,0 +1,9 @@
+<map id="Piduino::SpiDev::Info::Info" name="Piduino::SpiDev::Info::Info">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,47,161,87"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_spi_dev.html#a0136ed0847a348ef613c3a8fa1339774" title="Informations sur le bus." alt="" coords="221,5,376,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,47,229,31,230,36,162,52"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_spi_dev_1_1_info.html#a450689d1dc7f84258d4c6ddca28af0a1" title=" " alt="" coords="209,55,388,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="161,65,196,65,196,70,161,70"/>
+<area shape="rect" id="Node000004" href="$class_piduino_1_1_spi_dev_1_1_info.html#a6d9197f448a25be030f6edaa109e1300" title=" " alt="" coords="221,105,377,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="160,85,210,98,209,104,158,90"/>
+</map>

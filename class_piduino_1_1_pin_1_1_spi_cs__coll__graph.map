@@ -1,0 +1,9 @@
+<map id="Piduino::Pin::SpiCs" name="Piduino::Pin::SpiCs">
+<area shape="rect" id="Node000001" title="Represents a SPI chip select configuration for a pin." alt="" coords="26,148,161,213"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,48,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="36,70,54,123,60,133,55,136,50,125,31,72"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="78,5,109,71"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="96,71,96,131,91,131,91,71"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="137,5,188,71"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="157,72,136,125,130,135,125,133,131,123,152,70"/>
+</map>

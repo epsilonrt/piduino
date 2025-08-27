@@ -1,0 +1,24 @@
+<map id="Piduino::ConsoleOptionPrinter" name="Piduino::ConsoleOptionPrinter">
+<area shape="rect" id="Node000001" title="Option printer for the console." alt="" coords="280,976,488,1101"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_option_printer.html" title="Base class for an OptionPrinter." alt="" coords="306,821,462,927"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="387,940,387,976,381,976,381,940"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_option_parser.html" title="OptionParser manages all Options." alt="" coords="307,433,461,759"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="387,759,387,805,381,805,381,759"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="117,276,259,356"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="218,355,300,471,295,474,213,358"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,148,155,213"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="88,213,95,232,105,250,115,263,111,266,100,254,90,234,83,214"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="137,13,159,78"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="139,70,106,135,101,132,134,68"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="179,148,301,213"/>
+<area shape="poly" id="edge7_Node000007_Node000006" title=" " alt="" coords="162,62,211,133,207,136,157,65"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="198,226,192,238,187,257,186,276,181,276,182,256,187,236,194,223"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="295,283,473,349"/>
+<area shape="poly" id="edge12_Node000010_Node000007" title=" " alt="" coords="286,221,351,281,348,285,282,225"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="461,148,539,213"/>
+<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="524,213,533,236,538,242,548,238,560,231,571,227,577,237,573,265,525,410,502,458,473,502,469,499,498,456,520,408,568,264,572,237,570,232,562,235,550,243,537,247,528,239,519,215"/>
+<area shape="poly" id="edge11_Node000010_Node000008" title=" " alt="" coords="475,215,425,272,421,269,471,212"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="435,5,565,85"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="503,99,503,148,497,148,497,99"/>
+<area shape="poly" id="edge10_Node000003_Node000010" title=" " alt="" coords="387,349,387,417,381,417,381,349"/>
+</map>

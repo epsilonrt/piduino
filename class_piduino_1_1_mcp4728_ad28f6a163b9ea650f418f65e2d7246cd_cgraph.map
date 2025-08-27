@@ -1,0 +1,5 @@
+<map id="Piduino::Mcp4728::fastWrite" name="Piduino::Mcp4728::fastWrite">
+<area shape="rect" id="Node000001" title="Writes multiple values to the MCP4728 DAC channels in a single operation." alt="" coords="5,5,211,31"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_mcp4728.html#ac61920833faaab0ca321f4d68a38f92a" title="Writes multiple values to the MCP4728 DAC channels in a single operation." alt="" coords="259,5,464,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,15,245,15,245,21,211,21"/>
+</map>

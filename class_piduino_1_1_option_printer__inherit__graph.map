@@ -1,0 +1,9 @@
+<map id="Piduino::OptionPrinter" name="Piduino::OptionPrinter">
+<area shape="rect" id="Node000001" title="Base class for an OptionPrinter." alt="" coords="298,5,454,111"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_bash_completion_option_printer.html" title="Option printer for bash completion." alt="" coords="5,161,248,281"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="288,119,220,163,217,159,285,115"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_console_option_printer.html" title="Option printer for the console." alt="" coords="272,159,480,284"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="379,124,379,158,373,158,373,124"/>
+<area shape="rect" id="Node000004" href="$class_piduino_1_1_groff_option_printer.html" title="Option printer for man pages." alt="" coords="505,159,693,284"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="460,117,515,156,512,161,457,121"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="Piduino::RingBuffer::pop_back" name="Piduino::RingBuffer::pop_back">
+<area shape="rect" id="Node000001" title="Remove the last element from the container." alt="" coords="5,35,152,75"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_ring_buffer.html#a8ee180cc47fbd9819a9531c24086b017" title=" " alt="" coords="200,5,347,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="152,41,186,36,187,41,152,46"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_ring_buffer.html#a11afdff22cd2307b3777390b624697dd" title=" " alt="" coords="395,35,541,75"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="152,54,200,55,347,55,381,54,381,59,347,60,200,60,152,59"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="347,34,381,39,381,44,346,39"/>
+</map>

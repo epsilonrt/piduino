@@ -1,0 +1,48 @@
+<map id="Piduino::System" name="Piduino::System">
+<area shape="rect" id="Node000001" title=" " alt="" coords="115,1161,273,1667"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="208,229,287,294"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="218,296,165,359,137,398,114,439,75,525,54,596,42,670,30,764,15,870,8,955,10,994,16,1036,28,1083,47,1136,76,1202,109,1267,104,1269,71,1205,42,1138,23,1084,11,1037,4,995,3,954,10,870,25,764,36,669,49,595,70,523,109,436,133,395,160,356,214,292"/>
+<area shape="rect" id="Node000006" href="$class_piduino_1_1_system_1_1_arm_core.html" title=" " alt="" coords="215,884,399,949"/>
+<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="242,295,228,361,217,438,206,498,194,546,191,569,193,591,201,615,216,641,230,651,246,652,264,654,281,665,296,688,308,714,320,768,322,822,318,868,313,868,317,822,314,769,302,716,292,691,277,669,263,659,246,658,228,656,212,644,196,617,188,592,186,569,189,546,200,497,211,437,223,360,237,294"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="283,507,462,573"/>
+<area shape="poly" id="edge8_Node000007_Node000002" title=" " alt="" coords="256,294,270,350,292,412,315,454,340,492,336,495,311,457,288,414,265,352,251,295"/>
+<area shape="rect" id="Node000011" href="$class_piduino_1_1_system_1_1_armbian_info.html" title=" " alt="" coords="569,437,776,643"/>
+<area shape="poly" id="edge15_Node000011_Node000002" title=" " alt="" coords="287,292,302,299,327,307,350,310,391,308,431,308,454,312,479,323,518,358,577,423,573,427,514,362,477,328,452,317,431,313,391,313,350,315,326,312,300,304,285,296"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="182,5,313,85"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="250,99,250,228,245,228,245,99"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="39,884,82,949"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="58,950,52,1035,53,1086,61,1137,81,1203,109,1267,105,1269,76,1205,55,1138,48,1087,46,1035,53,949"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="123,507,153,573"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="140,573,141,781,145,924,153,1069,160,1145,154,1146,147,1070,139,924,136,781,135,573"/>
+<area shape="poly" id="edge12_Node000006_Node000005" title=" " alt="" coords="144,572,158,650,170,695,186,739,223,798,275,869,271,872,218,801,181,741,164,697,152,651,139,573"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="303,950,258,1146,253,1145,297,949"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="370,574,318,868,313,867,364,573"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="312,229,433,294"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="375,308,375,507,370,507,370,308"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="361,13,384,78"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="375,78,375,212,370,212,370,78"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="486,507,545,573"/>
+<area shape="poly" id="edge11_Node000006_Node000010" title=" " alt="" coords="506,574,476,644,426,741,341,872,337,869,421,739,472,642,501,572"/>
+<area shape="poly" id="edge13_Node000001_Node000011" title=" " alt="" coords="629,644,533,843,414,1071,350,1179,285,1282,280,1279,345,1176,409,1068,528,841,624,642"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="674,13,717,78"/>
+<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="697,78,681,421,675,421,691,78"/>
+<area shape="rect" id="Node000016" href="$struct_piduino_1_1_system_1_1_raspian_info_1_1_board_info_field.html" title=" " alt="" coords="855,221,1034,301"/>
+<area shape="poly" id="edge25_Node000016_Node000012" title=" " alt="" coords="699,78,702,107,710,138,723,169,743,195,764,209,785,214,809,215,840,218,839,224,809,220,784,219,762,214,739,199,718,172,704,140,697,108,693,79"/>
+<area shape="rect" id="Node000013" href="$class_piduino_1_1_system_1_1_raspian_info.html" title=" " alt="" coords="763,764,967,1069"/>
+<area shape="poly" id="edge16_Node000001_Node000013" title=" " alt="" coords="764,1043,716,1093,664,1139,569,1209,469,1272,373,1327,289,1370,287,1365,370,1322,466,1268,566,1205,660,1135,712,1089,760,1040"/>
+<area shape="rect" id="Node000014" href="$union_piduino_1_1_system_1_1_raspian_info_1_1_board_info.html" title=" " alt="" coords="801,450,979,630"/>
+<area shape="poly" id="edge17_Node000013_Node000014" title=" " alt="" coords="887,631,879,748,873,747,881,630"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="765,229,831,294"/>
+<area shape="poly" id="edge18_Node000014_Node000015" title=" " alt="" coords="811,293,858,434,853,435,806,295"/>
+<area shape="poly" id="edge19_Node000014_Node000016" title=" " alt="" coords="940,302,913,434,908,433,934,301"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="807,13,866,78"/>
+<area shape="poly" id="edge20_Node000016_Node000017" title=" " alt="" coords="838,78,842,136,850,167,863,196,872,208,867,211,858,199,845,169,837,137,832,79"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="890,13,973,78"/>
+<area shape="poly" id="edge21_Node000016_Node000018" title=" " alt="" coords="936,78,944,205,939,205,931,78"/>
+<area shape="rect" id="Node000019" title=" " alt="" coords="997,13,1074,78"/>
+<area shape="poly" id="edge22_Node000016_Node000019" title=" " alt="" coords="1035,79,1024,136,1015,168,1002,199,995,209,991,207,997,196,1010,166,1019,135,1030,78"/>
+<area shape="rect" id="Node000020" title=" " alt="" coords="1098,13,1199,78"/>
+<area shape="poly" id="edge23_Node000016_Node000020" title=" " alt="" coords="1151,79,1142,139,1131,171,1112,199,1084,223,1051,240,1049,235,1081,218,1108,196,1126,168,1137,137,1146,78"/>
+<area shape="rect" id="Node000021" title=" " alt="" coords="1233,13,1328,78"/>
+<area shape="poly" id="edge24_Node000016_Node000021" title=" " alt="" coords="1287,78,1287,107,1282,140,1272,172,1253,199,1220,219,1170,234,1051,253,1050,248,1169,229,1218,214,1250,195,1267,169,1277,138,1281,107,1281,78"/>
+</map>

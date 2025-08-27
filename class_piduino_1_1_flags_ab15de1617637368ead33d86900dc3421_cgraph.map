@@ -1,0 +1,5 @@
+<map id="Piduino::Flags::clearFlag" name="Piduino::Flags::clearFlag">
+<area shape="rect" id="Node000001" title="Clears a single flag using bitwise AND with complement." alt="" coords="5,5,187,31"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_flags.html#a913530b22b74138ac5d37b0d1d8e8ad5" title="Clears multiple flags using bitwise AND with complement." alt="" coords="235,5,423,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="187,15,221,15,221,21,187,21"/>
+</map>

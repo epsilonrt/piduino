@@ -1,0 +1,11 @@
+<map id="Piduino::IoMap" name="Piduino::IoMap">
+<area shape="rect" id="Node000001" title="Memory mapping." alt="" coords="75,133,208,499"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,48,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="40,70,54,108,71,148,66,150,50,110,35,72"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="79,5,131,71"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="108,71,109,109,110,117,105,117,104,110,102,71"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="163,5,194,71"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="177,71,171,117,166,116,172,71"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="219,5,272,71"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="236,72,216,123,211,121,231,70"/>
+</map>

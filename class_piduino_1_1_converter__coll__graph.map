@@ -1,0 +1,15 @@
+<map id="Piduino::Converter" name="Piduino::Converter">
+<area shape="rect" id="Node000001" title="The Converter class provides an interface for analog&#45;to&#45;digital and digital&#45;to&#45;analog converters." alt="" coords="100,737,284,1123"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_io_device.html" title="Abstract base class for input/output devices." alt="" coords="12,389,185,675"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,688,149,736,144,738,133,689"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,261,192,327"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,327,101,373,96,373,96,327"/>
+<area shape="rect" id="Node000004" href="$class_private.html" title="Internal implementation class for GpioDevice." alt="" coords="37,133,97,199"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="77,198,89,245,84,246,72,200"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="121,133,271,199"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="165,211,125,263,121,259,161,208"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="185,5,207,71"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="199,71,199,117,193,117,193,71"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="210,499,361,565"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="281,565,243,722,238,721,275,564"/>
+</map>

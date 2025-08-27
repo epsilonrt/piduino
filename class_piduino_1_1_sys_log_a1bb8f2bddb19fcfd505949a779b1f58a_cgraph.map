@@ -1,0 +1,8 @@
+<map id="Piduino::SysLog::priorityName" name="Piduino::SysLog::priorityName">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,224,55"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="75,31,66,21,71,11,87,5,115,3,149,7,159,11,163,17,158,20,156,15,148,12,115,8,88,10,74,15,72,20,79,27"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_sys_log.html#a4ecc7030b5ba05f2c52d304f33f60b66" title=" " alt="" coords="272,29,451,55"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="224,39,258,39,258,45,224,45"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_sys_log_buffer.html#a26afcc07ba9e664de221868e56529a1c" title=" " alt="" coords="499,22,661,62"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="451,39,485,39,485,45,451,45"/>
+</map>

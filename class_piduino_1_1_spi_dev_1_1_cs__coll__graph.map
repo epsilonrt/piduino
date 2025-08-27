@@ -1,0 +1,19 @@
+<map id="Piduino::SpiDev::Cs" name="Piduino::SpiDev::Cs">
+<area shape="rect" id="Node000001" title="Broche de chip select d&#39;un bus SPI." alt="" coords="144,932,289,1217"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,589,36,655"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="22,655,25,747,34,801,50,854,67,889,88,924,135,986,131,990,83,927,62,892,45,856,29,802,20,747,16,655"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_pin.html" title="Represents a general&#45;purpose input/output (GPIO) pin and its configuration." alt="" coords="60,389,208,855"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="179,854,190,916,185,917,174,855"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="41,261,227,327"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="137,327,137,373,131,373,131,327"/>
+<area shape="rect" id="Node000005" href="$class_private.html" title="Internal implementation class for GpioDevice." alt="" coords="72,133,132,199"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="113,198,125,245,119,246,107,200"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="157,133,306,199"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="201,211,161,263,156,259,196,208"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="220,5,243,71"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="234,71,234,117,229,117,229,71"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="233,589,283,655"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="258,655,234,916,229,915,252,655"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="314,589,357,655"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="336,655,324,768,312,839,295,909,293,917,287,916,290,907,307,838,319,767,331,654"/>
+</map>

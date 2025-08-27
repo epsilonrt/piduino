@@ -1,0 +1,9 @@
+<map id="Piduino::I2cDev::Info" name="Piduino::I2cDev::Info">
+<area shape="rect" id="Node000001" title="Information class for I2C bus configuration and management." alt="" coords="5,277,152,543"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="7,135,38,200"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="23,200,27,253,28,261,23,262,21,254,18,200"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="97,135,175,200"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="131,201,117,262,111,261,126,199"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="71,5,201,85"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="139,99,139,134,133,134,133,99"/>
+</map>

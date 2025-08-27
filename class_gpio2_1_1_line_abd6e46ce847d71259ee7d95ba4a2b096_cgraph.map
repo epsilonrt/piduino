@@ -1,0 +1,5 @@
+<map id="Gpio2::Line::getValues" name="Gpio2::Line::getValues">
+<area shape="rect" id="Node000001" title="Gets the values of the GPIO line(s)." alt="" coords="5,5,172,31"/>
+<area shape="rect" id="Node000002" href="$class_gpio2_1_1_line.html#af6ebb0f3d30ff33fe6033aca7b316332" title="Checks if the GPIO line is open." alt="" coords="220,5,368,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,15,206,15,206,21,172,21"/>
+</map>

@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['bananapi_0',['BananaPi',['../class_piduino_1_1_database_1_1_board_1_1_family.html#a9a6db230566aec1df28a6fe5969e3da3ad699ab2ba8337fa53dffab02e8d0f4bd',1,'Piduino::Database::Board::Family']]],
+  ['baud115200_1',['Baud115200',['../class_piduino_1_1_serial_port.html#ab2b062de48521274b282701c63697ea7aca040acc300ca0aca19f5392dfc6c318',1,'Piduino::SerialPort']]],
+  ['baud1200_2',['Baud1200',['../class_piduino_1_1_serial_port.html#ab2b062de48521274b282701c63697ea7a2f88af03c63c0350012f6fc2ec6e85c2',1,'Piduino::SerialPort']]],
+  ['baud19200_3',['Baud19200',['../class_piduino_1_1_serial_port.html#ab2b062de48521274b282701c63697ea7a629d9136815e100e1949c4f272673d1c',1,'Piduino::SerialPort']]],
+  ['baud2400_4',['Baud2400',['../class_piduino_1_1_serial_port.html#ab2b062de48521274b282701c63697ea7aee4a89167b0b09ab794815a8c00ff756',1,'Piduino::SerialPort']]],
+  ['baud38400_5',['Baud38400',['../class_piduino_1_1_serial_port.html#ab2b062de48521274b282701c63697ea7a3269ffe7c47c490f25cda518abe6ae1d',1,'Piduino::SerialPort']]],
+  ['baud4800_6',['Baud4800',['../class_piduino_1_1_serial_port.html#ab2b062de48521274b282701c63697ea7a1d77c7293c12091707d3f09f513e5998',1,'Piduino::SerialPort']]],
+  ['baud57600_7',['Baud57600',['../class_piduino_1_1_serial_port.html#ab2b062de48521274b282701c63697ea7a37a9c0ab82717366670a464dbc4e60a6',1,'Piduino::SerialPort']]],
+  ['baud9600_8',['Baud9600',['../class_piduino_1_1_serial_port.html#ab2b062de48521274b282701c63697ea7a0aed58faf32651aef7053aa5b6bad177',1,'Piduino::SerialPort']]],
+  ['bcm2708_9',['Bcm2708',['../class_piduino_1_1_so_c.html#adcccd8effa15eb47383bf48be823c13daf74affdbbd5f90d00e6cc7bc98295e67',1,'Piduino::SoC']]],
+  ['bcm2709_10',['Bcm2709',['../class_piduino_1_1_so_c.html#adcccd8effa15eb47383bf48be823c13da0b8eb7d71f18b08e076a3dfbae6e1706',1,'Piduino::SoC']]],
+  ['bcm2710_11',['Bcm2710',['../class_piduino_1_1_so_c.html#adcccd8effa15eb47383bf48be823c13da42fbe963d214de5423ee1eee5194c4eb',1,'Piduino::SoC']]],
+  ['bcm2711_12',['bcm2711',['../class_piduino_1_1_system_1_1_raspian_info.html#a999f392cd9e28a42e4a5312f0cbb153ea9fb90b8ab653251572820d445f4d5676',1,'Piduino::System::RaspianInfo::BCM2711'],['../class_piduino_1_1_so_c.html#adcccd8effa15eb47383bf48be823c13da121b04a55c1570f299111c2a0892b595',1,'Piduino::SoC::Bcm2711']]],
+  ['bcm2712_13',['bcm2712',['../class_piduino_1_1_system_1_1_raspian_info.html#a999f392cd9e28a42e4a5312f0cbb153ea23bf0296622ad9119d3167390135bed8',1,'Piduino::System::RaspianInfo::BCM2712'],['../class_piduino_1_1_so_c.html#adcccd8effa15eb47383bf48be823c13daead6fd216a30b00f62b6af3012a42eb0',1,'Piduino::SoC::Bcm2712']]],
+  ['bcm2835_14',['BCM2835',['../class_piduino_1_1_system_1_1_raspian_info.html#a999f392cd9e28a42e4a5312f0cbb153eac4233428e5e504134b8e0807229419c2',1,'Piduino::System::RaspianInfo']]],
+  ['bcm2836_15',['BCM2836',['../class_piduino_1_1_system_1_1_raspian_info.html#a999f392cd9e28a42e4a5312f0cbb153eaf0efc146e15d6ab303d38f186c1b66dc',1,'Piduino::System::RaspianInfo']]],
+  ['bcm2837_16',['BCM2837',['../class_piduino_1_1_system_1_1_raspian_info.html#a999f392cd9e28a42e4a5312f0cbb153eae84a821a598d5aad35f4391e4ff29ba5',1,'Piduino::System::RaspianInfo']]],
+  ['binary_17',['Binary',['../class_piduino_1_1_io_device.html#a0293f2e9db1a34f7ac9e8e36f6782bb3ad4abf3f3356607f726721e2e1c7d57ed',1,'Piduino::IoDevice']]],
+  ['broadcom_18',['Broadcom',['../class_piduino_1_1_manufacturer.html#ace9d3ff495658651889913ac3f7aad4baf66fc2ab58fbbe89c29ad9f65b935ad3',1,'Piduino::Manufacturer']]],
+  ['broadcombcm2835_19',['BroadcomBcm2835',['../class_piduino_1_1_so_c_1_1_family.html#ac527ffcd7a9cfdbd46a62b776e19e686aba210ba9881a87088d20df1faa6f430d',1,'Piduino::SoC::Family']]]
+];

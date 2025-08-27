@@ -1,0 +1,9 @@
+<map id="Piduino::RingBuffer&lt; T, A &gt;" name="Piduino::RingBuffer&lt; T, A &gt;">
+<area shape="rect" id="Node000001" title="STL&#45;style circular buffer." alt="" coords="108,177,269,697"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,81,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="51,70,71,153,104,243,99,245,66,154,46,71"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="134,5,243,71"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="191,71,191,161,186,161,186,71"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="276,5,336,71"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="301,72,279,154,276,164,271,162,274,153,296,70"/>
+</map>

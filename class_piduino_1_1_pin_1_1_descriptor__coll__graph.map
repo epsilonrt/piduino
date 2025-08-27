@@ -1,0 +1,25 @@
+<map id="Piduino::Pin::Descriptor" name="Piduino::Pin::Descriptor">
+<area shape="rect" id="Node000001" title="Describes a pin&#39;s type, numbering, and associated names." alt="" coords="149,507,314,672"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,371,49,437"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="51,430,63,442,137,510,134,514,59,446,47,434"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_pin_1_1_number.html" title="Holds various numbering representations for a pin." alt="" coords="73,371,224,437"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="165,436,190,490,185,492,160,438"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="133,148,164,213"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="151,214,151,355,146,355,146,214"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="249,371,291,437"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="266,437,255,491,249,490,261,436"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="316,364,467,444"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="359,446,315,496,311,492,355,442"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="277,148,327,213"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="308,213,320,273,330,307,343,339,349,349,344,352,338,341,325,308,315,274,303,214"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="352,148,431,213"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="394,214,394,347,389,347,389,214"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="326,5,457,85"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="394,99,394,148,389,148,389,99"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="455,148,581,213"/>
+<area shape="poly" id="edge9_Node000006_Node000010" title=" " alt="" coords="516,228,503,284,492,314,476,342,455,365,451,362,472,338,487,312,498,283,511,227"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="493,13,516,78"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="506,78,509,124,510,131,504,132,503,124,501,78"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="569,13,592,78"/>
+<area shape="poly" id="edge11_Node000010_Node000012" title=" " alt="" coords="573,79,554,125,549,135,544,132,549,123,568,77"/>
+</map>

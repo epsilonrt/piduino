@@ -1,0 +1,37 @@
+<map id="Piduino::Switch" name="Piduino::Switch">
+<area shape="rect" id="Node000001" title="Value option without value." alt="" coords="477,1543,614,1668"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_value.html" title=" " alt="" coords="463,1108,627,1493"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="548,1507,548,1542,543,1542,543,1507"/>
+<area shape="rect" id="Node000003" href="$class_piduino_1_1_option.html" title="Abstract Base class for Options." alt="" coords="334,292,450,597"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="398,611,414,819,429,933,451,1045,468,1107,463,1109,445,1046,424,934,408,820,393,611"/>
+<area shape="rect" id="Node000013" href="$class_piduino_1_1_value.html" title="Value option with optional default value." alt="" coords="207,660,361,1045"/>
+<area shape="poly" id="edge16_Node000013_Node000003" title=" " alt="" coords="379,612,373,637,363,671,358,670,368,635,374,610"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="253,135,331,200"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="297,200,311,267,330,319,325,321,305,269,292,201"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="227,5,357,85"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="295,99,295,134,289,134,289,99"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="383,135,454,200"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="418,200,411,276,406,275,413,200"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="461,820,630,885"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="548,886,548,1091,543,1091,543,886"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="657,412,700,477"/>
+<area shape="poly" id="edge10_Node000002_Node000008" title=" " alt="" coords="683,478,684,574,682,715,670,880,659,964,644,1046,632,1093,627,1091,639,1045,654,963,664,879,676,715,679,574,677,478"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="676,478,664,535,644,598,629,623,590,719,561,805,556,803,585,717,624,620,639,596,659,534,671,477"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="788,820,929,885"/>
+<area shape="poly" id="edge12_Node000011_Node000008" title=" " alt="" coords="691,477,718,550,756,635,772,659,810,734,842,804,837,806,806,737,767,661,751,637,713,552,686,478"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="480,412,629,477"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="550,491,536,621,537,730,544,819,539,820,531,731,531,621,545,490"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="675,135,698,200"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="678,194,579,398,575,396,673,191"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="758,412,879,477"/>
+<area shape="poly" id="edge14_Node000012_Node000010" title=" " alt="" coords="701,191,799,396,794,398,696,194"/>
+<area shape="poly" id="edge11_Node000002_Node000011" title=" " alt="" coords="850,887,818,962,772,1047,708,1132,641,1208,637,1205,704,1128,767,1044,813,959,845,885"/>
+<area shape="poly" id="edge13_Node000011_Node000012" title=" " alt="" coords="826,491,858,819,853,820,820,491"/>
+<area shape="poly" id="edge15_Node000002_Node000013" title=" " alt="" coords="331,1058,344,1083,370,1124,400,1162,465,1229,461,1233,396,1166,365,1127,339,1085,327,1060"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="123,412,245,477"/>
+<area shape="poly" id="edge17_Node000013_Node000014" title=" " alt="" coords="189,477,198,550,213,635,215,644,210,645,208,637,192,551,184,478"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="269,412,302,477"/>
+<area shape="poly" id="edge18_Node000013_Node000015" title=" " alt="" coords="288,477,287,644,282,644,283,477"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="5,412,99,477"/>
+<area shape="poly" id="edge19_Node000013_Node000016" title=" " alt="" coords="64,477,85,533,113,596,155,668,200,735,195,738,150,670,108,599,80,535,59,479"/>
+</map>

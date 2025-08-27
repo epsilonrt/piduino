@@ -1,0 +1,5 @@
+<map id="Piduino::Scheduler::interrupts" name="Piduino::Scheduler::interrupts">
+<area shape="rect" id="Node000001" title="Passage en mode &quot;avec interruptions&quot;." alt="" coords="5,5,148,45"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_scheduler.html#a21e7b158adc90c44a52fcae395205f5e" title="Définis la priorité en temps réel du thread appelant." alt="" coords="196,5,339,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,23,183,23,183,28,148,28"/>
+</map>

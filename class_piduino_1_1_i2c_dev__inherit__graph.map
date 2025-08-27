@@ -1,0 +1,5 @@
+<map id="Piduino::I2cDev" name="Piduino::I2cDev">
+<area shape="rect" id="Node000001" title="I2C device interface for communicating with I2C peripheral devices." alt="" coords="31,339,153,644"/>
+<area shape="rect" id="Node000002" href="$class_piduino_1_1_io_device.html" title="Abstract base class for input/output devices." alt="" coords="5,5,179,291"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,305,95,338,89,338,89,305"/>
+</map>

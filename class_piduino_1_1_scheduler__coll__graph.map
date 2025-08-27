@@ -1,0 +1,7 @@
+<map id="Piduino::Scheduler" name="Piduino::Scheduler">
+<area shape="rect" id="Node000001" title=" " alt="" coords="19,148,177,393"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,36,71"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="20,71,21,97,25,123,27,131,22,133,19,125,15,97,15,71"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="135,5,219,71"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="168,72,147,133,142,132,163,70"/>
+</map>

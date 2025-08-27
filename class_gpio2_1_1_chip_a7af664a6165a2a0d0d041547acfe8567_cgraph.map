@@ -1,0 +1,6 @@
+<map id="Gpio2::Chip::close" name="Gpio2::Chip::close">
+<area shape="rect" id="Node000001" title="Closes the GPIO chip device." alt="" coords="5,29,144,55"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="43,31,36,21,40,11,53,5,75,3,101,6,112,15,109,19,99,11,75,8,54,10,44,15,41,20,47,28"/>
+<area shape="rect" id="Node000002" href="$class_gpio2_1_1_chip.html#a6946d2012fde1e860cb39ca2e7dc3017" title="Checks if the GPIO chip device is open." alt="" coords="192,29,343,55"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="144,39,179,39,179,45,144,45"/>
+</map>
