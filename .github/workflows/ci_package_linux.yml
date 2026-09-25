@@ -19,7 +19,8 @@ concurrency:
 
 jobs:
   # Build the Debian packages (one per CPack component) in a Debian bookworm container:
-  # arm64 runs natively on a GitHub-hosted arm64 runner, armhf under QEMU emulation.
+  # Both run natively on a GitHub-hosted arm64 runner (armhf as a 32-bit container, no emulation);
+  # "linux32" makes uname report armv7l as on a 32-bit Pi.
   package-linux:
     name: package-linux (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
@@ -30,19 +31,17 @@ jobs:
           - arch: arm64
             runner: ubuntu-24.04-arm
             platform: linux/arm64
+            prefix: ""
           - arch: armhf
-            runner: ubuntu-latest
+            runner: ubuntu-24.04-arm
             platform: linux/arm/v7
+            prefix: linux32
 
     steps:
     # The full history (with tags) is required: the version comes from 'git describe'
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
-    - name: Set up QEMU
-      if: matrix.arch == 'armhf'
-      uses: docker/setup-qemu-action@v3
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -61,7 +60,8 @@ jobs:
     - name: Build and package
       env:
         ARCH: ${{ matrix.arch }}
-      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 4 && cd build && cpack -G DEB'
+        PREFIX: ${{ matrix.prefix }}
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" $PREFIX sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 4 && cd build && cpack -G DEB'
 
     - name: Check packages
       id: pkg

@@ -21,7 +21,8 @@ jobs:
   # piduino only builds on ARM (Raspberry Pi and similar boards), so there is no x86 build.
   # The build runs in a Debian bookworm container (same base as Raspberry Pi OS):
   # - arm64 runs natively on a GitHub-hosted arm64 runner,
-  # - armhf runs under QEMU emulation on an x86_64 runner.
+  # - armhf also runs natively on the same arm64 runner (32-bit containers, no emulation);
+  #   "linux32" makes uname report armv7l as on a 32-bit Pi.
   build-linux:
     name: build-linux (${{ matrix.arch }}, ${{ matrix.build_type }})
     runs-on: ${{ matrix.runner }}
@@ -34,18 +35,16 @@ jobs:
           - arch: arm64
             runner: ubuntu-24.04-arm
             platform: linux/arm64
+            prefix: ""
           - arch: armhf
-            runner: ubuntu-latest
+            runner: ubuntu-24.04-arm
             platform: linux/arm/v7
+            prefix: linux32
 
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
-    - name: Set up QEMU
-      if: matrix.arch == 'armhf'
-      uses: docker/setup-qemu-action@v3
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -64,8 +63,9 @@ jobs:
     - name: Configure and build
       env:
         ARCH: ${{ matrix.arch }}
+        PREFIX: ${{ matrix.prefix }}
         BUILD_TYPE: ${{ matrix.build_type }}
-      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" -e BUILD_TYPE "piduino-build-$ARCH:latest" sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" && cmake --build build --parallel 4'
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" -e BUILD_TYPE "piduino-build-$ARCH:latest" $PREFIX sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" && cmake --build build --parallel 4'
 
     # The unit tests are only built in Debug. All of them need a real Pi board and are
     # labelled "hardware" in tests/CMakeLists.txt: they are compiled here but not run.
@@ -73,4 +73,5 @@ jobs:
       if: matrix.build_type == 'Debug'
       env:
         ARCH: ${{ matrix.arch }}
-      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" sh -c 'ctest --test-dir build -N -L hardware && ctest --test-dir build -LE hardware --no-tests=ignore --output-on-failure'
+        PREFIX: ${{ matrix.prefix }}
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" $PREFIX sh -c 'ctest --test-dir build -N -L hardware && ctest --test-dir build -LE hardware --no-tests=ignore --output-on-failure'
