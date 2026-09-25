@@ -1,0 +1,76 @@
+name: Build Linux
+
+on:
+  push:
+    branches: [ master, dev ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ master, dev ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Cancel redundant runs of the same pull request (or of the same branch)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # piduino only builds on ARM (Raspberry Pi and similar boards), so there is no x86 build.
+  # The build runs in a Debian bookworm container (same base as Raspberry Pi OS):
+  # - arm64 runs natively on a GitHub-hosted arm64 runner,
+  # - armhf runs under QEMU emulation on an x86_64 runner.
+  build-linux:
+    name: build-linux (${{ matrix.arch }}, ${{ matrix.build_type }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [arm64, armhf]
+        build_type: [Release, Debug]
+        include:
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+          - arch: armhf
+            runner: ubuntu-latest
+            platform: linux/arm/v7
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up QEMU
+      if: matrix.arch == 'armhf'
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: .github/docker/Dockerfile.${{ matrix.arch }}
+        platforms: ${{ matrix.platform }}
+        tags: piduino-build-${{ matrix.arch }}:latest
+        load: true
+        cache-from: type=gha,scope=${{ matrix.arch }}
+        cache-to: type=gha,scope=${{ matrix.arch }},mode=max
+
+    - name: Configure and build
+      env:
+        ARCH: ${{ matrix.arch }}
+        BUILD_TYPE: ${{ matrix.build_type }}
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" -e BUILD_TYPE "piduino-build-$ARCH:latest" sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" && cmake --build build --parallel 4'
+
+    # The unit tests are only built in Debug. All of them need a real Pi board and are
+    # labelled "hardware" in tests/CMakeLists.txt: they are compiled here but not run.
+    - name: Run tests (those not requiring hardware)
+      if: matrix.build_type == 'Debug'
+      env:
+        ARCH: ${{ matrix.arch }}
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" sh -c 'ctest --test-dir build -N -L hardware && ctest --test-dir build -LE hardware --no-tests=ignore --output-on-failure'
