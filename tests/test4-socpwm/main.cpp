@@ -159,6 +159,7 @@ struct PwmFixture : public GpioFixture {
 
       output->setPull (Pin::PullUp);
       output->setMode (Pin::ModeInput); // Set output pin to input mode to release the input
+      clk.delayMicroseconds (500); // the line may have been held low (PWM at 0 %): let the pull-up raise it
 
       inState = input->read();
       CHECK_EQUAL (true, inState);
@@ -220,9 +221,10 @@ TEST_FIXTURE (PwmFixture, Test1) {
   CHECK_EQUAL (true, pwm->open());
   REQUIRE CHECK_EQUAL (true, pwm->isOpen());
 
-  if (pwm->isEnabled()) { // If PWM is enabled, disable it, to ensure a clean state
+  if (pwm->isEnabled()) { // If PWM is enabled (left by a previous run or by pido), disable it, to ensure a clean state
 
-    std::cout << "PWM is enabled, exiting test to restore a clean state, re-run the test" << std::endl;
+    std::cout << "PWM is enabled, disabling it to restore a clean state" << std::endl;
+    pwm->setEnable (false);
     REQUIRE CHECK_EQUAL (false, pwm->isEnabled());
   }
 
