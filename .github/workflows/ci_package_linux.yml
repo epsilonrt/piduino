@@ -43,6 +43,11 @@ jobs:
       with:
         fetch-depth: 0
 
+    # On a tag run, actions/checkout turns the annotated tag into a lightweight one,
+    # which 'git describe' (used by CMake to get the version) ignores.
+    - name: Fetch annotated tags
+      run: git fetch --force --tags origin
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
