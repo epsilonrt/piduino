@@ -1,0 +1,159 @@
+name: Build Linux Package
+
+on:
+  push:
+    branches: [ master, dev ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ master, dev ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Cancel redundant runs of the same pull request (or of the same branch)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Build the Debian packages (one per CPack component) in a Debian bookworm container.
+  # Both architectures run natively on a GitHub-hosted arm64 runner (armhf as a 32-bit
+  # container, no emulation); "linux32" makes uname report armv7l as on a 32-bit Pi.
+  package-linux:
+    name: package-linux (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            prefix: ""
+          - arch: armhf
+            runner: ubuntu-24.04-arm
+            platform: linux/arm/v7
+            prefix: linux32
+
+    steps:
+    # The full history (with tags) is required: the version comes from 'git describe'
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # On a tag run, actions/checkout turns the annotated tag into a lightweight one,
+    # which 'git describe' (used by CMake to get the version) ignores.
+    - name: Fetch annotated tags
+      run: git fetch --force --tags origin
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: .github/docker/Dockerfile.${{ matrix.arch }}
+        platforms: ${{ matrix.platform }}
+        tags: piduino-build-${{ matrix.arch }}:latest
+        load: true
+        cache-from: type=gha,scope=${{ matrix.arch }}
+        cache-to: type=gha,scope=${{ matrix.arch }},mode=max
+
+    - name: Build and package
+      env:
+        ARCH: ${{ matrix.arch }}
+        PREFIX: ${{ matrix.prefix }}
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" $PREFIX sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 4 && cd build && cpack -G DEB'
+
+    - name: Check packages
+      id: pkg
+      env:
+        ARCH: ${{ matrix.arch }}
+      run: |
+        shopt -s nullglob
+        debs=(build/*.deb)
+        if [ ${#debs[@]} -eq 0 ]; then
+          echo "Error: no .deb package found in build/" >&2
+          exit 1
+        fi
+        VERSION=$(dpkg-deb -f build/libpiduino_*_"$ARCH".deb Version)
+        echo "Version: $VERSION"
+        if [ "$VERSION" = "1.0.0" ] || [ -z "$VERSION" ]; then
+          echo "Error: version '$VERSION' looks like the git describe fallback" >&2
+          exit 1
+        fi
+        # One package per CPack component, named <name>_<version>_<arch>.deb
+        for name in libpiduino libpiduino-dev libpiduino-doc piduino-utils; do
+          f="build/${name}_${VERSION}_${ARCH}.deb"
+          if [ ! -f "$f" ]; then
+            echo "Error: expected package $f not found" >&2
+            ls -l build/*.deb >&2
+            exit 1
+          fi
+          echo "::group::$f"
+          dpkg-deb --info "$f"
+          echo "---"
+          dpkg-deb --contents "$f"
+          echo "::endgroup::"
+          if [ "$(dpkg-deb -f "$f" Architecture)" != "$ARCH" ]; then
+            echo "Error: $f is not an $ARCH package" >&2
+            exit 1
+          fi
+        done
+        # A release tag vX.Y.Z must give a package version X.Y.Z
+        if [[ "$GITHUB_REF" == refs/tags/v* ]] && [ "$VERSION" != "${GITHUB_REF_NAME#v}" ]; then
+          echo "Error: tag $GITHUB_REF_NAME does not match package version $VERSION" >&2
+          exit 1
+        fi
+        echo "ARTIFACT_NAME=piduino_${VERSION}_linux_${ARCH}" >> "$GITHUB_OUTPUT"
+
+    - name: Upload Debian packages artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.pkg.outputs.ARTIFACT_NAME }}
+        path: build/*.deb
+        if-no-files-found: error
+
+  # Publish the packages in the GitHub release, only for a tag vX.Y.Z carried by master
+  publish-release:
+    name: publish-release
+    needs: package-linux
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Check tag is on master
+      id: check_branch
+      run: |
+        if git branch -r --contains "$GITHUB_SHA" | grep -qx ' *origin/master'; then
+          echo "ON_MASTER=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "Tag is not on master, skipping release"
+          echo "ON_MASTER=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Download packages
+      if: steps.check_branch.outputs.ON_MASTER == 'true'
+      uses: actions/download-artifact@v4
+      with:
+        pattern: piduino_*_linux_*
+        merge-multiple: true
+        path: dist
+
+    - name: Upload to Release
+      if: steps.check_branch.outputs.ON_MASTER == 'true'
+      uses: softprops/action-gh-release@v2
+      with:
+        files: dist/*.deb
+        generate_release_notes: true
+        draft: false
+        prerelease: false
