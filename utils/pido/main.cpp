@@ -857,6 +857,10 @@ void cmode (int argc, char *argv[]) {
           throw Exception (Exception::ConverterModeError, converterStr);
         }
 
+        // The modes given replace the current mode (this allows, for example, to change
+        // the direction of a pin whose current mode is an input pulled up)
+        mode = Converter::NoMode;
+
         while (paramc > 0) {
           string str (argv[optind]);
 

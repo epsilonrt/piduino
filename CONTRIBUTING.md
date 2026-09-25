@@ -133,6 +133,7 @@ with wires between GPIO pins, and are run as root (CTest calls `sudo`):
 | `test4-socpwm`    | A hardware PWM pin wired to an input pin                            |
 | `test5-gpiopwm`   | A pin wired to an input pin (software PWM)                          |
 | `test6-max1161x`  | A MAX1161x ADC on an I2C bus, with test voltages on its inputs      |
+| `test7-max7311`   | A MAX7311 GPIO expander at 0x20 on the default I2C bus              |
 
 The pin numbers and the chip numbers are constants at the top of each
 `tests/*/main.cpp`: edit them to match your wiring (use `pido readall` to

@@ -59,6 +59,7 @@ not a Raspberry Pi).
 | `test4-socpwm`    | Hardware PWM of the SoC (`SocPwm`)                    | wire iNo 1 (PWM pin) - iNo 0            | ~10 s    |
 | `test5-gpiopwm`   | Software PWM (`GpioPwm`)                              | wire iNo 1 - iNo 0                      | ~1 min   |
 | `test6-max1161x`  | `Max1161x` ADC converter (I2C)                        | see below                               | ~20 s    |
+| `test7-max7311`  | `Max7311` GPIO expander (I2C): parameters, modes, write/read | see below                        | ~1 s     |
 
 Run one test, for example `test3-pin` (from the source root, after the build):
 
@@ -88,10 +89,26 @@ relative to ground:
 The readings must be within 0.05 V of these values, so a bench supply or a
 resistor divider is enough.
 
+### test7-max7311
+
+The test uses a MAX7311 at the I2C address 0x20 (AD0, AD1 and AD2 to ground) with
+the default I2C bus of the board. It only needs the device: nothing is wired to
+the GPIO pins, and it needs no root privileges if your user can access the I2C bus.
+
+- `Address` and `TestChannel` are constants at the top of `test7-max7311/main.cpp`.
+- **Only `TestChannel` (0 by default) is driven as an output** and toggled: connect
+  nothing to it that a push-pull output could damage. A LED with its resistor is
+  fine, and shows that the test is working. On the RPi Extended board nothing is
+  connected to IO0 (pin 1 of the connector J5) by default: remove one of the three
+  first jumpers of JP1 to free one of the LEDs D1 to D3, and connect it to IO0 with a
+  female-female wire (the LEDs are lit at the low level, their anode being at 3.3 V).
+  The other channels are set as inputs or written back with the mode that was read.
+- The modes of the 16 channels are restored at the end of the test.
+
 ## Reference results
 
 Compute Module 5 (Debian 13 Trixie, 64 bits) with the wiring above:
-`test2`, `test3`, `test4`, `test5` and `test6` pass. `test1` passes except
+`test2`, `test3`, `test4`, `test5`, `test6` and `test7` pass. `test1` passes except
 `Test2`, where the kernel refuses to reconfigure a line from an input with edge
 detection and debounce to a plain input with pull-down (probably a limitation of
 the RP1 GPIO driver).
