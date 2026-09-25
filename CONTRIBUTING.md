@@ -81,9 +81,10 @@ Follow the existing code style:
 - **Private implementation**: the classes use the pimpl idiom (`d_ptr` / `q_ptr`,
   a `Private` class in a `*_p.h` file). Keep the public headers in
   `include/piduino/` free of implementation details.
-- **License header**: every new source file starts with the LGPL header of the
-  existing files (copy it from `include/piduino/gpio.h`, with your name and the
-  year).
+- **License header**: every new source file starts with the license header of the
+  existing files: the LGPL-2.1-or-later header for the library (copy it from
+  `include/piduino/gpio.h`), the GPL-2.0-or-later header for `utils/` and the build
+  scripts (copy it from `utils/pido/main.cpp`), with your name and the year.
 - Keep commits focused: one logical change per commit.
 - Update the documentation (Doxygen comments, `README.md`, the
   [Wiki](https://github.com/epsilonrt/piduino/wiki)) if your change affects the usage.
@@ -178,6 +179,11 @@ carried by `master`).
 
 ## License
 
-PiDuino is licensed under the [GNU Lesser General Public License v3.0](COPYING.LESSER)
-(LGPL-3.0 or later). By contributing, you agree that your contributions will be
-licensed under the same terms.
+The PiDuino library is licensed under the
+[GNU Lesser General Public License version 2.1](COPYING.LESSER) or later
+(LGPL-2.1-or-later). The command-line tools (`pido`, `pinfo`) and the build scripts
+are licensed under the [GNU General Public License version 2](COPYING) or later
+(GPL-2.0-or-later). By contributing, you agree that your contributions will be
+licensed under the license of the files that you change (or of the directory in
+which you add a file). The versions up to 0.7.3 were published under the LGPL
+version 3 or later.

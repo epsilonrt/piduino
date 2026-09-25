@@ -3,7 +3,7 @@
 # Purpose:       postrm script for package libpiduino
 # Authors:       Copyright © 2018-2025 Pascal JEAN, All rights reserved.
 # Bug-Reports:   https://github.com/epsilonrt/piduino/issues
-# SPDX-License-Identifier: LGPL-3.0-or-later
+# SPDX-License-Identifier: LGPL-2.1-or-later
 set -e
 
 PIDUINO_CONF_FILE=@PIDUINO_INSTALL_ETC_DIR@/piduino.conf

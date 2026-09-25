@@ -251,5 +251,13 @@ requests must target the `dev` branch, `master` is reserved for stable releases.
 
 ## License
 
-PiDuino is licensed under the GNU Lesser General Public License v3.0 or later,
-see [COPYING.LESSER](COPYING.LESSER).
+The PiDuino library is licensed under the GNU Lesser General Public License
+version 2.1 or later (LGPL-2.1-or-later), see [COPYING.LESSER](COPYING.LESSER).
+The command-line tools (`pido`, `pinfo`) and the build scripts are licensed under
+the GNU General Public License version 2 or later (GPL-2.0-or-later), see
+[COPYING](COPYING). Some files come from other projects and keep their notice
+(Arduino: LGPL-2.1-or-later, `SPI.h`: GPL-2 or LGPL-2.1, `fileno`: public domain,
+`threadsafebuffer.h`: BSD-3-Clause, `3rdparty/popl`: MIT).
+
+The versions up to 0.7.3 were published under the LGPL version 3 or later and
+remain available under these terms.
