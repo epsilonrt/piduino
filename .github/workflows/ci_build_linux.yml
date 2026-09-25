@@ -18,50 +18,25 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Native build on a GitHub-hosted arm64 runner.
-  # The library only builds on ARM, so there is no x86 build.
-  build-native-arm64:
-    name: build-native-arm64 (${{ matrix.build_type }})
-    runs-on: ubuntu-24.04-arm
+  # piduino only builds on ARM (Raspberry Pi and similar boards), so there is no x86 build.
+  # The build runs in a Debian bookworm container (same base as Raspberry Pi OS):
+  # - arm64 runs natively on a GitHub-hosted arm64 runner,
+  # - armhf runs under QEMU emulation on an x86_64 runner.
+  build-linux:
+    name: build-linux (${{ matrix.arch }}, ${{ matrix.build_type }})
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
+        arch: [arm64, armhf]
         build_type: [Release, Debug]
-
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends build-essential cmake pkg-config libcppdb-dev libudev-dev libunittest++-dev valgrind doxygen graphviz
-
-    - name: Configure CMake
-      env:
-        BUILD_TYPE: ${{ matrix.build_type }}
-      run: cmake -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
-
-    - name: Build
-      run: cmake --build build --parallel
-
-    - name: Discover tests (temporary)
-      if: matrix.build_type == 'Debug'
-      run: ctest --test-dir build --timeout 120 --output-on-failure || true
-
-  # Build in an emulated armhf/arm64 container (QEMU), using the Dockerfiles of the repository.
-  build-docker:
-    name: build-docker (${{ matrix.arch }})
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
         include:
-          - arch: armhf
-            platform: linux/arm/v7
           - arch: arm64
+            runner: ubuntu-24.04-arm
             platform: linux/arm64
+          - arch: armhf
+            runner: ubuntu-latest
+            platform: linux/arm/v7
 
     steps:
     - uses: actions/checkout@v4
@@ -69,18 +44,31 @@ jobs:
         fetch-depth: 0
 
     - name: Set up QEMU
+      if: matrix.arch == 'armhf'
       uses: docker/setup-qemu-action@v3
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
     - name: Build Docker image
-      env:
-        ARCH: ${{ matrix.arch }}
-        PLATFORM: ${{ matrix.platform }}
-      run: docker buildx build --platform "$PLATFORM" -f ".github/docker/Dockerfile.$ARCH" -t "piduino-build-$ARCH:latest" --load .
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: .github/docker/Dockerfile.${{ matrix.arch }}
+        platforms: ${{ matrix.platform }}
+        tags: piduino-build-${{ matrix.arch }}:latest
+        load: true
+        cache-from: type=gha,scope=${{ matrix.arch }}
+        cache-to: type=gha,scope=${{ matrix.arch }},mode=max
 
-    - name: Build in container
+    - name: Configure and build
       env:
         ARCH: ${{ matrix.arch }}
-      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" sh -c "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 4"
+        BUILD_TYPE: ${{ matrix.build_type }}
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" -e BUILD_TYPE "piduino-build-$ARCH:latest" sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" && cmake --build build --parallel 4'
+
+    - name: Discover tests (temporary)
+      if: matrix.build_type == 'Debug'
+      env:
+        ARCH: ${{ matrix.arch }}
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" sh -c 'ctest --test-dir build --timeout 120 --output-on-failure || true'
