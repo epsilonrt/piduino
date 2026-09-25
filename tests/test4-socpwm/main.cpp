@@ -271,6 +271,14 @@ TEST_FIXTURE (PwmFixture, Test1) {
 TEST_FIXTURE (PwmFixture, Test3) {
   begin (3, "SocPwm full and zero duty cycle (level of the output)");
 
+  // The value of max() that gives a permanent high level depends on the SoC: only
+  // checked on the Bcm2712, where max() is the range
+  if (db.board().soc().id() != SoC::Bcm2712) {
+    std::cout << "Only checked on the Bcm2712" << std::endl;
+    end();
+    return;
+  }
+
   REQUIRE CHECK_EQUAL (true, pwm->open());
   pwm->setRange (Range2);
   pwm->setFrequency (Freq2);
