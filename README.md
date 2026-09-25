@@ -6,8 +6,9 @@ _Arduino on Pi boards, the best of both worlds !_
 
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/epsilonrt/piduino?include_prereleases)](https://github.com/epsilonrt/piduino/releases)  
 
-[![Arm64 Build](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml.yml)
-[![ArmHf Build](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml.yml)
+[![Build Linux](https://github.com/epsilonrt/piduino/actions/workflows/ci_build_linux.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/ci_build_linux.yml)
+[![Build Linux Package](https://github.com/epsilonrt/piduino/actions/workflows/ci_package_linux.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/ci_package_linux.yml)
+[![Documentation](https://github.com/epsilonrt/piduino/actions/workflows/doxygen-gh-pages.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/doxygen-gh-pages.yml)
 
 ---
 
@@ -242,3 +243,13 @@ void loop() {
   delay (1000);
 }
 ```
+
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md): pull
+requests must target the `dev` branch, `master` is reserved for stable releases.
+
+## License
+
+PiDuino is licensed under the GNU Lesser General Public License v3.0 or later,
+see [COPYING.LESSER](COPYING.LESSER).
