@@ -96,19 +96,6 @@ Compute Module 5 (Debian 13 Trixie, 64 bits) with the wiring above:
 detection and debounce to a plain input with pull-down (probably a limitation of
 the RP1 GPIO driver).
 
-### Known issue: the I2C bus can be left stuck (#62)
-
-On the Compute Module 5, `test2`, `test3`, `test4` and `test5` leave the I2C bus
-stuck (SDA and SCL held low, `SDA stuck at low` in `dmesg`), so `test6` then fails
-at its first transaction with `Remote I/O error`. `test1`, `test6` and the `pido`
-commands do not do it. Run `test6` first, or recover the bus without rebooting
-(the name of the controller is in `/sys/bus/platform/drivers/i2c_designware/`):
-
-```bash
-echo 1f00074000.i2c | sudo tee /sys/bus/platform/drivers/i2c_designware/unbind
-echo 1f00074000.i2c | sudo tee /sys/bus/platform/drivers/i2c_designware/bind
-```
-
 ## Benchmarks
 
 The `benchmarks` directory contains benchmarks (not tests) that are built with
