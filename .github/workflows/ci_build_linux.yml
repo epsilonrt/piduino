@@ -1,0 +1,86 @@
+name: Build Linux
+
+on:
+  push:
+    branches: [ master, dev ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ master, dev ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Cancel redundant runs of the same pull request (or of the same branch)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Native build on a GitHub-hosted arm64 runner.
+  # The library only builds on ARM, so there is no x86 build.
+  build-native-arm64:
+    name: build-native-arm64 (${{ matrix.build_type }})
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends build-essential cmake pkg-config libcppdb-dev libudev-dev libunittest++-dev valgrind doxygen graphviz
+
+    - name: Configure CMake
+      env:
+        BUILD_TYPE: ${{ matrix.build_type }}
+      run: cmake -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
+
+    - name: Build
+      run: cmake --build build --parallel
+
+    - name: Discover tests (temporary)
+      if: matrix.build_type == 'Debug'
+      run: ctest --test-dir build --timeout 120 --output-on-failure || true
+
+  # Build in an emulated armhf/arm64 container (QEMU), using the Dockerfiles of the repository.
+  build-docker:
+    name: build-docker (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: armhf
+            platform: linux/arm/v7
+          - arch: arm64
+            platform: linux/arm64
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      env:
+        ARCH: ${{ matrix.arch }}
+        PLATFORM: ${{ matrix.platform }}
+      run: docker buildx build --platform "$PLATFORM" -f ".github/docker/Dockerfile.$ARCH" -t "piduino-build-$ARCH:latest" --load .
+
+    - name: Build in container
+      env:
+        ARCH: ${{ matrix.arch }}
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" sh -c "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 4"
