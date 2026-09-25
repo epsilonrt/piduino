@@ -191,11 +191,15 @@ namespace Piduino {
       case Pin::ModeAlt6:
       case Pin::ModeAlt7:
       case Pin::ModeAlt8: {
-        // Alternate functions, set the function select bits
-        // and set the pad register to hardware mode
+        // Alternate functions, set the function select bits.
+        // The pad keeps its current settings (pull, drive...): only the input is enabled
+        // and the output is not disabled, so that the peripheral can use the pin.
+        // Writing GPIO_PAD_HW_0TO8 or GPIO_PAD_HW_FROM9 here (input and output disabled,
+        // the value of a pin without function) breaks a bus in use, such as I2C, as soon
+        // as the mode of the pin is written again, for example when the Gpio is reopened.
         uint32_t ctrl = d->ctrlReg (p) & ~GPIO_CTRL_FUNCSEL_MASK; // Clear the function select bits
         ctrl |= fsel; // Set the new function select value
-        d->setPadReg (p, (p <= 8) ? GPIO_PAD_HW_0TO8 : GPIO_PAD_HW_FROM9); // Set the pad register to hardware mode
+        d->setPadReg (p, (d->padReg (p) & ~GPIO_PAD_OUT_DISABLE) | GPIO_PAD_IN_ENABLE); // Enable the input and the peripheral output
         d->setCtrlReg (p, ctrl); // Write back the modified control register
         d->rio[GPIO_RIO_OE + GPIO_RIO_CLR_OFFSET] = 1 << p; // disable output for the pin
       }
