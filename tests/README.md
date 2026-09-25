@@ -56,7 +56,7 @@ not a Raspberry Pi).
 | `test1-gpio2`     | GPIO character device access (`Gpio2` classes)        | wire iNo 0 - iNo 1, iNo 2 and 4 free    | ~5 s     |
 | `test2-gpiodev2`  | `GpioDev2`: modes, pulls, read/write, interrupts      | wire iNo 0 - iNo 1, iNo 2 free          | ~5 s     |
 | `test3-pin`       | `Pin`: numbers, modes, pulls, drive, read/write, IRQ  | wire iNo 0 - iNo 1, iNo 2 free          | ~5 s     |
-| `test4-socpwm`    | Hardware PWM of the SoC (`SocPwm`)                    | wire iNo 1 (PWM pin) - iNo 0            | ~10 s    |
+| `test4-socpwm`    | Hardware PWM of the SoC (`SocPwm`): frequency, 0 % and 100 % duty | wire iNo 1 (PWM pin) - iNo 0            | ~10 s    |
 | `test5-gpiopwm`   | Software PWM (`GpioPwm`)                              | wire iNo 1 - iNo 0                      | ~1 min   |
 | `test6-max1161x`  | `Max1161x` ADC converter (I2C)                        | see below                               | ~20 s    |
 | `test7-max7311`  | `Max7311` GPIO expander (I2C): parameters, modes, write/read | see below                        | ~1 s     |

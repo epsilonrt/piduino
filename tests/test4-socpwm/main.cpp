@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <string>
 #include <array>
+#include <chrono>
 
 #include <piduino/system.h>
 #include <piduino/clock.h>
@@ -104,7 +105,6 @@ struct PwmFixture : public GpioFixture {
 
     switch (db.board().soc().id()) {
       case SoC::Bcm2712:
-        maxOffset = 1; // For Bcm2712, max() is 1 more than range()
       case SoC::Bcm2708:
       case SoC::Bcm2709:
       case SoC::Bcm2710:
@@ -263,6 +263,89 @@ TEST_FIXTURE (PwmFixture, Test1) {
   end();
 }
 
+// -----------------------------------------------------------------------------
+// Level of the output for the extreme values: a value equal to max() must give a
+// permanent high level, and 0 a permanent low level.
+// The input pin is polled (a pulse of a single tick, about 1 us, lasts long enough
+// to be seen), because the interrupts do not report such short pulses.
+TEST_FIXTURE (PwmFixture, Test3) {
+  begin (3, "SocPwm full and zero duty cycle (level of the output)");
+
+  REQUIRE CHECK_EQUAL (true, pwm->open());
+  pwm->setRange (Range2);
+  pwm->setFrequency (Freq2);
+  pwm->write (0);
+  pwm->run();
+  clk.delay (20);
+
+  // number of samples of the input at the given level during 100 ms
+  auto samples = [this] (bool level) {
+    unsigned long count = 0;
+    auto t0 = std::chrono::steady_clock::now();
+
+    while (std::chrono::steady_clock::now() - t0 < std::chrono::milliseconds (100)) {
+
+      if (input->read() == level) {
+        count++;
+      }
+    }
+    return count;
+  };
+
+  CHECK_EQUAL (0UL, samples (true)); // 0: permanent low level
+  CHECK (pwm->write (pwm->max()));
+  clk.delay (20);
+  CHECK_EQUAL (pwm->range(), pwm->max() - maxOffset);
+  CHECK_EQUAL (0UL, samples (false)); // max(): permanent high level
+  CHECK (pwm->write (pwm->max() - 1));
+  clk.delay (20);
+  CHECK (samples (false) > 0); // one tick less: the low pulses are seen (sanity check of the sampling)
+  pwm->stop();
+  end();
+}
+
+// -----------------------------------------------------------------------------
+// The frequency that is announced must be the frequency of the output. With a small
+// range the error of a period that would be one tick too long is easy to measure
+// (1 % for a range of 100). The falling edges are counted by polling the input.
+TEST_FIXTURE (PwmFixture, Test4) {
+  begin (4, "SocPwm frequency of the output");
+
+  if (db.board().soc().id() != SoC::Bcm2712) {
+    std::cout << "Only checked on the Bcm2712" << std::endl;
+    end();
+    return;
+  }
+
+  const long range = 100;
+  const long frequency = 1000;
+
+  REQUIRE CHECK_EQUAL (true, pwm->open());
+  pwm->setRange (range);
+  CHECK_EQUAL (range, pwm->range());
+  long f = pwm->setFrequency (frequency);
+  CHECK_CLOSE (frequency, f, 10);
+  CHECK (pwm->write (range / 2));
+  pwm->run();
+  clk.delay (20);
+
+  unsigned long falls = 0;
+  bool prev = input->read();
+  auto t0 = std::chrono::steady_clock::now();
+
+  while (std::chrono::steady_clock::now() - t0 < std::chrono::milliseconds (500)) {
+    bool s = input->read();
+
+    if (prev && !s) {
+      falls++;
+    }
+    prev = s;
+  }
+  pwm->stop();
+  std::cout << "Announced frequency: " << f << " Hz, measured: " << falls * 2 << " Hz" << std::endl;
+  CHECK_CLOSE (f * 0.5, falls, f * 0.5 * 0.006); // 0.6 %
+  end();
+}
 
 // -----------------------------------------------------------------------------
 struct InterruptFixture : public PwmFixture {
