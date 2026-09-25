@@ -31,6 +31,8 @@ var NAVTREE =
       [ "Blink Example", "index.html#autotoc_md5", null ]
     ] ],
     [ "Converters System and extension", "index.html#autotoc_md6", null ],
+    [ "Contributing", "index.html#autotoc_md7", null ],
+    [ "License", "index.html#autotoc_md8", null ],
     [ "Namespace Members", "namespacemembers.html", [
       [ "All", "namespacemembers.html", null ],
       [ "Functions", "namespacemembers_func.html", null ],
@@ -65,10 +67,10 @@ var NAVTREEINDEX =
 "class_piduino_1_1_max7311.html#a5425ba8313fa55335fb63d0f6a682f70a39cdeda3d7bdb34ad3317020e2ee3eb8",
 "class_piduino_1_1_mcp4728.html#a2a0ec5b937a12979efce01ca6a83add8",
 "class_piduino_1_1_pin.html#ad7687fa9e14ec46ec18e3c4354983551ad5ff3bcc2af58da652efb9e5c158cc76",
-"class_piduino_1_1_serial_port.html#ad28ad1f8b401944a28d9421e5f07229e",
-"class_piduino_1_1_soc_pwm.html#af6568085bc739fed2cdee72b0f42f270",
-"class_piduino_1_1_system.html#ac4c3d9929da0b02970c82058f0bf4534",
-"classgpio__v2__line__config__attribute.html"
+"class_piduino_1_1_so_c.html#ab849be439e1ae2644d0857ae8c4ee46b",
+"class_piduino_1_1_spi_dev_1_1_info.html#ad0a7cdf0f101c40589fd45df6bab280b",
+"class_piduino_1_1_t_s_queue.html#a1252e67bdaf2c2fb90908b27ce35b8e0",
+"functions_w.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

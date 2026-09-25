@@ -97,7 +97,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <p><img src="https://raw.githubusercontent.com/epsilonrt/piduino/master/doc/images/PiduinoCommunityLogoSmall.png" alt="Piduino Logo" align="right" valign="top" class="inline"/></p>
 <p><a href="https://github.com/epsilonrt/piduino/releases"><img src="https://img.shields.io/github/v/release/epsilonrt/piduino?include_prereleases" alt="GitHub release (latest by date including pre-releases)" class="inline"/></a> <br  />
 </p>
-<p><a href="https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml.yml"><img src="https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml/badge.svg" alt="Arm64 Build" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml.yml"><img src="https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml/badge.svg" alt="ArmHf Build" style="pointer-events: none;" class="inline"/></a></p>
+<p><a href="https://github.com/epsilonrt/piduino/actions/workflows/ci_build_linux.yml"><img src="https://github.com/epsilonrt/piduino/actions/workflows/ci_build_linux.yml/badge.svg" alt="Build Linux" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/epsilonrt/piduino/actions/workflows/ci_package_linux.yml"><img src="https://github.com/epsilonrt/piduino/actions/workflows/ci_package_linux.yml/badge.svg" alt="Build Linux Package" style="pointer-events: none;" class="inline"/></a> <a href="https://github.com/epsilonrt/piduino/actions/workflows/doxygen-gh-pages.yml"><img src="https://github.com/epsilonrt/piduino/actions/workflows/doxygen-gh-pages.yml/badge.svg" alt="Documentation" style="pointer-events: none;" class="inline"/></a></p>
 <hr  />
 <h1><a class="anchor" id="autotoc_md2"></a>
 Abstract</h1>
@@ -111,11 +111,11 @@ Abstract</h1>
 <p>To learn more about PiDuino, you can follow the <a href="https://github.com/epsilonrt/piduino/wiki">Wiki</a>, but if you're in a hurry, let's go to the quick start version...</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Quickstart guide</h1>
-<p>The fastest and safest way to install piduino on Armbian is to use the APT repository from <a href="http://apt.piduino.org">piduino.org</a>, so you should do the following : </p><pre class="fragment">wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
+<p>The fastest and safest way to install piduino on Raspberry Pi OS or Armbian is to use the APT repository from <a href="http://apt.piduino.org">piduino.org</a>, so you should do the following : </p><pre class="fragment">wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/piduino-archive-keyring.gpg] http://apt.piduino.org $(lsb_release -c -s) piduino" | sudo tee /etc/apt/sources.list.d/piduino.list
 sudo apt update
 sudo apt install libpiduino-dev piduino-utils
-</pre><p> This repository provides <a class="el" href="namespace_piduino.html" title="Global namespace for Piduino.">Piduino</a> packages for <code>armhf</code> and <code>arm64</code> architectures for <code>buster</code>, <code>bullseye</code>, and <code>bookworm</code> distributions. <br  />
+</pre><p> This repository provides <a class="el" href="namespace_piduino.html" title="Global namespace for Piduino.">Piduino</a> packages for <code>armhf</code> and <code>arm64</code> architectures for <code>bookworm</code> and <code>trixie</code> distributions. <br  />
 </p>
 <p>If you want to build from sources, you can follow the <a href="https://github.com/epsilonrt/piduino/wiki/Build-from-source">Wiki</a>.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
@@ -261,7 +261,14 @@ Converters System and extension</h1>
 <div class="line"> </div>
 <div class="line">  delay (1000);</div>
 <div class="line">}</div>
-</div><!-- fragment --> </div></div><!-- PageDoc -->
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md7"></a>
+Contributing</h1>
+<p>Contributions are welcome! Please read CONTRIBUTING.md: pull requests must target the <code>dev</code> branch, <code>master</code> is reserved for stable releases.</p>
+<h1><a class="anchor" id="autotoc_md8"></a>
+License</h1>
+<p>The PiDuino library is licensed under the GNU Lesser General Public License version 2.1 or later (LGPL-2.1-or-later), see <a href="COPYING.LESSER">COPYING.LESSER</a>. The command-line tools (<code>pido</code>, <code>pinfo</code>) and the build scripts are licensed under the GNU General Public License version 2 or later (GPL-2.0-or-later), see [COPYING](COPYING). Some files come from other projects and keep their notice (Arduino: LGPL-2.1-or-later, <code>SPI.h</code>: GPL-2 or LGPL-2.1, <code>fileno</code>: public domain, <code><a class="el" href="threadsafebuffer_8h_source.html">threadsafebuffer.h</a></code>: BSD-3-Clause, <code>3rdparty/popl</code>: MIT).</p>
+<p>The versions up to 0.7.3 were published under the LGPL version 3 or later and remain available under these terms. </p>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

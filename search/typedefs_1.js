@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['allocator_5ftype_0',['allocator_type',['../class_piduino_1_1_ring_buffer.html#a8d191ad3a04cfe7cdf84c2a5d232aaed',1,'Piduino::RingBuffer']]]
+  ['directions_0',['Directions',['../class_piduino_1_1_serial_port.html#ada132b5f15dbc3db073f0bec77560faa',1,'Piduino::SerialPort']]]
 ];

@@ -31,13 +31,12 @@ var searchData=
   ['_7eoptionparser_28',['~OptionParser',['../class_piduino_1_1_option_parser.html#a2d9b647a5d702ff8fdfc051a7ec0128a',1,'Piduino::OptionParser']]],
   ['_7eoptionprinter_29',['~OptionPrinter',['../class_piduino_1_1_option_printer.html#a86ea33a8b90be6eb40aebf8426007083',1,'Piduino::OptionPrinter']]],
   ['_7epin_30',['~Pin',['../class_piduino_1_1_pin.html#a9bdbc3308f0197dec5b945eb03c1e953',1,'Piduino::Pin']]],
-  ['_7eringbuffer_31',['~RingBuffer',['../class_piduino_1_1_ring_buffer.html#a54f1a49e3c448f536d81c19348ce5757',1,'Piduino::RingBuffer']]],
-  ['_7eserialport_32',['~SerialPort',['../class_piduino_1_1_serial_port.html#a9991cb7ca29389903f09e1108228a5fc',1,'Piduino::SerialPort']]],
-  ['_7esoc_33',['~SoC',['../class_piduino_1_1_so_c.html#a6bfd1949c47a25fe1c871a5150082c31',1,'Piduino::SoC']]],
-  ['_7esocpwm_34',['~SocPwm',['../class_piduino_1_1_soc_pwm.html#a24db697334e917088b66277e96a8d2f9',1,'Piduino::SocPwm']]],
-  ['_7espidev_35',['~SpiDev',['../class_piduino_1_1_spi_dev.html#ad833b7bdb16d25ab2ee6636033df3684',1,'Piduino::SpiDev']]],
-  ['_7esyslog_36',['~SysLog',['../class_piduino_1_1_sys_log.html#ab7141cf3fb1238268915978c0d4eb1c3',1,'Piduino::SysLog']]],
-  ['_7esystem_37',['~System',['../class_piduino_1_1_system.html#a8978ea7d26d0ca53fb6307945cccdbf5',1,'Piduino::System']]],
-  ['_7eterminalnotifier_38',['~TerminalNotifier',['../class_piduino_1_1_terminal_notifier.html#ab718e338a6d69313fc4440741ca60380',1,'Piduino::TerminalNotifier']]],
-  ['_7ethreadsafebuffer_39',['~ThreadSafeBuffer',['../class_piduino_1_1_thread_safe_buffer.html#ae42048d1a97319096cd054f695ab1e06',1,'Piduino::ThreadSafeBuffer']]]
+  ['_7eserialport_31',['~SerialPort',['../class_piduino_1_1_serial_port.html#a9991cb7ca29389903f09e1108228a5fc',1,'Piduino::SerialPort']]],
+  ['_7esoc_32',['~SoC',['../class_piduino_1_1_so_c.html#a6bfd1949c47a25fe1c871a5150082c31',1,'Piduino::SoC']]],
+  ['_7esocpwm_33',['~SocPwm',['../class_piduino_1_1_soc_pwm.html#a24db697334e917088b66277e96a8d2f9',1,'Piduino::SocPwm']]],
+  ['_7espidev_34',['~SpiDev',['../class_piduino_1_1_spi_dev.html#ad833b7bdb16d25ab2ee6636033df3684',1,'Piduino::SpiDev']]],
+  ['_7esyslog_35',['~SysLog',['../class_piduino_1_1_sys_log.html#ab7141cf3fb1238268915978c0d4eb1c3',1,'Piduino::SysLog']]],
+  ['_7esystem_36',['~System',['../class_piduino_1_1_system.html#a8978ea7d26d0ca53fb6307945cccdbf5',1,'Piduino::System']]],
+  ['_7eterminalnotifier_37',['~TerminalNotifier',['../class_piduino_1_1_terminal_notifier.html#ab718e338a6d69313fc4440741ca60380',1,'Piduino::TerminalNotifier']]],
+  ['_7ethreadsafebuffer_38',['~ThreadSafeBuffer',['../class_piduino_1_1_thread_safe_buffer.html#ae42048d1a97319096cd054f695ab1e06',1,'Piduino::ThreadSafeBuffer']]]
 ];

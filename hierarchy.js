@@ -94,9 +94,6 @@ var hierarchy =
     [ "std::iostream", null, [
       [ "Piduino::FileStream", "class_piduino_1_1_file_stream.html", null ]
     ] ],
-    [ "std::iterator", null, [
-      [ "Piduino::RingBuffer< T, A >::iterator_< E, EN >", "class_piduino_1_1_ring_buffer_1_1iterator__.html", null ]
-    ] ],
     [ "Gpio2::Line", "class_gpio2_1_1_line.html", null ],
     [ "Piduino::LinearBuffer", "class_piduino_1_1_linear_buffer.html", null ],
     [ "Piduino::Manufacturer", "class_piduino_1_1_manufacturer.html", null ],
@@ -119,7 +116,6 @@ var hierarchy =
     [ "Piduino::Pin", "class_piduino_1_1_pin.html", null ],
     [ "Private", "class_private.html", null ],
     [ "Piduino::System::RaspianInfo", "class_piduino_1_1_system_1_1_raspian_info.html", null ],
-    [ "Piduino::RingBuffer< T, A >", "class_piduino_1_1_ring_buffer.html", null ],
     [ "Piduino::Scheduler", "class_piduino_1_1_scheduler.html", null ],
     [ "cppdb::session", null, [
       [ "Piduino::Database", "class_piduino_1_1_database.html", null ]

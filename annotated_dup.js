@@ -45,7 +45,6 @@ var annotated_dup =
       [ "OptionParser", "class_piduino_1_1_option_parser.html", "class_piduino_1_1_option_parser" ],
       [ "OptionPrinter", "class_piduino_1_1_option_printer.html", "class_piduino_1_1_option_printer" ],
       [ "Pin", "class_piduino_1_1_pin.html", "class_piduino_1_1_pin" ],
-      [ "RingBuffer", "class_piduino_1_1_ring_buffer.html", "class_piduino_1_1_ring_buffer" ],
       [ "Scheduler", "class_piduino_1_1_scheduler.html", "class_piduino_1_1_scheduler" ],
       [ "SerialPort", "class_piduino_1_1_serial_port.html", "class_piduino_1_1_serial_port" ],
       [ "SoC", "class_piduino_1_1_so_c.html", "class_piduino_1_1_so_c" ],

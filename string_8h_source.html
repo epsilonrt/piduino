@@ -104,7 +104,7 @@ $(document).ready(function(){initNavTree('string_8h_source.html',''); initResiza
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * The Piduino Library is free software; you can redistribute it and/or</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> * modify it under the terms of the GNU Lesser General Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> * License as published by the Free Software Foundation; either</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> * version 3 of the License, or (at your option) any later version.</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> * version 2.1 of the License, or (at your option) any later version.</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment"> * The Piduino Library is distributed in the hope that it will be useful,</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment"> * but WITHOUT ANY WARRANTY; without even the implied warranty of</span></div>
@@ -279,7 +279,7 @@ $(document).ready(function(){initNavTree('string_8h_source.html',''); initResiza
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>  <span class="comment">//------------------------------------------------------------------------</span></div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>  <span class="keyword">inline</span> <span class="keywordtype">void</span> String::replace (<span class="keywordtype">char</span> c1, <span class="keywordtype">char</span> c2) {</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    std::replace (<a class="code hl_function" href="namespace_piduino.html#ad4e09123487b535654a468e5a16631b8">begin</a>(), <a class="code hl_function" href="namespace_piduino.html#a4e525104419d2a64648c5a73b7297c84">end</a>(), c1, c2);</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    std::replace (begin(), end(), c1, c2);</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>  }</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>  <span class="comment">//------------------------------------------------------------------------</span></div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>  <span class="keyword">inline</span> <span class="keywordtype">void</span> String::concat (<span class="keyword">const</span> String &amp;str) {</div>
@@ -500,8 +500,6 @@ $(document).ready(function(){initNavTree('string_8h_source.html',''); initResiza
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span> </div>
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span><span class="comment">/* ========================================================================== */</span></div>
 <div class="ttc" id="anamespace_piduino_html"><div class="ttname"><a href="namespace_piduino.html">Piduino</a></div><div class="ttdoc">Global namespace for Piduino.</div><div class="ttdef"><b>Definition</b> <a href="board_8h_source.html#l00028">board.h:28</a></div></div>
-<div class="ttc" id="anamespace_piduino_html_a4e525104419d2a64648c5a73b7297c84"><div class="ttname"><a href="namespace_piduino.html#a4e525104419d2a64648c5a73b7297c84">Piduino::end</a></div><div class="ttdeci">RingBuffer&lt; T, A &gt;::iterator end(RingBuffer&lt; T, A &gt; &amp;cb)</div><div class="ttdef"><b>Definition</b> <a href="ringbuffer_8h_source.html#l00832">ringbuffer.h:832</a></div></div>
-<div class="ttc" id="anamespace_piduino_html_ad4e09123487b535654a468e5a16631b8"><div class="ttname"><a href="namespace_piduino.html#ad4e09123487b535654a468e5a16631b8">Piduino::begin</a></div><div class="ttdeci">RingBuffer&lt; T, A &gt;::iterator begin(RingBuffer&lt; T, A &gt; &amp;cb)</div><div class="ttdef"><b>Definition</b> <a href="ringbuffer_8h_source.html#l00821">ringbuffer.h:821</a></div></div>
 <div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdoc">STL namespace.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
