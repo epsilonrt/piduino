@@ -91,7 +91,8 @@ namespace Piduino {
 
     it = paramsMap.find ("addr");
     if (it != paramsMap.end()) {
-      int id = it->second.empty() ? 0x20 : std::stoi (it->second);
+      // base 0: the address is usually given in hexadecimal ("addr=0x20")
+      int id = it->second.empty() ? 0x20 : std::stoi (it->second, nullptr, 0);
       addr = id;
     }
 
@@ -344,12 +345,22 @@ namespace Piduino {
   bool
   Max7311::Private::setMode (Mode m, int channel) {
 
-    if (m & ~ (DigitalOutput | DigitalInput | ActiveLow)) {
+    // The inputs are always pulled up and mode() returns DigitalInput | PullUp for an input:
+    // PullUp is accepted (and ignored) so that the mode that was read can be written back.
+    if (m & ~ (DigitalOutput | DigitalInput | ActiveLow | PullUp)) {
 
       if (isDebug) {
-        std::cerr << "Max7311:setMode: only support DigitalOutput, DigitalInput and ActiveLow modes. Input has always been pulled up." << std::endl;
+        std::cerr << "Max7311:setMode: only support DigitalOutput, DigitalInput, ActiveLow and PullUp (inputs only) modes. Input has always been pulled up." << std::endl;
       }
-      return false; // Return false if pull-up or pull-down mode is requested
+      return false; // Return false if pull-down mode or another mode is requested
+    }
+
+    if ( (m & DigitalOutput) && (m & PullUp)) {
+
+      if (isDebug) {
+        std::cerr << "Max7311:setMode: PullUp only applies to a DigitalInput." << std::endl;
+      }
+      return false; // Return false if the pull-up is requested on an output
     }
 
     if ( (m & DigitalOutput) && (m & DigitalInput)) {
@@ -388,15 +399,15 @@ namespace Piduino {
           return writeSetup (index, 1); // Write the setup for the specific port
         }
         if (isDebug) {
-          std::cerr << "Max7311: Invalid channel " << channel << std::endl;
-        }
-        return false; // Return false if the channel index is invalid
-      }
-      else {
-        if (isDebug) {
           std::cerr << "Max7311: Failed to read setup for channel " << channel << std::endl;
         }
         return false; // Return false if reading setup fails
+      }
+      else {
+        if (isDebug) {
+          std::cerr << "Max7311: Invalid channel " << channel << std::endl;
+        }
+        return false; // Return false if the channel index is invalid
       }
     }
     else { // set all channels

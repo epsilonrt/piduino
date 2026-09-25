@@ -45,7 +45,9 @@ The number of alternative modes available depends on the SoC model (see datashee
 You can use the \fB-c\fR option to specify a gpio expander (e.g. MCP23017 or MAX7311), 
 in this case:
     \(bu all modes are not generally available (input and output)
-    \(bu you can omit the pin number to modify all pins at once.
+    \(bu you can omit the pin number to modify all pins at once
+    \(bu the modes given replace the current mode of the pin: \fBactivelow\fR is
+      only kept if it is given again.
 
 .TP
 \fBpull\fR \fIpin\fR [\fBup\fR | \fBdown\fR | \fBoff\fR]
