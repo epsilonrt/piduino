@@ -159,6 +159,7 @@ struct PwmFixture : public GpioFixture {
 
       output->setPull (Pin::PullUp);
       output->setMode (Pin::ModeInput); // Set output pin to input mode to release the input
+      clk.delayMicroseconds (500); // the line may have been held low (PWM at 0 %): let the pull-up raise it
 
       inState = input->read();
       CHECK_EQUAL (true, inState);
@@ -220,9 +221,10 @@ TEST_FIXTURE (PwmFixture, Test1) {
   CHECK_EQUAL (true, pwm->open());
   REQUIRE CHECK_EQUAL (true, pwm->isOpen());
 
-  if (pwm->isEnabled()) { // If PWM is enabled, disable it, to ensure a clean state
+  if (pwm->isEnabled()) { // If PWM is enabled (left by a previous run or by pido), disable it, to ensure a clean state
 
-    std::cout << "PWM is enabled, exiting test to restore a clean state, re-run the test" << std::endl;
+    std::cout << "PWM is enabled, disabling it to restore a clean state" << std::endl;
+    pwm->setEnable (false);
     REQUIRE CHECK_EQUAL (false, pwm->isEnabled());
   }
 
@@ -510,6 +512,37 @@ TEST_FIXTURE (InterruptFixture, Test2) {
   for (const auto &tp : testPoints) {
     TestAndCheck (tp);
   }
+}
+
+// -----------------------------------------------------------------------------
+// A channel that has not been configured (RANGE register at its reset value) must have a
+// range and a frequency of 0: pido detects it and applies its default settings (range
+// 1024, 1000 Hz). The range of the RP1 was at least 1 and its frequency was the one of
+// the clock, so the default settings were not applied any more.
+TEST_FIXTURE (PwmFixture, Test5) {
+  begin (5, "SocPwm channel that has not been configured");
+
+  if (db.board().soc().id() != SoC::Bcm2712) {
+    std::cout << "Only checked on the Bcm2712" << std::endl;
+    end();
+    return;
+  }
+
+  REQUIRE CHECK_EQUAL (true, pwm->open());
+  pwm->setEnable (false);
+  pwm->setRange (0); // reset state
+  CHECK_EQUAL (0, pwm->range());
+  CHECK_EQUAL (0, pwm->frequency());
+  CHECK_EQUAL (0, pwm->setFrequency (1000)); // the range is needed to compute the divisor
+
+  // what pido does
+  pwm->setRange (1024);
+  CHECK_EQUAL (1024, pwm->range());
+  CHECK_CLOSE (1000, pwm->setFrequency (1000), 10);
+  CHECK_EQUAL (1024, pwm->max());
+  CHECK (pwm->write (512)); // valid with the default range
+  CHECK_EQUAL (512, pwm->read());
+  end();
 }
 
 // run all tests

@@ -90,6 +90,7 @@ struct PwmFixture : public GpioFixture {
 
       output.setPull (Pin::PullUp);
       output.setMode (Pin::ModeInput); // Set output pin to input mode to release the input
+      clk.delayMicroseconds (500); // the line may have been held low: let the pull-up raise it
 
       inState = input.read();
       CHECK_EQUAL (true, inState);
