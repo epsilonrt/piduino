@@ -131,9 +131,11 @@ with wires between GPIO pins, and are run as root (CTest calls `sudo`):
 | `test5-gpiopwm`   | A pin wired to an input pin (software PWM)                          |
 | `test6-max1161x`  | A MAX1161x ADC on an I2C bus, with test voltages on its inputs      |
 
-The pin numbers, the chip numbers and the I2C bus are constants at the top of
-each `tests/*/main.cpp`: edit them to match your wiring (use `pido readall` to
-get the pin numbers) and remove the `#warning` line once done.
+The pin numbers and the chip numbers are constants at the top of each
+`tests/*/main.cpp`: edit them to match your wiring (use `pido readall` to
+get the pin numbers) and remove the `#warning` line once done. The step-by-step
+procedure of each test (wiring, duration, expected result) is in
+[tests/README.md](tests/README.md).
 
 ```bash
 cmake -B build -DCMAKE_BUILD_TYPE=Debug
