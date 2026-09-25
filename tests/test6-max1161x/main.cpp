@@ -30,8 +30,10 @@ const long D2Int = (V2 * (1 << 12)) / FsrInt; // Digital value for Voltage 2 wit
 const long D2Vdd = (V2 * (1 << 12)) / FsrVdd; // Digital value for Voltage 2 with Vdd reference
 const long D2Ext = (V2 * (1 << 12)) / FsrExt; // Digital value for Voltage 2 with External reference
 
-// const int bus2Id = -1; // I2C bus ID for testing, use -1 for disabled this test
-const int bus2Id = 0;
+// Test the "bus=" option of the constructor string with an explicit I2C bus id.
+// The default bus of the board is used, so the test does not depend on the board.
+// Set to false to disable this test.
+const bool TestBusOption = true;
 
 /**
    @struct Info
@@ -145,11 +147,12 @@ TEST_FIXTURE (TestFixture, Test1) {
     CHECK_EQUAL (conv.range() - 1, conv.max());
   }
 
-  if (bus2Id >= 0) { // Test with a specific I2C bus ID
+  if (TestBusOption) { // Test with a specific I2C bus ID
     // Create a Max1161x converter instance with a specific I2C bus ID
     // This will use the default model (Max11615) and default reference (Vdd)
     // The full-scale range will be set to 3.3V, and bipolar mode will be disabled
-    // The bus ID is set to bus2Id, which should be a valid I2C bus ID
+    // The bus ID is the default bus of the board, which is a valid I2C bus ID
+    const int bus2Id = I2cDev::Info::defaultBus().id();
     std::cout << "Testing with bus ID: " << bus2Id << std::endl;
     Max1161x conv ("max1161x:bus=" + std::to_string (bus2Id));
     conv.setDebug (true); // Enable debug mode for detailed output

@@ -1,18 +1,71 @@
-name: Doxygen GitHub Pages Deploy Action
+name: Documentation
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
+  pull_request:
+    branches: [ master, dev ]
+    paths:
+      - 'Doxyfile'
+      - 'README.md'
+      - 'include/**'
+      - 'doc/**'
+      - 'examples/**'
+      - '.github/workflows/doxygen-gh-pages.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+# Cancel redundant runs of the same pull request; never cancel a deployment
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  deploy:
+  # Build the Doxygen documentation without publishing it (checks that it builds)
+  build-docs:
+    name: build-docs
     runs-on: ubuntu-latest
     steps:
-      - uses: DenverCoder1/doxygen-github-pages-action@v1.2.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          folder: docs
-          config_file: Doxyfile
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends doxygen graphviz
+
+    # HTML_OUTPUT is "docs" in the Doxyfile
+    - name: Build documentation
+      run: doxygen Doxyfile 2> doxygen-warnings.log
+
+    - name: Check the result
+      run: |
+        test -f docs/index.html || { echo "Error: docs/index.html not generated" >&2; exit 1; }
+        WARNINGS=$(grep -c 'warning' doxygen-warnings.log || true)
+        echo "Doxygen warnings: $WARNINGS (not blocking)"
+        echo "### Doxygen: $WARNINGS warnings (not blocking)" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Upload documentation preview
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: piduino-docs-preview
+        path: docs
+        retention-days: 7
+
+  # Publish on the gh-pages branch (served by GitHub Pages), from master only
+  deploy-docs:
+    name: deploy-docs
+    needs: build-docs
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: DenverCoder1/doxygen-github-pages-action@v1.2.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        folder: docs
+        config_file: Doxyfile

@@ -4,7 +4,7 @@
    The Piduino Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
-   version 3 of the License, or (at your option) any later version.
+   version 2.1 of the License, or (at your option) any later version.
 
    The Piduino Library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -179,7 +179,9 @@ namespace Piduino {
   long
   SocPwm::Rp1Engine::max (bool differential) const {
 
-    return range() + 1;
+    // The output is high during DUTY ticks of the RANGE + 1 ticks of the period
+    // (see setRange()): a value equal to the range gives a permanent high level.
+    return range();
   }
 
   // -------------------------------------------------------------------------
@@ -195,7 +197,9 @@ namespace Piduino {
   long
   SocPwm::Rp1Engine::range() const {
 
-    return readPwm (rngReg);
+    // The counter of the RP1 counts from 0 to the RANGE register: the period lasts
+    // RANGE + 1 ticks. The range is the number of ticks of the period.
+    return readPwm (rngReg) + 1;
   }
 
   // -------------------------------------------------------------------------
@@ -203,7 +207,10 @@ namespace Piduino {
   long
   SocPwm::Rp1Engine::setRange (long r) {
 
-    writePwm (rngReg,  r);
+    // With a period of RANGE + 1 ticks and an output that is high while the counter is
+    // below DUTY, a value equal to the range (DUTY = RANGE + 1) gives a permanent high
+    // level, and the frequency is the clock divided by the divisor and by the range.
+    writePwm (rngReg, (r > 0) ? (r - 1) : 0);
     return range();
   }
 

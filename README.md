@@ -6,8 +6,9 @@ _Arduino on Pi boards, the best of both worlds !_
 
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/epsilonrt/piduino?include_prereleases)](https://github.com/epsilonrt/piduino/releases)  
 
-[![Arm64 Build](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_arm64.yml.yml)
-[![ArmHf Build](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/build_cmake_armhf.yml.yml)
+[![Build Linux](https://github.com/epsilonrt/piduino/actions/workflows/ci_build_linux.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/ci_build_linux.yml)
+[![Build Linux Package](https://github.com/epsilonrt/piduino/actions/workflows/ci_package_linux.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/ci_package_linux.yml)
+[![Documentation](https://github.com/epsilonrt/piduino/actions/workflows/doxygen-gh-pages.yml/badge.svg)](https://github.com/epsilonrt/piduino/actions/workflows/doxygen-gh-pages.yml)
 
 ---
 
@@ -34,7 +35,7 @@ let's go to the quick start version...
 
 ## Quickstart guide
 
-The fastest and safest way to install piduino on Armbian is to use the APT 
+The fastest and safest way to install piduino on Raspberry Pi OS or Armbian is to use the APT 
 repository from [piduino.org](http://apt.piduino.org), so you should do the following :
 
     wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
@@ -42,7 +43,7 @@ repository from [piduino.org](http://apt.piduino.org), so you should do the foll
     sudo apt update
     sudo apt install libpiduino-dev piduino-utils
 
-This repository provides Piduino packages for `armhf` and `arm64` architectures for `buster`, `bullseye`, and `bookworm` distributions.  
+This repository provides Piduino packages for `armhf` and `arm64` architectures for `bookworm` and `trixie` distributions.  
 
 If you want to build from sources, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki/Build-from-source).
@@ -242,3 +243,21 @@ void loop() {
   delay (1000);
 }
 ```
+
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md): pull
+requests must target the `dev` branch, `master` is reserved for stable releases.
+
+## License
+
+The PiDuino library is licensed under the GNU Lesser General Public License
+version 2.1 or later (LGPL-2.1-or-later), see [COPYING.LESSER](COPYING.LESSER).
+The command-line tools (`pido`, `pinfo`) and the build scripts are licensed under
+the GNU General Public License version 2 or later (GPL-2.0-or-later), see
+[COPYING](COPYING). Some files come from other projects and keep their notice
+(Arduino: LGPL-2.1-or-later, `SPI.h`: GPL-2 or LGPL-2.1, `fileno`: public domain,
+`threadsafebuffer.h`: BSD-3-Clause, `3rdparty/popl`: MIT).
+
+The versions up to 0.7.3 were published under the LGPL version 3 or later and
+remain available under these terms.

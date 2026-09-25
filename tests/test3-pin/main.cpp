@@ -644,6 +644,44 @@ TEST_FIXTURE (InterruptFixture, Test12) {
   end();
 }
 
+// -----------------------------------------------------------------------------
+// Closing and reopening the Gpio must leave the pins used by a peripheral (I2C,
+// SPI, UART...) untouched: the pad of such a pin must not be disabled.
+// An idle I2C bus reads high through its pull-up; reopening the Gpio used to
+// disable the pad of SDA and SCL, which were then read low and left the bus
+// stuck (issue #62).
+TEST_FIXTURE (GpioFixture, Test13) {
+  std::vector<Pin *> altPins;
+
+  begin (13, "Gpio reopen tests");
+
+  for (auto &c : gpio.connector()) {
+    for (auto &p : c.second->pin()) {
+      Pin *pin = p.second.get();
+
+      if (pin->type() == Pin::TypeGpio && pin->isOpen()) {
+        Pin::Mode m = pin->mode();
+        bool isAlt = (m >= Pin::ModeAlt0) && (m <= Pin::ModeAlt9);
+
+        // keep the pins that a peripheral holds high through a pull-up
+        if (isAlt && (pin->pull() == Pin::PullUp) && pin->read()) {
+
+          altPins.push_back (pin);
+        }
+      }
+    }
+  }
+  std::cout << "Pins in alternate function held high: " << altPins.size() << std::endl;
+
+  gpio.close();
+  REQUIRE CHECK (gpio.open());
+  for (auto pin : altPins) {
+
+    CHECK_EQUAL (true, pin->read()); // must still be high after the Gpio was reopened
+  }
+  end();
+}
+
 // run all tests
 int main (int argc, char **argv) {
   return UnitTest::RunAllTests();

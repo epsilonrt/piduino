@@ -15,6 +15,7 @@ RUN apt-get update && \
       pkg-config \
       libudev-dev \
       valgrind \
+      sudo \
       libunittest++-dev \
       fakeroot \
       doxygen \

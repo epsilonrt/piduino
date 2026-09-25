@@ -3,7 +3,7 @@
 #
 # The piduino Project is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
+# the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #
 # The piduino Project is distributed in the hope that it will be useful,
@@ -57,6 +57,9 @@ endif()
 #   message(STATUS "dir='${dir}'")
 # endforeach()
 
+# All the tests need a real Pi board (GPIO pins wired together, I2C converter...).
+# They are labelled "hardware" so that a CI runner without a board can skip them:
+#   ctest -LE hardware
 function(add_test_incl_memcheck test)
   message(STATUS "Add test ${test}")
   # create an executable, which instantiates a runner from UnitTest++
@@ -75,6 +78,7 @@ function(add_test_incl_memcheck test)
   if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${test}/run_as_root")
 
     add_test(NAME ${test} COMMAND ${test})
+    set_tests_properties(${test} PROPERTIES LABELS "hardware")
     if(MEMORY_TESTS)
       message(STATUS "  test ${test} will be run with valgrind")
       # add a memory check test using valgrind
@@ -111,7 +115,7 @@ function(add_test_incl_memcheck test)
         $<TARGET_FILE:${test}>
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
       set_tests_properties(${test}_memchecked PROPERTIES
-        LABELS "memcheck"
+        LABELS "memcheck;hardware"
         TIMEOUT 30  # Timeout CMake également
       )
     endif()
@@ -120,6 +124,7 @@ function(add_test_incl_memcheck test)
     message(STATUS "  test ${test} requires root privileges, it will run with sudo")
     add_test(NAME ${test} COMMAND ${SUDO_EXECUTABLE} $<TARGET_FILE:${test}>
       WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+    set_tests_properties(${test} PROPERTIES LABELS "hardware")
 
     if(MEMORY_TESTS)
       message(STATUS "  test ${test} will be run with valgrind")
@@ -135,7 +140,7 @@ function(add_test_incl_memcheck test)
         $<TARGET_FILE:${test}>
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
       set_tests_properties(${test}_memchecked PROPERTIES
-        LABELS "memcheck"
+        LABELS "memcheck;hardware"
         TIMEOUT 30
       )
     endif()
