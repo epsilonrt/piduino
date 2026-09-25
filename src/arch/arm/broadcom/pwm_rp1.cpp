@@ -198,8 +198,13 @@ namespace Piduino {
   SocPwm::Rp1Engine::range() const {
 
     // The counter of the RP1 counts from 0 to the RANGE register: the period lasts
-    // RANGE + 1 ticks. The range is the number of ticks of the period.
-    return readPwm (rngReg) + 1;
+    // RANGE + 1 ticks. The range is the number of ticks of the period. A RANGE register
+    // at 0 (reset value) is a channel that has not been configured: its range is 0, like
+    // the one of the other engines, so that the caller (pido, for example) can detect it
+    // and apply its default settings.
+    long r = readPwm (rngReg);
+
+    return (r == 0) ? 0 : r + 1;
   }
 
   // -------------------------------------------------------------------------
@@ -210,7 +215,9 @@ namespace Piduino {
     // With a period of RANGE + 1 ticks and an output that is high while the counter is
     // below DUTY, a value equal to the range (DUTY = RANGE + 1) gives a permanent high
     // level, and the frequency is the clock divided by the divisor and by the range.
-    writePwm (rngReg, (r > 0) ? (r - 1) : 0);
+    // A range below 2 (a period of a single tick is of no use) resets the register: the
+    // channel is then not configured.
+    writePwm (rngReg, (r > 1) ? (r - 1) : 0);
     return range();
   }
 
@@ -219,11 +226,12 @@ namespace Piduino {
   long
   SocPwm::Rp1Engine::frequency() const {
     uint32_t div = clockDivisor();
+    long r = range();
 
-    if (div != 0) {
-      return clkFreq / div / range();
+    if ( (div != 0) && (r != 0)) {
+      return clkFreq / div / r;
     }
-    return 0;
+    return 0; // clock or range not configured
   }
 
   // -------------------------------------------------------------------------
@@ -231,12 +239,12 @@ namespace Piduino {
   long
   SocPwm::Rp1Engine::setFrequency (long f) {
 
-    if (f > 0) {
+    if ( (f > 0) && (range() != 0)) { // the divisor is computed from the range
 
       setClockDivisor (frequencyDivisor (f));
       return frequency(); // Return the new frequency
     }
-    return 0; // Invalid frequency, return 0
+    return 0; // Invalid frequency or range not set, return 0
   }
 
   // -------------------------------------------------------------------------

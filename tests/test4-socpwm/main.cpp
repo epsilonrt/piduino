@@ -512,6 +512,37 @@ TEST_FIXTURE (InterruptFixture, Test2) {
   }
 }
 
+// -----------------------------------------------------------------------------
+// A channel that has not been configured (RANGE register at its reset value) must have a
+// range and a frequency of 0: pido detects it and applies its default settings (range
+// 1024, 1000 Hz). The range of the RP1 was at least 1 and its frequency was the one of
+// the clock, so the default settings were not applied any more.
+TEST_FIXTURE (PwmFixture, Test5) {
+  begin (5, "SocPwm channel that has not been configured");
+
+  if (db.board().soc().id() != SoC::Bcm2712) {
+    std::cout << "Only checked on the Bcm2712" << std::endl;
+    end();
+    return;
+  }
+
+  REQUIRE CHECK_EQUAL (true, pwm->open());
+  pwm->setEnable (false);
+  pwm->setRange (0); // reset state
+  CHECK_EQUAL (0, pwm->range());
+  CHECK_EQUAL (0, pwm->frequency());
+  CHECK_EQUAL (0, pwm->setFrequency (1000)); // the range is needed to compute the divisor
+
+  // what pido does
+  pwm->setRange (1024);
+  CHECK_EQUAL (1024, pwm->range());
+  CHECK_CLOSE (1000, pwm->setFrequency (1000), 10);
+  CHECK_EQUAL (1024, pwm->max());
+  CHECK (pwm->write (512)); // valid with the default range
+  CHECK_EQUAL (512, pwm->read());
+  end();
+}
+
 // run all tests
 int main (int argc, char **argv) {
 

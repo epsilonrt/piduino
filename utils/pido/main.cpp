@@ -1091,8 +1091,9 @@ pwm (int argc, char *argv[]) {
     throw Exception (Exception::PwmOpenError, pin->logicalNumber());
   }
 
-  if (socpwm.frequency() == 0) {
+  if ( (socpwm.frequency() == 0) || (socpwm.range() == 0)) {
 
+    // the PWM has not been configured yet
     socpwm.setRange (pwmDefautRange);
     socpwm.setFrequency (pwmDefaultFreq);
     #ifndef NDEBUG
