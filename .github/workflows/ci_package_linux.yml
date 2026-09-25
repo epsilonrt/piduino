@@ -18,9 +18,9 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Build the Debian packages (one per CPack component) in a Debian bookworm container:
-  # Both run natively on a GitHub-hosted arm64 runner (armhf as a 32-bit container, no emulation);
-  # "linux32" makes uname report armv7l as on a 32-bit Pi.
+  # Build the Debian packages (one per CPack component) in a Debian bookworm container.
+  # Both architectures run natively on a GitHub-hosted arm64 runner (armhf as a 32-bit
+  # container, no emulation); "linux32" makes uname report armv7l as on a 32-bit Pi.
   package-linux:
     name: package-linux (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
