@@ -66,7 +66,7 @@ jobs:
       env:
         ARCH: ${{ matrix.arch }}
         PREFIX: ${{ matrix.prefix }}
-      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" $PREFIX sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --parallel 4 && cd build && cpack -G DEB'
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" $PREFIX sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr && cmake --build build --parallel 4 && cd build && cpack -G DEB'
 
     - name: Check packages
       id: pkg
@@ -98,6 +98,11 @@ jobs:
           echo "---"
           dpkg-deb --contents "$f"
           echo "::endgroup::"
+          # Debian packages install under /usr (CMAKE_INSTALL_PREFIX=/usr), never under /usr/local
+          if dpkg-deb --contents "$f" | grep -q ' \./usr/local/'; then
+            echo "Error: $f installs files under /usr/local" >&2
+            exit 1
+          fi
           if [ "$(dpkg-deb -f "$f" Architecture)" != "$ARCH" ]; then
             echo "Error: $f is not an $ARCH package" >&2
             exit 1

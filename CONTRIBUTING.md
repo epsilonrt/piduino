@@ -101,7 +101,13 @@ cmake --build build --parallel
 - A **Release** build also generates the API documentation (needs `doxygen` and `graphviz`).
 - A **Debug** build compiles the unit tests (needs `libunittest++-dev`).
 - To install: `sudo cmake --install build`.
-- To build the Debian packages: `cd build && cpack -G DEB` (Release build).
+- To build the Debian packages (Release only, installed under `/usr`):
+  ```bash
+  sudo apt install fakeroot
+  cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build --parallel
+  cd build && fakeroot make package
+  ```
 - The version comes from `git describe`, so keep the tags of the repository
   (`git fetch --tags` in a fork).
 
