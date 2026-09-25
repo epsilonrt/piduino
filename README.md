@@ -35,7 +35,7 @@ let's go to the quick start version...
 
 ## Quickstart guide
 
-The fastest and safest way to install piduino on Armbian is to use the APT 
+The fastest and safest way to install piduino on Raspberry Pi OS or Armbian is to use the APT 
 repository from [piduino.org](http://apt.piduino.org), so you should do the following :
 
     wget -O- http://www.piduino.org/piduino-key.asc | sudo gpg --dearmor --yes --output /usr/share/keyrings/piduino-archive-keyring.gpg
@@ -43,7 +43,7 @@ repository from [piduino.org](http://apt.piduino.org), so you should do the foll
     sudo apt update
     sudo apt install libpiduino-dev piduino-utils
 
-This repository provides Piduino packages for `armhf` and `arm64` architectures for `buster`, `bullseye`, and `bookworm` distributions.  
+This repository provides Piduino packages for `armhf` and `arm64` architectures for `bookworm` and `trixie` distributions.  
 
 If you want to build from sources, you can follow the 
 [Wiki](https://github.com/epsilonrt/piduino/wiki/Build-from-source).
