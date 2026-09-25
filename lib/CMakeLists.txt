@@ -2,7 +2,7 @@
 #
 # The Piduino Project is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
+# the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #
 # The Piduino Project is distributed in the hope that it will be useful,
@@ -45,7 +45,6 @@ set (hdr_piduino
   ${PIDUINO_INC_DIR}/piduino/manufacturer.h
   ${PIDUINO_INC_DIR}/piduino/memory.h
   ${PIDUINO_INC_DIR}/piduino/popl.h
-  ${PIDUINO_INC_DIR}/piduino/ringbuffer.h
   ${PIDUINO_INC_DIR}/piduino/scheduler.h
   ${PIDUINO_INC_DIR}/piduino/soc.h
   ${PIDUINO_INC_DIR}/piduino/socpwm.h
