@@ -97,8 +97,11 @@ the GPIO pins, and it needs no root privileges if your user can access the I2C b
 
 - `Address` and `TestChannel` are constants at the top of `test7-max7311/main.cpp`.
 - **Only `TestChannel` (0 by default) is driven as an output** and toggled: connect
-  nothing to it that a push-pull output could damage (a LED with its resistor is
-  fine, as on the RPi Extended board where IO0 drives a LED lit at the low level).
+  nothing to it that a push-pull output could damage. A LED with its resistor is
+  fine, and shows that the test is working. On the RPi Extended board nothing is
+  connected to IO0 (pin 1 of the connector J5) by default: remove one of the three
+  first jumpers of JP1 to free one of the LEDs D1 to D3, and connect it to IO0 with a
+  female-female wire (the LEDs are lit at the low level, their anode being at 3.3 V).
   The other channels are set as inputs or written back with the mode that was read.
 - The modes of the 16 channels are restored at the end of the test.
 
