@@ -23,6 +23,9 @@ it does not build on x86.
 - Explain the use case and why this feature would be useful.
 - To add support for a new board, say which board and SoC, and attach the
   output of `pinfo` if PiDuino already runs on it.
+- Planned work is tracked in the
+  [PiDuino roadmap](https://github.com/users/epsilonrt/projects/4) project:
+  check it before opening an issue, and feel free to pick a task there.
 
 ### Pull Requests
 
