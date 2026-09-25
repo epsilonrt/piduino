@@ -67,8 +67,10 @@ jobs:
         BUILD_TYPE: ${{ matrix.build_type }}
       run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" -e BUILD_TYPE "piduino-build-$ARCH:latest" sh -c 'git config --global --add safe.directory /workspace && cmake -S . -B build -DCMAKE_BUILD_TYPE="$BUILD_TYPE" && cmake --build build --parallel 4'
 
-    - name: Discover tests (temporary)
+    # The unit tests are only built in Debug. All of them need a real Pi board and are
+    # labelled "hardware" in tests/CMakeLists.txt: they are compiled here but not run.
+    - name: Run tests (those not requiring hardware)
       if: matrix.build_type == 'Debug'
       env:
         ARCH: ${{ matrix.arch }}
-      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" sh -c 'ctest --test-dir build --timeout 120 --output-on-failure || true'
+      run: docker run --rm -v "$GITHUB_WORKSPACE:/workspace" "piduino-build-$ARCH:latest" sh -c 'ctest --test-dir build -N -L hardware && ctest --test-dir build -LE hardware --no-tests=ignore --output-on-failure'
